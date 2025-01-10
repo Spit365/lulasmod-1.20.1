@@ -1,0 +1,23 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "pattern": [
+        "#",
+        "N",
+        "/"
+    ],
+    "key": {
+        "#": {
+            "item": "minecraft:lightning_rod"
+        },
+        "N": {
+            "item": "minecraft:nether_star"
+        },
+        "/": {
+            "item": "minecraft:diamond"
+        }
+    },
+    "result": {
+        "item": "lulasmod:lightning_crystal",
+        "count": 1
+    }
+}
