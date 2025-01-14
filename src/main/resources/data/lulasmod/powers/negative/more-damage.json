@@ -1,0 +1,9 @@
+{
+    "name": "Vulnerable",
+    "description": "You take a lot more damage (3x)",
+    "type": "origins:modify_damage_taken",
+    "modifier": {
+        "operation": "add_base_early",
+        "value": 3
+    }
+}

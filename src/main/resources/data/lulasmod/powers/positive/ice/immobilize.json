@@ -1,0 +1,18 @@
+{
+    "name": "Ice Spikes",
+    "description": "You can freeze everything near you, leaving remnants of those who have died. You are not as skilled as you would like to be, so you will also freeze youself.",
+    "type": "origins:active_self",
+    "entity_action": {
+      "type": "origins:execute_command",
+      "command": "function the_tailed:immobilize"
+    },
+    "cooldown": 1200,
+    "hud_render": {
+      "should_render": true
+    },
+    "key": {
+      "key": "key.origins.primary_active",
+      "continuous": false
+    }
+  }
+  

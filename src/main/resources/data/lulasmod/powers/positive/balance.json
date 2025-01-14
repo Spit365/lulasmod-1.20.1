@@ -1,0 +1,25 @@
+{
+    "name": "Balance",
+    "description": "Due to the tail, which is sprouting out of the users back, the user will be able to walk a bit faster than normal. This only works in cold environments",
+    "type": "origins:modify_attribute",
+    "attribute": "minecraft:generic.movement_speed",
+    "modifier": {"operation": "set_total", "value": 0.15, "name": "speedy"},
+    "condition": {
+			"type": "origins:or",
+			"conditions": [{
+					"type": "origins:biome",
+					"condition": {
+						"type": "origins:category",
+						"category": "taiga"
+					}
+				},
+				{
+					"type": "origins:biome",
+					"condition": {
+						"type": "origins:category",
+						"category": "icy"
+					}
+				}
+			]
+		}
+}

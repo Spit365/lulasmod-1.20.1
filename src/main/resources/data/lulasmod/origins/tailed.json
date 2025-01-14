@@ -1,0 +1,18 @@
+{
+    "name": "The Tailed",
+    "description": "*Warning for servers, only works for one person!* A humanoid creature with the only diffrence being a tail of variable size sprouting from the back. Due to the origin of this creature, it can withstand very cold terrain.",
+    "powers": [
+        "lulasmod:negative/more-damage",
+        "lulasmod:positive/tail/start-tail",
+        "lulasmod:positive/tail/big-tail",
+        "lulasmod:positive/balance",
+        "lulasmod:positive/ice/freeze-immune",
+        "lulasmod:positive/ice/cold-hands",
+        "lulasmod:positive/ice/immobilize",
+        "lulasmod:setup"
+    ],
+    "icon": {
+        "item": "minecraft:pink_petals"
+    },
+    "impact": 1
+}

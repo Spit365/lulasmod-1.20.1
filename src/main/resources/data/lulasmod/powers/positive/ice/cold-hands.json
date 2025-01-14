@@ -1,0 +1,16 @@
+{
+    "name": "Cold Hands",
+    "description": "You freeze your foe's blood upon hitting them. This will make them slower than usual.",
+    "type": "origins:target_action_on_hit",
+    "entity_action": {
+        "type": "origins:apply_effect",
+        "effect": {
+            "effect": "minecraft:slowness",
+            "duration": 1200,
+            "amplifier": 2,
+            "show_particles": false,
+            "show_icon": false
+        }
+    },
+    "cooldown": 200
+}
