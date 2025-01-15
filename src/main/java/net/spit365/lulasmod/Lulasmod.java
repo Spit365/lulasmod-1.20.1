@@ -2,14 +2,21 @@ package net.spit365.lulasmod;
 
 import net.fabricmc.api.ModInitializer;
 
+import net.fabricmc.fabric.api.client.particle.v1.ParticleFactoryRegistry;
 import net.fabricmc.fabric.api.event.player.UseItemCallback;
+import net.fabricmc.fabric.api.particle.v1.FabricParticleTypes;
+import net.minecraft.client.particle.SweepAttackParticle;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.damage.DamageTypes;
 import net.minecraft.entity.projectile.DragonFireballEntity;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.particle.DefaultParticleType;
+import net.minecraft.registry.Registries;
+import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKeys;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
@@ -27,6 +34,8 @@ public class Lulasmod implements ModInitializer {
 
 	@Override
 	public void onInitialize() {
+		Registry.register(Registries.PARTICLE_TYPE, new Identifier(Lulasmod.MOD_ID, "scratch"), SCRATCH);
+		ParticleFactoryRegistry.getInstance().register(Lulasmod.SCRATCH, SweepAttackParticle.Factory::new);
 		UseItemCallback.EVENT.register((player, world, hand) -> {
 		if (!world.isClient) {
 			if (player.getStackInHand(hand).getItem() == ModItems.MODIFIED_TNT) {
@@ -69,6 +78,9 @@ public class Lulasmod implements ModInitializer {
 				world.createExplosion(LightningEntity,pos2.getX(), pos2.getY(), pos2.getZ(), 5, World.ExplosionSourceType.NONE);
 				player.damage(new DamageSource(world.getRegistryManager().get(RegistryKeys.DAMAGE_TYPE).entryOf(DamageTypes.MAGIC)), 4f);
 			}
+			if (player.getStackInHand(hand).getItem() == ModItems.GRAVITATOR) {
+				player.setNoGravity(!player.hasNoGravity());
+			}
 
 		}
 		return TypedActionResult.pass(player.getStackInHand(hand));
@@ -76,4 +88,6 @@ public class Lulasmod implements ModInitializer {
 		ModItems.registerModItems();
 		LOGGER.info("Hello Fabric world!");
 	}
+	public static final DefaultParticleType SCRATCH = FabricParticleTypes.simple(true);
+
 }
