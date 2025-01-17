@@ -3,8 +3,11 @@ package net.spit365.lulasmod;
 import net.fabricmc.api.ModInitializer;
 
 import net.fabricmc.fabric.api.client.particle.v1.ParticleFactoryRegistry;
+import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
 import net.fabricmc.fabric.api.event.player.UseItemCallback;
 import net.fabricmc.fabric.api.particle.v1.FabricParticleTypes;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.particle.SweepAttackParticle;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
@@ -84,7 +87,8 @@ public class Lulasmod implements ModInitializer {
 
 		}
 		return TypedActionResult.pass(player.getStackInHand(hand));
-	});
+		});
+
 		ModItems.registerModItems();
 		LOGGER.info("Hello Fabric world!");
 	}
