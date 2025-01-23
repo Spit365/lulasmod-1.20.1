@@ -13,7 +13,6 @@ import net.minecraft.entity.passive.OcelotEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -129,29 +128,5 @@ public abstract class CreeperEntityMixin extends HostileEntity implements SkinOv
 	@Unique
 	public void ignite() {
 		this.dataTracker.set(IGNITED, true);
-	}
-
-	@Unique
-	public int getFuseSpeed() {
-		return this.dataTracker.get(FUSE_SPEED);
-	}
-
-	@Unique
-	public void setFuseSpeed(int fuseSpeed) {
-		this.dataTracker.set(FUSE_SPEED, fuseSpeed);
-	}
-
-	@Unique
-	public boolean shouldDropHead() {
-		return this.dataTracker.get(CHARGED) && this.headsDropped < 1;
-	}
-
-	@Unique
-	public void onHeadDropped() {
-		this.headsDropped++;
-	}
-
-	public float getClientFuseTime(float timeDelta) {
-		return MathHelper.lerp(timeDelta, this.lastFuseTime, this.currentFuseTime) / (this.fuseTime - 2);
 	}
 }

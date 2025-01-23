@@ -13,12 +13,17 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.damage.DamageTypes;
+import net.minecraft.entity.effect.StatusEffect;
+import net.minecraft.entity.effect.StatusEffectInstance;
+import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.projectile.DragonFireballEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.particle.DefaultParticleType;
+import net.minecraft.particle.ParticleTypes;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKeys;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.math.BlockPos;
@@ -84,9 +89,13 @@ public class Lulasmod implements ModInitializer {
 			if (player.getStackInHand(hand).getItem() == ModItems.GRAVITATOR) {
 				player.setNoGravity(!player.hasNoGravity());
 			}
+			if (player.getStackInHand(hand).getItem() == ModItems.SMOKE_BOMB){
+
+				if (!player.isCreative()) {player.getStackInHand(hand).decrement(1);}
+			}
 
 		}
-		return TypedActionResult.pass(player.getStackInHand(hand));
+		return TypedActionResult.success(player.getStackInHand(hand), true);
 		});
 
 		ModItems.registerModItems();

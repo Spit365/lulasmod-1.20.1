@@ -14,6 +14,7 @@ public class ModItems {
     public static final Item HIGHLIGHTER = registerItem("highlighter", new Item(new Item.Settings()));
     public static final Item LIGHTNING_CRYSTAL = registerItem("lightning_crystal", new Item(new Item.Settings().maxCount(1)));
     public static final Item GRAVITATOR = registerItem("gravitator", new Item(new Item.Settings().maxCount(1)));
+    public static final Item SMOKE_BOMB = registerItem("smoke_bomb", new Item(new Item.Settings().maxCount(16)));
     //public static final Item BOMB_ITEM = registerItem("bomb", new BombItem(new Item.Settings()));
 
 
@@ -41,6 +42,7 @@ public class ModItems {
             entries.add(HIGHLIGHTER);
             entries.add(LIGHTNING_CRYSTAL);
             entries.add(GRAVITATOR);
+            entries.add(SMOKE_BOMB);
             //entries.add(BOMB_ITEM);
         });
     }

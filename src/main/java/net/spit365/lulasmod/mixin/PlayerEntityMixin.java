@@ -1,10 +1,8 @@
 package net.spit365.lulasmod.mixin;
 
 import net.minecraft.entity.EntityType;
-import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
@@ -16,7 +14,6 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.Objects;
 
@@ -34,7 +31,8 @@ public abstract class PlayerEntityMixin extends LivingEntity {
             cancellable = true)
     private void spawnSweepAttackParticles(CallbackInfo ci) {
         PlayerEntity player = (PlayerEntity) (Object) this; // Casting 'this' to PlayerEntity
-        if (player.getWorld() instanceof ServerWorld serverWorld) {
+        if (player.getWorld() instanceof ServerWorld) {
+            ServerWorld serverWorld = (ServerWorld) player.getWorld();
             double d = -MathHelper.sin(this.getYaw() * (float) (Math.PI / 180.0));
             double e = MathHelper.cos(this.getYaw() * (float) (Math.PI / 180.0));
             boolean isTailed = false;
