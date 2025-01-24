@@ -3,46 +3,47 @@ package net.spit365.lulasmod;
 import net.fabricmc.api.ModInitializer;
 
 import net.fabricmc.fabric.api.client.particle.v1.ParticleFactoryRegistry;
-import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
-import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
+import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
 import net.fabricmc.fabric.api.event.player.UseItemCallback;
 import net.fabricmc.fabric.api.particle.v1.FabricParticleTypes;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.particle.SweepAttackParticle;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.damage.DamageTypes;
-import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.projectile.DragonFireballEntity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.particle.DefaultParticleType;
-import net.minecraft.particle.ParticleTypes;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKeys;
-import net.minecraft.server.world.ServerWorld;
+import net.minecraft.sound.SoundCategory;
+import net.minecraft.sound.SoundEvents;
+import net.minecraft.stat.Stats;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import net.spit365.lulasmod.custom.ModEntities;
+import net.spit365.lulasmod.custom.ModItems;
+import net.spit365.lulasmod.custom.SmokeBombEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import net.minecraft.client.render.entity.FlyingItemEntityRenderer;
 
 public class Lulasmod implements ModInitializer {
 	public static final String MOD_ID = "lulasmod";
 
-	// This logger is used to write text to the console and the log file.
-	// It is considered best practice to use your mod id as the logger's name.
-	// That way, it's clear which mod wrote info, warnings, and errors.
 	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
 	@Override
 	public void onInitialize() {
 		Registry.register(Registries.PARTICLE_TYPE, new Identifier(Lulasmod.MOD_ID, "scratch"), SCRATCH);
+		EntityRendererRegistry.register(ModEntities.SMOKE_BOMB, FlyingItemEntityRenderer::new);
 		ParticleFactoryRegistry.getInstance().register(Lulasmod.SCRATCH, SweepAttackParticle.Factory::new);
 		UseItemCallback.EVENT.register((player, world, hand) -> {
 		if (!world.isClient) {
@@ -91,14 +92,25 @@ public class Lulasmod implements ModInitializer {
 			}
 			if (player.getStackInHand(hand).getItem() == ModItems.SMOKE_BOMB){
 
-				if (!player.isCreative()) {player.getStackInHand(hand).decrement(1);}
+					if (!player.isCreative()) {player.getStackInHand(hand).decrement(1);}
+			}
+			if (player.getStackInHand(hand).getItem() == ModItems.SMOKE_BOMB){
+				world.playSound(null,	player.getX(), player.getY(), player.getZ(), SoundEvents.ENTITY_SNOWBALL_THROW, SoundCategory.NEUTRAL, 0.5F, 0.4F / (world.getRandom().nextFloat() * 0.4F + 0.8F));
+
+                SmokeBombEntity smokeBombEntity = new SmokeBombEntity(world, player);
+                smokeBombEntity.setPos(player.getX(), player.getY() + 1, player.getZ());
+                smokeBombEntity.setVelocity(player, player.getPitch(), player.getYaw(), 0.0F, 1.5F, 0.0F);
+                world.spawnEntity(smokeBombEntity);
+
+                player.addStatusEffect(new StatusEffectInstance(StatusEffects.INVISIBILITY, 1200, 0, false, true));
 			}
 
 		}
 		return TypedActionResult.success(player.getStackInHand(hand), true);
 		});
 
-		ModItems.registerModItems();
+		ModItems.init();
+		ModEntities.init();
 		LOGGER.info("Hello Fabric world!");
 	}
 	public static final DefaultParticleType SCRATCH = FabricParticleTypes.simple(true);

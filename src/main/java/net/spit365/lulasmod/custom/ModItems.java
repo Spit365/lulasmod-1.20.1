@@ -1,4 +1,4 @@
-package net.spit365.lulasmod;
+package net.spit365.lulasmod.custom;
 
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.minecraft.item.Item;
@@ -6,6 +6,7 @@ import net.minecraft.item.ItemGroups;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;
+import net.spit365.lulasmod.Lulasmod;
 
 public class ModItems {
 
@@ -33,7 +34,7 @@ public class ModItems {
         return Registry.register(Registries.ITEM, Identifier.of(Lulasmod.MOD_ID, name), item);
     }
 
-    public static void registerModItems() {
+    public static void init() {
         Lulasmod.LOGGER.info("Registering Mod Items for " + Lulasmod.MOD_ID);
 
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.COMBAT).register(entries -> {

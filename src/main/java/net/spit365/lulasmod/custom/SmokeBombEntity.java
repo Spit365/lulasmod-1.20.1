@@ -1,29 +1,27 @@
 package net.spit365.lulasmod.custom;
 
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.projectile.thrown.SnowballEntity;
+import net.minecraft.entity.mob.BlazeEntity;
 import net.minecraft.entity.projectile.thrown.ThrownItemEntity;
 import net.minecraft.item.Item;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.sound.SoundCategory;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.world.World;
-import net.spit365.lulasmod.ModItems;
-import net.spit365.lulasmod.mixin.ModEntities;
 
 public class SmokeBombEntity extends ThrownItemEntity {
+
 	public SmokeBombEntity(EntityType<? extends SmokeBombEntity> entityType, World world) {
 		super(entityType, world);
 	}
 
-	public SmokeBombEntity(EntityType<? extends ThrownItemEntity> entityType, double d, double e, double f, World world) {
-		super(entityType, d, e, f, world);
-	}
-
-	public SmokeBombEntity(World world, LivingEntity livingEntity) {
-		super(ModEntities.SMOKE_BOMB, livingEntity, world);
+	public SmokeBombEntity(World world, LivingEntity owner) {
+		super(ModEntities.SMOKE_BOMB, owner, world);
 	}
 
 	@Override
@@ -39,11 +37,31 @@ public class SmokeBombEntity extends ThrownItemEntity {
 	@Override
 	protected void onCollision(HitResult hitResult) {
 		super.onCollision(hitResult);
+
 		if (!this.getWorld().isClient) {
-
 			ServerWorld serverWorld = (ServerWorld) this.getWorld();
-			serverWorld.spawnParticles(ParticleTypes.CAMPFIRE_SIGNAL_SMOKE,hitResult.getPos().getX(),hitResult.getPos().getY() + 1,hitResult.getPos().getZ(),269, 1.2,1.2,1.2, 0);
 
+			// Spawn particles
+			serverWorld.spawnParticles(
+					ParticleTypes.CAMPFIRE_SIGNAL_SMOKE,
+					hitResult.getPos().x, hitResult.getPos().y + 1, hitResult.getPos().z,
+					269, 1.2, 1.2, 1.2, 0
+			);
+
+			// Play sound
+			this.getWorld().playSound(
+					null,
+					this.getX(),
+					this.getY(),
+					this.getZ(),
+					SoundEvents.ENTITY_SPLASH_POTION_BREAK,
+					SoundCategory.NEUTRAL,
+					1.0F,
+					1.0F
+			);
+
+			// Remove the entity
+			this.discard();
 		}
 	}
 }
