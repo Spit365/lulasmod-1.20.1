@@ -16,9 +16,11 @@ import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.projectile.DragonFireballEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.particle.DefaultParticleType;
+import net.minecraft.particle.ParticleTypes;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKeys;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.Identifier;
@@ -39,7 +41,6 @@ public class Lulasmod implements ModInitializer {
 	@Override
 	public void onInitialize() {
 		Registry.register(Registries.PARTICLE_TYPE, new Identifier(Lulasmod.MOD_ID, "scratch"), SCRATCH);
-		EntityRendererRegistry.register(ModEntities.SMOKE_BOMB, FlyingItemEntityRenderer::new);
 		ParticleFactoryRegistry.getInstance().register(Lulasmod.SCRATCH, SweepAttackParticle.Factory::new);
 		UseItemCallback.EVENT.register((player, world, hand) -> {
 		if (!world.isClient) {
@@ -109,5 +110,12 @@ public class Lulasmod implements ModInitializer {
 		LOGGER.info("Hello Fabric world!");
 	}
 	public static final DefaultParticleType SCRATCH = FabricParticleTypes.simple(true);
+	public static void summonSmoke(Vec3d position, World world){
+		((ServerWorld) world).spawnParticles(
+				ParticleTypes.CAMPFIRE_SIGNAL_SMOKE,
+				position.x, position.y + 1, position.z,
+				269, 1.2, 1.2, 1.2, 0
+		);
+	}
 
 }

@@ -13,6 +13,7 @@ import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.world.World;
+import net.spit365.lulasmod.Lulasmod;
 
 public class SmokeBombEntity extends ThrownItemEntity {
 
@@ -31,7 +32,7 @@ public class SmokeBombEntity extends ThrownItemEntity {
 
 	@Override
 	protected void onEntityHit(EntityHitResult entityHitResult) {
-		onCollision(entityHitResult);
+		Lulasmod.summonSmoke(entityHitResult.getPos(),entityHitResult.getEntity().getWorld());
 	}
 
 	@Override
@@ -39,14 +40,7 @@ public class SmokeBombEntity extends ThrownItemEntity {
 		super.onCollision(hitResult);
 
 		if (!this.getWorld().isClient) {
-			ServerWorld serverWorld = (ServerWorld) this.getWorld();
-
-			// Spawn particles
-			serverWorld.spawnParticles(
-					ParticleTypes.CAMPFIRE_SIGNAL_SMOKE,
-					hitResult.getPos().x, hitResult.getPos().y + 1, hitResult.getPos().z,
-					269, 1.2, 1.2, 1.2, 0
-			);
+			Lulasmod.summonSmoke(hitResult.getPos(), this.getWorld());
 
 			// Play sound
 			this.getWorld().playSound(
