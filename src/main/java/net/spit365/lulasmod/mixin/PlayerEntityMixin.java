@@ -8,7 +8,7 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
-import net.spit365.lulasmod.Lulasmod;
+import net.spit365.lulasmod.custom.ModParticles;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -40,7 +40,7 @@ public abstract class PlayerEntityMixin extends LivingEntity {
                 if (Objects.equals(player.getCommandTags().stream().toList().get(i - 1), "tailed")){isTailed = true;}
             }
             if (isTailed){
-                serverWorld.spawnParticles(Lulasmod.SCRATCH,player.getX() + d,player.getBodyY(0.5),player.getZ() + e,0,d,0.0,e, 0.0);
+                serverWorld.spawnParticles(ModParticles.SCRATCH,player.getX() + d,player.getBodyY(0.5),player.getZ() + e,0,d,0.0,e, 0.0);
             }else{serverWorld.spawnParticles(ParticleTypes.SWEEP_ATTACK,player.getX() + d,player.getBodyY(0.5),player.getZ() + e,0,d,0.0,e, 0.0);}
             ci.cancel();
         }

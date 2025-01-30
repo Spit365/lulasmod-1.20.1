@@ -16,27 +16,13 @@ public class ModItems {
     public static final Item LIGHTNING_CRYSTAL = registerItem("lightning_crystal", new Item(new Item.Settings().maxCount(1)));
     public static final Item GRAVITATOR = registerItem("gravitator", new Item(new Item.Settings().maxCount(1)));
     public static final Item SMOKE_BOMB = registerItem("smoke_bomb", new Item(new Item.Settings().maxCount(16)));
-    //public static final Item BOMB_ITEM = registerItem("bomb", new BombItem(new Item.Settings()));
-
-
-    //public static final EntityType<BombEntity> BOMB_ENTITY = Registry.register(
-           // Registries.ENTITY_TYPE,
-            //new Identifier(Testi.MOD_ID, "bomb"),
-            //EntityType.Builder.create(BombEntity::new, SpawnGroup.AMBIENT)
-                   // .dimensions(EntityDimensions.fixed(0.75f, 0.75f))
-                  //  .build());
-
-
-
-
+    public static final Item DETONATOR = registerItem("detonator", new Item(new Item.Settings().maxCount(1)));
 
     private static Item registerItem(String name, Item item) {
         return Registry.register(Registries.ITEM, Identifier.of(Lulasmod.MOD_ID, name), item);
     }
 
     public static void init() {
-        Lulasmod.LOGGER.info("Registering Mod Items for " + Lulasmod.MOD_ID);
-
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.COMBAT).register(entries -> {
             entries.add(DRAGON_FIREBALL);
             entries.add(MODIFIED_TNT);
@@ -44,7 +30,7 @@ public class ModItems {
             entries.add(LIGHTNING_CRYSTAL);
             entries.add(GRAVITATOR);
             entries.add(SMOKE_BOMB);
-            //entries.add(BOMB_ITEM);
+            entries.add(DETONATOR);
         });
     }
 }
