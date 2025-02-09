@@ -13,12 +13,11 @@ import net.minecraft.entity.passive.OcelotEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
-import net.minecraft.particle.ParticleEffect;
 import net.minecraft.particle.ParticleTypes;
-import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import net.spit365.lulasmod.custom.ModEntities;
+import net.spit365.lulasmod.custom.ModImportant;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -37,9 +36,6 @@ public abstract class CreeperEntityMixin extends HostileEntity implements SkinOv
 
 	@Shadow
 	private int lastFuseTime;
-
-	@Shadow
-	private int currentFuseTime;
 
 	@Shadow
 	private int fuseTime;
@@ -108,25 +104,26 @@ public abstract class CreeperEntityMixin extends HostileEntity implements SkinOv
 	@Inject(method = "explode", at = @At("HEAD"), cancellable = true)
 	private void onExplode(CallbackInfo ci) {
 		if (!this.getWorld().isClient) {
-			float explosionPower = this.dataTracker.get(CHARGED) ? 2.0F : 1.0F;
-			ServerWorld serverWorld = (ServerWorld) this.getWorld();
-			serverWorld.spawnParticles(ParticleTypes.HEART, this.getX(), this.getY(), this.getZ(), 2, 1, 1, 1, 0);
-			List<? extends PlayerEntity> players = this.getWorld().getPlayers();
-			for (int i = 0; i <= players.size() -1; i++){
-				if(
-					Objects.equals(players.get(i).getName().getString(), "MEGAMASTER75983")
-					&&
-					this.getPos().squaredDistanceTo(players.get(i).getPos()) <= 25
-				){
-					players.get(i).kill();
-					this.dead = true;
-					this.discard();
+			if (this.getType() != ModEntities.SMOKE_CREEPER) {
+				ServerWorld serverWorld = (ServerWorld) this.getWorld();
+				serverWorld.spawnParticles(ParticleTypes.HEART, this.getX(), this.getY(), this.getZ(), 2, 1, 1, 1, 0);
+				List<? extends PlayerEntity> players = this.getWorld().getPlayers();
+				for (int i = 0; i <= players.size() - 1; i++) {
+					if (
+							Objects.equals(players.get(i).getName().getString(), "MEGAMASTER75983")
+							&&
+							this.getPos().squaredDistanceTo(players.get(i).getPos()) <= 25
+							&&
+							ModImportant.creeperExplode
+					) {
+						players.get(i).kill();
+						this.dead = true;
+						this.discard();
+					}
 				}
+			}else{
+				ModImportant.summonSmoke(this.getPos(), this.getWorld());
 			}
-
-			//
-			//this.getWorld().createExplosion(this, this.getX(), this.getY(), this.getZ(), this.explosionRadius * explosionPower, World.ExplosionSourceType.NONE);
-			//
 			ci.cancel();
 		}
 	}

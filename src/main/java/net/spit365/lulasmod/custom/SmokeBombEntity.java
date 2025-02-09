@@ -1,19 +1,14 @@
 package net.spit365.lulasmod.custom;
 
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.mob.BlazeEntity;
 import net.minecraft.entity.projectile.thrown.ThrownItemEntity;
 import net.minecraft.item.Item;
-import net.minecraft.particle.ParticleTypes;
-import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.world.World;
-import net.spit365.lulasmod.Lulasmod;
 
 public class SmokeBombEntity extends ThrownItemEntity {
 
@@ -32,7 +27,7 @@ public class SmokeBombEntity extends ThrownItemEntity {
 
 	@Override
 	protected void onEntityHit(EntityHitResult entityHitResult) {
-		Lulasmod.summonSmoke(entityHitResult.getPos(),entityHitResult.getEntity().getWorld());
+		ModImportant.summonSmoke(entityHitResult.getPos(),entityHitResult.getEntity().getWorld());
 	}
 
 	@Override
@@ -40,7 +35,7 @@ public class SmokeBombEntity extends ThrownItemEntity {
 		super.onCollision(hitResult);
 
 		if (!this.getWorld().isClient) {
-			Lulasmod.summonSmoke(hitResult.getPos(), this.getWorld());
+			ModImportant.summonSmoke(hitResult.getPos(), this.getWorld());
 
 			// Play sound
 			this.getWorld().playSound(
