@@ -28,6 +28,20 @@ public class SmokeBombEntity extends ThrownItemEntity {
 	@Override
 	protected void onEntityHit(EntityHitResult entityHitResult) {
 		ModImportant.summonSmoke(entityHitResult.getPos(),entityHitResult.getEntity().getWorld());
+		if (!this.getWorld().isClient) {
+			Lulasmod.summonSmoke(entityHitResult.getPos(),entityHitResult.getEntity().getWorld());
+			this.getWorld().playSound(
+					null,
+					this.getX(),
+					this.getY(),
+					this.getZ(),
+					SoundEvents.ENTITY_SPLASH_POTION_BREAK,
+					SoundCategory.NEUTRAL,
+					1.0F,
+					1.0F
+			);
+			this.discard();
+		}
 	}
 
 	@Override
@@ -48,8 +62,6 @@ public class SmokeBombEntity extends ThrownItemEntity {
 					1.0F,
 					1.0F
 			);
-
-			// Remove the entity
 			this.discard();
 		}
 	}

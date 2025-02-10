@@ -13,6 +13,6 @@ public class SmokeCreeperEntity extends CreeperEntity{
     public static DefaultAttributeContainer.Builder createMobAttributes() {
         return CreeperEntity.createCreeperAttributes()
                 .add(EntityAttributes.GENERIC_MAX_HEALTH, 20.0)
-                .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 1);
+                .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.4);
     }
 }

@@ -8,7 +8,6 @@ import org.slf4j.LoggerFactory;
 
 public class Lulasmod implements ModInitializer {
 	public static final String MOD_ID = "lulasmod";
-
 	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
 	@Override

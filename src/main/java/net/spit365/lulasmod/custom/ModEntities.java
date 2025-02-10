@@ -2,7 +2,6 @@ package net.spit365.lulasmod.custom;
 
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
-import net.minecraft.client.render.entity.CreeperEntityRenderer;
 import net.minecraft.client.render.entity.FlyingItemEntityRenderer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
@@ -31,7 +30,7 @@ public class ModEntities {
     }
     public static void init(){
         EntityRendererRegistry.register(ModEntities.SMOKE_BOMB, FlyingItemEntityRenderer::new);
-        EntityRendererRegistry.register(ModEntities.SMOKE_CREEPER, CreeperEntityRenderer::new);
+        EntityRendererRegistry.register(ModEntities.SMOKE_CREEPER, SmokeCreeperEntityRenderer::new);
 
         FabricDefaultAttributeRegistry.register(SMOKE_CREEPER, SmokeCreeperEntity.createMobAttributes());
     }

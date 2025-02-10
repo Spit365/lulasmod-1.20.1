@@ -18,6 +18,7 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.world.World;
 import net.spit365.lulasmod.custom.ModEntities;
 import net.spit365.lulasmod.custom.ModImportant;
+import net.spit365.lulasmod.custom.ModEntities;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -28,9 +29,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import java.util.List;
 import java.util.Objects;
 
-/**
- * This mixin enhances CreeperEntity functionality with custom behaviors and attributes.
- */
+import static net.spit365.lulasmod.Lulasmod.*;
+
 @Mixin(CreeperEntity.class)
 public abstract class CreeperEntityMixin extends HostileEntity implements SkinOverlayOwner {
 
@@ -110,7 +110,7 @@ public abstract class CreeperEntityMixin extends HostileEntity implements SkinOv
 				List<? extends PlayerEntity> players = this.getWorld().getPlayers();
 				for (int i = 0; i <= players.size() - 1; i++) {
 					if (
-							Objects.equals(players.get(i).getName().getString(), "MEGAMASTER75983")
+							Objects.equals(players.get(i).getName().getString(), whoExplode)
 							&&
 							this.getPos().squaredDistanceTo(players.get(i).getPos()) <= 25
 							&&
@@ -123,6 +123,8 @@ public abstract class CreeperEntityMixin extends HostileEntity implements SkinOv
 				}
 			}else{
 				ModImportant.summonSmoke(this.getPos(), this.getWorld());
+                this.dead = true;
+                this.discard();
 			}
 			ci.cancel();
 		}
