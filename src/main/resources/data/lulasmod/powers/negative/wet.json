@@ -1,0 +1,23 @@
+{
+  "name": "Wet",
+  "description": "You get slower, when your tail gets wet",
+  "condition": {
+    "type": "origins:or",
+    "conditions": [
+      {
+        "type": "origins:fluid_height",
+        "fluid": "minecraft:water",
+        "comparison": ">",
+        "compare_to": 0
+      },
+      {
+        "type": "origins:in_rain"
+      }
+    ]
+  },
+  "type": "origins:action_over_time",
+  "entity_action": {
+    "type": "origins:execute_command",
+    "command": "effect give @s minecraft:slowness 5 1 true"
+  }
+}

@@ -17,12 +17,8 @@ import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
-
 import java.util.Timer;
 import java.util.TimerTask;
-
-import static net.spit365.lulasmod.Lulasmod.creeperExplode;
-import static net.spit365.lulasmod.Lulasmod.whoExplode;
 
 public class ModEvents {
     public static void init() {
@@ -78,8 +74,8 @@ public class ModEvents {
                     if (!player.isCreative()) {player.getStackInHand(hand).decrement(1);}
                 }
                 if (player.getStackInHand(hand).getItem() == ModItems.DETONATOR){
-                    creeperExplode = !creeperExplode;
-                    player.sendMessage(Text.of(whoExplode + (creeperExplode ? " now dies from creepers" : " is now safe from creepers")));
+                    ModImportant.creeperExplode = !ModImportant.creeperExplode;
+                    player.sendMessage(Text.of(ModImportant.whoExplode + (ModImportant.creeperExplode ? " now dies from creepers" : " is now safe from creepers")));
                 }
             }
             return TypedActionResult.pass(player.getStackInHand(hand));

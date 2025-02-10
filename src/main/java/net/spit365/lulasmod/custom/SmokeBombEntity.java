@@ -29,7 +29,7 @@ public class SmokeBombEntity extends ThrownItemEntity {
 	protected void onEntityHit(EntityHitResult entityHitResult) {
 		ModImportant.summonSmoke(entityHitResult.getPos(),entityHitResult.getEntity().getWorld());
 		if (!this.getWorld().isClient) {
-			Lulasmod.summonSmoke(entityHitResult.getPos(),entityHitResult.getEntity().getWorld());
+			ModImportant.summonSmoke(entityHitResult.getPos(),entityHitResult.getEntity().getWorld());
 			this.getWorld().playSound(
 					null,
 					this.getX(),

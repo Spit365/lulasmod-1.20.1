@@ -14,4 +14,5 @@ public class ModImportant {
         );
     }
     public static boolean creeperExplode = false;
+    public static String whoExplode = "MEGAMASTER75983";
 }

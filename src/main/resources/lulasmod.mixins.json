@@ -3,7 +3,7 @@
   "package": "net.spit365.lulasmod.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
-    "CreeperEntityMixin",
+    "CreeperEntityMixin"
   ],
   "injectors": {
     "defaultRequire": 1
