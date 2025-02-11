@@ -18,7 +18,6 @@ public class ModItemGroups {
         entries.add(LIGHTNING_CRYSTAL);
         entries.add(SMOKE_BOMB);
         entries.add(HIGHLIGHTER);
-        entries.add(GRAVITATOR);
         entries.add(DETONATOR);
     }).build());
     public static  void init(){}

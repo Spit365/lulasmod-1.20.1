@@ -10,6 +10,7 @@ import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.world.World;
 import net.spit365.lulasmod.mod.ModEntities;
+import net.spit365.lulasmod.mod.ModImportant;
 import net.spit365.lulasmod.mod.ModItems;
 
 public class SmokeBombEntity extends ThrownItemEntity {

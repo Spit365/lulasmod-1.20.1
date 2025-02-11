@@ -1,4 +1,4 @@
-package net.spit365.lulasmod.custom;
+package net.spit365.lulasmod.mod;
 
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.world.ServerWorld;
