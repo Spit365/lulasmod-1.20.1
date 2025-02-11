@@ -2,34 +2,20 @@ package net.spit365.lulasmod.mixin;
 
 import net.minecraft.client.render.entity.feature.SkinOverlayOwner;
 import net.minecraft.entity.EntityType;
-import net.minecraft.entity.ai.goal.*;
-import net.minecraft.entity.data.DataTracker;
-import net.minecraft.entity.data.TrackedData;
-import net.minecraft.entity.data.TrackedDataHandlerRegistry;
 import net.minecraft.entity.mob.CreeperEntity;
 import net.minecraft.entity.mob.HostileEntity;
-import net.minecraft.entity.passive.CatEntity;
-import net.minecraft.entity.passive.OcelotEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtElement;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.world.World;
-import net.spit365.lulasmod.custom.ModEntities;
+import net.spit365.lulasmod.mod.ModEntities;
 import net.spit365.lulasmod.custom.ModImportant;
-import net.spit365.lulasmod.custom.ModEntities;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import java.util.List;
 import java.util.Objects;
-
-import static net.spit365.lulasmod.Lulasmod.*;
 
 @Mixin(CreeperEntity.class)
 public abstract class CreeperEntityMixin extends HostileEntity implements SkinOverlayOwner {
@@ -62,7 +48,7 @@ public abstract class CreeperEntityMixin extends HostileEntity implements SkinOv
                 this.dead = true;
                 this.discard();
 			}
-			ci.cancel();
+            ci.cancel();
 		}
 	}
 }

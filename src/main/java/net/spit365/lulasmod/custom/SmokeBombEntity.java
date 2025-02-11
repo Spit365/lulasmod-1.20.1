@@ -9,6 +9,8 @@ import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.world.World;
+import net.spit365.lulasmod.mod.ModEntities;
+import net.spit365.lulasmod.mod.ModItems;
 
 public class SmokeBombEntity extends ThrownItemEntity {
 
@@ -27,7 +29,6 @@ public class SmokeBombEntity extends ThrownItemEntity {
 
 	@Override
 	protected void onEntityHit(EntityHitResult entityHitResult) {
-		ModImportant.summonSmoke(entityHitResult.getPos(),entityHitResult.getEntity().getWorld());
 		if (!this.getWorld().isClient) {
 			ModImportant.summonSmoke(entityHitResult.getPos(),entityHitResult.getEntity().getWorld());
 			this.getWorld().playSound(

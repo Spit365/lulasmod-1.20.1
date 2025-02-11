@@ -1,4 +1,4 @@
-package net.spit365.lulasmod.custom;
+package net.spit365.lulasmod.mod;
 
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
@@ -10,6 +10,9 @@ import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;
 import net.spit365.lulasmod.Lulasmod;
+import net.spit365.lulasmod.custom.SmokeBombEntity;
+import net.spit365.lulasmod.custom.SmokeCreeperEntity;
+import net.spit365.lulasmod.custom.SmokeCreeperEntityRenderer;
 
 public class ModEntities {
     public static final EntityType<SmokeBombEntity> SMOKE_BOMB = register(

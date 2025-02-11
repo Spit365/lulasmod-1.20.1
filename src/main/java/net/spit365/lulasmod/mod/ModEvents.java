@@ -1,4 +1,4 @@
-package net.spit365.lulasmod.custom;
+package net.spit365.lulasmod.mod;
 
 import net.fabricmc.fabric.api.event.player.UseItemCallback;
 import net.minecraft.entity.Entity;
@@ -17,37 +17,45 @@ import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import net.spit365.lulasmod.custom.ModImportant;
+import net.spit365.lulasmod.custom.SmokeBombEntity;
+
 import java.util.Timer;
 import java.util.TimerTask;
 
 public class ModEvents {
-    public static void init() {
+    public static void init(){
         UseItemCallback.EVENT.register((player, world, hand) -> {
             if (!world.isClient) {
                 if (player.getStackInHand(hand).getItem() == ModItems.MODIFIED_TNT) {
                     player.setVelocity(0, 1, 0);
                     BlockPos pos1 = BlockPos.ofFloored(player.raycast(999999, 1, false).getPos());
                     if (!player.isCreative()) {player.getStackInHand(hand).decrement(1);}
+                    world.playSound(null, player.getBlockPos(),SoundEvents.BLOCK_BEACON_ACTIVATE,SoundCategory.PLAYERS,2.0f,1.0f);
                     Timer timer = new Timer();
                     TimerTask task = new TimerTask() {
                         @Override
                         public void run() {
+                            world.playSound(null, player.getBlockPos(), SoundEvents.ENTITY_WITHER_SHOOT, SoundCategory.PLAYERS,2.0f, 1.0f);
                             world.createExplosion(player, pos1.getX(), pos1.getY(), pos1.getZ(), 5, World.ExplosionSourceType.TNT);
                             timer.cancel();
                         }
                     };
                     timer.schedule(task, 3000);
                 }
+
                 if (player.getStackInHand(hand).getItem() == ModItems.DRAGON_FIREBALL) {
                     DragonFireballEntity fireballEntity = new DragonFireballEntity(world, player, player.getRotationVec(1f).getX(), player.getRotationVec(1f).getY(), player.getRotationVec(1f).getZ());
                     fireballEntity.setPosition(player.getX(), player.getY() + 1, player.getZ());
                     world.spawnEntity(fireballEntity);
                     if (!player.isCreative()) {player.getStackInHand(hand).decrement(1);}
                 }
+
                 if (player.getStackInHand(hand).getItem() == ModItems.HIGHLIGHTER) {
                     boolean iPlayerGlowing = !player.isGlowing();
                     for (int i = 0; i <= world.getPlayers().size(); i++){world.getPlayers().get(i).setGlowing(iPlayerGlowing);}
                 }
+
                 if (player.getStackInHand(hand).getItem() == ModItems.LIGHTNING_CRYSTAL) {
                     BlockPos pos2 = BlockPos.ofFloored(player.raycast(100, 1, false).getPos());
                     Entity lightningEntity = new Entity(EntityType.LIGHTNING_BOLT, world) {
@@ -60,6 +68,7 @@ public class ModEvents {
                     world.createExplosion(lightningEntity,pos2.getX(), pos2.getY(), pos2.getZ(), 5, World.ExplosionSourceType.NONE);
                     player.damage(new DamageSource(world.getRegistryManager().get(RegistryKeys.DAMAGE_TYPE).entryOf(DamageTypes.MAGIC)), 4f);
                 }
+
                 if (player.getStackInHand(hand).getItem() == ModItems.GRAVITATOR) {
                     player.setNoGravity(!player.hasNoGravity());
                 }
@@ -73,6 +82,7 @@ public class ModEvents {
                     player.addStatusEffect(new StatusEffectInstance(StatusEffects.INVISIBILITY, 400, 0, false, true));
                     if (!player.isCreative()) {player.getStackInHand(hand).decrement(1);}
                 }
+
                 if (player.getStackInHand(hand).getItem() == ModItems.DETONATOR){
                     ModImportant.creeperExplode = !ModImportant.creeperExplode;
                     player.sendMessage(Text.of(ModImportant.whoExplode + (ModImportant.creeperExplode ? " now dies from creepers" : " is now safe from creepers")));

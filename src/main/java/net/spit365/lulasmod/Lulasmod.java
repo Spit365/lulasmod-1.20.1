@@ -1,8 +1,7 @@
 package net.spit365.lulasmod;
 
 import net.fabricmc.api.ModInitializer;
-
-import net.spit365.lulasmod.custom.*;
+import net.spit365.lulasmod.mod.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,6 +15,7 @@ public class Lulasmod implements ModInitializer {
 		ModEntities.init();
 		ModParticles.init();
 		ModEvents.init();
+		ModItemGroups.init();
 		LOGGER.info("Initializing for " + Lulasmod.MOD_ID);
 	}
 
