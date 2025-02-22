@@ -9,3 +9,6 @@ effect give @e[tag=immobilized] minecraft:weakness 1 255 true
 # remove annoying scaling issue
 #scale set bewitchment:modify_width 1 @e[tag=tailed]
 #scale set bewitchment:modify_height 1 @e[tag=tailed]
+
+# Clear the tag after effects have been applied
+execute as @e[tag=immobilized,nbt={HurtTime:9s}] run tag @s remove immobilized
