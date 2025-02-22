@@ -6,6 +6,3 @@ execute at @e[tag=immobilized] run playsound minecraft:entity.evoker.prepare_att
 
 # Spawn particles around the affected area
 execute at @s run particle minecraft:enchant ~ ~ ~ 1 1 1 0.1 100
-
-# closing sequence with duration
-schedule function lulasmod:immobilize_part2 10s
