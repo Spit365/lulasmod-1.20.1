@@ -10,7 +10,10 @@ import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.DragonFireballEntity;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
+import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
@@ -18,7 +21,9 @@ import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import net.spit365.lulasmod.Lulasmod;
 import net.spit365.lulasmod.custom.SmokeBombEntity;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -79,9 +84,11 @@ public class ModEvents {
                     if (!player.isCreative()) {player.getStackInHand(hand).decrement(1);}
                 }
 
-                if (player.getStackInHand(hand).getItem() == ModItems.DETONATOR){
-                    ModImportant.creeperExplode = !ModImportant.creeperExplode;
-                    player.sendMessage(Text.of(ModImportant.whoExplode + (ModImportant.creeperExplode ? " now dies from creepers" : " is now safe from creepers")));
+                if (player.getStackInHand(hand).getItem() == ModItems.HOME_BUTTON){
+                    BlockPos pos = ((ServerPlayerEntity) player).getSpawnPointPosition();
+                    if (pos == null){pos = world.getSpawnPos();}
+                    player.teleport( pos.getX(), pos.getY(), pos.getZ(), true);
+                    Lulasmod.LOGGER.info(player.getName() + " homebuttoned to " + pos.getX() + pos.getY() + pos.getZ());
                 }
             }
             return TypedActionResult.pass(player.getStackInHand(hand));

@@ -18,7 +18,7 @@ public class ModItemGroups {
         entries.add(LIGHTNING_CRYSTAL);
         entries.add(SMOKE_BOMB);
         entries.add(HIGHLIGHTER);
-        entries.add(DETONATOR);
+        entries.add(HOME_BUTTON);
     }).build());
     public static  void init(){}
 }
