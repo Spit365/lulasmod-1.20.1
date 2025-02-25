@@ -1,6 +1,8 @@
 package net.spit365.lulasmod.mod;
 
 import net.fabricmc.fabric.api.event.player.UseItemCallback;
+import net.fabricmc.fabric.api.event.server.ServerTickCallback;
+import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.damage.DamageSource;
@@ -10,41 +12,47 @@ import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.DragonFireballEntity;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.registry.RegistryKey;
+import net.minecraft.particle.ParticleTypes;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
-import net.minecraft.text.Text;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.spit365.lulasmod.Lulasmod;
+import net.spit365.lulasmod.custom.DelayedTaskManager;
 import net.spit365.lulasmod.custom.SmokeBombEntity;
-import org.jetbrains.annotations.NotNull;
-
-import java.util.Timer;
-import java.util.TimerTask;
 
 public class ModEvents {
     public static void init(){
+        ServerTickCallback.EVENT.register(minecraftServer -> {
+            for (PlayerEntity player : minecraftServer.getPlayerManager().getPlayerList()) {
+                if (player.getCommandTags().stream().anyMatch("miner"::equals)) {
+                    BlockPos blockPos = player.getBlockPos();
+                    for (int i = 0; i <= 9; i++) {
+                        if (Blocks.NETHER_PORTAL.getStateManager().getStates().stream().anyMatch(player.getWorld().getBlockState(blockPos)::equals) ||
+                            Blocks.END_PORTAL.getStateManager().getStates().stream().anyMatch(player.getWorld().getBlockState(blockPos)::equals)
+                        ) {player.getWorld().setBlockState(blockPos, Blocks.AIR.getDefaultState());}
+                    }
+                }
+            }
+        });
+
         UseItemCallback.EVENT.register((player, world, hand) -> {
             if (!world.isClient) {
-                if (player.getStackInHand(hand).getItem() == ModItems.MODIFIED_TNT) {
+                if (player.getStackInHand(hand).getItem() == ModItems.MODIFIED_TNT && !player.getItemCooldownManager().isCoolingDown(ModItems.MODIFIED_TNT)) {
+                    player.getItemCooldownManager().set(player.getStackInHand(hand).getItem(), 7);
                     BlockPos blockPos = BlockPos.ofFloored(player.raycast(99999, 1, false).getPos());
                     world.playSound(null, player.getBlockPos(),SoundEvents.BLOCK_RESPAWN_ANCHOR_CHARGE,SoundCategory.PLAYERS,2.0f,1.0f);
-                    Timer timer = new Timer();
-                    TimerTask task = new TimerTask() {
-                        @Override
-                        public void run() {
-                            timer.cancel();
-                            world.createExplosion(player, blockPos.getX(), blockPos.getY(), blockPos.getZ(), 5, World.ExplosionSourceType.TNT);
-                            world.playSound(null, player.getBlockPos(), SoundEvents.ENTITY_WITHER_BREAK_BLOCK, SoundCategory.PLAYERS,2.0f, 1.0f);
-                        }
-                    };
-                    timer.schedule(task, 1500);
+                    ((ServerWorld)world).spawnParticles(ParticleTypes.PORTAL, blockPos.getX(), blockPos.getY(),blockPos.getZ(), 200, 0.45d , 0.45d, 0.45d, 1);
+                    DelayedTaskManager.addTask(40, () -> {
+                        world.createExplosion(player, blockPos.getX(), blockPos.getY(), blockPos.getZ(), 4.0f, World.ExplosionSourceType.TNT);
+                        world.playSound(null, player.getBlockPos(), SoundEvents.ENTITY_WITHER_BREAK_BLOCK, SoundCategory.PLAYERS,2.0f, 1.0f);
+                        ((ServerWorld)world).spawnParticles(ParticleTypes.END_ROD, blockPos.getX(), blockPos.getY(),blockPos.getZ(), 50, 0.3d , 0.3d, 0.3d, 1);
+                    });
                     if (!player.isCreative()) {player.getStackInHand(hand).decrement(1);}
                 }
 
@@ -52,15 +60,18 @@ public class ModEvents {
                     DragonFireballEntity dragonFireballEntity = new DragonFireballEntity(world, player, player.getRotationVec(1f).getX(), player.getRotationVec(1f).getY(), player.getRotationVec(1f).getZ());
                     dragonFireballEntity.setPosition(player.getX(), player.getY() + 1, player.getZ());
                     world.spawnEntity(dragonFireballEntity);
+                    world.playSound(null, player.getBlockPos(), SoundEvents.ITEM_FIRECHARGE_USE, SoundCategory.PLAYERS);
                     if (!player.isCreative()) {player.getStackInHand(hand).decrement(1);}
                 }
 
                 if (player.getStackInHand(hand).getItem() == ModItems.HIGHLIGHTER) {
-                    boolean iPlayerGlowing = !player.isGlowing();
-                    for (PlayerEntity playerEntity : world.getPlayers()){playerEntity.setGlowing(iPlayerGlowing);}
+                    boolean isPlayerGlowing = !player.isGlowing();
+                    world.playSound(null, player.getBlockPos(), (isPlayerGlowing ? SoundEvents.BLOCK_BEACON_ACTIVATE : SoundEvents.BLOCK_BEACON_DEACTIVATE), SoundCategory.PLAYERS);
+                    for (PlayerEntity playerEntity : world.getPlayers()){playerEntity.setGlowing(isPlayerGlowing);}
                 }
 
-                if (player.getStackInHand(hand).getItem() == ModItems.LIGHTNING_CRYSTAL) {
+                if (player.getStackInHand(hand).getItem() == ModItems.LIGHTNING_CRYSTAL && !player.getItemCooldownManager().isCoolingDown(ModItems.LIGHTNING_CRYSTAL)) {
+                    player.getItemCooldownManager().set(player.getStackInHand(hand).getItem(), 45);
                     Vec3d pos2 = player.raycast(100, 1, false).getPos();
                     Entity lightningEntity = new Entity(EntityType.LIGHTNING_BOLT, world) {
                         @Override protected void initDataTracker() {}
@@ -70,7 +81,10 @@ public class ModEvents {
                     world.spawnEntity(lightningEntity);
                     lightningEntity.setPosition(pos2);
                     world.createExplosion(lightningEntity,pos2.getX(), pos2.getY(), pos2.getZ(), 5, World.ExplosionSourceType.NONE);
-                    player.damage(new DamageSource(world.getRegistryManager().get(RegistryKeys.DAMAGE_TYPE).entryOf(DamageTypes.MAGIC)),(player.getCommandTags().stream().anyMatch("tailed"::equals) ? 0f : 4f));
+                    player.damage(new DamageSource(world.getRegistryManager().get(RegistryKeys.DAMAGE_TYPE).entryOf(DamageTypes.MAGIC)),20f);
+                    world.playSound(null, player.getBlockPos(), SoundEvents.BLOCK_AMETHYST_BLOCK_CHIME, SoundCategory.PLAYERS, 100.0f, 10.0f);
+                    world.playSound(null, BlockPos.ofFloored(pos2), SoundEvents.BLOCK_AMETHYST_BLOCK_BREAK, SoundCategory.PLAYERS, 100.0f, 10.0f);
+                    ((ServerWorld)world).spawnParticles(ParticleTypes.END_ROD, pos2.getX(), pos2.getY(),pos2.getZ(), 300, 0.3d , 0.3d, 0.3d, 1);
                 }
 
                 if (player.getStackInHand(hand).getItem() == ModItems.SMOKE_BOMB) {
@@ -87,8 +101,8 @@ public class ModEvents {
                 if (player.getStackInHand(hand).getItem() == ModItems.HOME_BUTTON){
                     BlockPos pos = ((ServerPlayerEntity) player).getSpawnPointPosition();
                     if (pos == null){pos = world.getSpawnPos();}
-                    player.teleport( pos.getX(), pos.getY(), pos.getZ(), true);
-                    Lulasmod.LOGGER.info(player.getName() + " homebuttoned to " + pos.getX() + pos.getY() + pos.getZ());
+                    player.teleport( pos.getX(), pos.getY() + 1, pos.getZ(), true);
+                    Lulasmod.LOGGER.info(player.getName() + " homebuttoned to " + pos.getX() + " " + pos.getY() + " " + pos.getZ());
                 }
             }
             return TypedActionResult.pass(player.getStackInHand(hand));

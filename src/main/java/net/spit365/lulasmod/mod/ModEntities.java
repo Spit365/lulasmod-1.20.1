@@ -32,9 +32,9 @@ public class ModEntities {
         return Registry.register(Registries.ENTITY_TYPE, new Identifier(Lulasmod.MOD_ID, id), type.build(new Identifier(Lulasmod.MOD_ID, id).toString()));
     }
     public static void init(){
-        EntityRendererRegistry.register(ModEntities.SMOKE_BOMB, FlyingItemEntityRenderer::new);
-        EntityRendererRegistry.register(ModEntities.SMOKE_CREEPER, SmokeCreeperEntityRenderer::new);
+       EntityRendererRegistry.register(ModEntities.SMOKE_BOMB, FlyingItemEntityRenderer::new);
+       EntityRendererRegistry.register(ModEntities.SMOKE_CREEPER, SmokeCreeperEntityRenderer::new);
 
-        FabricDefaultAttributeRegistry.register(SMOKE_CREEPER, SmokeCreeperEntity.createMobAttributes());
+       FabricDefaultAttributeRegistry.register(SMOKE_CREEPER, SmokeCreeperEntity.createMobAttributes());
     }
 }

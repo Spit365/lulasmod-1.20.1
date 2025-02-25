@@ -11,8 +11,8 @@ public class ModImportant {
     public static void summonSmoke(@NotNull Vec3d position, World world){
         ((ServerWorld) world).spawnParticles(
                 ParticleTypes.CAMPFIRE_SIGNAL_SMOKE,
-                position.x, position.y + 1, position.z,
-                269, 1.2, 1.2, 1.2, 0
+                position.x, position.y + 1.0d, position.z,
+                269, 1.2d, 1.2d, 1.2d, 0.0d
         );
     }
     public static void summonSmoke(@NotNull Entity entity){
