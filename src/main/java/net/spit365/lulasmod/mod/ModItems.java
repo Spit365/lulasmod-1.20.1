@@ -15,11 +15,9 @@ public class ModItems {
     public static final Item SMOKE_BOMB         = registerItem("smoke_bomb",        new Item(new Item.Settings().maxCount(16)));
     public static final Item HOME_BUTTON        = registerItem("home_button",       new Item(new Item.Settings().maxCount(1)));
     public static final Item HELLISH_SEAL       = registerItem("hellish_seal",      new Item(new Item.Settings().maxCount(1)));
-    public static final Item INESCAPABLE_FRENZY = registerItem("inescapable_frenzy",new Item(new Item.Settings().maxCount(1)));
+    public static final Item EMPTY_INCANTATION  = registerItem("empty_inc",         new Item(new Item.Settings().maxCount(1)));
 
-    private static Item registerItem(String name, Item item) {
-        return Registry.register(Registries.ITEM, Identifier.of(Lulasmod.MOD_ID, name), item);
-    }
+    private static Item registerItem(String name, Item item) {return Registry.register(Registries.ITEM, Identifier.of(Lulasmod.MOD_ID, name), item);}
 
     public static void init() {
     }

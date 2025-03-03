@@ -20,7 +20,7 @@ public class ModItemGroups {
         entries.add(HIGHLIGHTER);
         entries.add(HOME_BUTTON);
         entries.add(HELLISH_SEAL);
-        entries.add(INESCAPABLE_FRENZY);
+        entries.add(EMPTY_INCANTATION);
     }).build());
     public static  void init(){}
 }

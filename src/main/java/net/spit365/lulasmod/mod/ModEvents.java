@@ -58,7 +58,6 @@ public class ModEvents {
                             double repelDistance = 3;
                             player.setVelocity(repelVec.multiply(repelDistance));
                             player.velocityModified = true;
-                            player.sendMessage(Text.of("A mysterious force repels you from the portal!"), true);
                         }
                     }
                 }
