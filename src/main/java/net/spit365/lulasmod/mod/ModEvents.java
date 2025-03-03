@@ -55,12 +55,9 @@ public class ModEvents {
                         Vec3d repelVec = playerVec.subtract(Vec3d.ofCenter(closestPortal)).normalize();
 
                         if (!repelVec.equals(Vec3d.ZERO)) {
-                            // Scale the vector to 3 blocks
                             double repelDistance = 3;
-                            Vec3d newPos = playerVec.add(repelVec.multiply(repelDistance));
-
-                            // Teleport player away and add a message
-                            player.teleport(newPos.x, newPos.y, newPos.z);
+                            player.addVelocity(repelVec.multiply(repelDistance));
+                            player.velocityModified = true;
                             player.sendMessage(Text.of("A mysterious force repels you from the portal!"), true);
                         }
                     }
