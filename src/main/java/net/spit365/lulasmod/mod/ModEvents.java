@@ -18,6 +18,7 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
+import net.minecraft.text.Text;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
@@ -29,17 +30,45 @@ import net.spit365.lulasmod.custom.SmokeBombEntity;
 public class ModEvents {
     public static void init(){
         ServerTickCallback.EVENT.register(minecraftServer -> {
-            for (PlayerEntity player : minecraftServer.getPlayerManager().getPlayerList()) {
-                if (player.getCommandTags().stream().anyMatch("miner"::equals)) {
-                    BlockPos blockPos = player.getBlockPos();
-                    for (int i = 0; i <= 9; i++) {
-                        if (Blocks.NETHER_PORTAL.getStateManager().getStates().stream().anyMatch(player.getWorld().getBlockState(blockPos)::equals) ||
-                            Blocks.END_PORTAL.getStateManager().getStates().stream().anyMatch(player.getWorld().getBlockState(blockPos)::equals)
-                        ) {player.getWorld().setBlockState(blockPos, Blocks.AIR.getDefaultState());}
+            for (ServerPlayerEntity player : minecraftServer.getPlayerManager().getPlayerList()) {
+                if (player.getCommandTags().contains("miner")) {
+                    BlockPos playerPos = player.getBlockPos();
+                    int portalRadius = 5;
+                    BlockPos closestPortal = null;
+                    double closestDistance = Double.MAX_VALUE;
+                    for (BlockPos pos : BlockPos.stream(playerPos.add(-portalRadius, -portalRadius, -portalRadius),
+                            playerPos.add(portalRadius, portalRadius, portalRadius))
+                            .map(BlockPos::toImmutable)
+                            .toList()) {
+                        if (player.getWorld().getBlockState(pos).isOf(Blocks.END_PORTAL)||
+                            player.getWorld().getBlockState(pos).isOf(Blocks.NETHER_PORTAL)) {
+                            double distance = pos.getSquaredDistance(playerPos);
+                            if (distance < closestDistance) {
+                                closestDistance = distance;
+                                closestPortal = pos;
+                            }
+                        }
+                    }
+
+                    if (closestPortal != null) {
+                        Vec3d playerVec = player.getPos();
+                        Vec3d repelVec = playerVec.subtract(Vec3d.ofCenter(closestPortal)).normalize();
+
+                        if (!repelVec.equals(Vec3d.ZERO)) {
+                            // Scale the vector to 3 blocks
+                            double repelDistance = 3;
+                            Vec3d newPos = playerVec.add(repelVec.multiply(repelDistance));
+
+                            // Teleport player away and add a message
+                            player.teleport(newPos.x, newPos.y, newPos.z);
+                            player.sendMessage(Text.of("A mysterious force repels you from the portal!"), true);
+                        }
                     }
                 }
             }
         });
+
+
 
         UseItemCallback.EVENT.register((player, world, hand) -> {
             if (!world.isClient) {
