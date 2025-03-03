@@ -34,15 +34,13 @@ public abstract class CreeperEntityMixin extends HostileEntity implements SkinOv
 						ModImportant.creeperExplode
 					) {
 						player.kill();
-						this.dead = true;
-						this.discard();
 					}
 				}
 			}else{
-				ModImportant.summonSmoke(this.getPos(), this.getWorld());
-                this.dead = true;
-                this.discard();
+				ModImportant.summonSmoke(this);
 			}
+			this.dead = true;
+			this.discard();
             ci.cancel();
 		}
 	}

@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " # ",
+    "NRN",
+    " N "
+  ],
+  "key": {
+    "#": {
+      "item": "minecraft:mangrove_button"
+    },
+    "N": {
+      "item": "minecraft:netherite_scrap"
+    },
+    "R": {
+      "item": "minecraft:recovery_compass"
+    }
+  },
+  "result": {
+    "item": "lulasmod:home_button",
+    "count": 1
+  }
+}
