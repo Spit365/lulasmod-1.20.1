@@ -19,6 +19,8 @@ public class ModItemGroups {
         entries.add(SMOKE_BOMB);
         entries.add(HIGHLIGHTER);
         entries.add(HOME_BUTTON);
+        entries.add(HELLISH_SEAL);
+        entries.add(INESCAPABLE_FRENZY);
     }).build());
     public static  void init(){}
 }
