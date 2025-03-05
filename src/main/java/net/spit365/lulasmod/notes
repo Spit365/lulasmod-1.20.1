@@ -1,0 +1,2 @@
+player.getCommandTags().stream().anyMatch("tailed" ::equals)
+MEGAMASTER75983

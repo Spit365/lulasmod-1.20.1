@@ -4,9 +4,6 @@ import net.minecraft.client.render.entity.feature.SkinOverlayOwner;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.mob.CreeperEntity;
 import net.minecraft.entity.mob.HostileEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.particle.ParticleTypes;
-import net.minecraft.server.world.ServerWorld;
 import net.minecraft.world.World;
 import net.spit365.lulasmod.mod.ModEntities;
 import net.spit365.lulasmod.mod.ModImportant;
@@ -24,24 +21,11 @@ public abstract class CreeperEntityMixin extends HostileEntity implements SkinOv
 
 	@Inject(method = "explode", at = @At("HEAD"), cancellable = true)
 	private void onExplode(CallbackInfo ci) {
-		if (!this.getWorld().isClient) {
-			if (this.getType() != ModEntities.SMOKE_CREEPER) {
-				((ServerWorld) this.getWorld()).spawnParticles(ParticleTypes.HEART, this.getX(), this.getY(), this.getZ(), 2, 1, 1, 1, 0);
-				for (PlayerEntity player : this.getWorld().getPlayers()) {
-					if (
-						//Objects.equals(player.getName().getString(), ModImportant.whoExplode) &&
-						this.getPos().squaredDistanceTo(player.getPos()) <= 25 &&
-						ModImportant.creeperExplode
-					) {
-						player.kill();
-					}
-				}
-			}else{
-				ModImportant.summonSmoke(this);
-			}
+		if (!this.getWorld().isClient && this.getType() == ModEntities.SMOKE_CREEPER) {
+			ModImportant.summonSmoke(this.getPos(), this.getWorld());
 			this.dead = true;
 			this.discard();
-            ci.cancel();
-		}
+			ci.cancel();
+        }
 	}
 }

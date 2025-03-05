@@ -1,0 +1,18 @@
+{
+    "type": "minecraft:crafting_shapeless",
+    "ingredients": [
+        {
+            "item": "minecraft:lightning_rod"
+        },{
+            "item": "minecraft:nether_star"
+        },{
+            "item": "minecraft:diamond"
+        },{
+            "item": "lulasmod:empty_inc"
+        }
+    ],
+    "result": {
+        "item": "lulasmod:lightning_crystal_inc",
+        "count": 1
+    }
+}
