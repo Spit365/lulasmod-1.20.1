@@ -1,6 +1,6 @@
 {
     "name": "Freeze Immunity",
-    "description": "You are immune to freeze damage.",
+    "description": "Due to your Origin, you can withstand very cold temperatures",
     "type": "origins:modify_damage_taken",
     "damage_condition": {
         "type": "origins:in_tag",

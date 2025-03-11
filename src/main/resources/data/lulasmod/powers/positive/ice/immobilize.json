@@ -1,6 +1,6 @@
 {
-    "name": "Ice Spikes",
-    "description": "You can freeze everything near you, leaving remnants of those who have died. You are not as skilled as you would like to be, so you will also freeze youself.",
+    "name": "Soul Shatter",
+    "description": "By cooling down your enemies close to you near to the point of absolute Zero you will not only immobilize their bodies, but also shatter a part of their soul, leaving a soulless being for a moment",
     "type": "origins:active_self",
     "entity_action": {
       "type": "origins:execute_command",

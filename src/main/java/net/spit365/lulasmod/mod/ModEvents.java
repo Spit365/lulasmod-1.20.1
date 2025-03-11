@@ -90,12 +90,6 @@ public class ModEvents {
                     if (!player.isCreative()) {player.getStackInHand(hand).decrement(1);}
                 }
 
-                if (player.getStackInHand(hand).getItem() == ModItems.HIGHLIGHTER) {
-                    boolean isPlayerGlowing = !player.isGlowing();
-                    world.playSound(null, player.getBlockPos(), (isPlayerGlowing ? SoundEvents.BLOCK_BEACON_ACTIVATE : SoundEvents.BLOCK_BEACON_DEACTIVATE), SoundCategory.PLAYERS);
-                    for (PlayerEntity playerEntity : world.getPlayers()){playerEntity.setGlowing(isPlayerGlowing);}
-                }
-
                 if (player.getStackInHand(hand).getItem() == ModItems.SMOKE_BOMB) {
                     world.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.ENTITY_SNOWBALL_THROW, SoundCategory.NEUTRAL, 0.5F, 0.4F / (world.getRandom().nextFloat() * 0.4F + 0.8F));
                     SmokeBombEntity smokeBombEntity = new SmokeBombEntity(world, player);
@@ -143,7 +137,12 @@ public class ModEvents {
                     if (player.getMainHandStack().getItem() == ModItems.SMOKE_INCANTATION){
                         player.getItemCooldownManager().set(ModItems.HELLISH_SEAL, 5);
                         world.playSound(null, player.getBlockPos(), SoundEvents.ENTITY_SPLASH_POTION_THROW, SoundCategory.PLAYERS);
-                        ModImportant.summonSmoke(player.raycast(999999, 1, false).getPos(), world);
+                        ModImportant.summonSmoke(player.raycast(100, 1, false).getPos(), world);
+                    }
+                    if (player.getMainHandStack().getItem() == ModItems.HIGHLIGHTER_INCANTATION) {
+                        boolean isPlayerGlowing = !player.isGlowing();
+                        world.playSound(null, player.getBlockPos(), (isPlayerGlowing ? SoundEvents.BLOCK_BEACON_ACTIVATE : SoundEvents.BLOCK_BEACON_DEACTIVATE), SoundCategory.PLAYERS);
+                        for (PlayerEntity playerEntity : world.getPlayers()){playerEntity.setGlowing(isPlayerGlowing);}
                     }
                 }
             }
