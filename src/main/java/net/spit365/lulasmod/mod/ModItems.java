@@ -23,6 +23,7 @@ public class ModItems {
     public static final Item HOME_INCANTATION               = registerItem("home_inc",              new Item(new Item.Settings().maxCount(1)),false);
     public static final Item SMOKE_INCANTATION              = registerItem("smoke_inc",             new Item(new Item.Settings().maxCount(1)),false);
     public static final Item HIGHLIGHTER_INCANTATION        = registerItem("highlighter_inc",       new Item(new Item.Settings().maxCount(1)),false);
+    public static final Item POCKET_INCANTATION             = registerItem("pocket_inc",            new Item(new Item.Settings().maxCount(1)),false);
 
     private static Item registerItem(String name, Item item, Boolean showInCreativeTab) {
         if (showInCreativeTab) {ModItemList.add(Identifier.of(Lulasmod.MOD_ID, name));}

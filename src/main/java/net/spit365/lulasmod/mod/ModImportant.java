@@ -7,6 +7,7 @@ import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
 public class ModImportant {
+
     public static void summonSmoke(@NotNull Vec3d position, World world){
         ((ServerWorld) world).spawnParticles(
                 ParticleTypes.CAMPFIRE_SIGNAL_SMOKE,
@@ -14,5 +15,4 @@ public class ModImportant {
                 269, 1.2d, 1.2d, 1.2d, 0.0d
         );
     }
-
 }

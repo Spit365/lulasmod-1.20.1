@@ -14,10 +14,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(CreeperEntity.class)
 public abstract class CreeperEntityMixin extends HostileEntity implements SkinOverlayOwner {
-    protected CreeperEntityMixin(EntityType<? extends HostileEntity> entityType, World world) {
+	protected CreeperEntityMixin(EntityType<? extends HostileEntity> entityType, World world) {
 		super(entityType, world);
 	}
-
 
 	@Inject(method = "explode", at = @At("HEAD"), cancellable = true)
 	private void onExplode(CallbackInfo ci) {

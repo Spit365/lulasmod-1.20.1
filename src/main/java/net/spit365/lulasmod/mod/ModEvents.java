@@ -12,7 +12,9 @@ import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.DragonFireballEntity;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.network.packet.s2c.play.PositionFlag;
 import net.minecraft.particle.ParticleTypes;
+import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
@@ -23,8 +25,11 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.spit365.lulasmod.Lulasmod;
-import net.spit365.lulasmod.custom.DelayedTaskManager;
 import net.spit365.lulasmod.custom.SmokeBombEntity;
+
+import java.util.Collections;
+import java.util.Objects;
+import java.util.Set;
 
 public class ModEvents {
     public static void init(){
@@ -72,11 +77,9 @@ public class ModEvents {
                     BlockPos blockPos = BlockPos.ofFloored(player.raycast(99999, 1, false).getPos());
                     world.playSound(null, player.getBlockPos(), SoundEvents.BLOCK_RESPAWN_ANCHOR_CHARGE, SoundCategory.PLAYERS, 2.0f, 1.0f);
                     ((ServerWorld) world).spawnParticles(ParticleTypes.PORTAL, blockPos.getX(), blockPos.getY(), blockPos.getZ(), 200, 0.45d, 0.45d, 0.45d, 1);
-                    DelayedTaskManager.addTask(40, () -> {
                         world.createExplosion(player, blockPos.getX(), blockPos.getY(), blockPos.getZ(), 4.0f, World.ExplosionSourceType.TNT);
                         world.playSound(null, player.getBlockPos(), SoundEvents.ENTITY_WITHER_BREAK_BLOCK, SoundCategory.PLAYERS, 2.0f, 1.0f);
                         ((ServerWorld) world).spawnParticles(ParticleTypes.END_ROD, blockPos.getX(), blockPos.getY(), blockPos.getZ(), 50, 0.3d, 0.3d, 0.3d, 1);
-                    });
                     if (!player.isCreative()) {
                         player.getStackInHand(hand).decrement(1);
                     }
@@ -106,7 +109,7 @@ public class ModEvents {
                     BlockPos pos = ((ServerPlayerEntity) player).getSpawnPointPosition();
                     if (pos == null){pos = world.getSpawnPos();}
                     player.teleport( pos.getX(), pos.getY() + 1, pos.getZ(), true);
-                    Lulasmod.LOGGER.info(player.getName() + " homebuttoned to " + pos.getX() + " " + pos.getY() + " " + pos.getZ() + " (with button)");
+                    Lulasmod.LOGGER.info(player.getName() + " was sent home to " + pos.getX() + " " + pos.getY() + " " + pos.getZ() + " (with button)");
                 }
 
 
@@ -132,7 +135,7 @@ public class ModEvents {
                         BlockPos pos = ((ServerPlayerEntity) player).getSpawnPointPosition();
                         if (pos == null){pos = world.getSpawnPos();}
                         player.teleport( pos.getX(), pos.getY() + 1, pos.getZ(), true);
-                        Lulasmod.LOGGER.info(player.getName() + " homebuttoned to " + pos.getX() + " " + pos.getY() + " " + pos.getZ() + " (with incantation)");
+                        Lulasmod.LOGGER.info(player.getName() + " was sent home to " + pos.getX() + " " + pos.getY() + " " + pos.getZ() + " (with incantation)");
                     }
                     if (player.getMainHandStack().getItem() == ModItems.SMOKE_INCANTATION){
                         player.getItemCooldownManager().set(ModItems.HELLISH_SEAL, 5);
@@ -144,9 +147,20 @@ public class ModEvents {
                         world.playSound(null, player.getBlockPos(), (isPlayerGlowing ? SoundEvents.BLOCK_BEACON_ACTIVATE : SoundEvents.BLOCK_BEACON_DEACTIVATE), SoundCategory.PLAYERS);
                         for (PlayerEntity playerEntity : world.getPlayers()){playerEntity.setGlowing(isPlayerGlowing);}
                     }
+                    if (player.getMainHandStack().getItem() == ModItems.POCKET_INCANTATION){
+                        if (!player.getWorld().getRegistryKey().toString().equals("ResourceKey[minecraft:dimension / lulasmod:pocket_dimension]")) {
+                            RegistryKey<World> worldRegistryKey = null;
+                            for (RegistryKey<World> worldKeys : Objects.requireNonNull(player.getServer()).getWorldRegistryKeys()){if (
+                                worldKeys.toString().equals("ResourceKey[minecraft:dimension / lulasmod:pocket_dimension]")) worldRegistryKey = worldKeys;
+                            }
+                            if (worldRegistryKey == null) Lulasmod.LOGGER.error("could not find registry key for 'lulasmod:pocket_dimension'");
+                            player.teleport(player.getServer().getWorld(worldRegistryKey), player.getX(), player.getY(), player.getZ(), Set.of() , player.getYaw(), player.getPitch());
+                        }else{
+                            player.teleport(player.getServer().getWorld(World.OVERWORLD), player.getX(), player.getY(), player.getZ(), Set.of() , player.getYaw(), player.getPitch());
+                        }
+                    }
                 }
             }
-
             return TypedActionResult.pass(player.getStackInHand(hand));
         });
     }
