@@ -1,18 +1,14 @@
 package net.spit365.lulasmod.mod;
 
-import net.fabricmc.fabric.api.event.player.UseItemCallback;
-import net.fabricmc.fabric.api.event.server.ServerTickCallback;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.damage.DamageSource;
-import net.minecraft.entity.damage.DamageTypes;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.DragonFireballEntity;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.network.packet.s2c.play.PositionFlag;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
@@ -26,10 +22,11 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.spit365.lulasmod.Lulasmod;
 import net.spit365.lulasmod.custom.SmokeBombEntity;
-
-import java.util.Collections;
 import java.util.Objects;
 import java.util.Set;
+import net.minecraft.entity.damage.DamageTypes;
+import net.fabricmc.fabric.api.event.player.UseItemCallback;
+import net.fabricmc.fabric.api.event.server.ServerTickCallback;
 
 public class ModEvents {
     public static void init(){
