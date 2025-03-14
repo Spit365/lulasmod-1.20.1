@@ -1,0 +1,13 @@
+{
+  "name": "Tail",
+  "description": "You have a Tail",
+  "type": "origins:active_self",
+  "entity_action": {
+    "type": "origins:execute_command",
+    "command": "function lulasmod:toggle_tail"
+  },
+  "cooldown": 1,
+  "key": {
+    "key": "key.origins.secondary_active"
+  }
+}

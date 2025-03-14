@@ -1,6 +1,6 @@
 {
     "name": "Soul Shatter",
-    "description": "By cooling down your enemies close to you near to the point of absolute Zero you will not only immobilize their bodies, but also shatter a part of their soul, leaving a soulless being for a moment",
+    "description": "By cooling down your enemies close to you near to the point of absolute Zero you will not only immobilize their bodies, but also shatter a part of their soul, leaving the being soulless for a moment",
     "type": "origins:active_self",
     "entity_action": {
       "type": "origins:execute_command",

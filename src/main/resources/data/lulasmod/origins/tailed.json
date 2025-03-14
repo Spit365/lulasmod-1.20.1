@@ -3,8 +3,9 @@
     "description": "*Warning for servers, only works for one person!* A humanoid creature with the only diffrence being a tail of variable size sprouting from the back. Due to the origin of this creature, it can withstand very cold terrain.",
     "powers": [
         "lulasmod:negative/wet",
-        "lulasmod:positive/tail/start-tail",
-        "lulasmod:positive/balance",
+        "lulasmod:positive/tail/toggle-tail",
+        "lulasmod:positive/tail/update-tail",
+        "lulasmod:positive/ice/balance",
         "lulasmod:positive/ice/freeze-immune",
         "lulasmod:positive/ice/cold-hands",
         "lulasmod:positive/ice/immobilize",

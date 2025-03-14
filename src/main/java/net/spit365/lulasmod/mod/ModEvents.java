@@ -56,8 +56,7 @@ public class ModEvents {
                         Vec3d repelVec = playerVec.subtract(Vec3d.ofCenter(closestPortal)).normalize();
 
                         if (!repelVec.equals(Vec3d.ZERO)) {
-                            double repelDistance = 3;
-                            player.setVelocity(repelVec.multiply(repelDistance));
+                            player.setVelocity(repelVec);
                             player.velocityModified = true;
                         }
                     }
@@ -71,7 +70,7 @@ public class ModEvents {
             if (!world.isClient) {
                 if (player.getStackInHand(hand).getItem() == ModItems.MODIFIED_TNT && !player.getItemCooldownManager().isCoolingDown(ModItems.MODIFIED_TNT)) {
                     player.getItemCooldownManager().set(player.getStackInHand(hand).getItem(), 7);
-                    BlockPos blockPos = BlockPos.ofFloored(player.raycast(99999, 1, false).getPos());
+                    BlockPos blockPos = BlockPos.ofFloored(player.raycast(1000, 1, false).getPos());
                     world.playSound(null, player.getBlockPos(), SoundEvents.BLOCK_RESPAWN_ANCHOR_CHARGE, SoundCategory.PLAYERS, 2.0f, 1.0f);
                     ((ServerWorld) world).spawnParticles(ParticleTypes.PORTAL, blockPos.getX(), blockPos.getY(), blockPos.getZ(), 200, 0.45d, 0.45d, 0.45d, 1);
                         world.createExplosion(player, blockPos.getX(), blockPos.getY(), blockPos.getZ(), 4.0f, World.ExplosionSourceType.TNT);
@@ -113,7 +112,7 @@ public class ModEvents {
                 if (player.getOffHandStack().getItem() == ModItems.HELLISH_SEAL && !player.getItemCooldownManager().isCoolingDown(ModItems.HELLISH_SEAL)){
                     if (player.getMainHandStack().getItem() == ModItems.LIGHTNING_CRYSTAL_INCANTATION) {
                         player.getItemCooldownManager().set(ModItems.HELLISH_SEAL, 45);
-                        Vec3d pos2 = player.raycast(100, 1, false).getPos();
+                        Vec3d pos2 = player.raycast(1000, 1, false).getPos();
                         Entity lightningEntity = new Entity(EntityType.LIGHTNING_BOLT, world) {
                             @Override protected void initDataTracker() {}
                             @Override protected void readCustomDataFromNbt(NbtCompound nbt) {}
@@ -137,7 +136,7 @@ public class ModEvents {
                     if (player.getMainHandStack().getItem() == ModItems.SMOKE_INCANTATION){
                         player.getItemCooldownManager().set(ModItems.HELLISH_SEAL, 5);
                         world.playSound(null, player.getBlockPos(), SoundEvents.ENTITY_SPLASH_POTION_THROW, SoundCategory.PLAYERS);
-                        ModImportant.summonSmoke(player.raycast(100, 1, false).getPos(), world);
+                        ModImportant.summonSmoke(player.raycast(1000, 1, false).getPos(), world);
                     }
                     if (player.getMainHandStack().getItem() == ModItems.HIGHLIGHTER_INCANTATION) {
                         boolean isPlayerGlowing = !player.isGlowing();
@@ -145,16 +144,17 @@ public class ModEvents {
                         for (PlayerEntity playerEntity : world.getPlayers()){playerEntity.setGlowing(isPlayerGlowing);}
                     }
                     if (player.getMainHandStack().getItem() == ModItems.POCKET_INCANTATION){
-                        if (!player.getWorld().getRegistryKey().toString().equals("ResourceKey[minecraft:dimension / lulasmod:pocket_dimension]")) {
+                        if (world.getRegistryKey().toString().equals("ResourceKey[minecraft:dimension / lulasmod:pocket_dimension]")) {
+                            player.teleport(player.getServer().getWorld(World.OVERWORLD), player.getX(), player.getY(), player.getZ(), Set.of() , player.getYaw(), player.getPitch());
+                        }else{
                             RegistryKey<World> worldRegistryKey = null;
                             for (RegistryKey<World> worldKeys : Objects.requireNonNull(player.getServer()).getWorldRegistryKeys()){if (
                                 worldKeys.toString().equals("ResourceKey[minecraft:dimension / lulasmod:pocket_dimension]")) worldRegistryKey = worldKeys;
                             }
                             if (worldRegistryKey == null) Lulasmod.LOGGER.error("could not find registry key for 'lulasmod:pocket_dimension'");
-                            player.teleport(player.getServer().getWorld(worldRegistryKey), player.getX(), player.getY(), player.getZ(), Set.of() , player.getYaw(), player.getPitch());
-                        }else{
-                            player.teleport(player.getServer().getWorld(World.OVERWORLD), player.getX(), player.getY(), player.getZ(), Set.of() , player.getYaw(), player.getPitch());
+                            else player.teleport(player.getServer().getWorld(worldRegistryKey), player.getX(), player.getY(), player.getZ(), Set.of() , player.getYaw(), player.getPitch());
                         }
+                        player.getItemCooldownManager().set(ModItems.HELLISH_SEAL, 20);
                     }
                 }
             }
