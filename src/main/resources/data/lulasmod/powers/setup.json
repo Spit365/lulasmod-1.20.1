@@ -14,7 +14,7 @@
     },
     "entity_action_removed": {
         "type": "origins:execute_command",
-        "command": "function lulasmod:stopm_setup"
+        "command": "function lulasmod:stop_setup"
     },
     "hidden": true
 }

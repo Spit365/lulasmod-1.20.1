@@ -1,9 +1,9 @@
 {
     "name": "Balance",
-    "description": "Due to the tail, which is sprouting out of the users back, the user will be able to walk a bit faster than normal. This only works in cold environments",
+    "description": "Due to the tail, which is sprouting out of your back, you will be able to walk a bit faster than normal. This only works in cold environments",
     "type": "origins:modify_attribute",
     "attribute": "minecraft:generic.movement_speed",
-    "modifier": {"operation": "set_total", "value": 0.15, "name": "speedy"},
+    "modifier": {"operation": "add_base_late", "value": 0.05, "name": "speedy"},
     "condition": {
 			"type": "origins:or",
 			"conditions": [{
@@ -18,6 +18,104 @@
 					"condition": {
 						"type": "origins:category",
 						"category": "icy"
+					}
+				},
+				{
+					"type": "origins:biome",
+					"condition": {
+						"type": "origins:category",
+						"category": "frozen_peaks"
+					}
+				},
+				{
+					"type": "origins:biome",
+					"condition": {
+						"type": "origins:category",
+						"category": "jagged_peaks"
+					}
+				},
+				{
+					"type": "origins:biome",
+					"condition": {
+						"type": "origins:category",
+						"category": "snowy_taiga"
+					}
+				},
+				{
+					"type": "origins:biome",
+					"condition": {
+						"type": "origins:category",
+						"category": "snowy_slopes"
+					}
+				},
+				{
+					"type": "origins:biome",
+					"condition": {
+						"type": "origins:category",
+						"category": "grove"
+					}
+				},
+				{
+					"type": "origins:biome",
+					"condition": {
+						"type": "origins:category",
+						"category": "frozen_river"
+					}
+				},
+				{
+					"type": "origins:biome",
+					"condition": {
+						"type": "origins:category",
+						"category": "frozen_ocean"
+					}
+				},
+				{
+					"type": "origins:biome",
+					"condition": {
+						"type": "origins:category",
+						"category": "snowy_plains"
+					}
+				},
+				{
+					"type": "origins:biome",
+					"condition": {
+						"type": "origins:category",
+						"category": "ice_spikes"
+					}
+				},
+				{
+					"type": "origins:biome",
+					"condition": {
+						"type": "origins:category",
+						"category": "snowy_beach"
+					}
+				},
+				{
+					"type": "origins:biome",
+					"condition": {
+						"type": "origins:category",
+						"category": "windswept_forest"
+					}
+				},
+				{
+					"type": "origins:biome",
+					"condition": {
+						"type": "origins:category",
+						"category": "old_growth_spruce_taiga"
+					}
+				},
+				{
+					"type": "origins:biome",
+					"condition": {
+						"type": "origins:category",
+						"category": "old_growth_pine_taiga"
+					}
+				},
+				{
+					"type": "origins:biome",
+					"condition": {
+						"type": "origins:category",
+						"category": "deep_frozen_ocean"
 					}
 				}
 			]

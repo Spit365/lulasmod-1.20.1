@@ -1,5 +1,5 @@
 {
-  "type": "minecraft:overworld",
+  "type": "lulasmod:pocket_dimension_type",
   "generator": {
     "type": "minecraft:noise",
     "biome_source": {

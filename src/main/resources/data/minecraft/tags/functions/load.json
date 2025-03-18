@@ -1,5 +1,6 @@
 {
     "values": [
-        "lulasmod:load"
+        "lulasmod:load",
+        "terralith:setup"
     ]
 }
