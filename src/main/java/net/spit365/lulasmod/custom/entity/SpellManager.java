@@ -3,10 +3,7 @@ package net.spit365.lulasmod.custom.entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 public class SpellManager {
     private static final Map<UUID, LinkedList<ItemStack>> playerSpells = new HashMap<>();

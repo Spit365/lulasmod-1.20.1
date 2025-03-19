@@ -2,36 +2,31 @@ package net.spit365.lulasmod.mod;
 
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.DrawContext;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Identifier;
+import net.spit365.lulasmod.Lulasmod;
 import net.spit365.lulasmod.custom.entity.SpellManager;
 import net.spit365.lulasmod.custom.item.HellishSealItem;
 
 import java.util.List;
 
 public class ModClientEvents {
-    private static final Identifier SPELL_HOTBAR_TEXTURE = new Identifier("magicmod", "textures/gui/spell_hotbar.png");
+    private static final Identifier SPELL_HOTBAR_TEXTURE = new Identifier(Lulasmod.MOD_ID, "textures/gui/spell_hotbar.png");
 
     public static void init(){
         HudRenderCallback.EVENT.register((context, v) -> {
-            MinecraftClient client = MinecraftClient.getInstance();
-            PlayerEntity player = client.player;
+            PlayerEntity player = MinecraftClient.getInstance().player;
             if (player == null) return;
-
-            ItemStack mainHandStack = player.getMainHandStack();
-            if (mainHandStack.getItem() instanceof HellishSealItem) {
+            if (player.getMainHandStack().getItem() instanceof HellishSealItem) {
                 List<ItemStack> spells = SpellManager.getSpells(player);
                 if (!spells.isEmpty()) {
-                    int screenWidth = client.getWindow().getScaledWidth();
-                    int screenHeight = client.getWindow().getScaledHeight();
-                    int hotbarSlotX = screenWidth / 2 - 88 + (player.getInventory().selectedSlot * 20);
-                    int hotbarSlotY = screenHeight - 22;
+                    int hotbarSlotX =  context.getScaledWindowWidth() / 2 - 88 + (player.getInventory().selectedSlot * 20);
+                    int hotbarSlotY = context.getScaledWindowHeight() - 42;
 
-                    // Render spell slots
+                    context.drawTexture(SPELL_HOTBAR_TEXTURE, hotbarSlotX, hotbarSlotY - 64, 0, 0,24, 64);
                     for (int i = 0; i < Math.min(spells.size(), 3); i++) {
-                        context.drawItem(spells.get(i), hotbarSlotX, hotbarSlotY - 60 + (i * 20));
+                        context.drawItem(spells.get(i), hotbarSlotX, hotbarSlotY + (i * -20));
                     }
                 }
             }

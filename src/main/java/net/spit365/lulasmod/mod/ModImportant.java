@@ -7,6 +7,7 @@ import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
 public class ModImportant {
+    public static final String PocketDimensionKey = "ResourceKey[minecraft:dimension / lulasmod:pocket_dimension]";
 
     public static void summonSmoke(@NotNull Vec3d position, World world){
         ((ServerWorld) world).spawnParticles(

@@ -5,14 +5,13 @@ import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;
 import net.spit365.lulasmod.Lulasmod;
-import net.spit365.lulasmod.custom.HellishSealItem;
 import net.spit365.lulasmod.custom.item.*;
 
 import java.util.LinkedList;
 import java.util.List;
 
 public class ModItems {
-    public static       List<Identifier> ModItemList        = new LinkedList<>() {};
+    public static final List<Identifier> ModItemList        = new LinkedList<>() {};
 
     public static final Item DRAGON_FIREBALL                = registerItem("dragon_fireball",       new DragonFireballItem(new Item.Settings().maxCount(16)), true);
     public static final Item MODIFIED_TNT                   = registerItem("modified_tnt",          new ModifiedTntItem(new Item.Settings().maxCount(16)),true);

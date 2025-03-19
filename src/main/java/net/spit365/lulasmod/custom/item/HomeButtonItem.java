@@ -9,7 +9,6 @@ import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.spit365.lulasmod.Lulasmod;
-import net.spit365.lulasmod.mod.ModItems;
 
 public class HomeButtonItem extends Item {
     public HomeButtonItem(Settings settings) {
@@ -22,7 +21,7 @@ public class HomeButtonItem extends Item {
             BlockPos pos = ((ServerPlayerEntity) player).getSpawnPointPosition();
             if (pos == null){pos = world.getSpawnPos();}
             player.teleport( pos.getX(), pos.getY() + 1, pos.getZ(), true);
-            Lulasmod.LOGGER.info(player.getName() + " was sent home to " + pos.getX() + " " + pos.getY() + " " + pos.getZ() + " (with button)");
+            Lulasmod.LOGGER.info("{} was sent home to {} {} {} (with button)", player.getName(), pos.getX(), pos.getY(), pos.getZ());
             return TypedActionResult.success(player.getStackInHand(hand));
         }
         return TypedActionResult.pass(player.getStackInHand(hand));
