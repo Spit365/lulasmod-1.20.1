@@ -1,4 +1,4 @@
-package net.spit365.lulasmod.custom;
+package net.spit365.lulasmod.custom.item;
 
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.DragonFireballEntity;

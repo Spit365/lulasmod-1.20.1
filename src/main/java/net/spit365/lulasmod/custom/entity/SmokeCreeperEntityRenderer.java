@@ -1,4 +1,4 @@
-package net.spit365.lulasmod.custom;
+package net.spit365.lulasmod.custom.entity;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;

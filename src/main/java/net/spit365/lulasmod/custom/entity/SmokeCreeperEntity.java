@@ -1,4 +1,4 @@
-package net.spit365.lulasmod.custom;
+package net.spit365.lulasmod.custom.entity;
 
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.attribute.DefaultAttributeContainer;

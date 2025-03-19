@@ -1,4 +1,4 @@
-package net.spit365.lulasmod.custom;
+package net.spit365.lulasmod.custom.item;
 
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
@@ -10,6 +10,7 @@ import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.world.World;
+import net.spit365.lulasmod.custom.entity.SmokeBombEntity;
 
 public class SmokeBombItem extends Item {
     public SmokeBombItem(Settings settings) {

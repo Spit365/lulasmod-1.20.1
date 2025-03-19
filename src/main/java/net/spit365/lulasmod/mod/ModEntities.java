@@ -10,9 +10,9 @@ import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;
 import net.spit365.lulasmod.Lulasmod;
-import net.spit365.lulasmod.custom.SmokeBombEntity;
-import net.spit365.lulasmod.custom.SmokeCreeperEntity;
-import net.spit365.lulasmod.custom.SmokeCreeperEntityRenderer;
+import net.spit365.lulasmod.custom.entity.SmokeBombEntity;
+import net.spit365.lulasmod.custom.entity.SmokeCreeperEntity;
+import net.spit365.lulasmod.custom.entity.SmokeCreeperEntityRenderer;
 
 public class ModEntities {
     public static final EntityType<SmokeBombEntity> SMOKE_BOMB = register(

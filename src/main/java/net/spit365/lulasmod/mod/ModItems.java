@@ -5,7 +5,8 @@ import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;
 import net.spit365.lulasmod.Lulasmod;
-import net.spit365.lulasmod.custom.*;
+import net.spit365.lulasmod.custom.HellishSealItem;
+import net.spit365.lulasmod.custom.item.*;
 
 import java.util.LinkedList;
 import java.util.List;

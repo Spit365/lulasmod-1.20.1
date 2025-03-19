@@ -1,4 +1,4 @@
-package net.spit365.lulasmod.custom;
+package net.spit365.lulasmod.custom.item;
 
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
@@ -17,8 +17,8 @@ public class HomeButtonItem extends Item {
     }
     @Override
     public TypedActionResult<ItemStack> use(World world, PlayerEntity player, Hand hand){
-        if (!world.isClient() && !player.getItemCooldownManager().isCoolingDown(ModItems.HOME_BUTTON)) {
-            player.getItemCooldownManager().set(ModItems.HOME_BUTTON, 6000);
+        if (!world.isClient() && !player.getItemCooldownManager().isCoolingDown(this)) {
+            player.getItemCooldownManager().set(this, 6000);
             BlockPos pos = ((ServerPlayerEntity) player).getSpawnPointPosition();
             if (pos == null){pos = world.getSpawnPos();}
             player.teleport( pos.getX(), pos.getY() + 1, pos.getZ(), true);
