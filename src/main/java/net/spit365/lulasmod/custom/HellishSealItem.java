@@ -31,11 +31,14 @@ public class HellishSealItem extends Item {
     public HellishSealItem(Settings settings) {
         super(settings);
     }
+
+
+
     @Override
     public TypedActionResult<ItemStack> use(World world, PlayerEntity player, Hand hand) {
-        if (!world.isClient() &&  !player.getItemCooldownManager().isCoolingDown(ModItems.HELLISH_SEAL) && player.getCommandTags().contains("tailed")) {
-            if (player.getOffHandStack().getItem() == ModItems.LIGHTNING_CRYSTAL_INCANTATION) {
-                player.getItemCooldownManager().set(ModItems.HELLISH_SEAL, 45);
+        if (!world.isClient() &&  !player.getItemCooldownManager().isCoolingDown(this) && player.getCommandTags().contains("tailed")) {
+            if (SpellManager.getSpells(player).get(1).getItem() == ModItems.LIGHTNING_CRYSTAL_INCANTATION) {
+                player.getItemCooldownManager().set(this, 45);
                 Vec3d pos2 = player.raycast(1000, 1, false).getPos();
                 Entity lightningEntity = new Entity(EntityType.LIGHTNING_BOLT, world) {
                     @Override protected void initDataTracker() {}
@@ -51,27 +54,27 @@ public class HellishSealItem extends Item {
                 ((ServerWorld)world).spawnParticles(ParticleTypes.END_ROD, pos2.getX(), pos2.getY(),pos2.getZ(), 300, 0.3d , 0.3d, 0.3d, 1);
                 return TypedActionResult.success(player.getStackInHand(hand));
             }
-            if (player.getOffHandStack().getItem() == ModItems.HOME_INCANTATION){
-                player.getItemCooldownManager().set(ModItems.HELLISH_SEAL, 600);
+            if (SpellManager.getSpells(player).get(1).getItem() == ModItems.HOME_INCANTATION){
+                player.getItemCooldownManager().set(this, 600);
                 BlockPos pos = ((ServerPlayerEntity) player).getSpawnPointPosition();
                 if (pos == null){pos = world.getSpawnPos();}
                 player.teleport( pos.getX(), pos.getY() + 1, pos.getZ(), true);
                 Lulasmod.LOGGER.info(player.getName() + " was sent home to " + pos.getX() + " " + pos.getY() + " " + pos.getZ() + " (with incantation)");
                 return TypedActionResult.success(player.getStackInHand(hand));
             }
-            if (player.getOffHandStack().getItem() == ModItems.SMOKE_INCANTATION){
-                player.getItemCooldownManager().set(ModItems.HELLISH_SEAL, 5);
+            if (SpellManager.getSpells(player).get(1).getItem() == ModItems.SMOKE_INCANTATION){
+                player.getItemCooldownManager().set(this, 5);
                 world.playSound(null, player.getBlockPos(), SoundEvents.ENTITY_SPLASH_POTION_THROW, SoundCategory.PLAYERS);
                 ModImportant.summonSmoke(player.raycast(1000, 1, false).getPos(), world);
                 return TypedActionResult.success(player.getStackInHand(hand));
             }
-            if (player.getOffHandStack().getItem() == ModItems.HIGHLIGHTER_INCANTATION) {
+            if (SpellManager.getSpells(player).get(1).getItem() == ModItems.HIGHLIGHTER_INCANTATION) {
                 boolean isPlayerGlowing = !player.isGlowing();
                 world.playSound(null, player.getBlockPos(), (isPlayerGlowing ? SoundEvents.BLOCK_BEACON_ACTIVATE : SoundEvents.BLOCK_BEACON_DEACTIVATE), SoundCategory.PLAYERS);
                 for (PlayerEntity playerEntity : world.getPlayers()){playerEntity.setGlowing(isPlayerGlowing);}
                 return TypedActionResult.success(player.getStackInHand(hand));
             }
-            if (player.getOffHandStack().getItem() == ModItems.POCKET_INCANTATION){
+            if (SpellManager.getSpells(player).get(1).getItem() == ModItems.POCKET_INCANTATION){
                 if (world.getRegistryKey().toString().equals("ResourceKey[minecraft:dimension / lulasmod:pocket_dimension]")) {
                     player.teleport(player.getServer().getWorld(World.OVERWORLD), player.getX(), player.getY(), player.getZ(), Set.of() , player.getYaw(), player.getPitch());
                 }else{
@@ -82,7 +85,7 @@ public class HellishSealItem extends Item {
                     if (worldRegistryKey == null) Lulasmod.LOGGER.error("could not find registry key for 'lulasmod:pocket_dimension'");
                     else player.teleport(player.getServer().getWorld(worldRegistryKey), player.getX(), player.getY(), player.getZ(), Set.of() , player.getYaw(), player.getPitch());
                 }
-                player.getItemCooldownManager().set(ModItems.HELLISH_SEAL, 20);
+                player.getItemCooldownManager().set(this, 20);
                 return TypedActionResult.success(player.getStackInHand(hand));
             }
         }

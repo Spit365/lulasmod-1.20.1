@@ -17,6 +17,9 @@
 	"entrypoints": {
 		"main": [
 			"net.spit365.lulasmod.Lulasmod"
+		],
+		"client": [
+			"net.spit365.lulasmod.LulasmodClient"
 		]
 	},
 	"mixins": [

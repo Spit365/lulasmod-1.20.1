@@ -20,11 +20,11 @@ public class ModItems {
     public static final Item HELLISH_SEAL                   = registerItem("hellish_seal",          new HellishSealItem(new Item.Settings().maxCount(1)),true);
 
     public static final Item EMPTY_INCANTATION              = registerItem("empty_inc",             new Item(new Item.Settings().maxCount(1)),true);
-    public static final Item LIGHTNING_CRYSTAL_INCANTATION  = registerItem("lightning_crystal_inc", new Item(new Item.Settings().maxCount(1)),false);
-    public static final Item HOME_INCANTATION               = registerItem("home_inc",              new Item(new Item.Settings().maxCount(1)),false);
-    public static final Item SMOKE_INCANTATION              = registerItem("smoke_inc",             new Item(new Item.Settings().maxCount(1)),false);
-    public static final Item HIGHLIGHTER_INCANTATION        = registerItem("highlighter_inc",       new Item(new Item.Settings().maxCount(1)),false);
-    public static final Item POCKET_INCANTATION             = registerItem("pocket_inc",            new Item(new Item.Settings().maxCount(1)),false);
+    public static final Item LIGHTNING_CRYSTAL_INCANTATION  = registerItem("lightning_crystal_inc", new IncantationItem(new Item.Settings().maxCount(1)),false);
+    public static final Item HOME_INCANTATION               = registerItem("home_inc",              new IncantationItem(new Item.Settings().maxCount(1)),false);
+    public static final Item SMOKE_INCANTATION              = registerItem("smoke_inc",             new IncantationItem(new Item.Settings().maxCount(1)),false);
+    public static final Item HIGHLIGHTER_INCANTATION        = registerItem("highlighter_inc",       new IncantationItem(new Item.Settings().maxCount(1)),false);
+    public static final Item POCKET_INCANTATION             = registerItem("pocket_inc",            new IncantationItem(new Item.Settings().maxCount(1)),false);
 
     private static Item registerItem(String name, Item item, Boolean showInCreativeTab) {
         if (showInCreativeTab) {ModItemList.add(Identifier.of(Lulasmod.MOD_ID, name));}
