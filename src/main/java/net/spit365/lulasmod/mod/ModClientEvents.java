@@ -21,12 +21,12 @@ public class ModClientEvents {
             if (player.getMainHandStack().getItem() instanceof HellishSealItem) {
                 List<ItemStack> spells = SpellManager.getSpells(player);
                 if (!spells.isEmpty()) {
-                    int hotbarSlotX =  context.getScaledWindowWidth() / 2 - 88 + (player.getInventory().selectedSlot * 20);
+                    int hotbarSlotX =  context.getScaledWindowWidth() / 2 - 92 + (player.getInventory().selectedSlot * 20);
                     int hotbarSlotY = context.getScaledWindowHeight() - 42;
 
-                    context.drawTexture(SPELL_HOTBAR_TEXTURE, hotbarSlotX, hotbarSlotY - 64, 0, 0,24, 64);
+                    context.drawTexture(SPELL_HOTBAR_TEXTURE, hotbarSlotX, hotbarSlotY -44, 0, 0,24, 64, 24, 64);
                     for (int i = 0; i < Math.min(spells.size(), 3); i++) {
-                        context.drawItem(spells.get(i), hotbarSlotX, hotbarSlotY + (i * -20));
+                        context.drawItem(spells.get(i), hotbarSlotX +4, hotbarSlotY + (i * -20));
                     }
                 }
             }

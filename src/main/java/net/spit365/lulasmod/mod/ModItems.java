@@ -18,6 +18,7 @@ public class ModItems {
     public static final Item SMOKE_BOMB                     = registerItem("smoke_bomb",            new SmokeBombItem(new Item.Settings().maxCount(16)),true);
     public static final Item HOME_BUTTON                    = registerItem("home_button",           new HomeButtonItem(new Item.Settings().maxCount(1)),true);
     public static final Item HELLISH_SEAL                   = registerItem("hellish_seal",          new HellishSealItem(new Item.Settings().maxCount(1)),true);
+    public static final Item MEMORY_STONE                   = registerItem("memory_stone",          new MemoryStoneItem(new Item.Settings().maxCount(1)),true);
 
     public static final Item EMPTY_INCANTATION              = registerItem("empty_inc",             new Item(new Item.Settings().maxCount(1)),true);
     public static final Item LIGHTNING_CRYSTAL_INCANTATION  = registerItem("lightning_crystal_inc", new IncantationItem(new Item.Settings().maxCount(1)),false);
