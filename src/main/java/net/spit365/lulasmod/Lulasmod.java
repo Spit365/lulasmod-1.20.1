@@ -15,6 +15,7 @@ public class Lulasmod implements ModInitializer {
 		ModEntities.init();
 		ModParticles.init();
 		ModEvents.init();
+		ModCommands.init();
 		ModItemGroups.init();
 		LOGGER.info("Initializing for " + Lulasmod.MOD_ID);
 	}

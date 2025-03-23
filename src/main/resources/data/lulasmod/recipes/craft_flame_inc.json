@@ -1,0 +1,14 @@
+{
+    "type": "minecraft:crafting_shapeless",
+    "ingredients": [
+        {
+            "item": "minecraft:fire_charge"
+        },{
+            "item": "lulasmod:empty_inc"
+        }
+    ],
+    "result": {
+        "item": "lulasmod:flame_inc",
+        "count": 1
+    }
+}

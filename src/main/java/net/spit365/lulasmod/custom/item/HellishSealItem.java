@@ -1,22 +1,20 @@
 package net.spit365.lulasmod.custom.item;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.damage.DamageSource;
-import net.minecraft.entity.damage.DamageTypes;
+import net.minecraft.entity.*;
+import net.minecraft.entity.effect.StatusEffectInstance;
+import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NbtCompound;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.registry.RegistryKey;
-import net.minecraft.registry.RegistryKeys;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.spit365.lulasmod.Lulasmod;
@@ -33,21 +31,14 @@ public class HellishSealItem extends Item {
     @Override
     public TypedActionResult<ItemStack> use(World world, PlayerEntity player, Hand hand) {
         if (!world.isClient() &&  !player.getItemCooldownManager().isCoolingDown(this)) {
-            if (SpellManager.getSpells(player).get(0).getItem() == ModItems.LIGHTNING_CRYSTAL_INCANTATION) {
-                player.getItemCooldownManager().set(this, 50);
-                Vec3d pos2 = player.raycast(1000, 1, false).getPos();
-                Entity lightningEntity = new Entity(EntityType.LIGHTNING_BOLT, world) {
-                    @Override protected void initDataTracker() {}
-                    @Override protected void readCustomDataFromNbt(NbtCompound nbt) {}
-                    @Override protected void writeCustomDataToNbt(NbtCompound nbt) {}
-                };
-                world.spawnEntity(lightningEntity);
-                lightningEntity.setPosition(pos2);
-                world.createExplosion(lightningEntity,pos2.getX(), pos2.getY(), pos2.getZ(), 5, World.ExplosionSourceType.NONE);
-                player.damage(new DamageSource(world.getRegistryManager().get(RegistryKeys.DAMAGE_TYPE).entryOf(DamageTypes.MAGIC)),20f);
-                world.playSound(null, player.getBlockPos(), BLOCK_AMETHYST_BLOCK_CHIME, SoundCategory.PLAYERS, 100.0f, 10.0f);
-                world.playSound(null, BlockPos.ofFloored(pos2), BLOCK_AMETHYST_BLOCK_BREAK, SoundCategory.PLAYERS, 100.0f, 10.0f);
-                ((ServerWorld)world).spawnParticles(ParticleTypes.END_ROD, pos2.getX(), pos2.getY(),pos2.getZ(), 300, 0.3d , 0.3d, 0.3d, 1);
+            if (SpellManager.getSpells(player).get(0).getItem() == ModItems.FLAME_INCANTATION) {
+                player.getItemCooldownManager().set(this, 10);
+                Vec3d pos = player.getRotationVec(1).normalize().add(player.getPos());
+                ((ServerWorld) world).spawnParticles(ParticleTypes.FLAME, pos.getX(), pos.getY(), pos.getZ(), 50, 0.5, 0.5, 0.5, 1.5);
+                world.playSound(null, player.getBlockPos(), ITEM_FIRECHARGE_USE, SoundCategory.PLAYERS, 100.0f, 10.0f);
+                for (Entity entity : world.getOtherEntities(player, new Box(pos.add(1d, 1d, 1d), pos.add(-1d, -1d, -1d)))){
+                    entity.damage(world.getDamageSources().inFire(), 4);
+                }
                 return TypedActionResult.success(player.getStackInHand(hand));
             }
             if (SpellManager.getSpells(player).get(0).getItem() == ModItems.HOME_INCANTATION){
@@ -60,8 +51,8 @@ public class HellishSealItem extends Item {
             }
             if (SpellManager.getSpells(player).get(0).getItem() == ModItems.SMOKE_INCANTATION){
                 player.getItemCooldownManager().set(this, 5);
-                world.playSound(null, player.getBlockPos(), ENTITY_SPLASH_POTION_THROW, SoundCategory.PLAYERS);
-                ModImportant.summonSmoke(player.raycast(1000, 1, false).getPos(), world);
+                ModImportant.summonSmoke(player.getPos(), world);
+                player.addStatusEffect(new StatusEffectInstance(StatusEffects.INVISIBILITY, 1200, 1, false, false));
                 return TypedActionResult.success(player.getStackInHand(hand));
             }
             if (SpellManager.getSpells(player).get(0).getItem() == ModItems.HIGHLIGHTER_INCANTATION) {

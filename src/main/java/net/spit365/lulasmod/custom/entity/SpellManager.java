@@ -15,7 +15,7 @@ public class SpellManager {
 
     public static void addSpell(PlayerEntity player, ItemStack spell) {
         LinkedList<ItemStack> spells = getSpells(player);
-        if (spells.size() >= 5) spells.clear();
+        if (spells.size() >= getPlayerSpellSlots(player)) spells.clear();
         spells.add(spell.copy());
     }
 
@@ -35,6 +35,6 @@ public class SpellManager {
         SpellManager.playerSpellSlots.put(player.getUuid(), slots);
     }
     public static void addPlayerSpellSlots(PlayerEntity player, Integer slots) {
-        SpellManager.playerSpellSlots.put(player.getUuid(), SpellManager.getPlayerSpellSlots(player) + slots);
+        SpellManager.setPlayerSpellSlots(player, SpellManager.getPlayerSpellSlots(player) + slots);
     }
 }
