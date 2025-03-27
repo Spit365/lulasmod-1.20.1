@@ -6,7 +6,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.world.World;
-import net.spit365.lulasmod.custom.entity.SpellManager;
+import net.spit365.lulasmod.custom.spell.SpellManager;
 
 public class MemoryStoneItem extends Item {
     public MemoryStoneItem(Settings settings) {super(settings);}

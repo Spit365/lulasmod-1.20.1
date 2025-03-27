@@ -8,7 +8,7 @@ import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.world.World;
-import net.spit365.lulasmod.custom.entity.SpellManager;
+import net.spit365.lulasmod.custom.spell.SpellManager;
 
 public class IncantationItem extends Item {
     public IncantationItem(Settings settings) {

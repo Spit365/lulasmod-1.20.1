@@ -18,15 +18,16 @@ public class ModItems {
     public static final Item MODIFIED_TNT                   = registerItem("modified_tnt",          new ModifiedTntItem(new Item.Settings().maxCount(16)),true);
     public static final Item SMOKE_BOMB                     = registerItem("smoke_bomb",            new SmokeBombItem(new Item.Settings().maxCount(16)),true);
     public static final Item HOME_BUTTON                    = registerItem("home_button",           new HomeButtonItem(new Item.Settings().maxCount(1)),true);
-    public static final Item HELLISH_SEAL                   = registerItem("hellish_seal",          new HellishSealItem(new Item.Settings().maxCount(1)),true);
+    public static final Item HELLISH_SEAL                   = registerItem("hellish_seal",          new SealItem(new Item.Settings().maxCount(1)),true);
     public static final Item MEMORY_STONE                   = registerItem("memory_stone",          new MemoryStoneItem(new Item.Settings().maxCount(1)),true);
 
     public static final Item EMPTY_INCANTATION              = registerItem("empty_inc",             new Item(new Item.Settings().maxCount(1)),true);
-    public static final Item FLAME_INCANTATION              = registerItem("flame_inc", new IncantationItem(new Item.Settings().maxCount(1)),false);
+    public static final Item FLAME_INCANTATION              = registerItem("flame_inc",             new IncantationItem(new Item.Settings().maxCount(1)),false);
     public static final Item HOME_INCANTATION               = registerItem("home_inc",              new IncantationItem(new Item.Settings().maxCount(1)),false);
     public static final Item SMOKE_INCANTATION              = registerItem("smoke_inc",             new IncantationItem(new Item.Settings().maxCount(1)),false);
     public static final Item HIGHLIGHTER_INCANTATION        = registerItem("highlighter_inc",       new IncantationItem(new Item.Settings().maxCount(1)),false);
     public static final Item POCKET_INCANTATION             = registerItem("pocket_inc",            new IncantationItem(new Item.Settings().maxCount(1)),false);
+    public static final Item DASH_INCANTATION               = registerItem("dash_inc",              new IncantationItem(new Item.Settings().maxCount(1)),false);
 
     private static Item registerItem(String name, Item item, Boolean showInCreativeTab) {
         if (showInCreativeTab) ModItemList.add(Identifier.of(Lulasmod.MOD_ID, name));

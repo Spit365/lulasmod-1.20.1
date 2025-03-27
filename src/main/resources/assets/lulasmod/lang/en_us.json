@@ -9,7 +9,13 @@
   "item.lulasmod.empty_inc": "Empty Incantation",
   "item.lulasmod.flame_inc": "Diablo's Fury",
   "item.lulasmod.home_inc": "Remembrance of a safe Haven",
-  "item.lulasmod.smoke_inc": "Smoke Sling",
+  "item.lulasmod.smoke_inc": "Assassin's Approach",
+  "item.lulasmod.pocket_inc": "Realm of the Alternates",
+  "item.lulasmod.highlighter_inc": "Highlighter Inc",
+
+  "death.attack.diablos_flame": "%1$s was burned by the devil himself",
+  "death.attack.diablos_flame.player": "%1$s was burned by the devil himself using the body of %2$s",
+
 
   "itemgroup.lulas": "Lulasmod",
 

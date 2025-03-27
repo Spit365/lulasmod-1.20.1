@@ -6,8 +6,8 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Identifier;
 import net.spit365.lulasmod.Lulasmod;
-import net.spit365.lulasmod.custom.entity.SpellManager;
-import net.spit365.lulasmod.custom.item.HellishSealItem;
+import net.spit365.lulasmod.custom.spell.SpellManager;
+import net.spit365.lulasmod.custom.item.SealItem;
 
 import java.util.List;
 
@@ -18,7 +18,7 @@ public class ModClientEvents {
         HudRenderCallback.EVENT.register((context, v) -> {
             PlayerEntity player = MinecraftClient.getInstance().player;
             if (player == null) return;
-            if (player.getMainHandStack().getItem() instanceof HellishSealItem) {
+            if (player.getMainHandStack().getItem() instanceof SealItem) {
                 List<ItemStack> spells = SpellManager.getSpells(player);
                 if (!spells.isEmpty()) {
                     int hotbarSlotX =  context.getScaledWindowWidth() / 2 - 92 + (player.getInventory().selectedSlot * 20);

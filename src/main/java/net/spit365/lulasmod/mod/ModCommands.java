@@ -8,7 +8,7 @@ import net.minecraft.registry.Registries;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
-import net.spit365.lulasmod.custom.entity.SpellManager;
+import net.spit365.lulasmod.custom.spell.SpellManager;
 
 
 import java.util.Objects;
