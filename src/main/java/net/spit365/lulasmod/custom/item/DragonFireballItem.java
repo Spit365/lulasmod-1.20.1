@@ -9,13 +9,14 @@ import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.NotNull;
 
 public class DragonFireballItem extends Item {
     public DragonFireballItem(Settings settings) {
         super(settings);
     }
     @Override
-    public TypedActionResult<ItemStack> use(World world, PlayerEntity player, Hand hand){
+    public TypedActionResult<ItemStack> use(@NotNull World world, PlayerEntity player, Hand hand){
         if (!world.isClient()) {
             DragonFireballEntity dragonFireballEntity = new DragonFireballEntity(world, player, player.getRotationVec(1f).getX(), player.getRotationVec(1f).getY(), player.getRotationVec(1f).getZ());
             dragonFireballEntity.setPosition(player.getX(), player.getY() + 1, player.getZ());

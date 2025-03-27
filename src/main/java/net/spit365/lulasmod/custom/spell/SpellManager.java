@@ -1,7 +1,9 @@
 package net.spit365.lulasmod.custom.spell;
 
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.spit365.lulasmod.Lulasmod;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -51,5 +53,13 @@ public class SpellManager {
     }
     public static void decreasePlayerDashSpellUsages(@NotNull PlayerEntity player){
         setPlayerDashSpellUsages(player, getPlayerDashSpellUsages(player) -1);
+    }
+    public static void managePlayerSpellUsages(PlayerEntity player, Item item, Integer usages, Integer delayMin, Integer delayMax){
+        SpellManager.decreasePlayerDashSpellUsages(player);
+        if (SpellManager.getPlayerDashSpellUsages(player) < 0){
+            SpellManager.setPlayerDashSpellUsages(player, usages);
+        }
+        player.getItemCooldownManager().set(item, (SpellManager.getPlayerSpellSlots(player) == 0? delayMax : delayMin));
+        Lulasmod.LOGGER.warn("Managed Spell Usages of Player:{} to Usages:{} Cooldown:{}", player.getName(), SpellManager.getPlayerDashSpellUsages(player).toString(), SpellManager.getPlayerSpellSlots(player) == 0 ? delayMax : delayMin);
     }
 }

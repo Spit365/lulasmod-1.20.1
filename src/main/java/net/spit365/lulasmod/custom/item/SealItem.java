@@ -82,16 +82,9 @@ public class SealItem extends Item {
                 return TypedActionResult.success(player.getStackInHand(hand));
             }
             if (getSpell(player) == ModItems.DASH_INCANTATION){
-
                 player.addVelocity(player.getRotationVec(1).normalize().multiply(0.5));
                 player.velocityModified = true;
-                SpellManager.decreasePlayerDashSpellUsages(player);
-                if (SpellManager.getPlayerDashSpellUsages(player) < 0){
-                    SpellManager.setPlayerDashSpellUsages(player, 5);
-                }
-                Lulasmod.LOGGER.warn(SpellManager.getPlayerDashSpellUsages(player).toString());
-                Lulasmod.LOGGER.warn(String.valueOf(SpellManager.getPlayerSpellSlots(player) == 0? 50 : 2));
-                player.getItemCooldownManager().set(this, (SpellManager.getPlayerSpellSlots(player) == 0? 50 : 2));
+                SpellManager.managePlayerSpellUsages(player, this, 15, 2, 50);
 
             }
         }
