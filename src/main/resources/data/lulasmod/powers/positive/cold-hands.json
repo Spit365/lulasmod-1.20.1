@@ -1,6 +1,6 @@
 {
     "name": "Cold Hands",
-    "description": "You freeze your foe's blood upon hitting them. This will make them slower than usual.",
+    "description": "You freeze your foe's blood upon hitting them. This will make them slower for a short amount of time.",
     "type": "origins:target_action_on_hit",
     "entity_action": {
         "type": "origins:apply_effect",

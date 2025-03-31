@@ -7,11 +7,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
-import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
-
-import java.util.HashSet;
-import java.util.Objects;
 
 public class ModifiedTntItem extends Item {
     public ModifiedTntItem(Settings settings) {
@@ -19,13 +15,13 @@ public class ModifiedTntItem extends Item {
     }
     @Override
     public TypedActionResult<ItemStack> use(World world, PlayerEntity player, Hand hand){
-        if (!world.isClient() && !player.getItemCooldownManager().isCoolingDown(this) && player.experienceLevel > 0){
-            player.getItemCooldownManager().set(this, 7);
+        if (!world.isClient()  && (player.experienceLevel > 0 || player.isCreative())){
+            player.getItemCooldownManager().set(this, 20);
             TntEntity tnt = new TntEntity(EntityType.TNT, world);
             world.spawnEntity(tnt);
-            tnt.teleport(player.getX(), player.getY(), player.getZ());
+            tnt.requestTeleport(player.getX(), player.getY() +1, player.getZ());
             tnt.setFuse(20);
-            tnt.setVelocity(player.getRotationVec(1).normalize().multiply(5));
+            tnt.setVelocity(player.getRotationVec(1).normalize().multiply(2.5));
             if (!player.isCreative()) {
                 player.addExperienceLevels(-1);
                 player.getStackInHand(hand).decrement(1);

@@ -1,6 +1,6 @@
 {
   "name": "Wet",
-  "description": "You get slower, when your tail gets wet",
+  "description": "You get slower, when your tail, which is sprouting out of your back, gets wet.",
   "condition": {
     "type": "origins:or",
     "conditions": [
@@ -18,6 +18,6 @@
   "type": "origins:action_over_time",
   "entity_action": {
     "type": "origins:execute_command",
-    "command": "effect give @s minecraft:slowness 5 1 true"
+    "command": "effect give @s minecraft:slowness 2 1 true"
   }
 }

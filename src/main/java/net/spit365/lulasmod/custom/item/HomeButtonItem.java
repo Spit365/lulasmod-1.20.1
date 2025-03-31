@@ -16,11 +16,11 @@ public class HomeButtonItem extends Item {
     }
     @Override
     public TypedActionResult<ItemStack> use(World world, PlayerEntity player, Hand hand){
-        if (!world.isClient() && !player.getItemCooldownManager().isCoolingDown(this)) {
+        if (!world.isClient()) {
             player.getItemCooldownManager().set(this, 6000);
             BlockPos pos = ((ServerPlayerEntity) player).getSpawnPointPosition();
             if (pos == null){pos = world.getSpawnPos();}
-            player.teleport( pos.getX(), pos.getY() + 1, pos.getZ(), true);
+            player.requestTeleport(pos.getX(), pos.getY(), pos.getZ());
             Lulasmod.LOGGER.info("{} was sent home to {} {} {} (with button)", player.getName(), pos.getX(), pos.getY(), pos.getZ());
             return TypedActionResult.success(player.getStackInHand(hand));
         }

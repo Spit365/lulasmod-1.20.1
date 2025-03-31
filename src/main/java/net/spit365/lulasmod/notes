@@ -1,5 +1,5 @@
 #get a certain tag to connect data-driven and mod
-player.getCommandTags().stream().anyMatch("tag" ::equals)
+player.getCommandTags().contains("tag");
 
 
 #username
@@ -33,4 +33,15 @@ import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator;
 public class LulasmodDataGenerator implements DataGeneratorEntrypoint {
 	@Override
 	public void onInitializeDataGenerator(FabricDataGenerator fabricDataGenerator) {}
+}
+
+
+#particle registration
+public class ModParticles {
+    public static final DefaultParticleType SCRATCH = FabricParticleTypes.simple(true);
+
+    public static void init(){
+        Registry.register(Registries.PARTICLE_TYPE, new Identifier(Lulasmod.MOD_ID, "scratch"), SCRATCH);
+        ParticleFactoryRegistry.getInstance().register(SCRATCH, SweepAttackParticle.Factory::new);
+    }
 }

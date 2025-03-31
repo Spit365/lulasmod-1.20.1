@@ -12,12 +12,13 @@
   "item.lulasmod.smoke_inc": "Assassin's Approach",
   "item.lulasmod.pocket_inc": "Realm of the Alternates",
   "item.lulasmod.highlighter_inc": "Highlighter Inc",
+  "item.lulasmod.dash_inc": "Swift Withdrawal",
 
   "death.attack.diablos_flame": "%1$s was burned by the devil himself",
   "death.attack.diablos_flame.player": "%1$s was burned by the devil himself using the body of %2$s",
 
 
-  "itemgroup.lulas": "Lulasmod",
+  "item-group.lulasmod": "Lulasmod",
 
   "entity.lulasmod.smoke_creeper": "Smoke Creeper"
 }

@@ -12,7 +12,7 @@ import net.spit365.lulasmod.Lulasmod;
 import static net.spit365.lulasmod.mod.ModItems.*;
 
 public class ModItemGroups {
-    public static final ItemGroup LULAS_GROUP = Registry.register(Registries.ITEM_GROUP, new Identifier(Lulasmod.MOD_ID, "lulas_group"), FabricItemGroup.builder().displayName(Text.translatable("itemgroup.lulas")).icon(() -> new ItemStack(ModItems.SMOKE_BOMB)).entries((displayContext, entries) -> {
+    public static final ItemGroup LULAS_GROUP = Registry.register(Registries.ITEM_GROUP, new Identifier(Lulasmod.MOD_ID, "lulas_group"), FabricItemGroup.builder().displayName(Text.translatable("item-group.lulasmod")).icon(() -> new ItemStack(ModItems.SMOKE_BOMB)).entries((displayContext, entries) -> {
         for (Identifier id : ModItemList){entries.add(Registries.ITEM.get(id));}
     }).build());
     public static  void init(){

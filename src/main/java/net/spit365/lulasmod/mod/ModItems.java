@@ -14,13 +14,12 @@ public class ModItems {
     public static final List<Identifier> ModItemList            = new LinkedList<>() {};
     public static final List<Identifier> IncantationItems  = new LinkedList<>() {};
 
-    public static final Item DRAGON_FIREBALL                = registerItem("dragon_fireball",       new DragonFireballItem(new Item.Settings().maxCount(16)), true);
     public static final Item MODIFIED_TNT                   = registerItem("modified_tnt",          new ModifiedTntItem(new Item.Settings().maxCount(16)),true);
     public static final Item SMOKE_BOMB                     = registerItem("smoke_bomb",            new SmokeBombItem(new Item.Settings().maxCount(16)),true);
     public static final Item HOME_BUTTON                    = registerItem("home_button",           new HomeButtonItem(new Item.Settings().maxCount(1)),true);
+    public static final Item SHARP_TOME                     = registerItem("sharp_tome",            new SharpTomeItem(new Item.Settings().maxCount(1)),true);
     public static final Item HELLISH_SEAL                   = registerItem("hellish_seal",          new SealItem(new Item.Settings().maxCount(1)),true);
 
-    public static final Item EMPTY_INCANTATION              = registerItem("empty_inc",             new Item(new Item.Settings().maxCount(1)),true);
     public static final Item FLAME_INCANTATION              = registerItem("flame_inc",             new IncantationItem(new Item.Settings().maxCount(1)),false);
     public static final Item HOME_INCANTATION               = registerItem("home_inc",              new IncantationItem(new Item.Settings().maxCount(1)),false);
     public static final Item SMOKE_INCANTATION              = registerItem("smoke_inc",             new IncantationItem(new Item.Settings().maxCount(1)),false);

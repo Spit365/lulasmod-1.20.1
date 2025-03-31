@@ -12,12 +12,10 @@ public class Lulasmod implements ModInitializer {
 	@Override
 	public void onInitialize() {
 		ModItems.init();
+		ModItemGroups.init();
 		ModEntities.init();
-		ModParticles.init();
 		ModEvents.init();
 		ModCommands.init();
-		ModItemGroups.init();
 		LOGGER.info("Initializing for " + Lulasmod.MOD_ID);
 	}
-
 }

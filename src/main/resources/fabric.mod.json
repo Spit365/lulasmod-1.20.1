@@ -3,14 +3,10 @@
 	"id": "lulasmod",
 	"version": "${version}",
 	"name": "lulasmod",
-	"description": "This is an example description! Tell everyone what your mod is about!",
+	"description": "Doesn't need a description",
 	"authors": [
-		"Me!"
+		"Spit365"
 	],
-	"contact": {
-		"homepage": "https://fabricmc.net/",
-		"sources": "https://github.com/FabricMC/fabric-example-mod"
-	},
 	"license": "CC0-1.0",
 	"icon": "assets/lulasmod/icon.png",
 	"environment": "*",
@@ -29,9 +25,8 @@
 		"fabricloader": ">=0.16.9",
 		"minecraft": "~1.20.1",
 		"java": ">=17",
-		"fabric-api": "*"
-	},
-	"suggests": {
-		"another-mod": "*"
+		"fabric-api": "*",
+		"origins": "*",
+		"cloth-config": "*"
 	}
 }

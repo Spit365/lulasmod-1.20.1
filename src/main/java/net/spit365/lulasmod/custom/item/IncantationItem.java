@@ -16,7 +16,7 @@ public class IncantationItem extends Item {
     }
     @Override
     public TypedActionResult<ItemStack> use(World world, PlayerEntity player, Hand hand){
-        if (!world.isClient() && !player.getItemCooldownManager().isCoolingDown(this)){
+        if (!world.isClient()){
             player.getItemCooldownManager().set(this, 5);
             world.playSound(null, player.getBlockPos(), SoundEvents.BLOCK_RESPAWN_ANCHOR_CHARGE, SoundCategory.PLAYERS);
             SpellManager.addSpell(player, new ItemStack(this));

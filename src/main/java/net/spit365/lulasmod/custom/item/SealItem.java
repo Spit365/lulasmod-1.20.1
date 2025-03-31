@@ -22,6 +22,7 @@ import net.spit365.lulasmod.custom.spell.SpellManager;
 import net.spit365.lulasmod.mod.ModDamageSources;
 import net.spit365.lulasmod.mod.ModImportant;
 import net.spit365.lulasmod.mod.ModItems;
+
 import java.util.Objects;
 import java.util.Set;
 import static net.minecraft.sound.SoundEvents.*;
@@ -36,14 +37,14 @@ public class SealItem extends Item {
 
     @Override
     public TypedActionResult<ItemStack> use(World world, PlayerEntity player, Hand hand) {
-        if (!world.isClient() &&  !player.getItemCooldownManager().isCoolingDown(this)) {
+        if (!world.isClient()) {
             if (getSpell(player) == ModItems.FLAME_INCANTATION) {
                 player.getItemCooldownManager().set(this, 3);
                 Vec3d pos = player.getRotationVec(1).normalize().multiply(2).add(player.getPos().add(0 ,1, 0));
                 ((ServerWorld) world).spawnParticles(ParticleTypes.FLAME, pos.getX(), pos.getY(), pos.getZ(), 50, 0.5, 0.5, 0.5, 0);
                 world.playSound(null, player.getBlockPos(), ITEM_FIRECHARGE_USE, SoundCategory.PLAYERS, 100.0f, 10.0f);
                 for (Entity entity : world.getOtherEntities(player, new Box(pos.add(1d, 1d, 1d), pos.add(-1d, -1d, -1d)))){
-                    entity.damage(ModDamageSources.DIABLOS_FLAME(player), 1);
+                    entity.damage(ModDamageSources.DIABLOS_FLAME(player), 2);
                 }
                 return TypedActionResult.success(player.getStackInHand(hand));
             }
@@ -51,12 +52,13 @@ public class SealItem extends Item {
                 player.getItemCooldownManager().set(this, 600);
                 BlockPos pos = ((ServerPlayerEntity) player).getSpawnPointPosition();
                 if (pos == null){pos = world.getSpawnPos();}
-                player.teleport( pos.getX(), pos.getY() + 1, pos.getZ(), true);
+                player.requestTeleport(pos.getX(), pos.getY(), pos.getZ());
                 Lulasmod.LOGGER.info("{} was sent home to {} {} {} (with incantation)", player.getName().getString(), pos.getX(), pos.getY(), pos.getZ());
                 return TypedActionResult.success(player.getStackInHand(hand));
             }
             if (getSpell(player) == ModItems.SMOKE_INCANTATION){
                 player.getItemCooldownManager().set(this, 5);
+                world.playSound(null, player.getBlockPos(), ENTITY_SPLASH_POTION_BREAK, SoundCategory.PLAYERS);
                 ModImportant.summonSmoke(player.getPos(), world);
                 player.addStatusEffect(new StatusEffectInstance(StatusEffects.INVISIBILITY, 1200, 1, false, false));
                 return TypedActionResult.success(player.getStackInHand(hand));
@@ -82,10 +84,11 @@ public class SealItem extends Item {
                 return TypedActionResult.success(player.getStackInHand(hand));
             }
             if (getSpell(player) == ModItems.DASH_INCANTATION){
-                player.addVelocity(player.getRotationVec(1).normalize().multiply(0.5));
-                player.velocityModified = true;
-                SpellManager.managePlayerSpellUsages(player, this, 15, 2, 50);
-
+                if (!player.hasStatusEffect(StatusEffects.SLOWNESS)) {
+                    player.addVelocity(player.getRotationVec(1).normalize().add(0 , 0.25, 0));
+                    player.velocityModified = true;
+                }
+                SpellManager.manageDashSpellUsages(player, this, 5, 2, 50);
             }
         }
         return TypedActionResult.pass(player.getStackInHand(hand));
