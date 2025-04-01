@@ -6,12 +6,14 @@ import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;
 import net.spit365.lulasmod.Lulasmod;
 import net.spit365.lulasmod.custom.item.*;
+import net.spit365.lulasmod.custom.spell.IncantationItem;
+import net.spit365.lulasmod.custom.spell.SealItem;
 
 import java.util.LinkedList;
 import java.util.List;
 
 public class ModItems {
-    public static final List<Identifier> ModItemList            = new LinkedList<>() {};
+    public static final List<Identifier> ModItemList       = new LinkedList<>() {};
     public static final List<Identifier> IncantationItems  = new LinkedList<>() {};
 
     public static final Item MODIFIED_TNT                   = registerItem("modified_tnt",          new ModifiedTntItem(new Item.Settings().maxCount(16)),true);

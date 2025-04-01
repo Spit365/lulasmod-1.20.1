@@ -4,9 +4,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
-
 import java.util.*;
-
 import static net.spit365.lulasmod.mod.ModItems.IncantationItems;
 
 public class SpellManager {

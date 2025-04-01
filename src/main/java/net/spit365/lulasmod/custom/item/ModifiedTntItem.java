@@ -5,6 +5,7 @@ import net.minecraft.entity.TntEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.stat.Stats;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.world.World;
@@ -26,6 +27,7 @@ public class ModifiedTntItem extends Item {
                 player.addExperienceLevels(-1);
                 player.getStackInHand(hand).decrement(1);
             }
+            player.incrementStat(Stats.USED.getOrCreateStat(this));
             return TypedActionResult.success(player.getStackInHand(hand));
         }
         return TypedActionResult.pass(player.getStackInHand(hand));

@@ -10,10 +10,19 @@ import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.stat.Stats;
 import net.minecraft.world.World;
+import net.spit365.lulasmod.custom.entity.PaperEntity;
+import net.spit365.lulasmod.mod.ModEntities;
+
+import java.util.function.Predicate;
 
 public class SharpTomeItem extends BowItem {
     public SharpTomeItem(Settings settings) {
         super(settings);
+    }
+
+    @Override
+    public Predicate<ItemStack> getProjectiles() {
+        return stack -> stack.getItem().equals(Items.PAPER);
     }
 
     @Override
@@ -23,41 +32,35 @@ public class SharpTomeItem extends BowItem {
             ItemStack itemStack = playerEntity.getProjectileType(stack);
             if (!itemStack.isEmpty() || bl) {
                 if (itemStack.isEmpty()) {
-                    itemStack = new ItemStack(Items.ARROW);
+                    itemStack = new ItemStack(Items.PAPER);
                 }
 
                 int i = this.getMaxUseTime(stack) - remainingUseTicks;
                 float f = getPullProgress(i);
                 if (!((double)f < 0.1)) {
-                    boolean bl2 = bl && itemStack.isOf(Items.ARROW);
+                    boolean bl2 = bl && itemStack.isOf(Items.PAPER);
                     if (!world.isClient) {
-                        ArrowItem arrowItem = (ArrowItem)(itemStack.getItem() instanceof ArrowItem ? itemStack.getItem() : Items.ARROW);
-                        PersistentProjectileEntity persistentProjectileEntity = arrowItem.createArrow(world, itemStack, playerEntity);
-                        persistentProjectileEntity.setVelocity(playerEntity, playerEntity.getPitch(), playerEntity.getYaw(), 0.0F, f * 3.0F, 1.0F);
-                        if (f == 1.0F) {
-                            persistentProjectileEntity.setCritical(true);
-                        }
+                        PaperEntity paper = new PaperEntity(ModEntities.PAPER, world);
+                        paper.requestTeleport(playerEntity.getX(), playerEntity.getY(), playerEntity.getZ());
+                        paper.setVelocity(playerEntity, playerEntity.getPitch(), playerEntity.getYaw(), 0.0F, f * 3.0F, 0.0F);
+                        paper.setCritical(true);
 
                         int j = EnchantmentHelper.getLevel(Enchantments.POWER, stack);
                         if (j > 0) {
-                            persistentProjectileEntity.setDamage(persistentProjectileEntity.getDamage() + (double)j * (double)0.5F + (double)0.5F);
+                            paper.setDamage(paper.getDamage() + (double)j * 0.5d + 0.5d);
                         }
-
                         int k = EnchantmentHelper.getLevel(Enchantments.PUNCH, stack);
                         if (k > 0) {
-                            persistentProjectileEntity.setPunch(k);
+                            paper.setPunch(k);
                         }
 
                         if (EnchantmentHelper.getLevel(Enchantments.FLAME, stack) > 0) {
-                            persistentProjectileEntity.setOnFireFor(100);
+                            paper.setOnFireFor(100);
                         }
 
-                        stack.damage(1, playerEntity, (p) -> p.sendToolBreakStatus(playerEntity.getActiveHand()));
-                        if (bl2 || playerEntity.getAbilities().creativeMode && (itemStack.isOf(Items.SPECTRAL_ARROW) || itemStack.isOf(Items.TIPPED_ARROW))) {
-                            persistentProjectileEntity.pickupType = PersistentProjectileEntity.PickupPermission.CREATIVE_ONLY;
-                        }
-
-                        world.spawnEntity(persistentProjectileEntity);
+                        paper.pickupType = PersistentProjectileEntity.PickupPermission.CREATIVE_ONLY;
+ 
+                        world.spawnEntity(paper);
                     }
 
                     world.playSound(null, playerEntity.getX(), playerEntity.getY(), playerEntity.getZ(), SoundEvents.ENTITY_ARROW_SHOOT, SoundCategory.PLAYERS, 1.0F, 1.0F / (world.getRandom().nextFloat() * 0.4F + 1.2F) + f * 0.5F);

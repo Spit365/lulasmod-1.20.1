@@ -7,6 +7,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
+import net.minecraft.stat.Stats;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.world.World;
@@ -27,6 +28,8 @@ public class SmokeBombItem extends Item {
 
             player.addStatusEffect(new StatusEffectInstance(StatusEffects.INVISIBILITY, 400, 0, false, true));
             if (!player.isCreative()) {player.getStackInHand(hand).decrement(1);}
+            player.incrementStat(Stats.USED.getOrCreateStat(this));
+            return TypedActionResult.success(player.getStackInHand(hand));
         }
         return TypedActionResult.pass(player.getStackInHand(hand));
     }

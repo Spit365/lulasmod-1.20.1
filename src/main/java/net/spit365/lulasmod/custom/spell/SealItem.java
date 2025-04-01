@@ -1,4 +1,4 @@
-package net.spit365.lulasmod.custom.item;
+package net.spit365.lulasmod.custom.spell;
 
 import net.minecraft.entity.*;
 import net.minecraft.entity.effect.StatusEffectInstance;
@@ -11,6 +11,7 @@ import net.minecraft.registry.RegistryKey;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
+import net.minecraft.stat.Stats;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.math.BlockPos;
@@ -18,7 +19,6 @@ import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.spit365.lulasmod.Lulasmod;
-import net.spit365.lulasmod.custom.spell.SpellManager;
 import net.spit365.lulasmod.mod.ModDamageSources;
 import net.spit365.lulasmod.mod.ModImportant;
 import net.spit365.lulasmod.mod.ModItems;
@@ -90,6 +90,7 @@ public class SealItem extends Item {
                 }
                 SpellManager.manageDashSpellUsages(player, this, 5, 2, 50);
             }
+            player.incrementStat(Stats.USED.getOrCreateStat(this));
         }
         return TypedActionResult.pass(player.getStackInHand(hand));
     }
