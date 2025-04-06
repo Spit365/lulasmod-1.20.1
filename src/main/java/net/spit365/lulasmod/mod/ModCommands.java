@@ -1,11 +1,16 @@
 package net.spit365.lulasmod.mod;
 
+import com.mojang.brigadier.arguments.StringArgumentType;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.registry.Registries;
+import net.minecraft.server.command.CommandManager;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
+import net.spit365.lulasmod.custom.manager.TagManager;
+
+import java.util.Objects;
 
 import static net.minecraft.server.command.CommandManager.literal;
 import static net.spit365.lulasmod.mod.ModItems.IncantationItems;
@@ -13,15 +18,38 @@ import static net.spit365.lulasmod.mod.ModItems.IncantationItems;
 public class ModCommands {
 
     public static void init(){
-        CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> dispatcher.register(literal("contract")
-            .executes(context ->{
-                PlayerEntity player = context.getSource().getPlayer();
-                if (player != null && player.getCommandTags().contains("tailed")){
-                    player.giveItemStack(new ItemStack(ModItems.HELLISH_SEAL));
-                    for (Identifier id : IncantationItems) player.giveItemStack(new ItemStack(Registries.ITEM.get(id)));
-                }else context.getSource().sendFeedback(() -> Text.literal("You cannot use this action"), false);
-                return 1;
-            })
-        ));
+        CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
+            dispatcher.register(literal("contract")
+                .executes(context ->{
+                    PlayerEntity player = context.getSource().getPlayer();
+                    if (player != null && player.getCommandTags().contains("tailed")){
+                        player.giveItemStack(new ItemStack(ModItems.HELLISH_SEAL));
+                        for (Identifier id : IncantationItems) player.giveItemStack(new ItemStack(Registries.ITEM.get(id)));
+                    }else context.getSource().sendFeedback(() -> Text.literal("You cannot use this action"), false);
+                    return 1;
+                })
+
+            );
+            dispatcher.register(literal("tag-manager")
+                .then(literal("put").then(CommandManager.argument("category", StringArgumentType.word()).then(CommandManager.argument("value", StringArgumentType.word()).executes(commandContext -> {
+                    TagManager.put(Objects.requireNonNull(commandContext.getSource().getEntity()), StringArgumentType.getString(commandContext, "category"), StringArgumentType.getString(commandContext, "value"));
+                    commandContext.getSource().sendFeedback(() -> Text.literal(commandContext.getSource().toString() + " has been tagged in category " + StringArgumentType.getString(commandContext, "category") + " with value " + StringArgumentType.getString(commandContext, "value")), true);
+                    return 0;
+                    })
+                ))).then(literal("read").then(CommandManager.argument("category", StringArgumentType.word()).executes(commandContext -> {
+                    commandContext.getSource().sendFeedback(() -> Text.literal("Category " + StringArgumentType.getString(commandContext, "category") + " of " + commandContext.getSource().toString() + " contains " + TagManager.read(Objects.requireNonNull(commandContext.getSource().getEntity()), StringArgumentType.getString(commandContext, "category"))), true);
+                    return 0;
+                    })
+                )).then(literal("remove").then(CommandManager.argument("category", StringArgumentType.word()).executes(commandContext -> {
+                    TagManager.remove(Objects.requireNonNull(commandContext.getSource().getEntity()), StringArgumentType.getString(commandContext, "category"));
+                    commandContext.getSource().sendFeedback(() -> Text.literal("All tags in category " + StringArgumentType.getString(commandContext, "category") + " of " + commandContext.getSource().toString() + " have been removed"), true);
+                    return 0;
+                })
+                )).then(literal("check").then(CommandManager.argument("category", StringArgumentType.word()).then(CommandManager.argument("value", StringArgumentType.word()).executes(commandContext -> {
+                    commandContext.getSource().sendFeedback(() -> Text.literal("Category " + StringArgumentType.getString(commandContext, "category") + " of " + commandContext.getSource().toString() + (TagManager.check(Objects.requireNonNull(commandContext.getSource().getEntity()), StringArgumentType.getString(commandContext, "category"), StringArgumentType.getString(commandContext, "value"))? "contains" : "does not contain") + StringArgumentType.getString(commandContext, "value")), true);
+                    return 0;
+                }))))
+            );
+        });
     }
 }

@@ -1,4 +1,4 @@
-package net.spit365.lulasmod.custom.spell;
+package net.spit365.lulasmod.custom.item;
 
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
@@ -8,6 +8,7 @@ import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.world.World;
+import net.spit365.lulasmod.custom.manager.SpellManager;
 
 public class IncantationItem extends Item {
     public IncantationItem(Settings settings) {

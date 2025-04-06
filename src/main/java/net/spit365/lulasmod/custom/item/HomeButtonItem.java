@@ -24,6 +24,7 @@ public class HomeButtonItem extends Item {
             player.requestTeleport(pos.getX(), pos.getY(), pos.getZ());
             Lulasmod.LOGGER.info("{} was sent home to {} {} {} (with button)", player.getName(), pos.getX(), pos.getY(), pos.getZ());
             player.incrementStat(Stats.USED.getOrCreateStat(this));
+            player.getStackInHand(hand).damage(1, player, p -> p.sendToolBreakStatus(player.getActiveHand()));
             return TypedActionResult.success(player.getStackInHand(hand));
         }
         return TypedActionResult.pass(player.getStackInHand(hand));

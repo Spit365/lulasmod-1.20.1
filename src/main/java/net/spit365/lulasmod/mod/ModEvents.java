@@ -5,6 +5,7 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.fabricmc.fabric.api.event.server.ServerTickCallback;
+import net.spit365.lulasmod.custom.item.GoldenTridentItem;
 
 public class ModEvents {
     public static void init(){
@@ -40,6 +41,7 @@ public class ModEvents {
                     }
                 }
             }
+            GoldenTridentItem.updateImpale();
         });
     }
 }

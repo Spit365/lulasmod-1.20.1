@@ -1,4 +1,4 @@
-package net.spit365.lulasmod.custom.spell;
+package net.spit365.lulasmod.custom.manager;
 
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;

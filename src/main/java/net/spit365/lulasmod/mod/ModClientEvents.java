@@ -6,8 +6,8 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Identifier;
 import net.spit365.lulasmod.Lulasmod;
-import net.spit365.lulasmod.custom.spell.SpellManager;
-import net.spit365.lulasmod.custom.spell.SealItem;
+import net.spit365.lulasmod.custom.manager.SpellManager;
+import net.spit365.lulasmod.custom.item.SealItem;
 
 import java.util.List;
 

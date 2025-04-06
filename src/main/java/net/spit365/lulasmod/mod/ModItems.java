@@ -6,8 +6,8 @@ import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;
 import net.spit365.lulasmod.Lulasmod;
 import net.spit365.lulasmod.custom.item.*;
-import net.spit365.lulasmod.custom.spell.IncantationItem;
-import net.spit365.lulasmod.custom.spell.SealItem;
+import net.spit365.lulasmod.custom.item.IncantationItem;
+import net.spit365.lulasmod.custom.item.SealItem;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -18,8 +18,9 @@ public class ModItems {
 
     public static final Item MODIFIED_TNT                   = registerItem("modified_tnt",          new ModifiedTntItem(new Item.Settings().maxCount(16)),true);
     public static final Item SMOKE_BOMB                     = registerItem("smoke_bomb",            new SmokeBombItem(new Item.Settings().maxCount(16)),true);
-    public static final Item HOME_BUTTON                    = registerItem("home_button",           new HomeButtonItem(new Item.Settings().maxCount(1)),true);
-    public static final Item SHARP_TOME                     = registerItem("sharp_tome",            new SharpTomeItem(new Item.Settings().maxCount(1)),true);
+    public static final Item HOME_BUTTON                    = registerItem("home_button",           new HomeButtonItem(new Item.Settings().maxCount(1).maxDamage(100)),true);
+    public static final Item SHARP_TOME                     = registerItem("sharp_tome",            new SharpTomeItem(new Item.Settings().maxCount(1).maxDamage(500)),true);
+    public static final Item GOLDEN_TRIDENT                 = registerItem("golden_trident",        new GoldenTridentItem(new Item.Settings().maxCount(1).maxDamage(500)), true);
     public static final Item HELLISH_SEAL                   = registerItem("hellish_seal",          new SealItem(new Item.Settings().maxCount(1)),true);
 
     public static final Item FLAME_INCANTATION              = registerItem("flame_inc",             new IncantationItem(new Item.Settings().maxCount(1)),false);
