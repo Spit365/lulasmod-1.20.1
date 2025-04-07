@@ -7,7 +7,7 @@ import net.minecraft.util.Identifier;
 import net.spit365.lulasmod.Lulasmod;
 import net.spit365.lulasmod.custom.item.*;
 import net.spit365.lulasmod.custom.item.IncantationItem;
-import net.spit365.lulasmod.custom.item.SealItem;
+import net.spit365.lulasmod.custom.item.seal.*;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -21,9 +21,14 @@ public class ModItems {
     public static final Item HOME_BUTTON                    = registerItem("home_button",           new HomeButtonItem(new Item.Settings().maxCount(1).maxDamage(100)),true);
     public static final Item SHARP_TOME                     = registerItem("sharp_tome",            new SharpTomeItem(new Item.Settings().maxCount(1).maxDamage(500)),true);
     public static final Item GOLDEN_TRIDENT                 = registerItem("golden_trident",        new GoldenTridentItem(new Item.Settings().maxCount(1).maxDamage(500)), true);
-    public static final Item HELLISH_SEAL                   = registerItem("hellish_seal",          new SealItem(new Item.Settings().maxCount(1)),true);
+
+    public static final Item HELLISH_SEAL                   = registerItem("hellish_seal",          new HellishSeal(new Item.Settings().maxCount(1)),true);
+    public static final Item GOLDEN_SEAL                    = registerItem("golden_seal",           new GoldenSeal(new Item.Settings().maxCount(1)),true);
+    public static final Item BLOODSUCKING_SEAL              = registerItem("bloodsucking_seal",     new BloodsuckingSeal(new Item.Settings().maxCount(1)),true);
+    public static final Item CREATIVE_SEAL                  = registerItem("creative_seal",         new CreativeSeal(new Item.Settings().maxCount(1)),true);
 
     public static final Item FLAME_INCANTATION              = registerItem("flame_inc",             new IncantationItem(new Item.Settings().maxCount(1)),false);
+    public static final Item BLACK_FLAME_INCANTATION        = registerItem("black_flame_inc",       new IncantationItem(new Item.Settings().maxCount(1)), false);
     public static final Item HOME_INCANTATION               = registerItem("home_inc",              new IncantationItem(new Item.Settings().maxCount(1)),false);
     public static final Item SMOKE_INCANTATION              = registerItem("smoke_inc",             new IncantationItem(new Item.Settings().maxCount(1)),false);
     public static final Item HIGHLIGHTER_INCANTATION        = registerItem("highlighter_inc",       new IncantationItem(new Item.Settings().maxCount(1)),false);

@@ -9,14 +9,11 @@ import net.minecraft.server.command.CommandManager;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.spit365.lulasmod.custom.manager.TagManager;
-
 import java.util.Objects;
-
 import static net.minecraft.server.command.CommandManager.literal;
 import static net.spit365.lulasmod.mod.ModItems.IncantationItems;
 
 public class ModCommands {
-
     public static void init(){
         CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
             dispatcher.register(literal("contract")

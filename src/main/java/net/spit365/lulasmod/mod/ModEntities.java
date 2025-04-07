@@ -21,6 +21,13 @@ public class ModEntities {
                 .maxTrackingRange(4)
                 .trackingTickInterval(10)
     );
+    public static final EntityType<BlackFlameEntity> BLACK_FLAME = register(
+            "black_flame",
+            EntityType.Builder.<BlackFlameEntity>create(BlackFlameEntity::new, SpawnGroup.MISC)
+                    .setDimensions(0.25F, 0.25F)
+                    .maxTrackingRange(4)
+                    .trackingTickInterval(10)
+    );
     public static final EntityType<SmokeCreeperEntity> SMOKE_CREEPER = register(
         "smoke_creeper",
         EntityType.Builder.create(SmokeCreeperEntity::new, SpawnGroup.MONSTER)
@@ -32,6 +39,7 @@ public class ModEntities {
     }
     public static void init(){
        EntityRendererRegistry.register(ModEntities.SMOKE_BOMB, FlyingItemEntityRenderer::new);
+       EntityRendererRegistry.register(ModEntities.BLACK_FLAME, FlyingItemEntityRenderer::new);
        EntityRendererRegistry.register(ModEntities.SMOKE_CREEPER, SmokeCreeperEntityRenderer::new);
 
        FabricDefaultAttributeRegistry.register(SMOKE_CREEPER, SmokeCreeperEntity.createMobAttributes());

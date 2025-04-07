@@ -62,6 +62,7 @@ public class GoldenTridentItem extends TridentItem {
                     victim.getWorld().spawnEntity(arrow);
                     arrow.setNoGravity(true);
                     arrow.pickupType = PersistentProjectileEntity.PickupPermission.DISALLOWED;
+                    arrow.setDamage(Double.MAX_VALUE);
                     TagManager.put(arrow, "DamageDelay", "less");
                     arrow.requestTeleport(pos.getX(), pos.getY(), pos.getZ());
                     arrow.setCritical(true);
