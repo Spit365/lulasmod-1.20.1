@@ -1,13 +1,17 @@
 package net.spit365.lulasmod.mod;
 
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.block.Blocks;
+import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.fabricmc.fabric.api.event.server.ServerTickCallback;
 import net.spit365.lulasmod.custom.item.GoldenTridentItem;
+import net.spit365.lulasmod.tag.TagManager;
 
-public class ModEvents {
+public class ModServerEvents {
     public static void init(){
         ServerTickCallback.EVENT.register(minecraftServer -> {
             for (ServerPlayerEntity player : minecraftServer.getPlayerManager().getPlayerList()) {
@@ -31,8 +35,7 @@ public class ModEvents {
                     }
 
                     if (closestPortal != null) {
-                        Vec3d playerVec = player.getPos();
-                        Vec3d repelVec = playerVec.subtract(Vec3d.ofCenter(closestPortal)).normalize();
+                        Vec3d repelVec = player.getPos().subtract(Vec3d.ofCenter(closestPortal)).normalize();
 
                         if (!repelVec.equals(Vec3d.ZERO)) {
                             player.setVelocity(repelVec);
@@ -41,7 +44,11 @@ public class ModEvents {
                     }
                 }
             }
-            GoldenTridentItem.updateImpale();
+            GoldenTridentItem.impale(minecraftServer);
+            ModImportant.updateClientSpellList(minecraftServer);
+        });
+        ServerPlayNetworking.registerGlobalReceiver(ModPackets.CYCLE_PLAYER_SPELL, (minecraftServer, serverPlayerEntity, serverPlayNetworkHandler, packetByteBuf, packetSender) -> {
+            TagManager.cycle(serverPlayerEntity, ModTagCategories.SPELLS);
         });
     }
 }

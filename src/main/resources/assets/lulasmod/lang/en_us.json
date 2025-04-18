@@ -4,22 +4,35 @@
   "item.lulasmod.highlighter": "Highlighter",
   "item.lulasmod.home_button": "Home Button",
   "item.lulasmod.smoke_bomb": "Smoke Bomb",
-  "item.lulasmod.hellish_seal": "Hellish Seal",
   "item.lulasmod.golden_trident": "Golden Trident",
+  "item.lulasmod.sharp_tome": "Sharp Tome",
+  "item.lulasmod.lasciviousness": "Lasciviousness",
 
-  "item.lulasmod.empty_inc": "Empty Incantation",
-  "item.lulasmod.flame_inc": "Diablo's Fury",
+  "item.lulasmod.hellish_seal": "Hellish Seal",
+  "item.lulasmod.golden_seal": "Golden Seal",
+  "item.lulasmod.bloodsucking_seal": "Bloodsucking Seal",
+  "item.lulasmod.creative_seal": "Creative Seal",
+
+  "item.lulasmod.eternal_winter_inc": "Eternal Winter",
   "item.lulasmod.home_inc": "Remembrance of a safe Haven",
   "item.lulasmod.smoke_inc": "Assassin's Approach",
   "item.lulasmod.pocket_inc": "Realm of the Alternates",
   "item.lulasmod.highlighter_inc": "Highlighter Inc",
   "item.lulasmod.dash_inc": "Swift Withdrawal",
+  "item.lulasmod.fire_inc": "Flame Sling",
+  "item.lulasmod.heal_inc": "Curing Artifact",
 
-  "death.attack.diablos_flame": "%1$s was burned by the devil himself",
-  "death.attack.diablos_flame.player": "%1$s was burned by the devil himself using the body of %2$s",
+  "death.attack.eternal_winter": "%1$s was frozen eternally",
+  "death.attack.eternal_winter.player": "%1$s was frozen eternally by %2$s",
 
+  "effect.lulasmod.cushioned": "Cushioned",
+
+  "entity.lulasmod.smoke_bomb": "Smoke Bomb",
+  "entity.lulasmod.flame_sling": "Flame Sling",
 
   "item-group.lulasmod": "Lulasmod",
 
-  "entity.lulasmod.smoke_creeper": "Smoke Creeper"
+  "category.lulasmod": "Lulasmod",
+  "key.lulasmod.cycle_spell": "Cycle Spell"
+
 }

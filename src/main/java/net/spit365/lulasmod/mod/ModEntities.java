@@ -1,7 +1,6 @@
 package net.spit365.lulasmod.mod;
 
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
-import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
 import net.minecraft.client.render.entity.FlyingItemEntityRenderer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
@@ -11,7 +10,6 @@ import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;
 import net.spit365.lulasmod.Lulasmod;
 import net.spit365.lulasmod.custom.entity.*;
-import net.spit365.lulasmod.custom.entity.renderer.SmokeCreeperEntityRenderer;
 
 public class ModEntities {
     public static final EntityType<SmokeBombEntity> SMOKE_BOMB = register(
@@ -20,18 +18,12 @@ public class ModEntities {
                 .setDimensions(0.25F, 0.25F)
                 .maxTrackingRange(4)
                 .trackingTickInterval(10)
-    );
-    public static final EntityType<BlackFlameEntity> BLACK_FLAME = register(
-            "black_flame",
-            EntityType.Builder.<BlackFlameEntity>create(BlackFlameEntity::new, SpawnGroup.MISC)
-                    .setDimensions(0.25F, 0.25F)
-                    .maxTrackingRange(4)
-                    .trackingTickInterval(10)
-    );
-    public static final EntityType<SmokeCreeperEntity> SMOKE_CREEPER = register(
-        "smoke_creeper",
-        EntityType.Builder.create(SmokeCreeperEntity::new, SpawnGroup.MONSTER)
-                .setDimensions(0.6F, 1.7F)
+    );public static final EntityType<FlameSlingEntity> FLAME_SLING = register(
+        "flame_sling",
+        EntityType.Builder.<FlameSlingEntity>create(FlameSlingEntity::new, SpawnGroup.MISC)
+                .setDimensions(1.0F, 1.0F)
+                .maxTrackingRange(4)
+                .trackingTickInterval(10)
     );
 
     private static <T extends Entity> EntityType<T> register(String id, EntityType.Builder<T> type) {
@@ -39,9 +31,6 @@ public class ModEntities {
     }
     public static void init(){
        EntityRendererRegistry.register(ModEntities.SMOKE_BOMB, FlyingItemEntityRenderer::new);
-       EntityRendererRegistry.register(ModEntities.BLACK_FLAME, FlyingItemEntityRenderer::new);
-       EntityRendererRegistry.register(ModEntities.SMOKE_CREEPER, SmokeCreeperEntityRenderer::new);
-
-       FabricDefaultAttributeRegistry.register(SMOKE_CREEPER, SmokeCreeperEntity.createMobAttributes());
+       EntityRendererRegistry.register(ModEntities.FLAME_SLING, FlyingItemEntityRenderer::new);
     }
 }

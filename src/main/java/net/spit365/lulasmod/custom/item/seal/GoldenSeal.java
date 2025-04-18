@@ -8,6 +8,6 @@ public class GoldenSeal extends SealItem{
     }
 
     @Override protected Boolean canUse(PlayerEntity player) {return true;}
-    @Override protected Float damageMultiplier() {return 1f;}
+    @Override protected Float efficiencyMultiplier() {return 1f;}
     @Override protected Integer cooldownMultiplier() {return 2;}
 }

@@ -8,6 +8,6 @@ public class HellishSeal extends SealItem{
     }
 
     @Override protected Boolean canUse(PlayerEntity player) {return player.getCommandTags().contains("tailed");}
-    @Override protected Float damageMultiplier(){return 2f;}
+    @Override protected Float efficiencyMultiplier(){return 2f;}
     @Override protected Integer cooldownMultiplier() {return 1;}
 }

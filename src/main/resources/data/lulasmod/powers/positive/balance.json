@@ -6,18 +6,41 @@
     "modifier": {"operation": "add_base_late", "value": 0.05, "name": "speedy"},
     "condition": {
 			"type": "origins:or",
-			"conditions": [{
+			"conditions": [
+				{
 					"type": "origins:biome",
 					"condition": {
 						"type": "origins:category",
-						"category": "taiga"
+						"category": "icy"
 					}
 				},
 				{
 					"type": "origins:biome",
 					"condition": {
 						"type": "origins:category",
-						"category": "icy"
+						"category": "aquatic_icy"
+					}
+				},
+				{
+					"type": "origins:biome",
+					"condition": {
+						"type": "origins:category",
+						"category": "climate_cold"
+					}
+				},
+				{
+					"type": "origins:biome",
+					"condition": {
+						"type": "origins:category",
+						"category": "snowy"
+					}
+				},
+
+				{
+					"type": "origins:biome",
+					"condition": {
+						"type": "origins:category",
+						"category": "taiga"
 					}
 				},
 				{

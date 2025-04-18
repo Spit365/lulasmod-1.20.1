@@ -4,6 +4,7 @@ import net.minecraft.entity.*;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.projectile.FireballEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.particle.ParticleTypes;
@@ -19,13 +20,10 @@ import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.spit365.lulasmod.Lulasmod;
-import net.spit365.lulasmod.custom.entity.BlackFlameEntity;
-import net.spit365.lulasmod.custom.manager.SpellManager;
-import net.spit365.lulasmod.mod.ModDamageSources;
-import net.spit365.lulasmod.mod.ModImportant;
-import net.spit365.lulasmod.mod.ModItems;
-import org.jetbrains.annotations.Nullable;
-
+import net.spit365.lulasmod.custom.entity.FlameSlingEntity;
+import net.spit365.lulasmod.custom.item.IncantationItem;
+import net.spit365.lulasmod.mod.*;
+import net.spit365.lulasmod.tag.TagManager;
 import java.util.Objects;
 import java.util.Set;
 import static net.minecraft.sound.SoundEvents.*;
@@ -36,49 +34,46 @@ public abstract class SealItem extends Item {
         super(settings);
     }
 
-    protected static Item getSpell(@Nullable PlayerEntity player) {
-        return SpellManager.getSpells(player).get(0).getItem();
+    protected static String getSpell(PlayerEntity player) {
+        return TagManager.readList(player, ModTagCategories.SPELLS).get(0);
     }
 
     protected abstract Boolean canUse(PlayerEntity player);
-    protected abstract Float damageMultiplier();
+    protected abstract Float efficiencyMultiplier();
     protected abstract Integer cooldownMultiplier();
 
     @Override
     public TypedActionResult<ItemStack> use(World world, PlayerEntity player, Hand hand) {
         if (!world.isClient() && canUse(player)) {
-            if (getSpell(player) == ModItems.FLAME_INCANTATION) {
+            if (getSpell(player).equals(((IncantationItem)ModItems.FROST_INCANTATION).getSpellName())) {
                 player.getItemCooldownManager().set(this, 3 / cooldownMultiplier());
                 Vec3d pos = player.getRotationVec(1).normalize().multiply(2).add(player.getPos().add(0 ,1, 0));
                 for (Entity entity : world.getOtherEntities(player, new Box(pos.add(1d, 1d, 1d), pos.add(-1d, -1d, -1d)))){
-                    entity.damage(ModDamageSources.DIABLOS_FLAME(player), 2 * damageMultiplier());}
-                ((ServerWorld) world).spawnParticles(ParticleTypes.FLAME, pos.getX(), pos.getY(), pos.getZ(), 50, 0.5, 0.5, 0.5, 0);
+                    if (!(entity instanceof LivingEntity)) entity.discard();
+                    entity.damage(ModDamageSources.ETERNAL_WINTER(player), efficiencyMultiplier() * 2);}
+                ((ServerWorld) world).spawnParticles(ParticleTypes.SNOWFLAKE, pos.getX(), pos.getY(), pos.getZ(), 50, 0.5, 0.5, 0.5, 0);
                 world.playSound(null, player.getBlockPos(), ITEM_FIRECHARGE_USE, SoundCategory.PLAYERS, 100.0f, 10.0f);
-                return TypedActionResult.success(player.getStackInHand(hand));
             }
-            if (getSpell(player) == ModItems.HOME_INCANTATION){
+            if (getSpell(player).equals(((IncantationItem)ModItems.HOME_INCANTATION).getSpellName())){
                 player.getItemCooldownManager().set(this, 600 / cooldownMultiplier());
                 BlockPos pos = ((ServerPlayerEntity) player).getSpawnPointPosition();
                 if (pos == null){pos = world.getSpawnPos();}
                 player.requestTeleport(pos.getX(), pos.getY(), pos.getZ());
                 Lulasmod.LOGGER.info("{} was sent home to {} {} {} (with incantation)", player.getName().getString(), pos.getX(), pos.getY(), pos.getZ());
-                return TypedActionResult.success(player.getStackInHand(hand));
             }
-            if (getSpell(player) == ModItems.SMOKE_INCANTATION){
+            if (getSpell(player).equals(((IncantationItem)ModItems.SMOKE_INCANTATION).getSpellName())){
                 player.getItemCooldownManager().set(this, 5 / cooldownMultiplier());
                 world.playSound(null, player.getBlockPos(), ENTITY_SPLASH_POTION_BREAK, SoundCategory.PLAYERS);
                 ModImportant.summonSmoke(player.getPos(), world);
-                player.addStatusEffect(new StatusEffectInstance(StatusEffects.INVISIBILITY, 1200, 1, false, false));
-                if (damageMultiplier() > 1) player.addStatusEffect(new StatusEffectInstance(StatusEffects.STRENGTH, 1200, 2, false, false));
-                return TypedActionResult.success(player.getStackInHand(hand));
+                player.addStatusEffect(new StatusEffectInstance(StatusEffects.INVISIBILITY, 600, 1, false, false));
+                if (efficiencyMultiplier() > 1) player.addStatusEffect(new StatusEffectInstance(StatusEffects.STRENGTH, 1200, Math.min(Math.round(efficiencyMultiplier()) -1, 254), false, false));
             }
-            if (getSpell(player) == ModItems.HIGHLIGHTER_INCANTATION) {
+            if (getSpell(player).equals(((IncantationItem)ModItems.HIGHLIGHTER_INCANTATION).getSpellName())) {
                 boolean isPlayerGlowing = !player.isGlowing();
                 world.playSound(null, player.getBlockPos(), (isPlayerGlowing ? BLOCK_BEACON_ACTIVATE : BLOCK_BEACON_DEACTIVATE), SoundCategory.PLAYERS);
                 for (PlayerEntity playerEntity : world.getPlayers()){playerEntity.setGlowing(isPlayerGlowing);}
-                return TypedActionResult.success(player.getStackInHand(hand));
             }
-            if (getSpell(player) == ModItems.POCKET_INCANTATION){
+            if (getSpell(player).equals(((IncantationItem)ModItems.POCKET_INCANTATION).getSpellName())){
                 if (world.getRegistryKey().toString().equals(PocketDimensionKey)) {
                     player.teleport(Objects.requireNonNull(player.getServer()).getWorld(World.OVERWORLD), player.getX(), player.getY(), player.getZ(), Set.of() , player.getYaw(), player.getPitch());
                 }else{
@@ -86,27 +81,43 @@ public abstract class SealItem extends Item {
                     for (RegistryKey<World> worldKeys : Objects.requireNonNull(player.getServer()).getWorldRegistryKeys()){if (
                             worldKeys.toString().equals(PocketDimensionKey)) worldRegistryKey = worldKeys;
                     }
-                    if (worldRegistryKey == null) Lulasmod.LOGGER.error("could not find registry key for 'lulasmod:pocket_dimension'");
+                    if (worldRegistryKey == null) Lulasmod.LOGGER.error("could not find registry key: " + PocketDimensionKey);
                     else player.teleport(player.getServer().getWorld(worldRegistryKey), player.getX(), player.getY(), player.getZ(), Set.of() , player.getYaw(), player.getPitch());
                 }
                 player.getItemCooldownManager().set(this, 20 / cooldownMultiplier());
-                return TypedActionResult.success(player.getStackInHand(hand));
             }
-            if (getSpell(player) == ModItems.DASH_INCANTATION){
+            if (getSpell(player).equals(((IncantationItem)ModItems.DASH_INCANTATION).getSpellName())){
                 if (!player.hasStatusEffect(StatusEffects.SLOWNESS)) {
+                    String read = TagManager.read(player, ModTagCategories.DASH_SPELL);
+                    if (read == null) TagManager.put(player, ModTagCategories.DASH_SPELL, String.valueOf(5 * cooldownMultiplier()));
+                    if (read.equals("1")){
+                        player.getItemCooldownManager().set(this, 50);
+                        TagManager.put(player, ModTagCategories.DASH_SPELL, String.valueOf(5 * cooldownMultiplier()));
+                    }else {
+                        player.getItemCooldownManager().set(this, 2);
+                        TagManager.put(player, ModTagCategories.DASH_SPELL, String.valueOf(Math.min(5 * cooldownMultiplier(), Integer.parseInt(read)) -1));
+                    }
                     player.addVelocity(player.getRotationVec(1).normalize().add(0 , 0.25, 0));
                     player.velocityModified = true;
-                }
-                SpellManager.manageDashSpellUsages(player, this, 5 * cooldownMultiplier(), 2, 50);
+                }else player.getItemCooldownManager().set(this, 20);
             }
-            if (getSpell(player) == ModItems.BLACK_FLAME_INCANTATION){
-                player.getItemCooldownManager().set(this, 20);
-                BlackFlameEntity blackFlame = new BlackFlameEntity(world, player);
-                world.spawnEntity(blackFlame);
-                blackFlame.setPos(player.getX(), player.getY() + 1, player.getZ());
-                blackFlame.setVelocity(player, player.getPitch(), player.getYaw(), 0.0F, 1.5F, 0.0F);
+            if (getSpell(player).equals(((IncantationItem)ModItems.FIRE_INCANTATION).getSpellName())){
+                player.getItemCooldownManager().set(this, 100 / cooldownMultiplier());
+                Vec3d vec  = player.getRotationVec(1).normalize().multiply(3);
+                FlameSlingEntity flameSling = new FlameSlingEntity(world, player, vec.getX(), vec.getY(), vec.getZ(), Math.min(Math.round(efficiencyMultiplier() +2), 100));
+                flameSling.requestTeleport(flameSling.getX(), flameSling.getY() +1, flameSling.getZ());
+                world.spawnEntity(flameSling);
             }
-            player.incrementStat(Stats.USED.getOrCreateStat(this));
+            if (getSpell(player).equals(((IncantationItem)ModItems.HEAL_INCANTATION).getSpellName())){
+                player.getItemCooldownManager().set(this, 600 / cooldownMultiplier());
+                player.addStatusEffect(new StatusEffectInstance(StatusEffects.REGENERATION, Math.round(efficiencyMultiplier()) *20, 100));
+            }
+
+
+            if (getSpell(player) != null){
+                player.incrementStat(Stats.USED.getOrCreateStat(this));
+                return TypedActionResult.success(player.getStackInHand(hand));
+            }
         }
         return TypedActionResult.pass(player.getStackInHand(hand));
     }

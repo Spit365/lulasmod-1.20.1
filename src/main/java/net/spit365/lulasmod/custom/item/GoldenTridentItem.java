@@ -8,12 +8,16 @@ import net.minecraft.entity.projectile.ArrowEntity;
 import net.minecraft.entity.projectile.PersistentProjectileEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.TridentItem;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
-import net.spit365.lulasmod.custom.manager.TagManager;
+import net.spit365.lulasmod.Lulasmod;
+import net.spit365.lulasmod.tag.TagManager;
+import net.spit365.lulasmod.mod.ModTagCategories;
+
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
@@ -23,8 +27,8 @@ public class GoldenTridentItem extends TridentItem {
         super(settings);
     }
 
-    public static List<LivingEntity> impaledEntities = new LinkedList<>();
-    public static List<ArrowEntity> arrows = new LinkedList<>();
+    public static final List<LivingEntity> impaledEntities = new LinkedList<>();
+    public static final List<ArrowEntity> arrows = new LinkedList<>();
 
     @Override
     public TypedActionResult<ItemStack> use(World world, PlayerEntity player, Hand hand){
@@ -40,43 +44,36 @@ public class GoldenTridentItem extends TridentItem {
             }
             if (selectedEntity != null){
                 selectedEntity.requestTeleport(selectedEntity.getX(), selectedEntity.getY() + 5, selectedEntity.getZ());
-                TagManager.put(selectedEntity, "Attacker", player.getName().getString());
-                impaledEntities.add(selectedEntity);
+                TagManager.put(player, ModTagCategories.ATTACKER, String.valueOf(selectedEntity.getId()));
                 player.getItemCooldownManager().set(this, 200);
-                player.getStackInHand(hand).damage(100, player, p -> p.sendToolBreakStatus(player.getActiveHand()));
+                if (!player.isCreative()) player.getStackInHand(hand).damage(100, player, p -> p.sendToolBreakStatus(player.getActiveHand()));
                 return TypedActionResult.success(player.getStackInHand(hand));
             }
         }
         return TypedActionResult.pass(player.getStackInHand(hand));
     }
-
-    public static void updateImpale(){
-        for (LivingEntity victim : impaledEntities){
-            if (victim.isAlive()) {
-                victim.setVelocity(0, 0, 0);
-                Vec3d pos = new Vec3d(Math.random() * (new Random().nextBoolean() ? 1 : -1), Math.random() * (new Random().nextBoolean() ? 1 : -1), Math.random() * (new Random().nextBoolean() ? 1 : -1)).normalize().multiply(5).add(victim.getPos());
-                PlayerEntity attacker = getAttackerFromCommandTag(victim);
-                if (!(victim instanceof EndermanEntity) && attacker != null) {
-                    ArrowEntity arrow = new ArrowEntity(victim.getWorld(), attacker);
-                    arrows.add(arrow);
-                    victim.getWorld().spawnEntity(arrow);
-                    arrow.setNoGravity(true);
-                    arrow.pickupType = PersistentProjectileEntity.PickupPermission.DISALLOWED;
-                    arrow.setDamage(Double.MAX_VALUE);
-                    TagManager.put(arrow, "DamageDelay", "less");
-                    arrow.requestTeleport(pos.getX(), pos.getY(), pos.getZ());
-                    arrow.setCritical(true);
-                    arrow.addVelocity(pos.subtract(victim.getPos()).multiply(-0.5));
-                }else victim.kill();
-            } else {impaledEntities.remove(victim); for (ArrowEntity arrow : arrows)arrow.kill();}
+    public static void impale(MinecraftServer server){
+        for (PlayerEntity player : server.getPlayerManager().getPlayerList()){
+            String read = TagManager.read(player, ModTagCategories.ATTACKER);
+            if (read != null){
+                Entity victim = player.getWorld().getEntityById(Integer.parseInt(read));
+                if (victim != null && victim.isAlive()) {
+                    victim.setVelocity(0, 0, 0);
+                    Vec3d pos = new Vec3d(Math.random() * (new Random().nextBoolean() ? 1 : -1), Math.random() * (new Random().nextBoolean() ? 1 : -1), Math.random() * (new Random().nextBoolean() ? 1 : -1)).normalize().multiply(5).add(victim.getPos());
+                    if (!(victim instanceof EndermanEntity)) {
+                        ArrowEntity arrow = new ArrowEntity(victim.getWorld(), player);
+                        arrows.add(arrow);
+                        victim.getWorld().spawnEntity(arrow);
+                        arrow.setNoGravity(true);
+                        arrow.pickupType = PersistentProjectileEntity.PickupPermission.DISALLOWED;
+                        arrow.setDamage(Double.MAX_VALUE);
+                        TagManager.put(arrow, ModTagCategories.DAMAGE_DELAY, "less");
+                        arrow.requestTeleport(pos.getX(), pos.getY(), pos.getZ());
+                        arrow.setCritical(true);
+                        arrow.addVelocity(pos.subtract(victim.getPos()).multiply(-0.5));
+                    }else victim.kill();
+                } else {for (ArrowEntity arrow : arrows) arrow.kill(); TagManager.remove(player, ModTagCategories.ATTACKER);}
+            }
         }
-    }
-
-    public static PlayerEntity getAttackerFromCommandTag(LivingEntity entity){
-        PlayerEntity player = null;
-        for (PlayerEntity player2 : entity.getWorld().getPlayers()){
-            if (player2.getName().getString().equals(TagManager.read(entity, "Attacker"))) player = player2;
-        }
-        return player;
     }
 }

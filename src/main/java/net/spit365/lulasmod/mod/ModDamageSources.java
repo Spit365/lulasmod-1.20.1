@@ -11,15 +11,15 @@ import net.spit365.lulasmod.Lulasmod;
 
 
 public class ModDamageSources {
-    public static DamageSource DIABLOS_FLAME(Entity attacker) {
+    public static DamageSource ETERNAL_WINTER(Entity attacker) {
         RegistryEntry<DamageType> damageType = attacker.getWorld().getRegistryManager()
                 .get(RegistryKeys.DAMAGE_TYPE)
-                .getEntry(ModDamageSources.DIABLOS_FLAME())
+                .getEntry(ModDamageSources.ETERNAL_WINTER())
                 .orElseThrow();
         return new DamageSource(damageType);
     }
 
-    public static RegistryKey<DamageType> DIABLOS_FLAME() {
-        return RegistryKey.of(RegistryKeys.DAMAGE_TYPE, new Identifier(Lulasmod.MOD_ID, "diablos_flame"));
+    public static RegistryKey<DamageType> ETERNAL_WINTER() {
+        return RegistryKey.of(RegistryKeys.DAMAGE_TYPE, new Identifier(Lulasmod.MOD_ID, "eternal_winter"));
     }
 }

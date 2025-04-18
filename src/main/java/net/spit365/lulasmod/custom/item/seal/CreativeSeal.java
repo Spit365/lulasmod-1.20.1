@@ -8,6 +8,6 @@ public class CreativeSeal extends SealItem{
     }
 
     @Override protected Boolean canUse(PlayerEntity player) {return player.isCreative();}
-    @Override protected Float damageMultiplier() {return Float.MAX_VALUE;}
+    @Override protected Float efficiencyMultiplier() {return Float.MAX_VALUE;}
     @Override protected Integer cooldownMultiplier() {return Integer.MAX_VALUE;}
 }

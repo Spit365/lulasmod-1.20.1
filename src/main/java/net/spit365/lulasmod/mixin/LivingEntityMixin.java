@@ -6,8 +6,9 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.world.World;
-import net.spit365.lulasmod.custom.manager.TagManager;
+import net.spit365.lulasmod.tag.TagManager;
 import net.spit365.lulasmod.mod.ModDamageSources;
+import net.spit365.lulasmod.mod.ModTagCategories;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -22,13 +23,13 @@ public abstract class LivingEntityMixin extends Entity implements Attackable {
 
     @Inject(method = "damage", at = @At("HEAD"))
     private void damage(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
-        if (source.getTypeRegistryEntry().matchesKey(ModDamageSources.DIABLOS_FLAME())) {
+        if (source.getTypeRegistryEntry().matchesKey(ModDamageSources.ETERNAL_WINTER())) {
             timeUntilRegen = 0;
         }
-        if (source.getAttacker() != null && TagManager.check(source.getAttacker(), "DamageDelay", "none")) {
+        if (source.getAttacker() != null && TagManager.check(source.getAttacker(), ModTagCategories.DAMAGE_DELAY, "none")) {
             timeUntilRegen = 0;
         }
-        if (source.getAttacker() != null && TagManager.check(source.getAttacker(), "DamageDelay", "less")) {
+        if (source.getAttacker() != null && TagManager.check(source.getAttacker(), ModTagCategories.DAMAGE_DELAY, "less")) {
             timeUntilRegen = 5;
         }
     }

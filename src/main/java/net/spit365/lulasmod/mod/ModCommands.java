@@ -8,7 +8,8 @@ import net.minecraft.registry.Registries;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
-import net.spit365.lulasmod.custom.manager.TagManager;
+import net.spit365.lulasmod.tag.TagCategory;
+import net.spit365.lulasmod.tag.TagManager;
 import java.util.Objects;
 import static net.minecraft.server.command.CommandManager.literal;
 import static net.spit365.lulasmod.mod.ModItems.IncantationItems;
@@ -29,21 +30,21 @@ public class ModCommands {
             );
             dispatcher.register(literal("tag-manager")
                 .then(literal("put").then(CommandManager.argument("category", StringArgumentType.word()).then(CommandManager.argument("value", StringArgumentType.word()).executes(commandContext -> {
-                    TagManager.put(Objects.requireNonNull(commandContext.getSource().getEntity()), StringArgumentType.getString(commandContext, "category"), StringArgumentType.getString(commandContext, "value"));
-                    commandContext.getSource().sendFeedback(() -> Text.literal(commandContext.getSource().toString() + " has been tagged in category " + StringArgumentType.getString(commandContext, "category") + " with value " + StringArgumentType.getString(commandContext, "value")), true);
+                    TagManager.put(Objects.requireNonNull(commandContext.getSource().getEntity()), new TagCategory(StringArgumentType.getString(commandContext, "category")), StringArgumentType.getString(commandContext, "value"));
+                    commandContext.getSource().sendFeedback(() -> Text.literal("You have been tagged in category " + StringArgumentType.getString(commandContext, "category") + " with value " + StringArgumentType.getString(commandContext, "value")), true);
                     return 0;
                     })
                 ))).then(literal("read").then(CommandManager.argument("category", StringArgumentType.word()).executes(commandContext -> {
-                    commandContext.getSource().sendFeedback(() -> Text.literal("Category " + StringArgumentType.getString(commandContext, "category") + " of " + commandContext.getSource().toString() + " contains " + TagManager.read(Objects.requireNonNull(commandContext.getSource().getEntity()), StringArgumentType.getString(commandContext, "category"))), true);
+                    commandContext.getSource().sendFeedback(() -> Text.literal("Category " + StringArgumentType.getString(commandContext, "category") + " contains " + TagManager.read(Objects.requireNonNull(commandContext.getSource().getEntity()), new TagCategory(StringArgumentType.getString(commandContext, "category")))), true);
                     return 0;
                     })
                 )).then(literal("remove").then(CommandManager.argument("category", StringArgumentType.word()).executes(commandContext -> {
-                    TagManager.remove(Objects.requireNonNull(commandContext.getSource().getEntity()), StringArgumentType.getString(commandContext, "category"));
-                    commandContext.getSource().sendFeedback(() -> Text.literal("All tags in category " + StringArgumentType.getString(commandContext, "category") + " of " + commandContext.getSource().toString() + " have been removed"), true);
+                    TagManager.remove(Objects.requireNonNull(commandContext.getSource().getEntity()), new TagCategory(StringArgumentType.getString(commandContext, "category")));
+                    commandContext.getSource().sendFeedback(() -> Text.literal("All tags in category " + StringArgumentType.getString(commandContext, "category") + " have been removed"), true);
                     return 0;
                 })
                 )).then(literal("check").then(CommandManager.argument("category", StringArgumentType.word()).then(CommandManager.argument("value", StringArgumentType.word()).executes(commandContext -> {
-                    commandContext.getSource().sendFeedback(() -> Text.literal("Category " + StringArgumentType.getString(commandContext, "category") + " of " + commandContext.getSource().toString() + (TagManager.check(Objects.requireNonNull(commandContext.getSource().getEntity()), StringArgumentType.getString(commandContext, "category"), StringArgumentType.getString(commandContext, "value"))? "contains" : "does not contain") + StringArgumentType.getString(commandContext, "value")), true);
+                    commandContext.getSource().sendFeedback(() -> Text.literal("Category " + StringArgumentType.getString(commandContext, "category") + (TagManager.check(Objects.requireNonNull(commandContext.getSource().getEntity()), new TagCategory(StringArgumentType.getString(commandContext, "category")), StringArgumentType.getString(commandContext, "value"))? "contains" : "does not contain") + StringArgumentType.getString(commandContext, "value")), true);
                     return 0;
                 }))))
             );
