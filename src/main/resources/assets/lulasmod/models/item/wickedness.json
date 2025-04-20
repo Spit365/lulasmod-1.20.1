@@ -1,0 +1,6 @@
+{
+	"parent": "lulasmod:item/empty_inc",
+	"textures": {
+		"1": "lulasmod:item/inc_o_wickedness"
+	}
+}

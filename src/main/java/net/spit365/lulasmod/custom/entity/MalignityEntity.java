@@ -10,14 +10,14 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.event.GameEvent;
 
-public class FlameSlingEntity extends FireballEntity {
+public class MalignityEntity extends FireballEntity {
     private int explosionPower = 1;
 
-    public FlameSlingEntity(EntityType<? extends FireballEntity> entityType, World world) {
+    public MalignityEntity(EntityType<? extends FireballEntity> entityType, World world) {
         super(entityType, world);
     }
 
-    public FlameSlingEntity(World world, LivingEntity owner, double velocityX, double velocityY, double velocityZ, int explosionPower) {
+    public MalignityEntity(World world, LivingEntity owner, double velocityX, double velocityY, double velocityZ, int explosionPower) {
         super(world, owner, velocityX, velocityY, velocityZ, explosionPower);
         this.explosionPower = explosionPower;
     }
@@ -35,7 +35,7 @@ public class FlameSlingEntity extends FireballEntity {
             this.getWorld().emitGameEvent(GameEvent.PROJECTILE_LAND, blockPos, GameEvent.Emitter.of(this, this.getWorld().getBlockState(blockPos)));
         }
         if (!this.getWorld().isClient) {
-            this.getWorld().createExplosion(this.getOwner(), this.getX(), this.getY(), this.getZ(), (float)this.explosionPower, false, World.ExplosionSourceType.NONE);
+            this.getWorld().createExplosion(this.getOwner(), this.getX(), this.getY(), this.getZ(), (float) this.explosionPower, false, World.ExplosionSourceType.NONE);
             this.discard();
         }
     }

@@ -2,8 +2,6 @@ package net.spit365.lulasmod.mod;
 
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.particle.ParticleTypes;
@@ -15,7 +13,6 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.spit365.lulasmod.Lulasmod;
-import net.spit365.lulasmod.custom.item.IncantationItem;
 import net.spit365.lulasmod.tag.TagManager;
 import org.jetbrains.annotations.NotNull;
 
@@ -34,15 +31,13 @@ public class ModImportant {
     }
 
     public static ItemStack getItemStackFromSpell(String spell){
-        for (Identifier id : ModItems.IncantationItems)
-            if (((IncantationItem) Registries.ITEM.get(id)).getSpellName().equals(spell)) return new ItemStack(Registries.ITEM.get(id));
-        return null;
+        return new ItemStack(Registries.ITEM.get(new Identifier(Lulasmod.MOD_ID, spell)));
     }
 
     public static void updateClientSpellList(MinecraftServer server){
         for (ServerPlayerEntity player : server.getPlayerManager().getPlayerList()){
             PacketByteBuf buf = PacketByteBufs.create();
-            LinkedList<String> list = new LinkedList<>(TagManager.readList(player, ModTagCategories.SPELLS));
+            LinkedList<String> list = new LinkedList<>(TagManager.readList(Lulasmod.MOD_ID, player, ModTagCategories.SPELLS));
             Map<Integer, ItemStack> map = new HashMap<>();
             for (int i = 0; i < list.size(); i++) map.put(i, getItemStackFromSpell(list.get(i)));
             buf.writeMap(map, PacketByteBuf::writeInt, PacketByteBuf::writeItemStack);

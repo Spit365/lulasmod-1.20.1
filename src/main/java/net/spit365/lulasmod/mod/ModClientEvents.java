@@ -9,16 +9,12 @@ import net.minecraft.network.PacketByteBuf;
 import net.minecraft.util.Identifier;
 import net.spit365.lulasmod.Lulasmod;
 import net.spit365.lulasmod.custom.item.seal.SealItem;
-import net.spit365.lulasmod.tag.TagManager;
-
-import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 
 public class ModClientEvents {
     private static final Identifier SPELL_HOTBAR_TEXTURE = new Identifier(Lulasmod.MOD_ID, "textures/gui/spell_hotbar.png");
-    public static LinkedList<ItemStack> spellList = new LinkedList<>();
+    public static final LinkedList<ItemStack> spellList = new LinkedList<>();
 
     public static void init(){
         HudRenderCallback.EVENT.register((context, v) -> {

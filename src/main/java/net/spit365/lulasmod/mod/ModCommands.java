@@ -22,31 +22,31 @@ public class ModCommands {
                     PlayerEntity player = context.getSource().getPlayer();
                     if (player != null && player.getCommandTags().contains("tailed")){
                         player.giveItemStack(new ItemStack(ModItems.HELLISH_SEAL));
-                        for (Identifier id : IncantationItems) player.giveItemStack(new ItemStack(Registries.ITEM.get(id)));
+                        for (Identifier id : IncantationItems) if (Registries.ITEM.get(id) != ModItems.HIGHLIGHTER_INCANTATION) player.giveItemStack(new ItemStack(Registries.ITEM.get(id)));
                     }else context.getSource().sendFeedback(() -> Text.literal("You cannot use this action"), false);
                     return 1;
                 })
 
             );
             dispatcher.register(literal("tag-manager")
-                .then(literal("put").then(CommandManager.argument("category", StringArgumentType.word()).then(CommandManager.argument("value", StringArgumentType.word()).executes(commandContext -> {
-                    TagManager.put(Objects.requireNonNull(commandContext.getSource().getEntity()), new TagCategory(StringArgumentType.getString(commandContext, "category")), StringArgumentType.getString(commandContext, "value"));
+                .then(literal("put").then(CommandManager.argument("namespace", StringArgumentType.word()).then(CommandManager.argument("category", StringArgumentType.word()).then(CommandManager.argument("value", StringArgumentType.word()).executes(commandContext -> {
+                    TagManager.put(StringArgumentType.getString(commandContext, "namespace"), Objects.requireNonNull(commandContext.getSource().getEntity()), new TagCategory(StringArgumentType.getString(commandContext, "category")), StringArgumentType.getString(commandContext, "value"));
                     commandContext.getSource().sendFeedback(() -> Text.literal("You have been tagged in category " + StringArgumentType.getString(commandContext, "category") + " with value " + StringArgumentType.getString(commandContext, "value")), true);
                     return 0;
                     })
-                ))).then(literal("read").then(CommandManager.argument("category", StringArgumentType.word()).executes(commandContext -> {
-                    commandContext.getSource().sendFeedback(() -> Text.literal("Category " + StringArgumentType.getString(commandContext, "category") + " contains " + TagManager.read(Objects.requireNonNull(commandContext.getSource().getEntity()), new TagCategory(StringArgumentType.getString(commandContext, "category")))), true);
+                )))).then(literal("read").then(CommandManager.argument("namespace", StringArgumentType.word()).then(CommandManager.argument("category", StringArgumentType.word()).executes(commandContext -> {
+                    commandContext.getSource().sendFeedback(() -> Text.literal("Category " + StringArgumentType.getString(commandContext, "category") + " contains " + TagManager.read(StringArgumentType.getString(commandContext, "namespace"), Objects.requireNonNull(commandContext.getSource().getEntity()), new TagCategory(StringArgumentType.getString(commandContext, "category")))), true);
                     return 0;
                     })
-                )).then(literal("remove").then(CommandManager.argument("category", StringArgumentType.word()).executes(commandContext -> {
-                    TagManager.remove(Objects.requireNonNull(commandContext.getSource().getEntity()), new TagCategory(StringArgumentType.getString(commandContext, "category")));
+                ))).then(literal("remove").then(CommandManager.argument("namespace", StringArgumentType.word()).then(CommandManager.argument("category", StringArgumentType.word()).executes(commandContext -> {
+                    TagManager.remove(StringArgumentType.getString(commandContext, "namespace"), Objects.requireNonNull(commandContext.getSource().getEntity()), new TagCategory(StringArgumentType.getString(commandContext, "category")));
                     commandContext.getSource().sendFeedback(() -> Text.literal("All tags in category " + StringArgumentType.getString(commandContext, "category") + " have been removed"), true);
                     return 0;
                 })
-                )).then(literal("check").then(CommandManager.argument("category", StringArgumentType.word()).then(CommandManager.argument("value", StringArgumentType.word()).executes(commandContext -> {
-                    commandContext.getSource().sendFeedback(() -> Text.literal("Category " + StringArgumentType.getString(commandContext, "category") + (TagManager.check(Objects.requireNonNull(commandContext.getSource().getEntity()), new TagCategory(StringArgumentType.getString(commandContext, "category")), StringArgumentType.getString(commandContext, "value"))? "contains" : "does not contain") + StringArgumentType.getString(commandContext, "value")), true);
+                ))).then(literal("check").then(CommandManager.argument("namespace", StringArgumentType.word()).then(CommandManager.argument("category", StringArgumentType.word()).then(CommandManager.argument("value", StringArgumentType.word()).executes(commandContext -> {
+                    commandContext.getSource().sendFeedback(() -> Text.literal("Category " + StringArgumentType.getString(commandContext, "category") + (TagManager.check(StringArgumentType.getString(commandContext, "namespace"), Objects.requireNonNull(commandContext.getSource().getEntity()), new TagCategory(StringArgumentType.getString(commandContext, "category")), StringArgumentType.getString(commandContext, "value"))? "contains" : "does not contain") + StringArgumentType.getString(commandContext, "value")), true);
                     return 0;
-                }))))
+                })))))
             );
         });
     }

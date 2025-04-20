@@ -1,9 +1,10 @@
 {
+	"credit": "Made with Blockbench",
 	"texture_size": [16, 20],
 	"textures": {
-		"0": "lulasmod:item/incantation-base",
-		"1": "lulasmod:item/inc_o_smoke",
-		"particle": "lulasmod:item/incantation-base"
+		"0": "lulasmod:item/inc_b",
+		"1": "lulasmod:item/inc_o_empty",
+		"particle": "lulasmod:item/inc_b"
 	},
 	"elements": [
 		{
@@ -61,11 +62,12 @@
 	],
 	"display": {
 		"thirdperson_righthand": {
-			"translation": [0, 8.25, 0],
-			"scale": [0, 0, 0]
+			"translation": [-0.25, -0.5, -0.25],
+			"scale": [0.5, 0.5, 0.5]
 		},
 		"thirdperson_lefthand": {
-			"scale": [0, 0, 0]
+			"translation": [0.25, 0, -0.25],
+			"scale": [0.5, 0.5, 0.5]
 		},
 		"firstperson_righthand": {
 			"rotation": [0, 180, 0],
@@ -81,8 +83,12 @@
 			"translation": [0, 4.25, 0]
 		},
 		"gui": {
-			"rotation": [22.5, 135, 0],
-			"translation": [0, 2.25, 0]
+			"rotation": [22.5, 138, 0],
+			"translation": [0, 2.25, 0],
+			"scale": [1.1, 1.1, 1.1]
+		},
+		"head": {
+			"translation": [-0.5, 2.5, -7.5]
 		},
 		"fixed": {
 			"translation": [0, 2, 0]

@@ -18,9 +18,9 @@ public class ModEntities {
                 .setDimensions(0.25F, 0.25F)
                 .maxTrackingRange(4)
                 .trackingTickInterval(10)
-    );public static final EntityType<FlameSlingEntity> FLAME_SLING = register(
-        "flame_sling",
-        EntityType.Builder.<FlameSlingEntity>create(FlameSlingEntity::new, SpawnGroup.MISC)
+    );public static final EntityType<MalignityEntity> MALIGNITY = register(
+        "malignity",
+        EntityType.Builder.<MalignityEntity>create(MalignityEntity::new, SpawnGroup.MISC)
                 .setDimensions(1.0F, 1.0F)
                 .maxTrackingRange(4)
                 .trackingTickInterval(10)
@@ -31,6 +31,6 @@ public class ModEntities {
     }
     public static void init(){
        EntityRendererRegistry.register(ModEntities.SMOKE_BOMB, FlyingItemEntityRenderer::new);
-       EntityRendererRegistry.register(ModEntities.FLAME_SLING, FlyingItemEntityRenderer::new);
+       EntityRendererRegistry.register(ModEntities.MALIGNITY, FlyingItemEntityRenderer::new);
     }
 }

@@ -18,8 +18,18 @@ public class ModDamageSources {
                 .orElseThrow();
         return new DamageSource(damageType);
     }
+    public static DamageSource BLOODSUCKING(Entity attacker) {
+        RegistryEntry<DamageType> damageType = attacker.getWorld().getRegistryManager()
+                .get(RegistryKeys.DAMAGE_TYPE)
+                .getEntry(ModDamageSources.BLOODSUCKING())
+                .orElseThrow();
+        return new DamageSource(damageType);
+    }
 
     public static RegistryKey<DamageType> ETERNAL_WINTER() {
         return RegistryKey.of(RegistryKeys.DAMAGE_TYPE, new Identifier(Lulasmod.MOD_ID, "eternal_winter"));
+    }
+    public static RegistryKey<DamageType> BLOODSUCKING() {
+        return RegistryKey.of(RegistryKeys.DAMAGE_TYPE, new Identifier(Lulasmod.MOD_ID, "bloodsucking"));
     }
 }

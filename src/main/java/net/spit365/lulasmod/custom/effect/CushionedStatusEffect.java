@@ -4,8 +4,8 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectCategory;
 
-public class BubbleStatusEffect extends StatusEffect {
-  public BubbleStatusEffect() {
+public class CushionedStatusEffect extends StatusEffect {
+  public CushionedStatusEffect() {
     super(StatusEffectCategory.BENEFICIAL,0x00ccff);
   }
   @Override

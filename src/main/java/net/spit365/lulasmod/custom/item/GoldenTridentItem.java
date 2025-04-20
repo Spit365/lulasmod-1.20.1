@@ -27,7 +27,6 @@ public class GoldenTridentItem extends TridentItem {
         super(settings);
     }
 
-    public static final List<LivingEntity> impaledEntities = new LinkedList<>();
     public static final List<ArrowEntity> arrows = new LinkedList<>();
 
     @Override
@@ -44,7 +43,7 @@ public class GoldenTridentItem extends TridentItem {
             }
             if (selectedEntity != null){
                 selectedEntity.requestTeleport(selectedEntity.getX(), selectedEntity.getY() + 5, selectedEntity.getZ());
-                TagManager.put(player, ModTagCategories.ATTACKER, String.valueOf(selectedEntity.getId()));
+                TagManager.put(Lulasmod.MOD_ID, player, ModTagCategories.VICTIM, String.valueOf(selectedEntity.getId()));
                 player.getItemCooldownManager().set(this, 200);
                 if (!player.isCreative()) player.getStackInHand(hand).damage(100, player, p -> p.sendToolBreakStatus(player.getActiveHand()));
                 return TypedActionResult.success(player.getStackInHand(hand));
@@ -54,7 +53,7 @@ public class GoldenTridentItem extends TridentItem {
     }
     public static void impale(MinecraftServer server){
         for (PlayerEntity player : server.getPlayerManager().getPlayerList()){
-            String read = TagManager.read(player, ModTagCategories.ATTACKER);
+            String read = TagManager.read(Lulasmod.MOD_ID, player, ModTagCategories.VICTIM);
             if (read != null){
                 Entity victim = player.getWorld().getEntityById(Integer.parseInt(read));
                 if (victim != null && victim.isAlive()) {
@@ -67,12 +66,12 @@ public class GoldenTridentItem extends TridentItem {
                         arrow.setNoGravity(true);
                         arrow.pickupType = PersistentProjectileEntity.PickupPermission.DISALLOWED;
                         arrow.setDamage(Double.MAX_VALUE);
-                        TagManager.put(arrow, ModTagCategories.DAMAGE_DELAY, "less");
+                        TagManager.put(Lulasmod.MOD_ID, arrow, ModTagCategories.DAMAGE_DELAY, "0");
                         arrow.requestTeleport(pos.getX(), pos.getY(), pos.getZ());
                         arrow.setCritical(true);
                         arrow.addVelocity(pos.subtract(victim.getPos()).multiply(-0.5));
                     }else victim.kill();
-                } else {for (ArrowEntity arrow : arrows) arrow.kill(); TagManager.remove(player, ModTagCategories.ATTACKER);}
+                } else {for (ArrowEntity arrow : arrows) arrow.kill(); TagManager.remove(Lulasmod.MOD_ID, player, ModTagCategories.VICTIM);}
             }
         }
     }

@@ -27,14 +27,14 @@ public class ModItems {
     public static final Item BLOODSUCKING_SEAL              = register("bloodsucking_seal",     new BloodsuckingSeal(new Item.Settings().maxCount(1)),true);
     public static final Item CREATIVE_SEAL                  = register("creative_seal",         new CreativeSeal(new Item.Settings().maxCount(1)),true);
 
-    public static final Item FROST_INCANTATION              = register("eternal_winter_inc",    new IncantationItem(new Item.Settings().maxCount(1), "eternal_winter"),false);
-    public static final Item HOME_INCANTATION               = register("home_inc",              new IncantationItem(new Item.Settings().maxCount(1), "remembrance_of_a_safe_haven"),false);
-    public static final Item SMOKE_INCANTATION              = register("smoke_inc",             new IncantationItem(new Item.Settings().maxCount(1), "assassin's_approach"),false);
-    public static final Item HIGHLIGHTER_INCANTATION        = register("highlighter_inc",       new IncantationItem(new Item.Settings().maxCount(1), "highlighter"),false);
-    public static final Item POCKET_INCANTATION             = register("pocket_inc",            new IncantationItem(new Item.Settings().maxCount(1), "realm_of_the_alternates"),false);
-    public static final Item DASH_INCANTATION               = register("dash_inc",              new IncantationItem(new Item.Settings().maxCount(1), "swift_withdrawal"),false);
-    public static final Item FIRE_INCANTATION               = register("fire_inc",              new IncantationItem(new Item.Settings().maxCount(1), "flame_sling"),false);
-    public static final Item HEAL_INCANTATION               = register("heal_inc",              new IncantationItem(new Item.Settings().maxCount(1), "curing_artifact"),false);
+    public static final Item FROST_INCANTATION              = register("treachery_judecca",    new IncantationItem(new Item.Settings().maxCount(1)),false);
+    public static final Item FIRE_INCANTATION               = register("malignity",              new IncantationItem(new Item.Settings().maxCount(1)),false);
+    public static final Item DASH_INCANTATION               = register("purloining",              new IncantationItem(new Item.Settings().maxCount(1)),false);
+    public static final Item SMOKE_INCANTATION              = register("deceit",             new IncantationItem(new Item.Settings().maxCount(1)),false);
+    public static final Item HEAL_INCANTATION               = register("appeasing",              new IncantationItem(new Item.Settings().maxCount(1)),false);
+    public static final Item HOME_INCANTATION               = register("wickedness",              new IncantationItem(new Item.Settings().maxCount(1)),false);
+    public static final Item POCKET_INCANTATION             = register("heresies",            new IncantationItem(new Item.Settings().maxCount(1)),false);
+    public static final Item HIGHLIGHTER_INCANTATION        = register("highlighter_inc",       new IncantationItem(new Item.Settings().maxCount(1)),true);
 
     private static Item register(String name, Item item, Boolean showInCreativeTab) {
         if (showInCreativeTab) ModItemList.add(Identifier.of(Lulasmod.MOD_ID, name));

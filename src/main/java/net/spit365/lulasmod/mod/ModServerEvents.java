@@ -2,12 +2,11 @@ package net.spit365.lulasmod.mod;
 
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.block.Blocks;
-import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.fabricmc.fabric.api.event.server.ServerTickCallback;
+import net.spit365.lulasmod.Lulasmod;
 import net.spit365.lulasmod.custom.item.GoldenTridentItem;
 import net.spit365.lulasmod.tag.TagManager;
 
@@ -47,8 +46,8 @@ public class ModServerEvents {
             GoldenTridentItem.impale(minecraftServer);
             ModImportant.updateClientSpellList(minecraftServer);
         });
-        ServerPlayNetworking.registerGlobalReceiver(ModPackets.CYCLE_PLAYER_SPELL, (minecraftServer, serverPlayerEntity, serverPlayNetworkHandler, packetByteBuf, packetSender) -> {
-            TagManager.cycle(serverPlayerEntity, ModTagCategories.SPELLS);
-        });
+        ServerPlayNetworking.registerGlobalReceiver(ModPackets.CYCLE_PLAYER_SPELL, (a, player, b, c, d) ->
+                TagManager.cycle(Lulasmod.MOD_ID, player, ModTagCategories.SPELLS)
+        );
     }
 }

@@ -8,7 +8,7 @@ public class BloodsuckingSeal extends SealItem{
         super(settings);
     }
 
-    @Override protected Boolean canUse(PlayerEntity player) {player.damage(ModDamageSources.ETERNAL_WINTER(player), 1); return true;}
+    @Override protected Boolean canUse(PlayerEntity player) {player.damage(ModDamageSources.BLOODSUCKING(player), 1); return true;}
     @Override protected Float efficiencyMultiplier() {return 2f;}
     @Override protected Integer cooldownMultiplier() {return 1;}
 }
