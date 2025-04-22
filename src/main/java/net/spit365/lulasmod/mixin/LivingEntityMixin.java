@@ -5,8 +5,8 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
+import net.minecraft.util.Identifier;
 import net.minecraft.world.World;
-import net.spit365.lulasmod.Lulasmod;
 import net.spit365.lulasmod.tag.TagManager;
 import net.spit365.lulasmod.mod.ModDamageSources;
 import net.spit365.lulasmod.mod.ModTagCategories;
@@ -29,8 +29,8 @@ public abstract class LivingEntityMixin extends Entity implements Attackable {
             source.getTypeRegistryEntry().matchesKey(ModDamageSources.BLOODSUCKING())
         )   timeUntilRegen = 0;
         if (source.getAttacker() != null) {
-            String read = TagManager.read(Lulasmod.MOD_ID, source.getAttacker(), ModTagCategories.DAMAGE_DELAY);
-            if (read != null) timeUntilRegen = Integer.parseInt(read);
+            Identifier read = TagManager.read(source.getAttacker(), ModTagCategories.DAMAGE_DELAY);
+            if (read != null) timeUntilRegen = Integer.parseInt(read.getPath());
         }
     }
 }

@@ -1,54 +1,62 @@
 package net.spit365.lulasmod.tag;
 
 import net.minecraft.entity.Entity;
-import java.util.Arrays;
+import net.minecraft.util.Identifier;
 import java.util.LinkedList;
-import java.util.List;
 
 public class TagManager {
 
-    private static String category(String namespace, TagCategory category){return namespace + category.identifier() + ": ";}
+    private static String c(TagCategory category){return category.identifier() + ": ";}
 
-    public static void put(String namespace, Entity entity, TagCategory category, String value){
-        remove(namespace, entity, category);
-        entity.addCommandTag(category(namespace, category) + value);
+    public static void put(Entity entity, TagCategory category, Identifier value){
+        remove(entity, category);
+        entity.addCommandTag(c(category) + value.getNamespace() + ":" + value.getPath());
     }
-    public static void put(String namespace, Entity entity, TagCategory category, List<String> list){
-        remove(namespace, entity, category);
-        StringBuilder stringBuilder = new StringBuilder(category(namespace, category));
-        for (String string : list){
-            stringBuilder.append("::").append(string);
+    public static void put(Entity entity, TagCategory category, LinkedList<Identifier> list){
+        remove(entity, category);
+        StringBuilder stringBuilder = new StringBuilder(c(category));
+        for (Identifier id : list){
+            stringBuilder.append(";").append(id);
         }
         entity.addCommandTag(stringBuilder.toString());
     }
-    public static String read(String namespace, Entity entity, TagCategory category){
+    public static Identifier read(Entity entity, TagCategory category){
         for (String tag : entity.getCommandTags()){
-            if (tag.contains(category(namespace, category))){
-                return tag.replace(category(namespace, category), "");
+            if (tag.contains(c(category))){
+                String[] s = tag.replace(c(category), "").split(":");
+                return new Identifier(s[0], s[1]);
             }
         }
         return null;
     }
-    public static LinkedList<String> readList(String namespace, Entity entity, TagCategory category){
-        if (read(namespace, entity, category) != null) {
-            LinkedList<String> list = new LinkedList<>(Arrays.asList(read(namespace, entity, category).split("::")));
-            list.remove(0);
-            return list;
-        }else return new LinkedList<>();
+    public static LinkedList<Identifier> readList(Entity entity, TagCategory category){
+        for (String tag : entity.getCommandTags()){
+            if (tag.contains(c(category))) {
+                LinkedList<Identifier> list = new LinkedList<>();
+                for (String s1 : tag.replace(c(category), "").split(";")){
+                    String[] s2 = s1.split(":");
+                    if (s2.length == 2) {
+                        list.add(new Identifier(s2[0], s2[1]));
+                    }
+                }
+                return list;
+            }
+        }
+        return new LinkedList<>();
     }
-    public static Boolean check(String namespace, Entity entity, TagCategory category, String value){
-        String string = read(namespace, entity, category);
-        if (string == null) return false; else return string.equals(value);
+    public static Boolean check(Entity entity, TagCategory category, Identifier value){
+        Identifier id = read(entity, category);
+        if (id == null) return false; else return id.equals(value);
     }
-    public static void remove(String namespace, Entity entity, TagCategory category){
-        entity.getCommandTags().removeIf(tag -> tag.contains(category(namespace, category)));
+    public static void remove(Entity entity, TagCategory category){
+        entity.getCommandTags().removeIf(tag -> tag.contains(c(category)));
     }
-    public static void cycle(String namespace, Entity entity, TagCategory category) {
-        LinkedList<String> list = new LinkedList<>(readList(namespace, entity, category));
+    public static void cycle(Entity entity, TagCategory category) {
+        LinkedList<Identifier> list = readList(entity, category);
         if (!list.isEmpty()) {
-            String first = list.pollFirst();
+            Identifier first = list.pollFirst();
             list.addLast(first);
-            put(namespace, entity, category, list);
+            put(entity, category, list);
         }
     }
 }

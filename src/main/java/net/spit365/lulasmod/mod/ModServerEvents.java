@@ -6,8 +6,8 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.fabricmc.fabric.api.event.server.ServerTickCallback;
-import net.spit365.lulasmod.Lulasmod;
 import net.spit365.lulasmod.custom.item.GoldenTridentItem;
+import net.spit365.lulasmod.custom.item.seal.CatalystItem;
 import net.spit365.lulasmod.tag.TagManager;
 
 public class ModServerEvents {
@@ -46,8 +46,8 @@ public class ModServerEvents {
             GoldenTridentItem.impale(minecraftServer);
             ModImportant.updateClientSpellList(minecraftServer);
         });
-        ServerPlayNetworking.registerGlobalReceiver(ModPackets.CYCLE_PLAYER_SPELL, (a, player, b, c, d) ->
-                TagManager.cycle(Lulasmod.MOD_ID, player, ModTagCategories.SPELLS)
-        );
+        ServerPlayNetworking.registerGlobalReceiver(ModPackets.CYCLE_PLAYER_SPELL, (a, player, b, c, d) -> {
+            if (player.getMainHandStack().getItem() instanceof CatalystItem || player.getOffHandStack().getItem() instanceof CatalystItem) TagManager.cycle(player, ModTagCategories.SPELLS);
+        });
     }
 }

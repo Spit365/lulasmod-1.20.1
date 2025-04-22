@@ -19,6 +19,7 @@ public class Lulasmod implements ModInitializer {
 		ModPackets.init();
 		ModServerEvents.init();
 		ModCommands.init();
+		ModDimensions.init();
 		LOGGER.info("Initializing for " + Lulasmod.MOD_ID);
 	}
 }
