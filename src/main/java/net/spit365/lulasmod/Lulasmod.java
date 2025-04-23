@@ -16,6 +16,7 @@ public class Lulasmod implements ModInitializer {
 		ModItemGroups.init();
 		ModEntities.init();
 		ModStatusEffects.init();
+		ModParticles.init();
 		ModPackets.init();
 		ModServerEvents.init();
 		ModCommands.init();
