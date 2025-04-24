@@ -1,7 +1,3 @@
-#get a certain tag to connect data-driven and mod
-player.getCommandTags().contains("tag");
-
-
 #username
 MEGAMASTER75983
 
@@ -12,28 +8,14 @@ private static Item registerItem(String name, Item item, Boolean showInCreativeT
         return Registry.register(Registries.ITEM, Identifier.of(Lulasmod.MOD_ID, name), item);
     }
 
-
 #default item group
-public static final ItemGroup LULAS_GROUP = Registry.register(Registries.ITEM_GROUP, new Identifier(Lulasmod.MOD_ID, "lulas_group"), FabricItemGroup.builder().displayName(Text.translatable("itemgroup.lulas")).icon(() -> new ItemStack(Items.AIR)).entries((displayContext, entries) -> {
+public static final ItemGroup ITEM_GROUP = Registry.register(Registries.ITEM_GROUP, new Identifier(Lulasmod.MOD_ID, "item_group"), FabricItemGroup.builder().displayName(Text.translatable("itemgroup.lulas")).icon(() -> new ItemStack(Items.AIR)).entries((displayContext, entries) -> {
         for (Identifier id : ModItemList){entries.add(Registries.ITEM.get(id));}
     }).build());
 
 
 #empty init method
 public static void init(){}
-
-
-#data generator
-fabricApi {
-	configureDataGeneration {client = true}
-}
-"fabric-datagen": ["net.spit365.lulasmod.LulasmodDataGenerator"]
-import net.fabricmc.fabric.api.datagen.v1.DataGeneratorEntrypoint;
-import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator;
-public class LulasmodDataGenerator implements DataGeneratorEntrypoint {
-	@Override
-	public void onInitializeDataGenerator(FabricDataGenerator fabricDataGenerator) {}
-}
 
 
 #particle registration
@@ -45,3 +27,6 @@ public class ModParticles {
         ParticleFactoryRegistry.getInstance().register(SCRATCH, SweepAttackParticle.Factory::new);
     }
 }
+
+
+#todo

@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " # ",
+    "#E#",
+    " # "
+  ],
+  "key": {
+    "#": {
+      "item": "minecraft:ender_eye"
+    },
+    "E": {
+      "item": "minecraft:enchanted_book"
+    }
+  },
+  "result": {
+    "item": "lulasmod:sharp_tome",
+    "count": 1
+  }
+}

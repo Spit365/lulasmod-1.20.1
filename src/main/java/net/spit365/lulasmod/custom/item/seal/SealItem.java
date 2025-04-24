@@ -6,7 +6,6 @@ import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.particle.ParticleTypes;
-import net.minecraft.registry.RegistryKey;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
@@ -57,15 +56,13 @@ public abstract class SealItem extends CatalystItem {
             if (spellSelected(player, ModItems.DASH_INCANTATION)) {
                 if (!player.hasStatusEffect(StatusEffects.SLOWNESS)) {
                     Identifier id = TagManager.read(player, ModTagCategories.DASH_SPELL);
-                    if (id == null) TagManager.put(player, ModTagCategories.DASH_SPELL, new Identifier(Lulasmod.MOD_ID, String.valueOf(5 * cooldownMultiplier())));
-                    String read = id.getPath();
-                    if (read.equals("1")) {
-                        player.getItemCooldownManager().set(this, 50);
-                        TagManager.put(player, ModTagCategories.DASH_SPELL, new Identifier(Lulasmod.MOD_ID, String.valueOf(5 * cooldownMultiplier())));
-                    } else {
-                        player.getItemCooldownManager().set(this, 2);
-                        TagManager.put(player, ModTagCategories.DASH_SPELL, new Identifier(Lulasmod.MOD_ID, String.valueOf(Math.min(5 * cooldownMultiplier(), Integer.parseInt(read)) - 1)));
+                    if (id == null){
+                        id = new Identifier(Lulasmod.MOD_ID, String.valueOf(5 * cooldownMultiplier()));
+                        TagManager.put(player, ModTagCategories.DASH_SPELL, id);
                     }
+                    String read = id.getPath();
+                    player.getItemCooldownManager().set(this, (read.equals("1")? 50 : 2));
+                    TagManager.put(player, ModTagCategories.DASH_SPELL, new Identifier(Lulasmod.MOD_ID, String.valueOf((read.equals("1")? 5 * cooldownMultiplier() : Math.min(5 * cooldownMultiplier(), Integer.parseInt(read)) - 1))));
                     player.addVelocity(player.getRotationVec(1).normalize().add(0, 0.25, 0));
                     player.velocityModified = true;
                     ((ServerWorld) world).spawnParticles(ParticleTypes.CLOUD, player.getX(), player.getY(), player.getZ(), 5, 0.2, 0.2, 0.2, 0);
@@ -83,30 +80,25 @@ public abstract class SealItem extends CatalystItem {
                 player.addStatusEffect(new StatusEffectInstance(StatusEffects.REGENERATION, Math.round(efficiencyMultiplier()) *20, 100));
             }
             if (spellSelected(player, ModItems.HOME_INCANTATION)){
-                player.getItemCooldownManager().set(this, 600 / cooldownMultiplier());
+                player.getItemCooldownManager().set(this, 300 / cooldownMultiplier());
                 BlockPos pos = ((ServerPlayerEntity) player).getSpawnPointPosition();
                 if (pos == null){pos = world.getSpawnPos();}
                 player.requestTeleport(pos.getX(), pos.getY(), pos.getZ());
                 Lulasmod.LOGGER.info("{} was sent home to {} {} {} (with incantation)", player.getName().getString(), pos.getX(), pos.getY(), pos.getZ());
             }
             if (spellSelected(player, ModItems.POCKET_INCANTATION)){
-                if (world.getRegistryKey().equals(ModDimensions.POCKET_DIMENSION)) {
-                    player.teleport(Objects.requireNonNull(player.getServer()).getWorld(World.OVERWORLD), player.getX(), player.getY(), player.getZ(), Set.of() , player.getYaw(), player.getPitch());
-                }else{
-                    RegistryKey<World> worldRegistryKey = null;
-                    for (RegistryKey<World> worldKeys : Objects.requireNonNull(player.getServer()).getWorldRegistryKeys()){if (
-                            worldKeys.equals(ModDimensions.POCKET_DIMENSION)) worldRegistryKey = worldKeys;
-                    }
-                    if (worldRegistryKey == null)
-                        Lulasmod.LOGGER.error("could not find registry key: {}", ModDimensions.POCKET_DIMENSION);
-                    else player.teleport(player.getServer().getWorld(worldRegistryKey), player.getX(), player.getY(), player.getZ(), Set.of() , player.getYaw(), player.getPitch());
-                }
-                player.getItemCooldownManager().set(this, 20 / cooldownMultiplier());
+                player.getItemCooldownManager().set(this, 300 / cooldownMultiplier());
+                if (!player.teleport(Objects.requireNonNull(player.getServer()).getWorld((
+                        world.getRegistryKey().equals(ModDimensions.POCKET_DIMENSION)?
+                            World.OVERWORLD :
+                            ModDimensions.POCKET_DIMENSION
+                        )), player.getX(), player.getY(), player.getZ(), Set.of() , player.getYaw(), player.getPitch()))
+                    Lulasmod.LOGGER.error("Could not perform teleport. Registry key: {}", ModDimensions.POCKET_DIMENSION);
             }
             if (spellSelected(player, ModItems.HIGHLIGHTER_INCANTATION)) {
-                boolean isPlayerGlowing = !player.isGlowing();
-                world.playSound(null, player.getBlockPos(), (isPlayerGlowing ? BLOCK_BEACON_ACTIVATE : BLOCK_BEACON_DEACTIVATE), SoundCategory.PLAYERS);
-                for (PlayerEntity playerEntity : world.getPlayers()){playerEntity.setGlowing(isPlayerGlowing);}
+                boolean playerGlowing = !player.isGlowing();
+                world.playSound(null, player.getBlockPos(), (playerGlowing ? BLOCK_BEACON_ACTIVATE : BLOCK_BEACON_DEACTIVATE), SoundCategory.PLAYERS);
+                for (PlayerEntity playerEntity : world.getPlayers()){playerEntity.setGlowing(playerGlowing);}
             }
 
 

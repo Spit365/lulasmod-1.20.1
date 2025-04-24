@@ -12,23 +12,23 @@ import net.minecraft.util.TypedActionResult;
 import net.minecraft.world.World;
 
 public class SharpTomeItem extends Item{
-    public SharpTomeItem(Settings settings) {
-        super(settings);
-    }
+    public SharpTomeItem(Settings settings) {super(settings);}
 
     @Override
     public TypedActionResult<ItemStack> use(World world, PlayerEntity player, Hand hand) {
         ItemStack stack = player.getStackInHand(hand);
-        if (!world.isClient() && (getPaper(player) != null || player.isCreative() || EnchantmentHelper.getLevel(Enchantments.INFINITY, stack) > 0)){
+        ItemStack paper = getPaper(player);
+        boolean requirePaper = player.isCreative() || EnchantmentHelper.getLevel(Enchantments.INFINITY, stack) > 0;
+        if (!world.isClient() && (paper != null || !requirePaper)){
             player.getItemCooldownManager().set(this, 5);
+            if (requirePaper) paper.decrement(1);
             ArrowEntity arrow = new ArrowEntity(world, player);
-            world.spawnEntity(arrow);
             arrow.pickupType = PersistentProjectileEntity.PickupPermission.CREATIVE_ONLY;
             arrow.addVelocity(player.getRotationVec(1).normalize().multiply(2));
             if (EnchantmentHelper.getLevel(Enchantments.POWER, stack) > 0) arrow.setDamage(arrow.getDamage() + (double)EnchantmentHelper.getLevel(Enchantments.POWER, stack) * 0.5 + 0.5);
             if (EnchantmentHelper.getLevel(Enchantments.PUNCH, stack) > 0) arrow.setPunch(EnchantmentHelper.getLevel(Enchantments.PUNCH, stack));
             if (EnchantmentHelper.getLevel(Enchantments.FLAME, stack) > 0) arrow.setOnFireFor(100);
-            if (!(player.isCreative() || EnchantmentHelper.getLevel(Enchantments.INFINITY, stack) > 0)) getPaper(player).decrement(1);
+            world.spawnEntity(arrow);
             player.incrementStat(Stats.USED.getOrCreateStat(this));
             return TypedActionResult.success(stack);
         }

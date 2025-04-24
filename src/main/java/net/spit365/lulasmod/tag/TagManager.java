@@ -35,9 +35,7 @@ public class TagManager {
                 LinkedList<Identifier> list = new LinkedList<>();
                 for (String s1 : tag.replace(c(category), "").split(";")){
                     String[] s2 = s1.split(":");
-                    if (s2.length == 2) {
-                        list.add(new Identifier(s2[0], s2[1]));
-                    }
+                    if (s2.length == 2) list.add(new Identifier(s2[0], s2[1]));
                 }
                 return list;
             }
