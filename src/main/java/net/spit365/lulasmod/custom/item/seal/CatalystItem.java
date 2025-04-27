@@ -7,11 +7,21 @@ import net.spit365.lulasmod.custom.item.SpellItem;
 import net.spit365.lulasmod.mod.ModTagCategories;
 import net.spit365.lulasmod.tag.TagManager;
 
-public class CatalystItem extends Item {
+public abstract class CatalystItem extends Item {
+
+    protected abstract Boolean canUse(PlayerEntity player);
+    protected abstract Float efficiencyMultiplier();
+    protected abstract Integer cooldownMultiplier();
+
     public CatalystItem(Settings settings) {
         super(settings);
     }
     protected Boolean spellSelected(PlayerEntity player, Item item) {
         return item instanceof SpellItem && TagManager.readList(player, ModTagCategories.SPELLS).get(0).equals(Registries.ITEM.getId(item));
+    }
+    protected Boolean spellSelected(PlayerEntity player, Item item, Integer cooldown) {
+        boolean bl = spellSelected(player, item);
+        if (bl) player.getItemCooldownManager().set(this, cooldown / cooldownMultiplier());
+        return bl;
     }
 }

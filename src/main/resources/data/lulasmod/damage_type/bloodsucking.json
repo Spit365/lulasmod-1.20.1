@@ -1,7 +1,7 @@
 {
   "message_id": "bloodsucking",
-  "scaling": "always",
-  "exhaustion": 1,
+  "scaling": "never",
+  "exhaustion": 5,
   "effects": "hurt",
   "death_message_type": "default"
 }

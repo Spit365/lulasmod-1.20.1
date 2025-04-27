@@ -24,8 +24,10 @@
 
   "entity.lulasmod.smoke_bomb": "Smoke Bomb",
   "entity.lulasmod.malignity": "Malignity",
+  "entity.lulasmod.golden_projectile": "Golden Projectile",
 
   "effect.lulasmod.cushioned": "Cushioned",
+  "effect.lulasmod.bleeding": "Bleeding",
 
   "death.attack.eternal_winter": "%1$s was frozen eternally",
   "death.attack.eternal_winter.player": "%1$s was frozen eternally by %2$s",

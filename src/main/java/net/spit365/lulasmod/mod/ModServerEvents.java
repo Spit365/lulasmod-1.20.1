@@ -47,7 +47,10 @@ public class ModServerEvents {
             ModImportant.updateClientSpellList(minecraftServer);
         });
         ServerPlayNetworking.registerGlobalReceiver(ModPackets.CYCLE_PLAYER_SPELL, (a, player, b, c, d) -> {
-            if (player.getMainHandStack().getItem() instanceof CatalystItem || player.getOffHandStack().getItem() instanceof CatalystItem) TagManager.cycle(player, ModTagCategories.SPELLS);
+            if (
+                player.getMainHandStack().getItem() instanceof CatalystItem ||
+                player.getOffHandStack().getItem() instanceof CatalystItem
+            ) TagManager.cycle(player, ModTagCategories.SPELLS);
         });
     }
 }

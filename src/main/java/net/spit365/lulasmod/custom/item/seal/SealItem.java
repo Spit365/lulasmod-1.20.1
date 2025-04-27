@@ -30,15 +30,10 @@ public abstract class SealItem extends CatalystItem {
         super(settings);
     }
 
-    protected abstract Boolean canUse(PlayerEntity player);
-    protected abstract Float efficiencyMultiplier();
-    protected abstract Integer cooldownMultiplier();
-
     @Override
     public TypedActionResult<ItemStack> use(World world, PlayerEntity player, Hand hand) {
         if (!world.isClient() && canUse(player)) {
-            if (spellSelected(player, ModItems.FROST_INCANTATION)) {
-                player.getItemCooldownManager().set(this, 3 / cooldownMultiplier());
+            if (spellSelected(player, ModItems.FROST_INCANTATION, 3)) {
                 Vec3d pos = player.getRotationVec(1).normalize().multiply(2).add(player.getPos().add(0 ,1, 0));
                 for (Entity entity : world.getOtherEntities(player, new Box(pos.add(1d, 1d, 1d), pos.add(-1d, -1d, -1d)))){
                     if (!(entity instanceof LivingEntity)) entity.discard();
@@ -46,8 +41,7 @@ public abstract class SealItem extends CatalystItem {
                 ((ServerWorld) world).spawnParticles(ParticleTypes.SNOWFLAKE, pos.getX(), pos.getY(), pos.getZ(), 50, 0.5, 0.5, 0.5, 0);
                 world.playSound(null, player.getBlockPos(), ITEM_FIRECHARGE_USE, SoundCategory.PLAYERS, 100.0f, 10.0f);
             }
-            if (spellSelected(player, ModItems.FIRE_INCANTATION)){
-                player.getItemCooldownManager().set(this, 300 / cooldownMultiplier());
+            if (spellSelected(player, ModItems.FIRE_INCANTATION, 300)){
                 Vec3d vec  = player.getRotationVec(1).normalize().multiply(3);
                 MalignityEntity flameSling = new MalignityEntity(world, player, vec.getX(), vec.getY(), vec.getZ(), Math.min(Math.round(efficiencyMultiplier() +2), 100));
                 flameSling.requestTeleport(flameSling.getX(), flameSling.getY() +1, flameSling.getZ());
@@ -68,26 +62,22 @@ public abstract class SealItem extends CatalystItem {
                     ((ServerWorld) world).spawnParticles(ParticleTypes.CLOUD, player.getX(), player.getY(), player.getZ(), 5, 0.2, 0.2, 0.2, 0);
                 } else player.getItemCooldownManager().set(this, 20);
             }
-            if (spellSelected(player, ModItems.SMOKE_INCANTATION)){
-                player.getItemCooldownManager().set(this, 5 / cooldownMultiplier());
+            if (spellSelected(player, ModItems.SMOKE_INCANTATION, 20)){
                 world.playSound(null, player.getBlockPos(), ENTITY_SPLASH_POTION_BREAK, SoundCategory.PLAYERS);
                 ((ServerWorld) world).spawnParticles(ParticleTypes.CAMPFIRE_SIGNAL_SMOKE, player.getPos().x, player.getPos().y + 1.0d, player.getPos().z, 269, 1.2d, 1.2d, 1.2d, 0.0d);
                 player.addStatusEffect(new StatusEffectInstance(StatusEffects.INVISIBILITY, 600, 1, false, false));
                 if (efficiencyMultiplier() > 1) player.addStatusEffect(new StatusEffectInstance(StatusEffects.STRENGTH, 1200, Math.min(Math.round(efficiencyMultiplier()) -1, 254), false, false));
             }
-            if (spellSelected(player, ModItems.HEAL_INCANTATION)){
-                player.getItemCooldownManager().set(this, 600 / cooldownMultiplier());
+            if (spellSelected(player, ModItems.HEAL_INCANTATION, 300)){
                 player.addStatusEffect(new StatusEffectInstance(StatusEffects.REGENERATION, Math.round(efficiencyMultiplier()) *20, 100));
             }
-            if (spellSelected(player, ModItems.HOME_INCANTATION)){
-                player.getItemCooldownManager().set(this, 300 / cooldownMultiplier());
+            if (spellSelected(player, ModItems.HOME_INCANTATION, 600)){
                 BlockPos pos = ((ServerPlayerEntity) player).getSpawnPointPosition();
                 if (pos == null){pos = world.getSpawnPos();}
                 player.requestTeleport(pos.getX(), pos.getY(), pos.getZ());
                 Lulasmod.LOGGER.info("{} was sent home to {} {} {} (with incantation)", player.getName().getString(), pos.getX(), pos.getY(), pos.getZ());
             }
-            if (spellSelected(player, ModItems.POCKET_INCANTATION)){
-                player.getItemCooldownManager().set(this, 300 / cooldownMultiplier());
+            if (spellSelected(player, ModItems.POCKET_INCANTATION, 600)){
                 if (!player.teleport(Objects.requireNonNull(player.getServer()).getWorld((
                         world.getRegistryKey().equals(ModDimensions.POCKET_DIMENSION)?
                             World.OVERWORLD :

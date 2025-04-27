@@ -5,10 +5,11 @@ import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;
 import net.spit365.lulasmod.Lulasmod;
-import net.spit365.lulasmod.custom.effect.CushionedStatusEffect;
+import net.spit365.lulasmod.custom.effect.*;
 
 public class ModStatusEffects {
     public static final StatusEffect CUSHIONED = register("cushioned", new CushionedStatusEffect());
+    public static final StatusEffect BLEEDING = register("bleeding", new BleedingStatusEffect());
 
     private static StatusEffect register(String id, StatusEffect entry) {
         return Registry.register(Registries.STATUS_EFFECT, new Identifier(Lulasmod.MOD_ID, id), entry);

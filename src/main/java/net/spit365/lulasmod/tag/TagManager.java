@@ -8,9 +8,15 @@ public class TagManager {
 
     private static String c(TagCategory category){return category.identifier() + ": ";}
 
+    public static void add(Entity entity, TagCategory category, Identifier value){
+        LinkedList<Identifier> list = readList(entity, category);
+        list.add(value);
+        put(entity, category, list);
+    }
+
     public static void put(Entity entity, TagCategory category, Identifier value){
         remove(entity, category);
-        entity.addCommandTag(c(category) + value.getNamespace() + ":" + value.getPath());
+        entity.addCommandTag(c(category) + value);
     }
     public static void put(Entity entity, TagCategory category, LinkedList<Identifier> list){
         remove(entity, category);
@@ -43,11 +49,16 @@ public class TagManager {
         return new LinkedList<>();
     }
     public static Boolean check(Entity entity, TagCategory category, Identifier value){
-        Identifier id = read(entity, category);
-        if (id == null) return false; else return id.equals(value);
+        LinkedList<Identifier> list = readList(entity, category);
+        return list.contains(value);
     }
     public static void remove(Entity entity, TagCategory category){
         entity.getCommandTags().removeIf(tag -> tag.contains(c(category)));
+    }
+    public static void remove(Entity entity, TagCategory category, Identifier value){
+        LinkedList<Identifier> list = readList(entity, category);
+        list.remove(value);
+        put(entity, category, list);
     }
     public static void cycle(Entity entity, TagCategory category) {
         LinkedList<Identifier> list = readList(entity, category);
