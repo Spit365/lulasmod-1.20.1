@@ -19,6 +19,7 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.spit365.lulasmod.Lulasmod;
 import net.spit365.lulasmod.custom.entity.MalignityEntity;
+import net.spit365.lulasmod.custom.entity.ParticleProjectileEntity;
 import net.spit365.lulasmod.mod.*;
 import net.spit365.lulasmod.tag.TagManager;
 import java.util.Objects;
@@ -70,6 +71,11 @@ public abstract class SealItem extends CatalystItem {
             }
             if (spellSelected(player, ModItems.HEAL_INCANTATION, 300)){
                 player.addStatusEffect(new StatusEffectInstance(StatusEffects.REGENERATION, Math.round(efficiencyMultiplier()) *20, 100));
+            }
+            if (spellSelected(player, ModItems.BLOOD_INCANTATION)){
+                ParticleProjectileEntity particleProjectile = new ParticleProjectileEntity(world, player, ModParticles.SCRATCH);
+                particleProjectile.setVelocity(player.getRotationVec(1).normalize().multiply(2));
+                world.spawnEntity(particleProjectile);
             }
             if (spellSelected(player, ModItems.HOME_INCANTATION, 600)){
                 BlockPos pos = ((ServerPlayerEntity) player).getSpawnPointPosition();

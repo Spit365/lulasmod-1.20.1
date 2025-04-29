@@ -8,13 +8,9 @@ import net.minecraft.registry.Registries;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
-import net.spit365.lulasmod.Lulasmod;
 import net.spit365.lulasmod.tag.TagCategory;
 import net.spit365.lulasmod.tag.TagManager;
-
-import java.util.Arrays;
 import java.util.Objects;
-import java.util.Random;
 
 import static net.minecraft.server.command.CommandManager.literal;
 import static net.spit365.lulasmod.mod.ModItems.IncantationItems;

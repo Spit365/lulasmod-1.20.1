@@ -1,8 +1,8 @@
 package net.spit365.lulasmod.custom.item.seal;
 
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.player.PlayerEntity;
-import net.spit365.lulasmod.mod.ModDamageSources;
 import net.spit365.lulasmod.mod.ModStatusEffects;
 
 public class BloodsuckingSeal extends SealItem{
@@ -10,11 +10,15 @@ public class BloodsuckingSeal extends SealItem{
         super(settings);
     }
 
-    @Override protected Boolean canUse(PlayerEntity player) {
-        StatusEffectInstance effectInstance = player.getStatusEffect(ModStatusEffects.BLEEDING);
+    public static void applyBleed(LivingEntity entity, Integer duration){
+        StatusEffectInstance effectInstance = entity.getStatusEffect(ModStatusEffects.BLEEDING);
         if (effectInstance != null){
-            player.setStatusEffect(new StatusEffectInstance(ModStatusEffects.BLEEDING, effectInstance.getDuration() + 100), player);
-        } else player.addStatusEffect(new StatusEffectInstance(ModStatusEffects.BLEEDING, 100));
+            entity.setStatusEffect(new StatusEffectInstance(ModStatusEffects.BLEEDING, effectInstance.getDuration() + duration), entity);
+        } else entity.addStatusEffect(new StatusEffectInstance(ModStatusEffects.BLEEDING, duration));
+    }
+
+    @Override protected Boolean canUse(PlayerEntity player) {
+        applyBleed(player, 100);
         return true;
     }
     @Override protected Float efficiencyMultiplier() {return 2f;}

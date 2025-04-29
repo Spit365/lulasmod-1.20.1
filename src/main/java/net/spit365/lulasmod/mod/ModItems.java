@@ -30,8 +30,9 @@ public class ModItems {
     public static final Item FROST_INCANTATION              = register("treachery_judecca",    new IncantationItem(new Item.Settings().maxCount(1)),false);
     public static final Item FIRE_INCANTATION               = register("malignity",              new IncantationItem(new Item.Settings().maxCount(1)),false);
     public static final Item DASH_INCANTATION               = register("purloining",              new IncantationItem(new Item.Settings().maxCount(1)),false);
-    public static final Item SMOKE_INCANTATION              = register("deceit",             new IncantationItem(new Item.Settings().maxCount(1)),false);
+    public static final Item SMOKE_INCANTATION              = register("guile",             new IncantationItem(new Item.Settings().maxCount(1)),false);
     public static final Item HEAL_INCANTATION               = register("appeasing",              new IncantationItem(new Item.Settings().maxCount(1)),false);
+    public static final Item BLOOD_INCANTATION              = register("emulations",              new IncantationItem(new Item.Settings().maxCount(1)),false);
     public static final Item HOME_INCANTATION               = register("wickedness",              new IncantationItem(new Item.Settings().maxCount(1)),false);
     public static final Item POCKET_INCANTATION             = register("heresies",            new IncantationItem(new Item.Settings().maxCount(1)),false);
     public static final Item HIGHLIGHTER_INCANTATION        = register("highlighter_inc",       new IncantationItem(new Item.Settings().maxCount(1)),true);
