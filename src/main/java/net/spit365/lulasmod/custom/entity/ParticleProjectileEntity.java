@@ -38,7 +38,7 @@ public class ParticleProjectileEntity extends PersistentProjectileEntity {
     protected void onEntityHit(EntityHitResult entityHitResult) {
         super.onEntityHit(entityHitResult);
         Entity entity = entityHitResult.getEntity();
-        if (this.particleEffect == ModParticles.SCRATCH && entity instanceof LivingEntity) {
+        if (this.particleEffect == ModParticles.CURSED_BLOOD && entity instanceof LivingEntity) {
             BloodsuckingSeal.applyBleed((LivingEntity) entity, 200);
         }
     }

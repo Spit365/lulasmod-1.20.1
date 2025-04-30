@@ -3,9 +3,13 @@ package net.spit365.lulasmod.custom.item.seal;
 import net.minecraft.entity.*;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
+import net.minecraft.entity.mob.EndermanEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.projectile.PersistentProjectileEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.particle.ParticleEffect;
 import net.minecraft.particle.ParticleTypes;
+import net.minecraft.registry.Registries;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
@@ -22,7 +26,10 @@ import net.spit365.lulasmod.custom.entity.MalignityEntity;
 import net.spit365.lulasmod.custom.entity.ParticleProjectileEntity;
 import net.spit365.lulasmod.mod.*;
 import net.spit365.lulasmod.tag.TagManager;
+
+import java.util.LinkedList;
 import java.util.Objects;
+import java.util.Random;
 import java.util.Set;
 import static net.minecraft.sound.SoundEvents.*;
 
@@ -70,12 +77,10 @@ public abstract class SealItem extends CatalystItem {
                 if (efficiencyMultiplier() > 1) player.addStatusEffect(new StatusEffectInstance(StatusEffects.STRENGTH, 1200, Math.min(Math.round(efficiencyMultiplier()) -1, 254), false, false));
             }
             if (spellSelected(player, ModItems.HEAL_INCANTATION, 300)){
-                player.addStatusEffect(new StatusEffectInstance(StatusEffects.REGENERATION, Math.round(efficiencyMultiplier()) *20, 100));
+                player.setHealth(player.getMaxHealth());
             }
-            if (spellSelected(player, ModItems.BLOOD_INCANTATION)){
-                ParticleProjectileEntity particleProjectile = new ParticleProjectileEntity(world, player, ModParticles.SCRATCH);
-                particleProjectile.setVelocity(player.getRotationVec(1).normalize().multiply(2));
-                world.spawnEntity(particleProjectile);
+            if (spellSelected(player, ModItems.BLOOD_INCANTATION)) {
+                ModMethods.a(player, this, 20, 600, 2.5d, 5, 5d, 0.5d, ModParticles.CURSED_BLOOD);
             }
             if (spellSelected(player, ModItems.HOME_INCANTATION, 600)){
                 BlockPos pos = ((ServerPlayerEntity) player).getSpawnPointPosition();

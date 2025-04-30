@@ -13,6 +13,7 @@ public class ModParticles {
 
     public static final DefaultParticleType SCRATCH = register("scratch", true, SweepAttackParticle.Factory::new);
     public static final DefaultParticleType GOLDEN_SHIMMER = register("golden_shimmer", false, FlameParticle.Factory::new);
+    public static final DefaultParticleType CURSED_BLOOD = register("cursed_blood", false, FlameParticle.Factory::new);
 
 
     public static void init(){}
