@@ -18,13 +18,14 @@
   "item.lulasmod.purloining": "Purloining",
   "item.lulasmod.guile": "Guile",
   "item.lulasmod.appeasing": "Appeasing",
+  "item.lulasmod.emulations": "Emulations",
   "item.lulasmod.wickedness": "Wickedness",
   "item.lulasmod.heresies": "Heresies",
   "item.lulasmod.highlighter_inc": "Highlighter Inc",
 
   "entity.lulasmod.smoke_bomb": "Smoke Bomb",
   "entity.lulasmod.malignity": "Malignity",
-  "entity.lulasmod.golden_projectile": "Golden Projectile",
+  "entity.lulasmod.particle_projectile": "Particle Projectile",
 
   "effect.lulasmod.cushioned": "Cushioned",
   "effect.lulasmod.bleeding": "Bleeding",

@@ -3,13 +3,9 @@ package net.spit365.lulasmod.custom.item.seal;
 import net.minecraft.entity.*;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
-import net.minecraft.entity.mob.EndermanEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.projectile.PersistentProjectileEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.particle.ParticleEffect;
 import net.minecraft.particle.ParticleTypes;
-import net.minecraft.registry.Registries;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
@@ -23,13 +19,10 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.spit365.lulasmod.Lulasmod;
 import net.spit365.lulasmod.custom.entity.MalignityEntity;
-import net.spit365.lulasmod.custom.entity.ParticleProjectileEntity;
 import net.spit365.lulasmod.mod.*;
 import net.spit365.lulasmod.tag.TagManager;
 
-import java.util.LinkedList;
 import java.util.Objects;
-import java.util.Random;
 import java.util.Set;
 import static net.minecraft.sound.SoundEvents.*;
 
@@ -41,13 +34,13 @@ public abstract class SealItem extends CatalystItem {
     @Override
     public TypedActionResult<ItemStack> use(World world, PlayerEntity player, Hand hand) {
         if (!world.isClient() && canUse(player)) {
-            if (spellSelected(player, ModItems.FROST_INCANTATION, 3)) {
+            if (spellSelected(player, ModItems.BLOOD_FLAME_INCANTATION, 3)) {
                 Vec3d pos = player.getRotationVec(1).normalize().multiply(2).add(player.getPos().add(0 ,1, 0));
-                for (Entity entity : world.getOtherEntities(player, new Box(pos.add(1d, 1d, 1d), pos.add(-1d, -1d, -1d)))){
+                for (Entity entity : world.getOtherEntities(player, new Box(pos.add(1d, 1d, 1d), pos.add(-1d, -1d, -1d)))) {
                     if (!(entity instanceof LivingEntity)) entity.discard();
-                    entity.damage(ModDamageSources.ETERNAL_WINTER(player), efficiencyMultiplier() * 2);}
-                ((ServerWorld) world).spawnParticles(ParticleTypes.SNOWFLAKE, pos.getX(), pos.getY(), pos.getZ(), 50, 0.5, 0.5, 0.5, 0);
-                world.playSound(null, player.getBlockPos(), ITEM_FIRECHARGE_USE, SoundCategory.PLAYERS, 100.0f, 10.0f);
+                    else ModMethods.applyBleed((LivingEntity) entity, (int) (120 * efficiencyMultiplier()));
+                }((ServerWorld) world).spawnParticles(ModParticles.BLOOD_FLAME, pos.getX(), pos.getY(), pos.getZ(), 50, 0.5, 0.5, 0.5, 0);
+                world.playSound(null, player.getBlockPos(), ITEM_FIRECHARGE_USE, SoundCategory.PLAYERS, 100.0f, 10f);
             }
             if (spellSelected(player, ModItems.FIRE_INCANTATION, 300)){
                 Vec3d vec  = player.getRotationVec(1).normalize().multiply(3);
@@ -80,11 +73,11 @@ public abstract class SealItem extends CatalystItem {
                 player.setHealth(player.getMaxHealth());
             }
             if (spellSelected(player, ModItems.BLOOD_INCANTATION)) {
-                ModMethods.a(player, this, 20, 600, 2.5d, 5, 5d, 0.5d, ModParticles.CURSED_BLOOD);
+                ModMethods.impale(player, this, 20, 600, 6, ModParticles.CURSED_BLOOD, (int) (200 * efficiencyMultiplier()));
             }
             if (spellSelected(player, ModItems.HOME_INCANTATION, 600)){
                 BlockPos pos = ((ServerPlayerEntity) player).getSpawnPointPosition();
-                if (pos == null){pos = world.getSpawnPos();}
+                if (pos == null) pos = world.getSpawnPos();
                 player.requestTeleport(pos.getX(), pos.getY(), pos.getZ());
                 Lulasmod.LOGGER.info("{} was sent home to {} {} {} (with incantation)", player.getName().getString(), pos.getX(), pos.getY(), pos.getZ());
             }
@@ -101,7 +94,6 @@ public abstract class SealItem extends CatalystItem {
                 world.playSound(null, player.getBlockPos(), (playerGlowing ? BLOCK_BEACON_ACTIVATE : BLOCK_BEACON_DEACTIVATE), SoundCategory.PLAYERS);
                 for (PlayerEntity playerEntity : world.getPlayers()){playerEntity.setGlowing(playerGlowing);}
             }
-
 
             if (TagManager.readList(player, ModTagCategories.SPELLS).get(0) != null){
                 player.incrementStat(Stats.USED.getOrCreateStat(this));

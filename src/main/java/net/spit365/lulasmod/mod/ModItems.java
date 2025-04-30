@@ -25,9 +25,8 @@ public class ModItems {
     public static final Item HELLISH_SEAL                   = register("hellish_seal",          new HellishSeal(new Item.Settings().maxCount(1)),true);
     public static final Item GOLDEN_SEAL                    = register("golden_seal",           new GoldenSeal(new Item.Settings().maxCount(1)),true);
     public static final Item BLOODSUCKING_SEAL              = register("bloodsucking_seal",     new BloodsuckingSeal(new Item.Settings().maxCount(1)),true);
-    public static final Item CREATIVE_SEAL                  = register("creative_seal",         new CreativeSeal(new Item.Settings().maxCount(1)),true);
 
-    public static final Item FROST_INCANTATION              = register("treachery_judecca",    new IncantationItem(new Item.Settings().maxCount(1)),false);
+    public static final Item BLOOD_FLAME_INCANTATION        = register("treachery_judecca",    new IncantationItem(new Item.Settings().maxCount(1)),false);
     public static final Item FIRE_INCANTATION               = register("malignity",              new IncantationItem(new Item.Settings().maxCount(1)),false);
     public static final Item DASH_INCANTATION               = register("purloining",              new IncantationItem(new Item.Settings().maxCount(1)),false);
     public static final Item SMOKE_INCANTATION              = register("guile",             new IncantationItem(new Item.Settings().maxCount(1)),false);

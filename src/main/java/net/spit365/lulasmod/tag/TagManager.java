@@ -5,6 +5,7 @@ import net.minecraft.util.Identifier;
 import java.util.LinkedList;
 
 public class TagManager {
+    public record TagCategory(String identifier) {}
 
     private static String c(TagCategory category){return category.identifier() + ": ";}
 
