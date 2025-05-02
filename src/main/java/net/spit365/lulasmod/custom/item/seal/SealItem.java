@@ -71,7 +71,9 @@ public abstract class SealItem extends CatalystItem {
                 player.setHealth(player.getMaxHealth());
             }
             if (spellSelected(player, ModItems.BLOOD_INCANTATION)) {
-                ModMethods.impale(player, this, 20, 600, 6, ModParticles.CURSED_BLOOD, (int) (200 * efficiencyMultiplier()));
+                if (ModMethods.selectClosestEntity(player, 5d) instanceof LivingEntity victim)
+                    ModMethods.applyBleed(victim, (int) (1200 * efficiencyMultiplier()) -100);
+                ModMethods.impale(player, this, 20, 600, 6, ModParticles.CURSED_BLOOD);
             }
             if (spellSelected(player, ModItems.HOME_INCANTATION, 600)){
                 BlockPos pos = ((ServerPlayerEntity) player).getSpawnPointPosition();

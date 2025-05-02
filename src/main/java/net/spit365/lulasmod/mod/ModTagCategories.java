@@ -7,6 +7,4 @@ public class ModTagCategories {
     public static final TagManager.TagCategory SPELLS = new TagManager.TagCategory("Spells");
     public static final TagManager.TagCategory DASH_SPELL = new TagManager.TagCategory("PurloiningSpell");
     public static final TagManager.TagCategory LASCIVIOUSNESS_TARGET = new TagManager.TagCategory("LasciviousnessTarget");
-
-    public static void init(){}
 }

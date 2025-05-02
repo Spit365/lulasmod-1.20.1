@@ -9,7 +9,6 @@ public class LulasmodClient implements ClientModInitializer {
 
     @Override
     public void onInitializeClient() {
-        ModPackets.init();
         ModClientEvents.init();
         ModKeybinds.init();
     }

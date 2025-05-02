@@ -12,9 +12,13 @@ import java.util.Objects;
 public class BleedingStatusEffect extends StatusEffect {
   public BleedingStatusEffect() {super(StatusEffectCategory.HARMFUL,0xac2726); }
 
-  @Override public boolean canApplyUpdateEffect(int duration, int amplifier) {return duration >= 1200;}
+  @Override public boolean canApplyUpdateEffect(int duration, int amplifier) {return true;}
   @Override public void applyUpdateEffect(LivingEntity entity, int amplifier) {
-    entity.setStatusEffect(new StatusEffectInstance(ModStatusEffects.BLEEDING, Objects.requireNonNull(entity.getStatusEffect(ModStatusEffects.BLEEDING)).getDuration() -1200), entity);
-    entity.damage(ModDamageSources.BLOODSUCKING(entity), entity.getMaxHealth() * 0.15f + 10f);
+    int duration = Objects.requireNonNull(entity.getStatusEffect(ModStatusEffects.BLEEDING)).getDuration();
+    int min = Math.min((int) (entity.getMaxHealth() * 60), 1200);
+    if (duration > min) {
+      entity.setStatusEffect(new StatusEffectInstance(ModStatusEffects.BLEEDING, duration - min), entity);
+        entity.damage(ModDamageSources.BLOODSUCKING(entity), entity.getMaxHealth() * 0.15f + 10f);
+    }
   }
 }

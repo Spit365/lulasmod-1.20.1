@@ -8,6 +8,4 @@ import net.spit365.lulasmod.Lulasmod;
 
 public class ModDimensions {
     public static final RegistryKey<World> POCKET_DIMENSION =  RegistryKey.of(RegistryKeys.WORLD, new Identifier(Lulasmod.MOD_ID, "pocket_dimension"));
-
-    public static void init(){}
 }
