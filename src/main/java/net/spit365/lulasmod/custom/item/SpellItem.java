@@ -15,8 +15,8 @@ import net.spit365.lulasmod.mod.ModTagCategories;
 import net.spit365.lulasmod.tag.TagManager;
 import java.util.LinkedList;
 
-public class IncantationItem extends Item {
-    public IncantationItem(Settings settings) {
+public class SpellItem extends Item {
+    public SpellItem(Settings settings) {
         super(settings);
     }
 

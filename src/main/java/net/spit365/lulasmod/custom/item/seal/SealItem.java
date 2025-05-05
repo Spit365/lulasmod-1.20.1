@@ -32,7 +32,7 @@ public abstract class SealItem extends CatalystItem {
     @Override
     public TypedActionResult<ItemStack> use(World world, PlayerEntity player, Hand hand) {
         if (!world.isClient() && canUse(player)) {
-            if (spellSelected(player, ModItems.BLOOD_FLAME_INCANTATION, 3)) {
+            if (spellSelected(player, ModItems.BLOOD_FLAME_SPELL, 3)) {
                 Vec3d pos = player.getRotationVec(1).normalize().multiply(2).add(player.getEyePos());
                 for (Entity entity : world.getOtherEntities(player, new Box(pos.add(1d, 1d, 1d), pos.add(-1d, -1d, -1d)))) {
                     if (!(entity instanceof LivingEntity)) entity.discard();
@@ -40,11 +40,11 @@ public abstract class SealItem extends CatalystItem {
                 }((ServerWorld) world).spawnParticles(ModParticles.BLOOD_FLAME, pos.getX(), pos.getY(), pos.getZ(), 37, 0.5, 0.5, 0.5, 0);
                 world.playSound(null, player.getBlockPos(), ITEM_FIRECHARGE_USE, SoundCategory.PLAYERS, 100.0f, 10f);
             }
-            if (spellSelected(player, ModItems.FIRE_INCANTATION, 300)){
+            if (spellSelected(player, ModItems.FIRE_SPELL, 300)){
                 Vec3d vec  = player.getRotationVec(1).normalize().multiply(3);
                 world.spawnEntity(new MalignityEntity(world, player, vec.getX(), vec.getY(), vec.getZ(), Math.min(Math.round(efficiencyMultiplier() +2), 100)));
             }
-            if (spellSelected(player, ModItems.DASH_INCANTATION)) {
+            if (spellSelected(player, ModItems.DASH_SPELL)) {
                 if (!player.hasStatusEffect(StatusEffects.SLOWNESS)) {
                     Identifier id = TagManager.read(player, ModTagCategories.DASH_SPELL);
                     if (id == null){
@@ -59,27 +59,27 @@ public abstract class SealItem extends CatalystItem {
                     ((ServerWorld) world).spawnParticles(ParticleTypes.CLOUD, player.getX(), player.getY(), player.getZ(), 25, 0.75, 0.2, 0.75, 0);
                 } else player.getItemCooldownManager().set(this, 20);
             }
-            if (spellSelected(player, ModItems.SMOKE_INCANTATION, 20)){
+            if (spellSelected(player, ModItems.SMOKE_SPELL, 20)){
                 world.playSound(null, player.getBlockPos(), ENTITY_SPLASH_POTION_BREAK, SoundCategory.PLAYERS);
                 ((ServerWorld) world).spawnParticles(ParticleTypes.CAMPFIRE_SIGNAL_SMOKE, player.getPos().x, player.getPos().y + 1.0d, player.getPos().z, 269, 1.2d, 1.2d, 1.2d, 0d);
                 player.addStatusEffect(new StatusEffectInstance(StatusEffects.INVISIBILITY, 600, 1, false, false));
                 if (efficiencyMultiplier() > 1) player.addStatusEffect(new StatusEffectInstance(StatusEffects.STRENGTH, 1200, Math.min(Math.round(efficiencyMultiplier()) -1, 254), false, false));
             }
-            if (spellSelected(player, ModItems.HEAL_INCANTATION, 300)){
+            if (spellSelected(player, ModItems.HEAL_SPELL, 300)){
                 player.setHealth(player.getMaxHealth());
             }
-            if (spellSelected(player, ModItems.BLOOD_INCANTATION)) {
+            if (spellSelected(player, ModItems.BLOOD_SPELL)) {
                 if (ModMethods.selectClosestEntity(player, 5d) instanceof LivingEntity victim)
                     ModMethods.applyBleed(victim, (int) (1200 * efficiencyMultiplier()) -80);
                 ModMethods.impale(player, this, 20, 600, 6, ModParticles.CURSED_BLOOD);
             }
-            if (spellSelected(player, ModItems.HOME_INCANTATION, 600)){
+            if (spellSelected(player, ModItems.HOME_SPELL, 600)){
                 BlockPos pos = ((ServerPlayerEntity) player).getSpawnPointPosition();
                 if (pos == null) pos = world.getSpawnPos();
                 player.requestTeleport(pos.getX(), pos.getY(), pos.getZ());
                 Lulasmod.LOGGER.info("{} was sent home to {} {} {} (with incantation)", player.getName().getString(), pos.getX(), pos.getY(), pos.getZ());
             }
-            if (spellSelected(player, ModItems.POCKET_INCANTATION, 600)){
+            if (spellSelected(player, ModItems.POCKET_SPELL, 600)){
                 if (!player.teleport(Objects.requireNonNull(player.getServer()).getWorld((
                         world.getRegistryKey().equals(ModDimensions.POCKET_DIMENSION)?
                             World.OVERWORLD :
@@ -87,7 +87,7 @@ public abstract class SealItem extends CatalystItem {
                         )), player.getX(), player.getY(), player.getZ(), Set.of() , player.getYaw(), player.getPitch()))
                     Lulasmod.LOGGER.error("Could not perform teleport. Registry key: {}", ModDimensions.POCKET_DIMENSION);
             }
-            if (spellSelected(player, ModItems.HIGHLIGHTER_INCANTATION)) {
+            if (spellSelected(player, ModItems.HIGHLIGHTER_SPELL)) {
                 boolean playerGlowing = !player.isGlowing();
                 world.playSound(null, player.getBlockPos(), (playerGlowing ? BLOCK_BEACON_ACTIVATE : BLOCK_BEACON_DEACTIVATE), SoundCategory.PLAYERS);
                 for (PlayerEntity playerEntity : world.getPlayers()){playerEntity.setGlowing(playerGlowing);}

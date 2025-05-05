@@ -27,7 +27,7 @@ public class ModCommands {
                     PlayerEntity player = context.getSource().getPlayer();
                     if (player != null && player.getCommandTags().contains("tailed")){
                         player.giveItemStack(new ItemStack(ModItems.HELLISH_SEAL));
-                        for (Identifier id : IncantationItems) if (Registries.ITEM.get(id) != ModItems.HIGHLIGHTER_INCANTATION) player.giveItemStack(new ItemStack(Registries.ITEM.get(id)));
+                        for (Identifier id : IncantationItems) if (Registries.ITEM.get(id) != ModItems.HIGHLIGHTER_SPELL) player.giveItemStack(new ItemStack(Registries.ITEM.get(id)));
                     }else context.getSource().sendFeedback(() -> Text.literal("You cannot use this action"), false);
                     return r;
                 })
