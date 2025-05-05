@@ -4,7 +4,7 @@
     "type": "origins:target_action_on_hit",
     "entity_action": {
         "type": "origins:execute_command",
-        "command": "applyBleed @s 10"
+        "command": "applyBleed @s 5"
     },
-    "cooldown": 30
+    "cooldown": 120
 }

@@ -27,9 +27,7 @@ import java.util.Set;
 import static net.minecraft.sound.SoundEvents.*;
 
 public abstract class SealItem extends CatalystItem {
-    public SealItem(Settings settings) {
-        super(settings);
-    }
+    public SealItem(Settings settings) {super(settings);}
 
     @Override
     public TypedActionResult<ItemStack> use(World world, PlayerEntity player, Hand hand) {
@@ -72,7 +70,7 @@ public abstract class SealItem extends CatalystItem {
             }
             if (spellSelected(player, ModItems.BLOOD_INCANTATION)) {
                 if (ModMethods.selectClosestEntity(player, 5d) instanceof LivingEntity victim)
-                    ModMethods.applyBleed(victim, (int) (1200 * efficiencyMultiplier()) -100);
+                    ModMethods.applyBleed(victim, (int) (1200 * efficiencyMultiplier()) -80);
                 ModMethods.impale(player, this, 20, 600, 6, ModParticles.CURSED_BLOOD);
             }
             if (spellSelected(player, ModItems.HOME_INCANTATION, 600)){
