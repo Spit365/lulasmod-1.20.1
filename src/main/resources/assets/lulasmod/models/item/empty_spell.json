@@ -2,9 +2,9 @@
 	"credit": "Made with Blockbench",
 	"texture_size": [16, 20],
 	"textures": {
-		"0": "lulasmod:item/inc_b",
-		"1": "lulasmod:item/inc_o_empty",
-		"particle": "lulasmod:item/inc_b"
+		"0": "lulasmod:item/spell_b",
+		"1": "lulasmod:item/spell_o_empty",
+		"particle": "lulasmod:item/spell_b"
 	},
 	"elements": [
 		{

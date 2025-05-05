@@ -1,6 +1,6 @@
 {
-	"parent": "lulasmod:item/empty_inc",
+	"parent": "lulasmod:item/empty_spell",
 	"textures": {
-		"1": "lulasmod:item/inc_o_heresies"
+		"1": "lulasmod:item/spell_o_heresies"
 	}
 }

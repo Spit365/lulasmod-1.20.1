@@ -67,7 +67,7 @@ public class LasciviousnessItem extends Item {
         if (temp != null) symbiotic = (LivingEntity) temp;
         if (symbiotic.getHealth() < symbiotic.getMaxHealth()) symbiotic.heal(2f);
         Vec3d pos = attacker.getRotationVec(1).normalize().add(attacker.getPos());
-        ((ServerWorld) attacker.getWorld()).spawnParticles(ParticleTypes.SONIC_BOOM, pos.getX(), pos.getY() + attacker.getEyeHeight(attacker.getPose()), pos.getZ(), 1, 0, 0, 0, 0);
+        if (attacker.getWorld() instanceof ServerWorld serverWorld) serverWorld.spawnParticles(ParticleTypes.SONIC_BOOM, pos.getX(), pos.getY() + attacker.getEyeHeight(attacker.getPose()), pos.getZ(), 1, 0, 0, 0, 0);
         return true;
     }
 

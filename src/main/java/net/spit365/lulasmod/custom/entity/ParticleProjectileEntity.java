@@ -11,17 +11,18 @@ import net.minecraft.particle.ParticleEffect;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.world.World;
 import net.spit365.lulasmod.mod.ModEntities;
+import org.jetbrains.annotations.Nullable;
 
 public class ParticleProjectileEntity extends PersistentProjectileEntity {
     private int lifeTime = 0;
     private final ParticleEffect particleEffect;
 
-    public ParticleProjectileEntity(EntityType<? extends ParticleProjectileEntity> type, World world, ParticleEffect particleEffect) {
+    public ParticleProjectileEntity(EntityType<? extends ParticleProjectileEntity> type, World world) {
         super(ModEntities.PARTICLE_PROJECTILE, world);
-        this.particleEffect = particleEffect;
+        this.particleEffect = null;
     }
 
-    public ParticleProjectileEntity(World world, LivingEntity owner, ParticleEffect particleEffect) {
+    public ParticleProjectileEntity(World world, LivingEntity owner, @Nullable ParticleEffect particleEffect) {
         super(ModEntities.PARTICLE_PROJECTILE, owner, world);
         this.particleEffect = particleEffect;
     }
@@ -41,8 +42,8 @@ public class ParticleProjectileEntity extends PersistentProjectileEntity {
     @Override
     public void tick(){
         super.tick();
-        if (!this.getWorld().isClient()) {
-            ((ServerWorld) this.getWorld()).spawnParticles(particleEffect, this.getX(), this.getY(), this.getZ(), 2, 0.0625, 0.0625, 0.0625, 0);
+        if (this.getWorld() instanceof ServerWorld serverWorld) {
+            if (particleEffect != null) serverWorld.spawnParticles(particleEffect, this.getX(), this.getY(), this.getZ(), 2, 0.0625, 0.0625, 0.0625, 0);
             this.lifeTime++;
             if (this.lifeTime >= 600) this.discard();
         }

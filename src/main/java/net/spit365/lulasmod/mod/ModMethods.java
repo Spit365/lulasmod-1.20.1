@@ -58,8 +58,7 @@ public class ModMethods {
 
     public static Boolean impale(PlayerEntity player, Item item, Integer baseCooldown, Integer maxCooldown, Integer iterations, ParticleEffect particle) {
         player.getItemCooldownManager().set(item, 2);
-        Entity temp = selectClosestEntity(player, 5d);
-        if (temp instanceof LivingEntity selectedEntity) {
+        if (selectClosestEntity(player, 5d) instanceof LivingEntity selectedEntity) {
             selectedEntity.requestTeleport(selectedEntity.getX(), selectedEntity.getY() + 5, selectedEntity.getZ());
             player.getItemCooldownManager().set(item, maxCooldown);
             impaled.add(new ImpaledContext(player, selectedEntity, particle, iterations));

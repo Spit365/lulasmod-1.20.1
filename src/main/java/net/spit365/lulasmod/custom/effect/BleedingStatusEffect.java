@@ -18,7 +18,7 @@ public class BleedingStatusEffect extends StatusEffect {
     int min = Math.min((int) (entity.getMaxHealth() * 60), 1200);
     if (duration > min) {
       entity.setStatusEffect(new StatusEffectInstance(ModStatusEffects.BLEEDING, duration - min), entity);
-        entity.damage(ModDamageSources.BLOODSUCKING(entity), entity.getMaxHealth() * 0.15f + 10f);
+      entity.damage(ModDamageSources.BLOODSUCKING(entity), entity.getMaxHealth() * 0.15f + 10f);
     }
   }
 }

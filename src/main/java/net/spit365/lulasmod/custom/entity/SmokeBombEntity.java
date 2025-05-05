@@ -31,11 +31,11 @@ public class SmokeBombEntity extends ThrownItemEntity {
 
 	@Override
 	protected void onEntityHit(EntityHitResult entityHitResult) {
-		if (!this.getWorld().isClient) {
-			((ServerWorld) entityHitResult.getEntity().getWorld()).spawnParticles(
-					ParticleTypes.CAMPFIRE_SIGNAL_SMOKE,
-					entityHitResult.getPos().x, entityHitResult.getPos().y + 1.0d, entityHitResult.getPos().z,
-					269, 1.2d, 1.2d, 1.2d, 0.0d
+		if (this.getWorld() instanceof ServerWorld serverWorld) {
+			serverWorld.spawnParticles(
+				ParticleTypes.CAMPFIRE_SIGNAL_SMOKE,
+				entityHitResult.getPos().x, entityHitResult.getPos().y + 1.0d, entityHitResult.getPos().z,
+				269, 1.2d, 1.2d, 1.2d, 0.0d
 			);
 			this.getWorld().playSound(
 					null,
@@ -54,11 +54,11 @@ public class SmokeBombEntity extends ThrownItemEntity {
 	@Override
 	protected void onCollision(HitResult hitResult) {
 		super.onCollision(hitResult);
-		if (!this.getWorld().isClient) {
-			((ServerWorld) this.getWorld()).spawnParticles(
-					ParticleTypes.CAMPFIRE_SIGNAL_SMOKE,
-					hitResult.getPos().x, hitResult.getPos().y + 1.0d, hitResult.getPos().z,
-					269, 1.2d, 1.2d, 1.2d, 0.0d
+		if (this.getWorld() instanceof ServerWorld serverWorld) {
+			serverWorld.spawnParticles(
+				ParticleTypes.CAMPFIRE_SIGNAL_SMOKE,
+				hitResult.getPos().x, hitResult.getPos().y + 1.0d, hitResult.getPos().z,
+				269, 1.2d, 1.2d, 1.2d, 0.0d
 			);
 			this.getWorld().playSound(
 					null,

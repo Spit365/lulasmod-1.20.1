@@ -7,6 +7,7 @@ import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraft.world.event.GameEvent;
 
@@ -17,8 +18,8 @@ public class MalignityEntity extends FireballEntity {
         super(entityType, world);
     }
 
-    public MalignityEntity(World world, LivingEntity owner, double velocityX, double velocityY, double velocityZ, int explosionPower) {
-        super(world, owner, velocityX, velocityY, velocityZ, explosionPower);
+    public MalignityEntity(World world, LivingEntity owner, Vec3d velocity, int explosionPower) {
+        super(world, owner, velocity.getX(), velocity.getY(), velocity.getZ(), explosionPower);
         this.explosionPower = explosionPower;
     }
 

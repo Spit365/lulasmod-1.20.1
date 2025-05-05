@@ -1,5 +1,7 @@
 # Select entities within 15 blocks, excluding the player
-execute at @s as @e[distance=..15,tag=!tailed,type=!item] run tag @s add traumatised
+tag @s add traumatising
+execute at @s as @e[distance=..15,tag=!traumatising,type=!item] run tag @s add traumatised
+tag @s remove traumatising
 
 # Play sound effect at the player's position
 playsound minecraft:entity.ghast.hurt master @s ~ ~ ~

@@ -21,7 +21,7 @@ public abstract class CatalystItem extends Item {
     }
     protected Boolean spellSelected(PlayerEntity player, Item item, Integer cooldown) {
         boolean bl = spellSelected(player, item);
-        if (bl) player.getItemCooldownManager().set(this, cooldown / cooldownMultiplier());
+        if (bl) player.getItemCooldownManager().set(this, (player.isCreative()? cooldown/100 : cooldown) / cooldownMultiplier());
         return bl;
     }
 }

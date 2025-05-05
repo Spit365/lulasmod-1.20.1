@@ -1,6 +1,6 @@
 {
   "parent": "lulasmod:item/empty_spell",
   "textures": {
-    "1": "lulasmod:item/spell_o_emulations"
+    "1": "lulasmod:item/spell_o_highlighter"
   }
 }

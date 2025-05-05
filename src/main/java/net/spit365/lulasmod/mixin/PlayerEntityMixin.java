@@ -19,10 +19,10 @@ public abstract class PlayerEntityMixin extends LivingEntity {
     @Inject(method = "spawnSweepAttackParticles", at = @At("HEAD"), cancellable = true)
     private void spawnSweepAttackParticles(CallbackInfo ci) {
         PlayerEntity player = (PlayerEntity) (Object) this;
-        if (player.getCommandTags().contains("tailed") && player.getWorld() instanceof ServerWorld) {
+        if (player.getCommandTags().contains("tailed") && player.getWorld() instanceof ServerWorld serverWorld) {
             double x = -MathHelper.sin(this.getYaw() * (float) (Math.PI / 180.0));
             double y = MathHelper.cos(this.getYaw() * (float) (Math.PI / 180.0));
-            ((ServerWorld) player.getWorld()).spawnParticles(ModParticles.SCRATCH, player.getX() + x, player.getBodyY(0.5), player.getZ() + y, 0, x, 0.0, y, 0.0);
+            serverWorld.spawnParticles(ModParticles.SCRATCH, player.getX() + x, player.getBodyY(0.5), player.getZ() + y, 0, x, 0.0, y, 0.0);
             ci.cancel();
         }
     }

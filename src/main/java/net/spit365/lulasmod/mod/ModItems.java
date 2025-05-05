@@ -13,7 +13,7 @@ import java.util.List;
 
 public class ModItems {
     public static final List<Identifier> CreativeTabItems = new LinkedList<>() {};
-    public static final List<Identifier> IncantationItems  = new LinkedList<>() {};
+    public static final List<Identifier> SpellItems = new LinkedList<>() {};
 
     public static final Item MODIFIED_TNT       = register("modified_tnt",          new ModifiedTntItem(new Item.Settings().maxCount(16)),true);
     public static final Item SMOKE_BOMB         = register("smoke_bomb",            new SmokeBombItem(new Item.Settings().maxCount(16)),true);
@@ -34,11 +34,11 @@ public class ModItems {
     public static final Item BLOOD_SPELL        = register("emulations",              new SpellItem(new Item.Settings().maxCount(1)),false);
     public static final Item HOME_SPELL         = register("wickedness",              new SpellItem(new Item.Settings().maxCount(1)),false);
     public static final Item POCKET_SPELL       = register("heresies",            new SpellItem(new Item.Settings().maxCount(1)),false);
-    public static final Item HIGHLIGHTER_SPELL  = register("highlighter_inc",       new SpellItem(new Item.Settings().maxCount(1)),true);
+    public static final Item HIGHLIGHTER_SPELL  = register("highlighter_spell",       new SpellItem(new Item.Settings().maxCount(1)),true);
 
     private static Item register(String name, Item item, Boolean showInCreativeTab) {
         if (showInCreativeTab) CreativeTabItems.add(Identifier.of(Lulasmod.MOD_ID, name));
-        if (item instanceof SpellItem) IncantationItems.add(Identifier.of(Lulasmod.MOD_ID, name));
+        if (item instanceof SpellItem) SpellItems.add(Identifier.of(Lulasmod.MOD_ID, name));
         return Registry.register(Registries.ITEM, Identifier.of(Lulasmod.MOD_ID, name), item);
     }
 
