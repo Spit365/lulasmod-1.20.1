@@ -18,9 +18,8 @@ public class ModifiedTntItem extends Item {
     public TypedActionResult<ItemStack> use(World world, PlayerEntity player, Hand hand){
         if (!world.isClient()  && (player.experienceLevel > 0 || player.isCreative())){
             player.getItemCooldownManager().set(this, 20);
-            TntEntity tnt = new TntEntity(EntityType.TNT, world);
+            TntEntity tnt = new TntEntity(world, player.getX(), player.getY() +1, player.getZ(), player);
             world.spawnEntity(tnt);
-            tnt.requestTeleport(player.getX(), player.getY() +1, player.getZ());
             tnt.setFuse(20);
             tnt.setVelocity(player.getRotationVec(1).normalize().multiply(2.5));
             if (!player.isCreative()) {

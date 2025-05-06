@@ -36,7 +36,7 @@ public abstract class SealItem extends CatalystItem {
             if (spellSelected(player, ModItems.BLOOD_FLAME_SPELL, 3)) {
                 Vec3d pos = player.getRotationVec(1).normalize().multiply(2).add(player.getEyePos());
                 for (Entity entity : world.getOtherEntities(player, new Box(pos.add(1d, 1d, 1d), pos.add(-1d, -1d, -1d)))) {
-                    if (entity instanceof LivingEntity) ModMethods.applyBleed((LivingEntity) entity, (int) (120 * efficiencyMultiplier()));
+                    if (entity instanceof LivingEntity livingEntity) ModMethods.applyBleed(livingEntity, (int) (120 * efficiencyMultiplier()));
                     else entity.discard();}
                 serverWorld.spawnParticles(ModParticles.BLOOD_FLAME, pos.getX(), pos.getY(), pos.getZ(), 37, 0.5, 0.5, 0.5, 0);
                 world.playSound(null, player.getBlockPos(), ITEM_FIRECHARGE_USE, SoundCategory.PLAYERS, 100.0f, 10f);
@@ -78,10 +78,7 @@ public abstract class SealItem extends CatalystItem {
                 ModMethods.impale(player, this, 20, 600, 6, ModParticles.CURSED_BLOOD);
             }
             if (spellSelected(player, ModItems.HOME_SPELL, 600)){
-                BlockPos pos = ((ServerPlayerEntity) player).getSpawnPointPosition();
-                if (pos == null) pos = world.getSpawnPos();
-                player.requestTeleport(pos.getX(), pos.getY(), pos.getZ());
-                Lulasmod.LOGGER.info("{} was sent home to {} {} {} (with spell)", player.getName().getString(), pos.getX(), pos.getY(), pos.getZ());
+                ModMethods.sendHome(player, this);
             }
             if (spellSelected(player, ModItems.POCKET_SPELL, 300)){
                 double radius = 5;

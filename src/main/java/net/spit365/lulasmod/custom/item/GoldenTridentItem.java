@@ -14,10 +14,10 @@ public class GoldenTridentItem extends TridentItem {
 
     @Override
     public TypedActionResult<ItemStack> use(World world, PlayerEntity player, Hand hand){
-        if (!world.isClient()) {
-            if (ModMethods.impale(player, this, 20, 200, (player.isCreative()? Integer.MAX_VALUE : 10), ModParticles.GOLDEN_SHIMMER))
-                return TypedActionResult.success(player.getStackInHand(hand));
-        }
-        return TypedActionResult.pass(player.getStackInHand(hand));
+        return (!world.isClient() &&
+                ModMethods.impale(player, this, 20, 200, (player.isCreative()? Integer.MAX_VALUE : 10), ModParticles.GOLDEN_SHIMMER)?
+                TypedActionResult.success(player.getStackInHand(hand)):
+                TypedActionResult.pass(player.getStackInHand(hand))
+        );
     }
 }

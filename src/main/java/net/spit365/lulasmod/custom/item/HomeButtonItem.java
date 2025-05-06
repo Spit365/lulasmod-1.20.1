@@ -10,6 +10,7 @@ import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.spit365.lulasmod.Lulasmod;
+import net.spit365.lulasmod.mod.ModMethods;
 
 public class HomeButtonItem extends Item {
     public HomeButtonItem(Settings settings) {
@@ -19,11 +20,8 @@ public class HomeButtonItem extends Item {
     public TypedActionResult<ItemStack> use(World world, PlayerEntity player, Hand hand){
         if (!world.isClient()) {
             player.getItemCooldownManager().set(this, 6000);
-            BlockPos pos = ((ServerPlayerEntity) player).getSpawnPointPosition();
-            if (pos == null){pos = world.getSpawnPos();}
-            player.requestTeleport(pos.getX(), pos.getY(), pos.getZ());
-            Lulasmod.LOGGER.info("{} was sent home to {} {} {} (with button)", player.getName(), pos.getX(), pos.getY(), pos.getZ());
             player.incrementStat(Stats.USED.getOrCreateStat(this));
+            ModMethods.sendHome(player, this);
             player.getStackInHand(hand).damage(1, player, p -> p.sendToolBreakStatus(player.getActiveHand()));
             return TypedActionResult.success(player.getStackInHand(hand));
         }

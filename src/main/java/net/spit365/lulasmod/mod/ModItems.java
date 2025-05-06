@@ -26,15 +26,15 @@ public class ModItems {
     public static final Item GOLDEN_SEAL        = register("golden_seal",           new GoldenSeal(new Item.Settings().maxCount(1)),true);
     public static final Item BLOODSUCKING_SEAL  = register("bloodsucking_seal",     new BloodsuckingSeal(new Item.Settings().maxCount(1)),true);
 
-    public static final Item BLOOD_FLAME_SPELL  = register("treachery_judecca",    new SpellItem(new Item.Settings().maxCount(1)),false);
-    public static final Item FIRE_SPELL         = register("malignity",              new SpellItem(new Item.Settings().maxCount(1)),false);
-    public static final Item DASH_SPELL         = register("purloining",              new SpellItem(new Item.Settings().maxCount(1)),false);
-    public static final Item SMOKE_SPELL        = register("guile",             new SpellItem(new Item.Settings().maxCount(1)),false);
-    public static final Item HEAL_SPELL         = register("appeasing",              new SpellItem(new Item.Settings().maxCount(1)),false);
-    public static final Item BLOOD_SPELL        = register("emulations",              new SpellItem(new Item.Settings().maxCount(1)),false);
-    public static final Item HOME_SPELL         = register("wickedness",              new SpellItem(new Item.Settings().maxCount(1)),false);
-    public static final Item POCKET_SPELL       = register("heresies",            new SpellItem(new Item.Settings().maxCount(1)),false);
-    public static final Item HIGHLIGHTER_SPELL  = register("highlighter_spell",       new SpellItem(new Item.Settings().maxCount(1)),true);
+    public static final Item BLOOD_FLAME_SPELL  = register("treachery_judecca",     new SpellItem(),false);
+    public static final Item FIRE_SPELL         = register("malignity",             new SpellItem(),false);
+    public static final Item DASH_SPELL         = register("purloining",            new SpellItem(),false);
+    public static final Item SMOKE_SPELL        = register("guile",                 new SpellItem(),false);
+    public static final Item HEAL_SPELL         = register("appeasing",             new SpellItem(),false);
+    public static final Item BLOOD_SPELL        = register("emulations",            new SpellItem(),false);
+    public static final Item HOME_SPELL         = register("wickedness",            new SpellItem(),false);
+    public static final Item POCKET_SPELL       = register("heresies",              new SpellItem(),false);
+    public static final Item HIGHLIGHTER_SPELL  = register("highlighter_spell",     new SpellItem(),true);
 
     private static Item register(String name, Item item, Boolean showInCreativeTab) {
         if (showInCreativeTab) CreativeTabItems.add(Identifier.of(Lulasmod.MOD_ID, name));

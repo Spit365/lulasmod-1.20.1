@@ -18,8 +18,8 @@ import net.spit365.lulasmod.tag.TagManager;
 import java.util.LinkedList;
 
 public class SpellItem extends Item {
-    public SpellItem(Settings settings) {
-        super(settings);
+    public SpellItem() {
+        super(new Item.Settings().maxCount(1));
     }
 
     protected int cooldown() {return 5;}

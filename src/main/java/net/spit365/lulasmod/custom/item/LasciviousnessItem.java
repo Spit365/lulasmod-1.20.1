@@ -21,6 +21,7 @@ import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.spit365.lulasmod.Lulasmod;
+import net.spit365.lulasmod.mod.ModMethods;
 import net.spit365.lulasmod.mod.ModTagCategories;
 import net.spit365.lulasmod.tag.TagManager;
 
@@ -42,16 +43,9 @@ public class LasciviousnessItem extends Item {
     @Override
     public TypedActionResult<ItemStack> use(World world, PlayerEntity player, Hand hand){
         if (!world.isClient()) {
+            Entity selectedEntity = ModMethods.selectClosestEntity(player, 5d);
             player.getItemCooldownManager().set(this, 2);
-            double radius = 5d;
-            Vec3d selectionCenter = player.getRotationVec(1).normalize().multiply(radius).add(player.getPos());
-            LivingEntity selectedEntity = null;
-            for (Entity entity : world.getOtherEntities(player, new Box(selectionCenter.add(-radius, -radius, -radius), selectionCenter.add(radius, radius, radius)))) {
-                if ((selectedEntity == null || selectedEntity.getPos().squaredDistanceTo(player.getPos()) > entity.getPos().squaredDistanceTo(player.getPos())) && entity instanceof LivingEntity) {
-                    selectedEntity = (LivingEntity) entity;
-                }
-            }
-            if (selectedEntity == null) selectedEntity = player; else player.getItemCooldownManager().set(this, 50);
+            if (selectedEntity instanceof  LivingEntity) player.getItemCooldownManager().set(this, 50); else selectedEntity = player;
             TagManager.put(player, ModTagCategories.LASCIVIOUSNESS_TARGET, new Identifier(Lulasmod.MOD_ID, String.valueOf(selectedEntity.getId())));
             player.incrementStat(Stats.USED.getOrCreateStat(this));
             return TypedActionResult.success(player.getStackInHand(hand));
@@ -64,8 +58,8 @@ public class LasciviousnessItem extends Item {
         stack.damage(1, attacker, e -> e.sendEquipmentBreakStatus(EquipmentSlot.MAINHAND));
         LivingEntity symbiotic = attacker;
         Entity temp = attacker.getWorld().getEntityById(Integer.parseInt(Objects.requireNonNull(TagManager.read(attacker, ModTagCategories.LASCIVIOUSNESS_TARGET)).getPath()));
-        if (temp != null) symbiotic = (LivingEntity) temp;
-        if (symbiotic.getHealth() < symbiotic.getMaxHealth()) symbiotic.heal(2f);
+        if (temp instanceof LivingEntity) symbiotic = (LivingEntity) temp;
+        if (symbiotic.getHealth() <= symbiotic.getMaxHealth() -2f) symbiotic.heal(2f);
         Vec3d pos = attacker.getRotationVec(1).normalize().add(attacker.getPos());
         if (attacker.getWorld() instanceof ServerWorld serverWorld) serverWorld.spawnParticles(ParticleTypes.SONIC_BOOM, pos.getX(), pos.getY() + attacker.getEyeHeight(attacker.getPose()), pos.getZ(), 1, 0, 0, 0, 0);
         return true;

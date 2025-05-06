@@ -12,6 +12,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.PersistentProjectileEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.particle.ParticleEffect;
 import net.minecraft.registry.Registries;
@@ -54,6 +55,24 @@ public class ModMethods {
         if (effectInstance != null){
             entity.setStatusEffect(new StatusEffectInstance(ModStatusEffects.BLEEDING, effectInstance.getDuration() + duration), entity);
         } else entity.addStatusEffect(new StatusEffectInstance(ModStatusEffects.BLEEDING, duration));
+    }
+
+    public static void sendHome(PlayerEntity player, Item item){
+        BlockPos pos = ((ServerPlayerEntity) player).getSpawnPointPosition();
+        if (pos == null){pos = player.getWorld().getSpawnPos();}
+        player.requestTeleport(pos.getX(), pos.getY(), pos.getZ());
+        Lulasmod.LOGGER.info("{} was sent home to {} {} {} (with {})", player.getName(), pos.getX(), pos.getY(), pos.getZ(), item);
+
+    }
+
+    public static ItemStack getItemStack(PlayerEntity player, Item item){
+        for (int i = 0; i < player.getInventory().size(); i++) {
+            ItemStack itemStack = player.getInventory().getStack(i);
+            if (itemStack.getItem().equals(item)) {
+                return itemStack;
+            }
+        }
+        return null;
     }
 
     public static Boolean impale(PlayerEntity player, Item item, Integer baseCooldown, Integer maxCooldown, Integer iterations, ParticleEffect particle) {
