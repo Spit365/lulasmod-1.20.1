@@ -1,107 +1,33 @@
 package net.spit365.lulasmod.custom.item.seal;
 
-import net.minecraft.entity.*;
-import net.minecraft.entity.effect.StatusEffectInstance;
-import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.particle.ParticleTypes;
-import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.registry.Registries;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.sound.SoundCategory;
 import net.minecraft.stat.Stats;
 import net.minecraft.util.Hand;
-import net.minecraft.util.Identifier;
 import net.minecraft.util.TypedActionResult;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Box;
-import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
-import net.spit365.lulasmod.Lulasmod;
-import net.spit365.lulasmod.custom.entity.MalignityEntity;
-import net.spit365.lulasmod.mod.*;
+import net.spit365.lulasmod.custom.item.SpellItem;
+import net.spit365.lulasmod.mod.ModTagCategories;
 import net.spit365.lulasmod.tag.TagManager;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
-import static net.minecraft.sound.SoundEvents.*;
-
-public abstract class SealItem extends CatalystItem {
+public abstract class SealItem extends Item {
     public SealItem(Settings settings) {super(settings);}
+
+    protected abstract Boolean canUse(PlayerEntity player);
+    protected abstract Float efficiencyMultiplier();
+    protected abstract Integer cooldownMultiplier();
 
     @Override
     public TypedActionResult<ItemStack> use(World world, PlayerEntity player, Hand hand) {
         if (world instanceof ServerWorld serverWorld && canUse(player)) {
-            if (spellSelected(player, ModItems.BLOOD_FLAME_SPELL, 3)) {
-                Vec3d pos = player.getRotationVec(1).normalize().multiply(2).add(player.getEyePos());
-                for (Entity entity : world.getOtherEntities(player, new Box(pos.add(1d, 1d, 1d), pos.add(-1d, -1d, -1d)))) {
-                    if (entity instanceof LivingEntity livingEntity) ModMethods.applyBleed(livingEntity, (int) (120 * efficiencyMultiplier()));
-                    else entity.discard();}
-                serverWorld.spawnParticles(ModParticles.BLOOD_FLAME, pos.getX(), pos.getY(), pos.getZ(), 37, 0.5, 0.5, 0.5, 0);
-                world.playSound(null, player.getBlockPos(), ITEM_FIRECHARGE_USE, SoundCategory.PLAYERS, 100.0f, 10f);
-            }
-            if (spellSelected(player, ModItems.FIRE_SPELL, 300)){
-                 world.spawnEntity(new MalignityEntity(world, player, player.getRotationVec(1).normalize().multiply(3), Math.min(Math.round(efficiencyMultiplier() +2), 100)));
-            }
-            if (spellSelected(player, ModItems.DASH_SPELL)) {
-                if (!player.hasStatusEffect(StatusEffects.SLOWNESS)) {
-                    Identifier id = TagManager.read(player, ModTagCategories.DASH_SPELL);
-                    if (id == null){
-                        id = new Identifier(Lulasmod.MOD_ID, String.valueOf(5 * cooldownMultiplier()));
-                        TagManager.put(player, ModTagCategories.DASH_SPELL, id);
-                    }
-                    String usages = id.getPath();
-                    player.getItemCooldownManager().set(this, (usages.equals("1")? 50 : 2));
-                    TagManager.put(player, ModTagCategories.DASH_SPELL, new Identifier(Lulasmod.MOD_ID, String.valueOf(
-                            (usages.equals("1")?
-                                5 * cooldownMultiplier() :
-                                Math.min(5 * cooldownMultiplier(), Integer.parseInt(usages)) - 1)
-                    )));
-                    player.addVelocity(player.getRotationVec(1).normalize().add(0, 0.25, 0));
-                    player.velocityModified = true;
-                    serverWorld.spawnParticles(ParticleTypes.CLOUD, player.getX(), player.getY(), player.getZ(), 25, 0.75, 0.2, 0.75, 0);
-                } else player.getItemCooldownManager().set(this, 20);
-            }
-            if (spellSelected(player, ModItems.SMOKE_SPELL, 20)){
-                world.playSound(null, player.getBlockPos(), ENTITY_SPLASH_POTION_BREAK, SoundCategory.PLAYERS);
-                serverWorld.spawnParticles(ParticleTypes.CAMPFIRE_SIGNAL_SMOKE, player.getPos().x, player.getPos().y + 1.0d, player.getPos().z, 269, 1.2d, 1.2d, 1.2d, 0d);
-                player.addStatusEffect(new StatusEffectInstance(StatusEffects.INVISIBILITY, 600, 1, false, false));
-                if (efficiencyMultiplier() > 1) player.addStatusEffect(new StatusEffectInstance(StatusEffects.STRENGTH, 1200, Math.min(Math.round(efficiencyMultiplier()) -1, 254), false, false));
-            }
-            if (spellSelected(player, ModItems.HEAL_SPELL, 300)){
-                player.setHealth(player.getMaxHealth());
-            }
-            if (spellSelected(player, ModItems.BLOOD_SPELL)) {
-                if (ModMethods.selectClosestEntity(player, 5d) instanceof LivingEntity victim)
-                    ModMethods.applyBleed(victim, (int) (1200 * efficiencyMultiplier()) -80);
-                ModMethods.impale(player, this, 20, 600, 6, ModParticles.CURSED_BLOOD);
-            }
-            if (spellSelected(player, ModItems.HOME_SPELL, 600)){
-                ModMethods.sendHome(player, this);
-            }
-            if (spellSelected(player, ModItems.POCKET_SPELL, 300)){
-                double radius = 5;
-                serverWorld.spawnParticles(ModParticles.CURSED_BLOOD, player.getX(), player.getY(), player.getZ(), 5000, radius, 0, radius,  0);
-                List<Entity> entities = world.getOtherEntities(player, new Box(player.getPos().add(-radius, -radius, -radius), player.getPos().add(radius, radius, radius)));
-                if (entities.isEmpty()) entities.add(player);
-                for (Entity victim : entities) {
-                    serverWorld.spawnParticles(ParticleTypes.PORTAL, victim.getX(), victim.getY() + 0.5, victim.getZ(), 100, 0, 0, 0, 1);
-                    if (!victim.teleport(Objects.requireNonNull(victim.getServer()).getWorld((
-                        world.getRegistryKey().equals(ModDimensions.POCKET_DIMENSION)?
-                        World.OVERWORLD :
-                        ModDimensions.POCKET_DIMENSION
-                    )), victim.getX(), victim.getY(), victim.getZ(), Set.of() , victim.getYaw(), victim.getPitch()))
-                        Lulasmod.LOGGER.error("Could not perform teleport. Registry key: {}, Entity: {}", ModDimensions.POCKET_DIMENSION, victim);
-                }
-            }
-            if (spellSelected(player, ModItems.HIGHLIGHTER_SPELL)) {
-                boolean playerGlowing = !player.isGlowing();
-                world.playSound(null, player.getBlockPos(), (playerGlowing ? BLOCK_BEACON_ACTIVATE : BLOCK_BEACON_DEACTIVATE), SoundCategory.PLAYERS);
-                for (PlayerEntity playerEntity : world.getPlayers()){playerEntity.setGlowing(playerGlowing);}
-            }
-
-            if (TagManager.readList(player, ModTagCategories.SPELLS).get(0) != null){
+            SpellItem equippedSpell = null;
+            if(Registries.ITEM.get(TagManager.readList(player, ModTagCategories.SPELLS).get(0)) instanceof SpellItem spellItem) equippedSpell = spellItem;
+            if (equippedSpell != null) {
+                if (equippedSpell.cooldown() > 0) player.getItemCooldownManager().set(this, equippedSpell.cooldown());
+                equippedSpell.execute(serverWorld, player, hand, efficiencyMultiplier(), cooldownMultiplier());
                 player.incrementStat(Stats.USED.getOrCreateStat(this));
                 return TypedActionResult.success(player.getStackInHand(hand));
             }

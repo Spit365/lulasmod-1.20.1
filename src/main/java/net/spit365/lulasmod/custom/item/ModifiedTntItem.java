@@ -1,6 +1,5 @@
 package net.spit365.lulasmod.custom.item;
 
-import net.minecraft.entity.EntityType;
 import net.minecraft.entity.TntEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;

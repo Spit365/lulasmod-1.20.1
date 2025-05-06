@@ -8,8 +8,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.registry.Registries;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
@@ -17,7 +15,6 @@ import net.spit365.lulasmod.tag.TagManager;
 import java.util.Objects;
 
 import static net.minecraft.server.command.CommandManager.literal;
-import static net.spit365.lulasmod.mod.ModItems.SpellItems;
 
 public class ModCommands {
     public static void init(){
@@ -28,9 +25,9 @@ public class ModCommands {
                     PlayerEntity player = context.getSource().getPlayer();
                     if (player != null && player.getCommandTags().contains("tailed")){
                         player.giveItemStack(new ItemStack(ModItems.HELLISH_SEAL));
-                        player.giveItemStack(new ItemStack(ModItems.BLOOD_FLAME_SPELL));
-                        player.giveItemStack(new ItemStack(ModItems.BLOOD_SPELL));
-                        player.giveItemStack(new ItemStack(ModItems.POCKET_SPELL));
+                        player.giveItemStack(new ItemStack(ModSpells.BLOOD_FLAME_SPELL));
+                        player.giveItemStack(new ItemStack(ModSpells.BLOOD_SPELL));
+                        player.giveItemStack(new ItemStack(ModSpells.POCKET_SPELL));
                     }else context.getSource().sendFeedback(() -> Text.literal("You cannot use this action"), false);
                     return r;
                 })

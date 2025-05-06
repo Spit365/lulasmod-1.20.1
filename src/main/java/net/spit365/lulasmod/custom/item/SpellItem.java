@@ -3,40 +3,34 @@ package net.spit365.lulasmod.custom.item;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
 import net.minecraft.registry.Registries;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
-import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.world.World;
-import net.spit365.lulasmod.mod.ModItems;
 import net.spit365.lulasmod.mod.ModTagCategories;
 import net.spit365.lulasmod.tag.TagManager;
+
 import java.util.LinkedList;
 
-public class SpellItem extends Item {
+public abstract class SpellItem extends Item {
     public SpellItem() {
         super(new Item.Settings().maxCount(1));
     }
 
-    protected int cooldown() {return 5;}
-    protected SoundEvent sound(Item item) {
-        return (
-            item.equals(ModItems.BLOOD_FLAME_SPELL) ||
-            item.equals(ModItems.BLOOD_SPELL) ||
-            item.equals(ModItems.POCKET_SPELL) ?
-                SoundEvents.ENTITY_ZOMBIE_VILLAGER_CURE :
-                SoundEvents.BLOCK_RESPAWN_ANCHOR_CHARGE
-    );}
+    public abstract int cooldown();
+    protected abstract SoundEvent sound();
+    public abstract void execute(ServerWorld world, PlayerEntity player, Hand hand, Float efficiencyMultiplier, Integer cooldownMultiplier);
+
 
     @Override
     public TypedActionResult<ItemStack> use(World world, PlayerEntity player, Hand hand){
         if (!world.isClient()){
-            player.getItemCooldownManager().set(this, cooldown());
-            world.playSound(null, player.getBlockPos(), sound(this), SoundCategory.PLAYERS);
+            player.getItemCooldownManager().set(this, 5);
+            world.playSound(null, player.getBlockPos(), sound(), SoundCategory.PLAYERS);
             LinkedList<Identifier> list = TagManager.readList(player, ModTagCategories.SPELLS);
             if (player.isSneaking()) list.remove(getSpellName());
             else if (!list.contains(getSpellName())) list.add(getSpellName());
