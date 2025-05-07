@@ -18,9 +18,9 @@ public class ModifiedTntItem extends Item {
         if (!world.isClient()  && (player.experienceLevel > 0 || player.isCreative())){
             player.getItemCooldownManager().set(this, 20);
             TntEntity tnt = new TntEntity(world, player.getX(), player.getY() +1, player.getZ(), player);
-            world.spawnEntity(tnt);
             tnt.setFuse(20);
             tnt.setVelocity(player.getRotationVec(1).normalize().multiply(2.5));
+            world.spawnEntity(tnt);
             if (!player.isCreative()) {
                 player.addExperienceLevels(-1);
                 player.getStackInHand(hand).decrement(1);

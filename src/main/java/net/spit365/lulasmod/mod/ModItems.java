@@ -7,7 +7,6 @@ import net.minecraft.util.Identifier;
 import net.spit365.lulasmod.Lulasmod;
 import net.spit365.lulasmod.custom.item.*;
 import net.spit365.lulasmod.custom.item.seal.*;
-
 import java.util.LinkedList;
 import java.util.List;
 
@@ -21,9 +20,9 @@ public class ModItems {
     public static final Item SHARP_TOME         = register("sharp_tome",            new SharpTomeItem(new Item.Settings().maxCount(1).maxDamage(640)));
     public static final Item LASCIVIOUSNESS     = register("lasciviousness",        new LasciviousnessItem(new Item.Settings().maxCount(1).maxDamage(500)));
 
-    public static final Item HELLISH_SEAL       = register("hellish_seal",          new HellishSeal(new Item.Settings().maxCount(1)));
-    public static final Item GOLDEN_SEAL        = register("golden_seal",           new GoldenSeal(new Item.Settings().maxCount(1)));
-    public static final Item BLOODSUCKING_SEAL  = register("bloodsucking_seal",     new BloodsuckingSeal(new Item.Settings().maxCount(1)));
+    public static final Item HELLISH_SEAL       = register("hellish_seal",          new HellishSeal());
+    public static final Item GOLDEN_SEAL        = register("golden_seal",           new GoldenSeal());
+    public static final Item BLOODSUCKING_SEAL  = register("bloodsucking_seal",     new BloodsuckingSeal());
 
     private static Item register(String name, Item item) {
         CreativeTabItems.add(Identifier.of(Lulasmod.MOD_ID, name));

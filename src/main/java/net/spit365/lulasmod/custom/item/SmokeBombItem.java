@@ -24,7 +24,7 @@ public class SmokeBombItem extends Item {
             smokeBombEntity.setVelocity(player, player.getPitch(), player.getYaw(), 0.0F, 1.5F, 0.0F);
             world.spawnEntity(smokeBombEntity);
             player.addStatusEffect(new StatusEffectInstance(StatusEffects.INVISIBILITY, 400, 0, false, true));
-            if (!player.isCreative()) {player.getStackInHand(hand).decrement(1);}
+            if (!player.isCreative()) player.getStackInHand(hand).decrement(1);
             player.incrementStat(Stats.USED.getOrCreateStat(this));
             return TypedActionResult.success(player.getStackInHand(hand));
         }

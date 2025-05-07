@@ -10,14 +10,12 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraft.world.event.GameEvent;
+import net.spit365.lulasmod.mod.ModEntities;
 
 public class MalignityEntity extends FireballEntity {
     private int explosionPower = 1;
 
-    public MalignityEntity(EntityType<? extends FireballEntity> entityType, World world) {
-        super(entityType, world);
-    }
-
+    public MalignityEntity(EntityType<? extends FireballEntity> entityType, World world) {super(ModEntities.MALIGNITY, world);}
     public MalignityEntity(World world, LivingEntity owner, Vec3d velocity, int explosionPower) {
         super(world, owner, velocity.getX(), velocity.getY(), velocity.getZ(), explosionPower);
         this.explosionPower = explosionPower;
@@ -26,17 +24,18 @@ public class MalignityEntity extends FireballEntity {
     @Override
     protected void onCollision(HitResult hitResult) {
         HitResult.Type type = hitResult.getType();
+        World world = this.getWorld();
         if (type == HitResult.Type.ENTITY) {
             this.onEntityHit((EntityHitResult)hitResult);
-            this.getWorld().emitGameEvent(GameEvent.PROJECTILE_LAND, hitResult.getPos(), GameEvent.Emitter.of(this, null));
+            world.emitGameEvent(GameEvent.PROJECTILE_LAND, hitResult.getPos(), GameEvent.Emitter.of(this, null));
         } else if (type == HitResult.Type.BLOCK) {
             BlockHitResult blockHitResult = (BlockHitResult)hitResult;
             this.onBlockHit(blockHitResult);
             BlockPos blockPos = blockHitResult.getBlockPos();
-            this.getWorld().emitGameEvent(GameEvent.PROJECTILE_LAND, blockPos, GameEvent.Emitter.of(this, this.getWorld().getBlockState(blockPos)));
+            world.emitGameEvent(GameEvent.PROJECTILE_LAND, blockPos, GameEvent.Emitter.of(this, world.getBlockState(blockPos)));
         }
-        if (!this.getWorld().isClient) {
-            this.getWorld().createExplosion(this.getOwner(), this.getX(), this.getY(), this.getZ(), (float) this.explosionPower, false, World.ExplosionSourceType.NONE);
+        if (!world.isClient) {
+            world.createExplosion(this.getOwner(), this.getX(), this.getY(), this.getZ(), (float) this.explosionPower, false, World.ExplosionSourceType.NONE);
             this.discard();
         }
     }

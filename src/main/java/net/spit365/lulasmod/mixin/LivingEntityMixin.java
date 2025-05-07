@@ -24,13 +24,10 @@ public abstract class LivingEntityMixin extends Entity implements Attackable {
 
     @Inject(method = "damage", at = @At("HEAD"))
     private void damage(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
-        if (
-            source.getTypeRegistryEntry().matchesKey(ModDamageSources.ETERNAL_WINTER()) ||
-            source.getTypeRegistryEntry().matchesKey(ModDamageSources.BLOODSUCKING())
-        )   timeUntilRegen = 0;
         if (source.getAttacker() != null) {
             Identifier read = TagManager.read(source.getAttacker(), ModTagCategories.DAMAGE_DELAY);
             if (read != null) timeUntilRegen = Integer.parseInt(read.getPath());
         }
+        if (source.getTypeRegistryEntry().matchesKey(ModDamageSources.BLOODSUCKING())) timeUntilRegen = 0;
     }
 }

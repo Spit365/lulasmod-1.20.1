@@ -8,12 +8,7 @@ import net.spit365.lulasmod.custom.entity.ParticleProjectileEntity;
 
 public class ParticleProjectileEntityRenderer extends ProjectileEntityRenderer<ParticleProjectileEntity> {
     private final Identifier texture = new Identifier(Lulasmod.MOD_ID, "textures/entity/projectile.png");
-    public ParticleProjectileEntityRenderer(EntityRendererFactory.Context context) {
-        super(context);
-    }
+    public ParticleProjectileEntityRenderer(EntityRendererFactory.Context context) {super(context);}
 
-    @Override
-    public Identifier getTexture(ParticleProjectileEntity entity) {
-        return texture;
-    }
+    @Override public Identifier getTexture(ParticleProjectileEntity entity) {return texture;}
 }

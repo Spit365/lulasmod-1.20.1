@@ -17,7 +17,7 @@ public class ParticleProjectileEntity extends PersistentProjectileEntity {
     private int lifeTime = 0;
     private final ParticleEffect particleEffect;
 
-    public ParticleProjectileEntity(EntityType<? extends ParticleProjectileEntity> type, World world) {
+    public ParticleProjectileEntity(EntityType<? extends ParticleProjectileEntity> ignoredType, World world) {
         super(ModEntities.PARTICLE_PROJECTILE, world);
         this.particleEffect = null;
     }
@@ -49,10 +49,6 @@ public class ParticleProjectileEntity extends PersistentProjectileEntity {
         }
     }
 
-    @Override
-    protected boolean canHit(Entity entity) {
-        return !(entity instanceof PlayerEntity player && player.isCreative());
-    }
-
+    @Override protected boolean canHit(Entity entity) {return !(entity instanceof PlayerEntity player && player.isCreative());}
     @Override protected ItemStack asItemStack() {return ItemStack.EMPTY;}
 }

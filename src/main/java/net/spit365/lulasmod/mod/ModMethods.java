@@ -42,9 +42,8 @@ public class ModMethods {
         Vec3d selectionCenter = selector.getRotationVec(1).normalize().multiply(radius).add(selector.getPos());
         Entity selectedEntity = null;
         for (Entity entityInRange : selector.getWorld().getOtherEntities(selector, new Box(selectionCenter.add(-radius, -radius, -radius), selectionCenter.add(radius, radius, radius)))){
-            if (selectedEntity == null || selectedEntity.getPos().squaredDistanceTo(selector.getPos()) > entityInRange.getPos().squaredDistanceTo(selector.getPos())){
+            if (selectedEntity == null || selectedEntity.getPos().squaredDistanceTo(selector.getPos()) > entityInRange.getPos().squaredDistanceTo(selector.getPos()))
                 selectedEntity = entityInRange;
-            }
         }
         return selectedEntity;
     }
@@ -61,7 +60,6 @@ public class ModMethods {
         if (pos == null){pos = player.getWorld().getSpawnPos();}
         player.requestTeleport(pos.getX(), pos.getY(), pos.getZ());
         Lulasmod.LOGGER.info("{} was sent home to {} {} {} (with {})", player.getName(), pos.getX(), pos.getY(), pos.getZ(), item);
-
     }
 
     public static ItemStack getItemStack(PlayerEntity player, Item item){
@@ -77,15 +75,15 @@ public class ModMethods {
     public static Boolean impale(PlayerEntity player, Item item, Integer baseCooldown, Integer maxCooldown, Integer iterations, ParticleEffect particle) {
         player.getItemCooldownManager().set(item, 2);
         if (selectClosestEntity(player, 5d) instanceof LivingEntity selectedEntity) {
-            selectedEntity.requestTeleport(selectedEntity.getX(), selectedEntity.getY() + 5, selectedEntity.getZ());
             player.getItemCooldownManager().set(item, maxCooldown);
+            selectedEntity.requestTeleport(selectedEntity.getX(), selectedEntity.getY() + 5, selectedEntity.getZ());
             impaled.add(new ImpaledContext(player, selectedEntity, particle, iterations));
             return true;
         } else player.getItemCooldownManager().set(item, baseCooldown - 2);
         return false;
     }
 
-    protected static class ServerUpdates {
+    public static class ServerUpdates {
         protected static void updateImpaled() {
             impaledCounter++;
             for (ImpaledContext context : impaled) {
@@ -100,7 +98,6 @@ public class ModMethods {
                             projectile.setNoGravity(true);
                             projectile.pickupType = PersistentProjectileEntity.PickupPermission.DISALLOWED;
                             TagManager.put(context.player, ModTagCategories.DAMAGE_DELAY, new Identifier(Lulasmod.MOD_ID, "0"));
-                            projectile.requestTeleport(pos.getX(), pos.getY(), pos.getZ());
                             projectile.addVelocity(pos.subtract(victim.getPos()).multiply(-0.5));
                             victim.getWorld().spawnEntity(projectile);
                             impaled.remove(context);
@@ -117,7 +114,6 @@ public class ModMethods {
         protected static void updateSpells(ServerPlayerEntity player) {
             PacketByteBuf buf = PacketByteBufs.create();
             LinkedList<Identifier> list = TagManager.readList(player, ModTagCategories.SPELLS);
-
             Map<Integer, ItemStack> map = new HashMap<>();
             for (int i = 0; i < list.size(); i++) map.put(i, new ItemStack(Registries.ITEM.get(list.get(i))));
             buf.writeMap(map, PacketByteBuf::writeInt, PacketByteBuf::writeItemStack);
@@ -129,12 +125,13 @@ public class ModMethods {
                 int portalRadius = 5;
                 BlockPos closestPortal = null;
                 double closestDistance = Double.MAX_VALUE;
-                for (BlockPos pos : BlockPos.stream(playerPos.add(-portalRadius, -portalRadius, -portalRadius),
-                                playerPos.add(portalRadius, portalRadius, portalRadius))
+                for (BlockPos pos : BlockPos.stream(
+                        playerPos.add(-portalRadius, -portalRadius, -portalRadius),
+                        playerPos.add(portalRadius, portalRadius, portalRadius))
                         .map(BlockPos::toImmutable)
                         .toList()) {
                     if (player.getWorld().getBlockState(pos).isOf(Blocks.END_PORTAL) ||
-                            player.getWorld().getBlockState(pos).isOf(Blocks.NETHER_PORTAL)) {
+                        player.getWorld().getBlockState(pos).isOf(Blocks.NETHER_PORTAL)) {
                         double distance = pos.getSquaredDistance(playerPos);
                         if (distance < closestDistance) {
                             closestDistance = distance;

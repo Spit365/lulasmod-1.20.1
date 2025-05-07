@@ -7,6 +7,7 @@ import net.minecraft.registry.Registries;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.TypedActionResult;
@@ -17,12 +18,20 @@ import net.spit365.lulasmod.tag.TagManager;
 import java.util.LinkedList;
 
 public abstract class SpellItem extends Item {
-    public SpellItem() {
+    public int cooldown;
+    protected SoundEvent sound = SoundEvents.BLOCK_RESPAWN_ANCHOR_CHARGE;
+
+    public SpellItem(Integer cooldown, SoundEvent soundEvent) {
         super(new Item.Settings().maxCount(1));
+        this.cooldown = cooldown;
+        this.sound = soundEvent;
+
+    }
+    public SpellItem(Integer cooldown) {
+        super(new Item.Settings().maxCount(1));
+        this.cooldown = cooldown;
     }
 
-    public abstract int cooldown();
-    protected abstract SoundEvent sound();
     public abstract void execute(ServerWorld world, PlayerEntity player, Hand hand, Float efficiencyMultiplier, Integer cooldownMultiplier);
 
 
@@ -30,7 +39,7 @@ public abstract class SpellItem extends Item {
     public TypedActionResult<ItemStack> use(World world, PlayerEntity player, Hand hand){
         if (!world.isClient()){
             player.getItemCooldownManager().set(this, 5);
-            world.playSound(null, player.getBlockPos(), sound(), SoundCategory.PLAYERS);
+            world.playSound(null, player.getBlockPos(), sound, SoundCategory.PLAYERS);
             LinkedList<Identifier> list = TagManager.readList(player, ModTagCategories.SPELLS);
             if (player.isSneaking()) list.remove(getSpellName());
             else if (!list.contains(getSpellName())) list.add(getSpellName());

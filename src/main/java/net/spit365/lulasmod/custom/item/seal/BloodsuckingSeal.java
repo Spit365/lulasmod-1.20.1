@@ -4,12 +4,6 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.spit365.lulasmod.mod.ModMethods;
 
 public class BloodsuckingSeal extends SealItem{
-    public BloodsuckingSeal(Settings settings) {
-        super(settings);
-    }
-
-
-
     @Override protected Boolean canUse(PlayerEntity player) {
         ModMethods.applyBleed(player, 100);
         return true;

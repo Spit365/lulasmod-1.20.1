@@ -1,5 +1,6 @@
 package net.spit365.lulasmod.custom.item.seal;
 
+import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -14,7 +15,7 @@ import net.spit365.lulasmod.mod.ModTagCategories;
 import net.spit365.lulasmod.tag.TagManager;
 
 public abstract class SealItem extends Item {
-    public SealItem(Settings settings) {super(settings);}
+    public SealItem() {super(new FabricItemSettings().maxCount(1));}
 
     protected abstract Boolean canUse(PlayerEntity player);
     protected abstract Float efficiencyMultiplier();
@@ -26,7 +27,7 @@ public abstract class SealItem extends Item {
             SpellItem equippedSpell = null;
             if(Registries.ITEM.get(TagManager.readList(player, ModTagCategories.SPELLS).get(0)) instanceof SpellItem spellItem) equippedSpell = spellItem;
             if (equippedSpell != null) {
-                if (equippedSpell.cooldown() > 0) player.getItemCooldownManager().set(this, equippedSpell.cooldown());
+                if (equippedSpell.cooldown > 0) player.getItemCooldownManager().set(this, equippedSpell.cooldown);
                 equippedSpell.execute(serverWorld, player, hand, efficiencyMultiplier(), cooldownMultiplier());
                 player.incrementStat(Stats.USED.getOrCreateStat(this));
                 return TypedActionResult.success(player.getStackInHand(hand));
