@@ -7,13 +7,13 @@ import net.minecraft.command.argument.EntityArgumentType;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.spit365.lulasmod.tag.TagManager;
-import java.util.Objects;
-
+import java.util.*;
 import static net.minecraft.server.command.CommandManager.literal;
 
 public class ModCommands {
@@ -24,11 +24,15 @@ public class ModCommands {
                 .executes(context ->{
                     PlayerEntity player = context.getSource().getPlayer();
                     if (player != null && player.getCommandTags().contains("tailed")){
-                        player.giveItemStack(new ItemStack(ModItems.HELLISH_SEAL));
-                        player.giveItemStack(new ItemStack(ModSpells.BLOOD_FLAME_SPELL));
-                        player.giveItemStack(new ItemStack(ModSpells.BLOOD_SPELL));
-                        player.giveItemStack(new ItemStack(ModSpells.POCKET_SPELL));
-                    }else context.getSource().sendFeedback(() -> Text.literal("You cannot use this action"), false);
+                        Set<Boolean> booleanLinkedList = new HashSet<>();
+                        for (Item item : List.of(ModItems.HELLISH_SEAL, ModSpells.BLOOD_FLAME_SPELL, ModSpells.BLOOD_SPELL, ModSpells.POCKET_SPELL)) {
+                            boolean b = ModMethods.getItemStack(player, item) == null;
+                            if (b) player.giveItemStack(new ItemStack(item));
+                            booleanLinkedList.add(b);
+                        }
+                        if (booleanLinkedList.stream().allMatch(Boolean::booleanValue)) context.getSource().sendFeedback(() ->
+                                Text.literal("You obtained the powers of §kthe ancient tailed"), false);
+                    } else context.getSource().sendFeedback(() -> Text.literal("You cannot use this action"), false);
                     return r;
                 })
 
@@ -59,9 +63,8 @@ public class ModCommands {
                 })))))
             );
             dispatcher.register(literal("applyBleed").then(CommandManager.argument("targets", EntityArgumentType.entities()).then(CommandManager.argument("seconds", IntegerArgumentType.integer()).executes(context ->  {
-                for (Entity e : EntityArgumentType.getEntities(context, "targets")){
-                    if (e instanceof LivingEntity) ModMethods.applyBleed((LivingEntity) e, IntegerArgumentType.getInteger(context, "seconds") * 20);
-                }
+                for (Entity e : EntityArgumentType.getEntities(context, "targets")) if (e instanceof LivingEntity)
+                    ModMethods.applyBleed((LivingEntity) e, IntegerArgumentType.getInteger(context, "seconds") * 20);
                 return r;
             }))));
         });

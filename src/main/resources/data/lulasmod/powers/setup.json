@@ -4,18 +4,18 @@
     "type": "origins:action_on_callback",
     "entity_action_chosen": {
         "type": "origins:execute_command",
-        "command": "function lulasmod:start_setup"
+        "command": "tag @s add tailed"
     },
     "entity_action_added": {
         "type": "origins:execute_command",
-        "command": "function lulasmod:start_setup"
+        "command": "tag @s add tailed"
     },
     "entity_action_respawned": {
         "type": "origins:execute_command",
-        "command": "function lulasmod:start_setup"
+        "command": "tag @s add tailed"
     },
     "entity_action_removed": {
         "type": "origins:execute_command",
-        "command": "function lulasmod:stop_setup"
+        "command": "tag @s remove tailed"
     }
 }

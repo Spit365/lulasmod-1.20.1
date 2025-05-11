@@ -1,42 +1,38 @@
 package net.spit365.lulasmod.custom.entity;
 
+import com.mojang.brigadier.StringReader;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import net.minecraft.command.argument.ParticleEffectArgumentType;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.PersistentProjectileEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtElement;
 import net.minecraft.particle.ParticleEffect;
+import net.minecraft.registry.Registries;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import net.spit365.lulasmod.Lulasmod;
 import net.spit365.lulasmod.mod.ModEntities;
 import org.jetbrains.annotations.Nullable;
 
 public class ParticleProjectileEntity extends PersistentProjectileEntity {
     private int lifeTime = 0;
-    private final ParticleEffect particleEffect;
+    private ParticleEffect particleEffect;
 
-    public ParticleProjectileEntity(EntityType<? extends ParticleProjectileEntity> ignoredType, World world) {
-        super(ModEntities.PARTICLE_PROJECTILE, world);
+    public ParticleProjectileEntity(EntityType<? extends ParticleProjectileEntity> entityType, World world) {
+        super(entityType, world);
         this.particleEffect = null;
     }
 
-    public ParticleProjectileEntity(World world, LivingEntity owner, @Nullable ParticleEffect particleEffect) {
+    public ParticleProjectileEntity(World world, LivingEntity owner, Vec3d pos, Vec3d velocity, @Nullable ParticleEffect particleEffect) {
         super(ModEntities.PARTICLE_PROJECTILE, owner, world);
         this.particleEffect = particleEffect;
-    }
-
-    @Override
-    public void readCustomDataFromNbt(NbtCompound nbt) {
-        super.readCustomDataFromNbt(nbt);
-        this.lifeTime = nbt.getInt("Lifetime");
-    }
-
-    @Override
-    public void writeCustomDataToNbt(NbtCompound nbt) {
-        super.writeCustomDataToNbt(nbt);
-        nbt.putInt("Lifetime", this.lifeTime);
+        this.setPos(pos.getX(), pos.getY(), pos.getZ());
+        this.setVelocity(velocity);
     }
 
     @Override
@@ -49,6 +45,27 @@ public class ParticleProjectileEntity extends PersistentProjectileEntity {
         }
     }
 
-    @Override protected boolean canHit(Entity entity) {return !(entity instanceof PlayerEntity player && player.isCreative());}
+    @Override
+    public void readCustomDataFromNbt(NbtCompound nbt) {
+        super.readCustomDataFromNbt(nbt);
+        this.lifeTime = nbt.getInt("Lifetime");
+        if (nbt.contains("Particle", NbtElement.STRING_TYPE)) {
+            try {
+                this.particleEffect = ParticleEffectArgumentType.readParameters(new StringReader(nbt.getString("Particle")), Registries.PARTICLE_TYPE.getReadOnlyWrapper());
+            } catch (CommandSyntaxException var5) {
+                Lulasmod.LOGGER.warn("Couldn't load custom particle {}", nbt.getString("Particle"), var5);
+            }
+        }
+    }
+
+    @Override
+    public void writeCustomDataToNbt(NbtCompound nbt) {
+        super.writeCustomDataToNbt(nbt);
+        nbt.putInt("Lifetime", this.lifeTime);
+        if (this.particleEffect != null) nbt.putString("Particle", this.particleEffect.asString());
+    }
+
+    @Override protected boolean canHit(Entity entity) {return true;}
     @Override protected ItemStack asItemStack() {return ItemStack.EMPTY;}
+    @Override public boolean hasNoGravity() {return true;}
 }

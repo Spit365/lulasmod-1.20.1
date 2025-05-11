@@ -3,35 +3,41 @@ package net.spit365.lulasmod.mod;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.block.Blocks;
+import net.minecraft.block.SculkShriekerBlock;
+import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.mob.EndermanEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.projectile.PersistentProjectileEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.particle.ParticleEffect;
+import net.minecraft.particle.ParticleTypes;
+import net.minecraft.particle.ShriekParticleEffect;
 import net.minecraft.registry.Registries;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.World;
 import net.spit365.lulasmod.Lulasmod;
 import net.spit365.lulasmod.custom.entity.ParticleProjectileEntity;
 import net.spit365.lulasmod.tag.TagManager;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Map;
+import java.util.*;
 
 public class ModMethods {
     private static final LinkedList<ImpaledContext> impaled = new LinkedList<>();
     private static int impaledCounter = 0;
+    private static int sporesCounter = 0;
     private record ImpaledContext(PlayerEntity player, LivingEntity livingEntity, ParticleEffect particle, Integer iterations) {
         public ImpaledContext(ImpaledContext context, Integer iterations) {
             this(context.player(), context.livingEntity(), context.particle(), iterations);
@@ -56,10 +62,14 @@ public class ModMethods {
     }
 
     public static void sendHome(PlayerEntity player, Item item){
-        BlockPos pos = ((ServerPlayerEntity) player).getSpawnPointPosition();
-        if (pos == null){pos = player.getWorld().getSpawnPos();}
-        player.requestTeleport(pos.getX(), pos.getY(), pos.getZ());
-        Lulasmod.LOGGER.info("{} was sent home to {} {} {} (with {})", player.getName(), pos.getX(), pos.getY(), pos.getZ(), item);
+        if (player instanceof ServerPlayerEntity serverPlayer) {
+            BlockPos pos = serverPlayer.getSpawnPointPosition();
+            if (pos == null){
+                pos = player.getWorld().getSpawnPos();
+                if (player.teleport(Objects.requireNonNull(player.getServer()).getWorld(World.OVERWORLD), pos.getX(), pos.getY(), pos.getZ(), Set.of(), player.getYaw(), player.getPitch()))
+                    Lulasmod.LOGGER.info("{} was sent home to {} {} {} (with {})", player.getName(), pos.getX(), pos.getY(), pos.getZ(), item);
+            } else player.requestTeleport(pos.getX(), pos.getY(), pos.getZ());
+        }
     }
 
     public static ItemStack getItemStack(PlayerEntity player, Item item){
@@ -94,12 +104,10 @@ public class ModMethods {
                         if (impaledCounter >= 25) {
                             impaledCounter = 0;
                             Vec3d pos = new Vec3d(Math.random() * 2 - 1, Math.random() * 2 - 1, Math.random() * 2 - 1).normalize().multiply(5).add(victim.getPos());
-                            ParticleProjectileEntity projectile = new ParticleProjectileEntity(victim.getWorld(), context.player, context.particle);
-                            projectile.setNoGravity(true);
-                            projectile.pickupType = PersistentProjectileEntity.PickupPermission.DISALLOWED;
                             TagManager.put(context.player, ModTagCategories.DAMAGE_DELAY, new Identifier(Lulasmod.MOD_ID, "0"));
-                            projectile.addVelocity(pos.subtract(victim.getPos()).multiply(-0.5));
-                            victim.getWorld().spawnEntity(projectile);
+                            victim.getWorld().spawnEntity(new ParticleProjectileEntity(
+                                    victim.getWorld(), context.player, pos, pos.subtract(victim.getPos()).multiply(-0.5), context.particle)
+                            );
                             impaled.remove(context);
                             impaled.add(new ImpaledContext(context, context.iterations -1));
                         }
@@ -122,23 +130,16 @@ public class ModMethods {
         protected static void repelMiner(ServerPlayerEntity player) {
             if (player.getCommandTags().contains("miner")) {
                 BlockPos playerPos = player.getBlockPos();
-                int portalRadius = 5;
                 BlockPos closestPortal = null;
-                double closestDistance = Double.MAX_VALUE;
                 for (BlockPos pos : BlockPos.stream(
-                        playerPos.add(-portalRadius, -portalRadius, -portalRadius),
-                        playerPos.add(portalRadius, portalRadius, portalRadius))
-                        .map(BlockPos::toImmutable)
-                        .toList()) {
+                    playerPos.add(-5, -5, -5),
+                    playerPos.add(5, 5, 5)
+                    ).map(BlockPos::toImmutable)
+                    .toList())
                     if (player.getWorld().getBlockState(pos).isOf(Blocks.END_PORTAL) ||
-                        player.getWorld().getBlockState(pos).isOf(Blocks.NETHER_PORTAL)) {
-                        double distance = pos.getSquaredDistance(playerPos);
-                        if (distance < closestDistance) {
-                            closestDistance = distance;
+                        player.getWorld().getBlockState(pos).isOf(Blocks.NETHER_PORTAL))
+                        if (closestPortal == null || pos.getSquaredDistance(playerPos) < closestPortal.getSquaredDistance(playerPos))
                             closestPortal = pos;
-                        }
-                    }
-                }
                 if (closestPortal != null) {
                     Vec3d repelVec = player.getPos().subtract(Vec3d.ofCenter(closestPortal)).normalize();
                     if (!repelVec.equals(Vec3d.ZERO)) {
@@ -147,6 +148,15 @@ public class ModMethods {
                     }
                 }
             }
+        }
+        protected static void updateSpores(MinecraftServer minecraftServer){
+            sporesCounter--;
+             if (sporesCounter <= 0) {
+                  for (ServerPlayerEntity player : minecraftServer.getPlayerManager().getPlayerList())
+                       if (player.getCommandTags().contains("tailed") && player.getWorld() instanceof ServerWorld world)
+                            world.spawnParticles(ParticleTypes.CRIMSON_SPORE, player.getX(), 1 + player.getY(), player.getZ(), new Random(world.getSeed()).nextInt(2, 4), 0, 0, 0, 0);
+                  sporesCounter = new Random().nextInt(30, 60);
+             }
         }
     }
 }

@@ -1,7 +1,0 @@
-{
-  "message_id": "eternal_winter",
-  "scaling": "always",
-  "exhaustion": 1,
-  "effects": "hurt",
-  "death_message_type": "default"
-}

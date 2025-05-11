@@ -16,13 +16,12 @@ public class ModParticles {
     public static final DefaultParticleType GOLDEN_SHIMMER = register("golden_shimmer", false, FlameParticle.Factory::new);
     public static final DefaultParticleType CURSED_BLOOD = register("cursed_blood", false, FlameParticle.Factory::new);
 
-
-    public static void init(){}
-
     private static DefaultParticleType register(String name, Boolean alwaysShow, ParticleFactoryRegistry.PendingParticleFactory<DefaultParticleType> render){
             DefaultParticleType particle = FabricParticleTypes.simple(alwaysShow);
             Registry.register(Registries.PARTICLE_TYPE, new Identifier(Lulasmod.MOD_ID, name), particle);
             ParticleFactoryRegistry.getInstance().register(particle, render);
             return particle;
     }
+
+    public static void init(){}
 }

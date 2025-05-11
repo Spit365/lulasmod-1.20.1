@@ -27,7 +27,7 @@ public abstract class SealItem extends Item {
             SpellItem equippedSpell = null;
             if(Registries.ITEM.get(TagManager.readList(player, ModTagCategories.SPELLS).get(0)) instanceof SpellItem spellItem) equippedSpell = spellItem;
             if (equippedSpell != null) {
-                if (equippedSpell.cooldown > 0) player.getItemCooldownManager().set(this, equippedSpell.cooldown);
+                player.getItemCooldownManager().set(this, Math.max(equippedSpell.cooldown, 2));
                 equippedSpell.execute(serverWorld, player, hand, efficiencyMultiplier(), cooldownMultiplier());
                 player.incrementStat(Stats.USED.getOrCreateStat(this));
                 return TypedActionResult.success(player.getStackInHand(hand));

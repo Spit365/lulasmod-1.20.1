@@ -78,7 +78,7 @@ public class ModSpells {
      public static final SpellItem HOME_SPELL = register("wickedness", new SpellItem(600) {@Override public void execute(ServerWorld world, PlayerEntity player, Hand hand, Float efficiencyMultiplier, Integer cooldownMultiplier) {
          ModMethods.sendHome(player, player.getStackInHand(hand).getItem());
      }});
-     public static final SpellItem POCKET_SPELL = register("heresies", new SpellItem(300, ENTITY_ZOMBIE_VILLAGER_CURE) {@Override public void execute(ServerWorld world, PlayerEntity player, Hand hand, Float efficiencyMultiplier, Integer cooldownMultiplier) {
+     public static final SpellItem POCKET_SPELL = register("heresies", new SpellItem(0, ENTITY_ZOMBIE_VILLAGER_CURE) {@Override public void execute(ServerWorld world, PlayerEntity player, Hand hand, Float efficiencyMultiplier, Integer cooldownMultiplier) {
          List<Entity> entities = world.getOtherEntities(player, new Box(player.getPos().add(-5d, -5d, -5d), player.getPos().add(5d, 5d, 5d)));
          if (entities.isEmpty()) entities.add(player);
          for (Entity victim : entities) {

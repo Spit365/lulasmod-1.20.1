@@ -5,8 +5,7 @@
   "mixins": [
     "LivingEntityMixin",
     "MilkBucketItemMixin",
-    "PlayerEntityMixin",
-    "PlayerManagerMixin"
+    "PlayerEntityMixin"
   ],
   "injectors": {
     "defaultRequire": 1

@@ -15,15 +15,12 @@ import net.spit365.lulasmod.mod.ModEntities;
 import net.spit365.lulasmod.mod.ModItems;
 
 public class SmokeBombEntity extends ThrownItemEntity {
-	public SmokeBombEntity(EntityType<? extends SmokeBombEntity> entityType, World world) {
-		super(entityType, world);
-	}
+	public SmokeBombEntity(EntityType<? extends SmokeBombEntity> entityType, World world) {super(entityType, world);}
 	public SmokeBombEntity(World world, LivingEntity owner) {super(ModEntities.SMOKE_BOMB, owner, world);}
 
 	@Override protected Item getDefaultItem() {return ModItems.SMOKE_BOMB;}
 	@Override protected void onEntityHit(EntityHitResult entityHitResult) {onCollision(entityHitResult);}
-	@Override
-	protected void onCollision(HitResult hitResult) {
+	@Override protected void onCollision(HitResult hitResult) {
 		super.onCollision(hitResult);
 		if (this.getWorld() instanceof ServerWorld serverWorld) {
 			serverWorld.spawnParticles(
