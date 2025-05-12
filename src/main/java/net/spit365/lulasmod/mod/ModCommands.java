@@ -67,6 +67,11 @@ public class ModCommands {
                     ModMethods.applyBleed((LivingEntity) e, IntegerArgumentType.getInteger(context, "seconds") * 20);
                 return r;
             }))));
+            dispatcher.register(literal("removeCooldown").executes(context -> {
+                if (context.getSource().getEntity() instanceof PlayerEntity player) for (int i = 0; i < player.getInventory().size(); i++)
+                    player.getItemCooldownManager().set(player.getInventory().getStack(i).getItem(), 0);
+                return r;
+            }));
         });
     }
 }

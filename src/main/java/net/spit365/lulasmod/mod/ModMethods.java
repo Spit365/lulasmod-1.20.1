@@ -3,8 +3,6 @@ package net.spit365.lulasmod.mod;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.block.Blocks;
-import net.minecraft.block.SculkShriekerBlock;
-import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.StatusEffectInstance;
@@ -16,7 +14,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.particle.ParticleEffect;
 import net.minecraft.particle.ParticleTypes;
-import net.minecraft.particle.ShriekParticleEffect;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.server.MinecraftServer;
@@ -38,6 +35,7 @@ public class ModMethods {
     private static final LinkedList<ImpaledContext> impaled = new LinkedList<>();
     private static int impaledCounter = 0;
     private static int sporesCounter = 0;
+
     private record ImpaledContext(PlayerEntity player, LivingEntity livingEntity, ParticleEffect particle, Integer iterations) {
         public ImpaledContext(ImpaledContext context, Integer iterations) {
             this(context.player(), context.livingEntity(), context.particle(), iterations);
@@ -66,9 +64,10 @@ public class ModMethods {
             BlockPos pos = serverPlayer.getSpawnPointPosition();
             if (pos == null){
                 pos = player.getWorld().getSpawnPos();
-                if (player.teleport(Objects.requireNonNull(player.getServer()).getWorld(World.OVERWORLD), pos.getX(), pos.getY(), pos.getZ(), Set.of(), player.getYaw(), player.getPitch()))
-                    Lulasmod.LOGGER.info("{} was sent home to {} {} {} (with {})", player.getName(), pos.getX(), pos.getY(), pos.getZ(), item);
             } else player.requestTeleport(pos.getX(), pos.getY(), pos.getZ());
+            RegistryKey<World> targetDimension = serverPlayer.getSpawnPointDimension();
+            if (player.teleport(Objects.requireNonNull(player.getServer()).getWorld(targetDimension), pos.getX(), pos.getY(), pos.getZ(), Set.of(), player.getYaw(), player.getPitch()))
+                Lulasmod.LOGGER.info("{} was sent home to {} {} {} {} (with {})", player.getName(), pos.getX(), pos.getY(), pos.getZ(), targetDimension, item);
         }
     }
 

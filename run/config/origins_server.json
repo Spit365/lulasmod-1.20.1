@@ -110,6 +110,9 @@
       "origins:hunger_over_time": true,
       "origins:fragile": true,
       "origins:phantomize_overlay": true
+    },
+    "lulasmod:null": {
+      "enabled": true
     }
   }
 }

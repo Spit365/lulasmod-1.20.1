@@ -2,15 +2,15 @@
     "name": "The Tailed",
     "description": "*Warning for servers, only works for one person!* A humanoid demon with the only difference being a tail sprouting from the back and longer claw like fingernails. Originally it comes from a part of hell, where the temperatures are dangerously low. Therefore it can withstand very cold terrain.",
     "powers": [
-        "lulasmod:cosmetic/toggle-tail",
-        "lulasmod:cosmetic/update-tail",
-        "lulasmod:cosmetic/demonic-aura",
-        "lulasmod:negative/wet",
-        "lulasmod:positive/balance",
-        "lulasmod:positive/claws",
-        "lulasmod:positive/freeze-immune",
-        "lulasmod:positive/traumatise",
-        "lulasmod:setup"
+        "lulasmod:tailed/cosmetic/toggle-tail",
+        "lulasmod:tailed/cosmetic/update-tail",
+        "lulasmod:tailed/cosmetic/demonic-aura",
+        "lulasmod:tailed/negative/wet",
+        "lulasmod:tailed/positive/balance",
+        "lulasmod:tailed/positive/claws",
+        "lulasmod:tailed/positive/freeze-immune",
+        "lulasmod:tailed/positive/traumatise",
+        "lulasmod:tailed/setup"
     ],
     "icon": {
         "item": "minecraft:pink_petals"
