@@ -50,7 +50,16 @@
       "lulasmod:positive/soul_shatter": true,
       "lulasmod:positive/claws": true,
       "lulasmod:positive/traumatise": true,
-      "lulasmod:cosmetic/demonic-aura": true
+      "lulasmod:cosmetic/demonic-aura": true,
+      "lulasmod:tailed/cosmetic/toggle-tail": true,
+      "lulasmod:tailed/cosmetic/update-tail": true,
+      "lulasmod:tailed/cosmetic/demonic-aura": true,
+      "lulasmod:tailed/negative/wet": true,
+      "lulasmod:tailed/positive/balance": true,
+      "lulasmod:tailed/positive/claws": true,
+      "lulasmod:tailed/positive/freeze-immune": true,
+      "lulasmod:tailed/positive/traumatise": true,
+      "lulasmod:tailed/setup": true
     },
     "origins:avian": {
       "enabled": true,
