@@ -6,7 +6,6 @@ import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.StatusEffectInstance;
-import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.mob.EndermanEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
@@ -25,6 +24,7 @@ import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.spit365.lulasmod.Lulasmod;
+import net.spit365.lulasmod.custom.SpellHotbar;
 import net.spit365.lulasmod.custom.entity.ParticleProjectileEntity;
 import net.spit365.lulasmod.tag.TagManager;
 import org.jetbrains.annotations.Nullable;
@@ -53,10 +53,10 @@ public class ModMethods {
     }
 
     public static void applyBleed(LivingEntity entity, Integer duration){
-        StatusEffectInstance effectInstance = entity.getStatusEffect(ModStatusEffects.BLEEDING);
+        StatusEffectInstance effectInstance = entity.getStatusEffect(Mod.StatusEffects.BLEEDING);
         if (effectInstance != null){
-            entity.setStatusEffect(new StatusEffectInstance(ModStatusEffects.BLEEDING, effectInstance.getDuration() + duration), entity);
-        } else entity.addStatusEffect(new StatusEffectInstance(ModStatusEffects.BLEEDING, duration));
+            entity.setStatusEffect(new StatusEffectInstance(Mod.StatusEffects.BLEEDING, effectInstance.getDuration() + duration), entity);
+        } else entity.addStatusEffect(new StatusEffectInstance(Mod.StatusEffects.BLEEDING, duration));
     }
 
     public static void sendHome(PlayerEntity player, Item item){
@@ -81,6 +81,16 @@ public class ModMethods {
         return null;
     }
 
+    private static void sendSpellListPacket(ServerPlayerEntity player, Identifier packetId, LinkedList<Identifier> list) {
+        Map<Integer, ItemStack> map = new HashMap<>();
+        for (int i = 0; i < list.size(); i++) {
+            map.put(i, new ItemStack(Registries.ITEM.get(list.get(i))));
+        }
+        PacketByteBuf buf = PacketByteBufs.create();
+        buf.writeMap(map, PacketByteBuf::writeInt, PacketByteBuf::writeItemStack);
+        ServerPlayNetworking.send(player, packetId, buf);
+    }
+
     public static Boolean impale(PlayerEntity player, Item item, Integer baseCooldown, Integer maxCooldown, Integer iterations, ParticleEffect particle) {
         player.getItemCooldownManager().set(item, 2);
         if (selectClosestEntity(player, 5d) instanceof LivingEntity selectedEntity) {
@@ -103,7 +113,7 @@ public class ModMethods {
                         if (impaledCounter >= 25) {
                             impaledCounter = 0;
                             Vec3d pos = new Vec3d(Math.random() * 2 - 1, Math.random() * 2 - 1, Math.random() * 2 - 1).normalize().multiply(5).add(victim.getPos());
-                            TagManager.put(context.player, ModTagCategories.DAMAGE_DELAY, new Identifier(Lulasmod.MOD_ID, "0"));
+                            TagManager.put(context.player, Mod.TagCategories.DAMAGE_DELAY, new Identifier(Lulasmod.MOD_ID, "0"));
                             victim.getWorld().spawnEntity(new ParticleProjectileEntity(
                                     victim.getWorld(), context.player, pos, pos.subtract(victim.getPos()).multiply(-0.5), context.particle)
                             );
@@ -113,18 +123,14 @@ public class ModMethods {
                     } else victim.kill();
                 } else {
                     impaled.remove(context);
-                    TagManager.remove(context.player, ModTagCategories.DAMAGE_DELAY);
-                    victim.addStatusEffect(new StatusEffectInstance(StatusEffects.SLOW_FALLING, 50));
+                    TagManager.remove(context.player, Mod.TagCategories.DAMAGE_DELAY);
+                    victim.addStatusEffect(new StatusEffectInstance(net.minecraft.entity.effect.StatusEffects.SLOW_FALLING, 50));
                 }
             }
         }
         protected static void updateSpells(ServerPlayerEntity player) {
-            PacketByteBuf buf = PacketByteBufs.create();
-            LinkedList<Identifier> list = TagManager.readList(player, ModTagCategories.SPELLS);
-            Map<Integer, ItemStack> map = new HashMap<>();
-            for (int i = 0; i < list.size(); i++) map.put(i, new ItemStack(Registries.ITEM.get(list.get(i))));
-            buf.writeMap(map, PacketByteBuf::writeInt, PacketByteBuf::writeItemStack);
-            ServerPlayNetworking.send(player, ModPackets.PLAYER_SPELL_LIST, buf);
+            if(player.getMainHandStack().getItem() instanceof SpellHotbar item) sendSpellListPacket(player, Mod.Packets.PLAYER_SPELL_LIST, item.display(player));
+            else if(player.getOffHandStack().getItem() instanceof SpellHotbar item) sendSpellListPacket(player, Mod.Packets.PLAYER_SPELL_LIST, item.display(player));
         }
         protected static void repelMiner(ServerPlayerEntity player) {
             if (player.getCommandTags().contains("miner")) {

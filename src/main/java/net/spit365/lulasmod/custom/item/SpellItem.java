@@ -12,7 +12,8 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.world.World;
-import net.spit365.lulasmod.mod.ModTagCategories;
+import net.spit365.lulasmod.custom.SpellHotbar;
+import net.spit365.lulasmod.mod.Mod;
 import net.spit365.lulasmod.tag.TagManager;
 
 import java.util.LinkedList;
@@ -32,18 +33,18 @@ public abstract class SpellItem extends Item {
         this.cooldown = cooldown;
     }
 
-    public abstract void execute(ServerWorld world, PlayerEntity player, Hand hand, Float efficiencyMultiplier, Integer cooldownMultiplier);
+    public abstract void cast(ServerWorld world, PlayerEntity player, Hand hand, Float efficiencyMultiplier, Integer cooldownMultiplier);
 
 
     @Override
     public TypedActionResult<ItemStack> use(World world, PlayerEntity player, Hand hand){
-        if (!world.isClient()){
+        if (!world.isClient() && !(player.getOffHandStack().getItem() instanceof SpellBookItem)){
             player.getItemCooldownManager().set(this, 5);
             world.playSound(null, player.getBlockPos(), sound, SoundCategory.PLAYERS);
-            LinkedList<Identifier> list = TagManager.readList(player, ModTagCategories.SPELLS);
+            LinkedList<Identifier> list = TagManager.readList(player, Mod.TagCategories.EQUIPPED_SPELLS);
             if (player.isSneaking()) list.remove(getSpellName());
             else if (!list.contains(getSpellName())) list.add(getSpellName());
-            TagManager.put(player, ModTagCategories.SPELLS, list);
+            TagManager.put(player, Mod.TagCategories.EQUIPPED_SPELLS, list);
         }
         return TypedActionResult.pass(player.getStackInHand(hand));
     }

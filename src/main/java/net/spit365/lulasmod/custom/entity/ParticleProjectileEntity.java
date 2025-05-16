@@ -16,7 +16,7 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.spit365.lulasmod.Lulasmod;
-import net.spit365.lulasmod.mod.ModEntities;
+import net.spit365.lulasmod.mod.Mod;
 import org.jetbrains.annotations.Nullable;
 
 public class ParticleProjectileEntity extends PersistentProjectileEntity {
@@ -29,7 +29,7 @@ public class ParticleProjectileEntity extends PersistentProjectileEntity {
     }
 
     public ParticleProjectileEntity(World world, LivingEntity owner, Vec3d pos, Vec3d velocity, @Nullable ParticleEffect particleEffect) {
-        super(ModEntities.PARTICLE_PROJECTILE, owner, world);
+        super(Mod.Entities.PARTICLE_PROJECTILE, owner, world);
         this.particleEffect = particleEffect;
         this.setPos(pos.getX(), pos.getY(), pos.getZ());
         this.setVelocity(velocity);

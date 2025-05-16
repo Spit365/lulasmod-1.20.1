@@ -25,7 +25,7 @@ public class ModCommands {
                     PlayerEntity player = context.getSource().getPlayer();
                     if (player != null && player.getCommandTags().contains("tailed")){
                         Set<Boolean> booleanLinkedList = new HashSet<>();
-                        for (Item item : List.of(ModItems.HELLISH_SEAL, ModSpells.SLASH_SPELL, ModSpells.BLOOD_SPELL, ModSpells.POCKET_SPELL)) {
+                        for (Item item : List.of(Mod.Items.HELLISH_SEAL, Mod.Spells.SLASH_SPELL, Mod.Spells.BLOOD_SPELL, Mod.Spells.POCKET_SPELL)) {
                             boolean b = ModMethods.getItemStack(player, item) == null;
                             if (b) player.giveItemStack(new ItemStack(item));
                             booleanLinkedList.add(b);

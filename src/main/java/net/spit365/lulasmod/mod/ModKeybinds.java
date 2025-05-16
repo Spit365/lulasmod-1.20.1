@@ -20,7 +20,7 @@ public class ModKeybinds {
         ));
 
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
-            if (cycleSpellKey.wasPressed() && client.player != null) ClientPlayNetworking.send(ModPackets.CYCLE_PLAYER_SPELL, PacketByteBufs.create());
+            if (cycleSpellKey.wasPressed() && client.player != null) ClientPlayNetworking.send(Mod.Packets.CYCLE_PLAYER_SPELL, PacketByteBufs.create());
         });
     }
 }

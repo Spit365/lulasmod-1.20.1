@@ -20,8 +20,8 @@ import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.spit365.lulasmod.Lulasmod;
+import net.spit365.lulasmod.mod.Mod;
 import net.spit365.lulasmod.mod.ModMethods;
-import net.spit365.lulasmod.mod.ModTagCategories;
 import net.spit365.lulasmod.tag.TagManager;
 
 import java.util.Objects;
@@ -45,7 +45,7 @@ public class LasciviousnessItem extends Item {
             Entity selectedEntity = ModMethods.selectClosestEntity(player, 5d);
             player.getItemCooldownManager().set(this, 2);
             if (selectedEntity instanceof  LivingEntity) player.getItemCooldownManager().set(this, 50); else selectedEntity = player;
-            TagManager.put(player, ModTagCategories.LASCIVIOUSNESS_TARGET, new Identifier(Lulasmod.MOD_ID, String.valueOf(selectedEntity.getId())));
+            TagManager.put(player, Mod.TagCategories.LASCIVIOUSNESS_TARGET, new Identifier(Lulasmod.MOD_ID, String.valueOf(selectedEntity.getId())));
             player.incrementStat(Stats.USED.getOrCreateStat(this));
             return TypedActionResult.success(player.getStackInHand(hand));
         }
@@ -56,7 +56,7 @@ public class LasciviousnessItem extends Item {
     public boolean postHit(ItemStack stack, LivingEntity target, LivingEntity attacker){
         stack.damage(1, attacker, e -> e.sendEquipmentBreakStatus(EquipmentSlot.MAINHAND));
         LivingEntity symbiotic = attacker;
-        Entity temp = attacker.getWorld().getEntityById(Integer.parseInt(Objects.requireNonNull(TagManager.read(attacker, ModTagCategories.LASCIVIOUSNESS_TARGET)).getPath()));
+        Entity temp = attacker.getWorld().getEntityById(Integer.parseInt(Objects.requireNonNull(TagManager.read(attacker, Mod.TagCategories.LASCIVIOUSNESS_TARGET)).getPath()));
         if (temp instanceof LivingEntity) symbiotic = (LivingEntity) temp;
         if (symbiotic.getHealth() <= symbiotic.getMaxHealth() -2f) symbiotic.heal(2f);
         Vec3d pos = attacker.getRotationVec(1).normalize().add(attacker.getPos());

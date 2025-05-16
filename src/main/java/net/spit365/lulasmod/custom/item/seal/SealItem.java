@@ -8,14 +8,21 @@ import net.minecraft.registry.Registries;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.stat.Stats;
 import net.minecraft.util.Hand;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.world.World;
+import net.spit365.lulasmod.custom.SpellHotbar;
 import net.spit365.lulasmod.custom.item.SpellItem;
-import net.spit365.lulasmod.mod.ModTagCategories;
+import net.spit365.lulasmod.mod.Mod;
 import net.spit365.lulasmod.tag.TagManager;
 
-public abstract class SealItem extends Item {
+import java.util.LinkedList;
+
+public abstract class SealItem extends Item  implements SpellHotbar {
     public SealItem() {super(new FabricItemSettings().maxCount(1));}
+
+    @Override public LinkedList<Identifier> display(PlayerEntity player){return TagManager.readList(player, Mod.TagCategories.EQUIPPED_SPELLS);}
+    @Override public void cycle(PlayerEntity player){TagManager.cycle(player, Mod.TagCategories.EQUIPPED_SPELLS);}
 
     protected abstract Boolean canUse(PlayerEntity player);
     protected abstract Float efficiencyMultiplier();
@@ -24,11 +31,10 @@ public abstract class SealItem extends Item {
     @Override
     public TypedActionResult<ItemStack> use(World world, PlayerEntity player, Hand hand) {
         if (world instanceof ServerWorld serverWorld && canUse(player)) {
-            SpellItem equippedSpell = null;
-            if(Registries.ITEM.get(TagManager.readList(player, ModTagCategories.SPELLS).get(0)) instanceof SpellItem spellItem) equippedSpell = spellItem;
-            if (equippedSpell != null) {
-                player.getItemCooldownManager().set(this, Math.max(equippedSpell.cooldown, 2));
-                equippedSpell.execute(serverWorld, player, hand, efficiencyMultiplier(), cooldownMultiplier());
+            LinkedList<Identifier> spellList = TagManager.readList(player, Mod.TagCategories.EQUIPPED_SPELLS);
+            if(!spellList.isEmpty() && Registries.ITEM.get(spellList.get(0)) instanceof SpellItem spellItem) {
+                player.getItemCooldownManager().set(this, Math.max(spellItem.cooldown, 2));
+                spellItem.cast(serverWorld, player, hand, efficiencyMultiplier(), cooldownMultiplier());
                 player.incrementStat(Stats.USED.getOrCreateStat(this));
                 return TypedActionResult.success(player.getStackInHand(hand));
             }

@@ -4,8 +4,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectCategory;
 import net.minecraft.entity.effect.StatusEffectInstance;
-import net.spit365.lulasmod.mod.ModDamageSources;
-import net.spit365.lulasmod.mod.ModStatusEffects;
+import net.spit365.lulasmod.mod.Mod;
 
 import java.util.Objects;
 
@@ -14,11 +13,11 @@ public class BleedingStatusEffect extends StatusEffect {
 
   @Override public boolean canApplyUpdateEffect(int duration, int amplifier) {return true;}
   @Override public void applyUpdateEffect(LivingEntity entity, int amplifier) {
-    int duration = Objects.requireNonNull(entity.getStatusEffect(ModStatusEffects.BLEEDING)).getDuration();
+    int duration = Objects.requireNonNull(entity.getStatusEffect(Mod.StatusEffects.BLEEDING)).getDuration();
     int min = Math.min((int) (entity.getMaxHealth() * 60), 1200);
     if (duration > min) {
-      entity.setStatusEffect(new StatusEffectInstance(ModStatusEffects.BLEEDING, duration - min), entity);
-      entity.damage(ModDamageSources.BLOODSUCKING(entity), entity.getMaxHealth() * 0.15f + 10f);
+      entity.setStatusEffect(new StatusEffectInstance(Mod.StatusEffects.BLEEDING, duration - min), entity);
+      entity.damage(Mod.DamageSources.BLOODSUCKING(entity), entity.getMaxHealth() * 0.15f + 10f);
     }
   }
 }
