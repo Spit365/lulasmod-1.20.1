@@ -42,8 +42,8 @@ ao:true
 prioritizeChunkUpdates:0
 biomeBlendRadius:7
 renderClouds:"false"
-resourcePacks:["vanilla","fabric"]
-incompatibleResourcePacks:[]
+resourcePacks:["vanilla","fabric","file/FancyCrops","file/FreshAnimations","file/StayTrue","file/GEO - ST - v1.4.0"]
+incompatibleResourcePacks:["file/FancyCrops","file/GEO - ST - v1.4.0"]
 lastServer:
 lang:en_us
 soundDevice:""
@@ -121,19 +121,19 @@ key_key.hotbar.9:key.keyboard.9
 key_key.origins.primary_active:key.keyboard.g
 key_key.origins.secondary_active:key.keyboard.h
 key_key.origins.view_origin:key.keyboard.equal
-key_key.freecam.toggle:key.keyboard.f4
-key_key.freecam.playerControl:key.keyboard.period
-key_key.freecam.tripodReset:key.keyboard.unknown
-key_key.freecam.configGui:key.keyboard.unknown
-key_key.modmenu.open_menu:key.keyboard.unknown
 key_key.presencefootsteps.settings:key.keyboard.unknown
 key_key.presencefootsteps.toggle:key.keyboard.unknown
-key_key.lulasmod.cycle_spell:key.keyboard.r
 key_key.jade.config:key.keyboard.unknown
 key_key.jade.show_overlay:key.keyboard.unknown
 key_key.jade.toggle_liquid:key.keyboard.unknown
 key_key.jade.narrate:key.keyboard.unknown
 key_key.jade.show_details_alternative:key.keyboard.unknown
+key_key.freecam.toggle:key.keyboard.f4
+key_key.freecam.playerControl:key.keyboard.period
+key_key.freecam.tripodReset:key.keyboard.unknown
+key_key.freecam.configGui:key.keyboard.unknown
+key_key.lulasmod.cycle_spell:key.keyboard.r
+key_key.modmenu.open_menu:key.keyboard.unknown
 key_iris.keybind.reload:key.keyboard.unknown
 key_iris.keybind.toggleShaders:key.keyboard.k
 key_iris.keybind.shaderPackSelection:key.keyboard.o

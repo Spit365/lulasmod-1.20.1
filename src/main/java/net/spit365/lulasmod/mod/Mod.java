@@ -19,9 +19,7 @@ import net.minecraft.entity.damage.DamageType;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemGroup;
-import net.minecraft.item.ItemStack;
+import net.minecraft.item.*;
 import net.minecraft.network.packet.s2c.play.PositionFlag;
 import net.minecraft.particle.DefaultParticleType;
 import net.minecraft.particle.ParticleTypes;
@@ -35,7 +33,6 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Box;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
@@ -154,6 +151,7 @@ public class Mod {
          public static final Item GOLDEN_TRIDENT     = registerItem("golden_trident",        new GoldenTridentItem(new Item.Settings().maxCount(1).maxDamage(500)));
          public static final Item SHARP_TOME         = registerItem("sharp_tome",            new SharpTomeItem(new Item.Settings().maxCount(1).maxDamage(640)));
          public static final Item LASCIVIOUSNESS     = registerItem("lasciviousness",        new LasciviousnessItem(new Item.Settings().maxCount(1).maxDamage(500)));
+         public static final Item SINFUL             = registerItem("sinful",                new SinfulItem());
          public static final Item SPELL_BOOK         = registerItem("spell_book",            new SpellBookItem());
 
          public static final Item HELLISH_SEAL       = registerItem("hellish_seal",          new HellishSeal());
@@ -180,16 +178,14 @@ public class Mod {
               for (Entity entity : world.getOtherEntities(player, new Box(pos.add(1d, 1d, 1d), pos.add(-1d, -1d, -1d)))) {
                  if (entity instanceof LivingEntity livingEntity) ModMethods.applyBleed(livingEntity, (int) (120 * efficiencyMultiplier));
                  else entity.discard();}
-              double x = -MathHelper.sin(player.getYaw() * (float) (Math.PI / 180.0));
-              double y = MathHelper.cos(player.getYaw() * (float) (Math.PI / 180.0));
-              world.spawnParticles(Particles.SCRATCH, player.getX() + x, player.getBodyY(0.5), player.getZ() + y, 0, x, 0.0, y, 0.0);
+              world.spawnParticles(Particles.SCRATCH, pos.getX(), pos.getY(), pos.getZ(), 0, 0, 0, 0, 0);
               world.playSound(null, player.getBlockPos(), ENTITY_PLAYER_ATTACK_STRONG, SoundCategory.PLAYERS, 100.0f, 1f);
           }});
           public static final SpellItem FIRE_SPELL = registerSpell("malignity", new SpellItem(300) {@Override public void cast(ServerWorld world, PlayerEntity player, Hand hand, Float efficiencyMultiplier, Integer cooldownMultiplier) {
               world.spawnEntity(new MalignityEntity(world, player, player.getRotationVec(1).normalize().multiply(3), Math.min(Math.round(efficiencyMultiplier +2), 100)));
           }});
           public static final SpellItem DASH_SPELL = registerSpell("purloining", new SpellItem(0) {@Override public void cast(ServerWorld world, PlayerEntity player, Hand hand, Float efficiencyMultiplier, Integer cooldownMultiplier) {
-              if (!player.hasStatusEffect(net.minecraft.entity.effect.StatusEffects.SLOWNESS)) {
+               if (!player.hasStatusEffect(net.minecraft.entity.effect.StatusEffects.SLOWNESS)) {
                  Identifier id = TagManager.read(player, TagCategories.DASH_SPELL);
                  if (id == null){
                          id = new Identifier(Lulasmod.MOD_ID, String.valueOf(5 * cooldownMultiplier));
@@ -208,11 +204,11 @@ public class Mod {
                 } else player.getItemCooldownManager().set(player.getStackInHand(hand).getItem(), 20);
           }});
           public static final SpellItem SMOKE_SPELL = registerSpell("guile", new SpellItem(20) {@Override public void cast(ServerWorld world, PlayerEntity player, Hand hand, Float efficiencyMultiplier, Integer cooldownMultiplier) {
-              if (!player.hasStatusEffect(StatusEffects.CUSHIONED)) {
+               if (!player.hasStatusEffect(StatusEffects.CUSHIONED)) {
                   world.playSound(null, player.getBlockPos(), ENTITY_SPLASH_POTION_BREAK, SoundCategory.PLAYERS);
                   world.spawnParticles(ParticleTypes.CAMPFIRE_SIGNAL_SMOKE, player.getPos().x, player.getPos().y + 1.0d, player.getPos().z, 269, 1.2d, 1.2d, 1.2d, 0d);
-                  player.addStatusEffect(new StatusEffectInstance(net.minecraft.entity.effect.StatusEffects.INVISIBILITY, 600, 0, false, false));
-                  player.addStatusEffect(new StatusEffectInstance(StatusEffects.CUSHIONED, Math.round(efficiencyMultiplier) *1200, 0, false, false));
+                  player.addStatusEffect(new StatusEffectInstance(net.minecraft.entity.effect.StatusEffects.INVISIBILITY, 300, 0, false, false));
+                  player.addStatusEffect(new StatusEffectInstance(StatusEffects.CUSHIONED, Math.round(efficiencyMultiplier -1) *1200, 0, false, false));
               }
           }});
           public static final SpellItem HEAL_SPELL = registerSpell("appeasing", new SpellItem(300) {@Override public void cast(ServerWorld world, PlayerEntity player, Hand hand, Float efficiencyMultiplier, Integer cooldownMultiplier) {
@@ -270,5 +266,16 @@ public class Mod {
      public static class Packets {
           public static final Identifier PLAYER_SPELL_LIST = new Identifier(Lulasmod.MOD_ID, "player_spell_list");
           public static final Identifier CYCLE_PLAYER_SPELL = new Identifier(Lulasmod.MOD_ID, "cycle_player_spell");
+     }
+
+     public static void init() {
+          Items.init();
+          Spells.init();
+          ItemGroups.init();
+          Entities.init();
+          DamageSources.init();
+          StatusEffects.init();
+          Particles.init();
+          Gamerules.init();
      }
 }

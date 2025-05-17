@@ -36,7 +36,7 @@ public abstract class SealItem extends Item  implements SpellHotbar {
                 player.getItemCooldownManager().set(this, Math.max(spellItem.cooldown, 2));
                 spellItem.cast(serverWorld, player, hand, efficiencyMultiplier(), cooldownMultiplier());
                 player.incrementStat(Stats.USED.getOrCreateStat(this));
-                return TypedActionResult.success(player.getStackInHand(hand));
+                return TypedActionResult.success(player.getStackInHand(hand), false);
             }
         }
         return TypedActionResult.pass(player.getStackInHand(hand));

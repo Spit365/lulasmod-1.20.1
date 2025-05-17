@@ -45,6 +45,7 @@ public abstract class SpellItem extends Item {
             if (player.isSneaking()) list.remove(getSpellName());
             else if (!list.contains(getSpellName())) list.add(getSpellName());
             TagManager.put(player, Mod.TagCategories.EQUIPPED_SPELLS, list);
+            return TypedActionResult.success(player.getStackInHand(hand));
         }
         return TypedActionResult.pass(player.getStackInHand(hand));
     }

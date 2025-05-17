@@ -2,8 +2,8 @@
   "credit": "Made with Blockbench",
   "texture_size": [32, 32],
   "textures": {
-    "0": "lulasmod:item/creative_seal",
-    "particle": "lulasmod:item/creative_seal"
+    "0": "lulasmod:item/seal",
+    "particle": "lulasmod:item/seal"
   },
   "elements": [
     {
@@ -71,7 +71,9 @@
       "scale": [0.15, 0.3, 0.15]
     },
     "firstperson_righthand": {
-      "scale": [0, 0, 0]
+      "rotation": [-110, 0, -39],
+      "translation": [0, 3.75, 0],
+      "scale": [0.125, 0.125, 0.125]
     },
     "firstperson_lefthand": {
       "scale": [0, 0, 0]

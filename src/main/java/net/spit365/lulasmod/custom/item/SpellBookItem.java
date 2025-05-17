@@ -26,7 +26,6 @@ public class SpellBookItem extends Item implements SpellHotbar {
      @Override public LinkedList<Identifier> display(PlayerEntity player){
           ItemStack stack = (player.getMainHandStack().getItem().equals(this)? player.getMainHandStack() : player.getOffHandStack());
           NbtCompound nbt = stack.getOrCreateNbt();
-          Lulasmod.LOGGER.info(nbt.toString());
           return getListFromString(nbt.getString("Spells"));
      }
 
@@ -42,45 +41,33 @@ public class SpellBookItem extends Item implements SpellHotbar {
                nbt.putString("Spells", getStringFromList(list));
           }
      }
-     //TODO: Fucking fix whatever this shi is
      @Override
      public TypedActionResult<ItemStack> use(World world, PlayerEntity player, Hand hand){
-//          if (world instanceof ServerWorld){
-//               ItemStack stack = (hand.equals(Hand.MAIN_HAND)? player.getOffHandStack() : player.getMainHandStack());
-//               NbtCompound nbt = stack.getOrCreateNbt();
-//               if (stack.getItem() instanceof SpellItem spellItem) {
-//                    Identifier id = Registries.ITEM.getId(spellItem);
-//                    LinkedList<Identifier> list = getListFromString(nbt.getString("Spells"));
-//                    if (!list.contains(id)) list.add(id);
-//                    nbt.putString("Spells", getStringFromList(list));
-//                    stack.setNbt(nbt);
-//                    stack.decrement(1);
-//                    return TypedActionResult.success(player.getStackInHand(hand));
-//               } else if (stack.getItem().equals(Items.AIR)){
-//                    LinkedList<Identifier> list = getListFromString(nbt.getString("Spells"));
-//                    if (!list.isEmpty()) {
-//                         Identifier id = list.pollFirst();
-//                         list.remove(id);
-//                         stack.setNbt(nbt);
-//                         nbt.putString("Spells", getStringFromList(list));
-//                         player.giveItemStack(new ItemStack(Registries.ITEM.get(id)));
-//                         return TypedActionResult.success(player.getStackInHand(hand));
-//                    }
-//               }
-//          }
-          if(player.getStackInHand(hand).hasNbt()) {
-               player.getStackInHand(hand).setNbt(new NbtCompound());
+          if (world instanceof ServerWorld){
+               ItemStack spell = (hand.equals(Hand.MAIN_HAND)? player.getOffHandStack() : player.getMainHandStack());
+               ItemStack spellbook = player.getStackInHand(hand);
+               NbtCompound nbt = spellbook.getOrCreateNbt();
+               if (spell.getItem() instanceof SpellItem spellItem) {
+                    Identifier id = Registries.ITEM.getId(spellItem);
+                    LinkedList<Identifier> list = getListFromString(nbt.getString("Spells"));
+                    if (!list.contains(id)) list.add(id);
+                    nbt.putString("Spells", getStringFromList(list));
+                    spellbook.setNbt(nbt);
+                    spell.decrement(1);
+                    return TypedActionResult.success(player.getStackInHand(hand));
+               } else if (spell.getItem().equals(Items.AIR)){
+                    LinkedList<Identifier> list = getListFromString(nbt.getString("Spells"));
+                    if (!list.isEmpty()) {
+                         Identifier id = list.pollFirst();
+                         list.remove(id);
+                         spellbook.setNbt(nbt);
+                         nbt.putString("Spells", getStringFromList(list));
+                         player.giveItemStack(new ItemStack(Registries.ITEM.get(id)));
+                         return TypedActionResult.success(player.getStackInHand(hand));
+                    }
+               }
           }
-          return TypedActionResult.success(player.getStackInHand(hand));
-     }
-
-     @Override
-     public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context) {
-          if(stack.hasNbt()) {
-               assert stack.getNbt() != null;
-               String currentOre = stack.getNbt().getString("Spells");
-               tooltip.add(Text.literal(currentOre));
-          }
+          return TypedActionResult.pass(player.getStackInHand(hand));
      }
 
      private static LinkedList<Identifier> getListFromString(String s){

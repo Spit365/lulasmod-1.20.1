@@ -11,14 +11,7 @@ public class Lulasmod implements ModInitializer {
 
 	@Override
 	public void onInitialize() {
-		Mod.Items.init();
-		Mod.Spells.init();
-		Mod.ItemGroups.init();
-		Mod.Entities.init();
-		Mod.DamageSources.init();
-		Mod.StatusEffects.init();
-		Mod.Particles.init();
-		Mod.Gamerules.init();
+		Mod.init();
 		ModServerEvents.init();
 		ModCommands.init();
 		LOGGER.info("Initializing for " + Lulasmod.MOD_ID);
