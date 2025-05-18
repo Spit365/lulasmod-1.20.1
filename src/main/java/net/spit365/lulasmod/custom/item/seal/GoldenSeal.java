@@ -1,9 +1,12 @@
 package net.spit365.lulasmod.custom.item.seal;
 
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.LivingEntity;
 
 public class GoldenSeal extends SealItem{
-    @Override protected Boolean canUse(PlayerEntity player) {return true;}
-    @Override protected Float efficiencyMultiplier() {return 1f;}
-    @Override protected Integer cooldownMultiplier() {return 2;}
+    @Override
+    public Boolean canUse(LivingEntity entity) {return true;}
+    @Override
+    public Float efficiencyMultiplier() {return 1f;}
+    @Override
+    public Integer cooldownMultiplier() {return 2;}
 }

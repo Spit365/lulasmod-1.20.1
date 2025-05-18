@@ -47,7 +47,7 @@ public class LasciviousnessItem extends Item {
             if (selectedEntity instanceof  LivingEntity) player.getItemCooldownManager().set(this, 50); else selectedEntity = player;
             TagManager.put(player, Mod.TagCategories.LASCIVIOUSNESS_TARGET, new Identifier(Lulasmod.MOD_ID, String.valueOf(selectedEntity.getId())));
             player.incrementStat(Stats.USED.getOrCreateStat(this));
-            return TypedActionResult.success(player.getStackInHand(hand));
+            return TypedActionResult.success(player.getStackInHand(hand), false);
         }
         return TypedActionResult.pass(player.getStackInHand(hand));
     }

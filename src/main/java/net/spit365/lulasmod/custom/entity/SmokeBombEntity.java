@@ -10,6 +10,7 @@ import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.hit.HitResult;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.spit365.lulasmod.mod.Mod;
 
@@ -18,26 +19,30 @@ public class SmokeBombEntity extends ThrownItemEntity {
 	public SmokeBombEntity(World world, LivingEntity owner) {super(Mod.Entities.SMOKE_BOMB, owner, world);}
 
 	@Override protected Item getDefaultItem() {return Mod.Items.SMOKE_BOMB;}
-	@Override protected void onEntityHit(EntityHitResult entityHitResult) {onCollision(entityHitResult);}
+	@Override protected void onEntityHit(EntityHitResult entityHitResult) {collision(entityHitResult.getPos());}
 	@Override protected void onCollision(HitResult hitResult) {
 		super.onCollision(hitResult);
+		collision(hitResult.getPos());
+	}
+
+	private void collision(Vec3d pos) {
 		if (this.getWorld() instanceof ServerWorld serverWorld) {
-			serverWorld.spawnParticles(
-				ParticleTypes.CAMPFIRE_SIGNAL_SMOKE,
-				hitResult.getPos().x, hitResult.getPos().y + 1.0d, hitResult.getPos().z,
-				269, 1.2d, 1.2d, 1.2d, 0.0d
-			);
-			this.getWorld().playSound(
-					null,
-					this.getX(),
-					this.getY(),
-					this.getZ(),
-					SoundEvents.ENTITY_SPLASH_POTION_BREAK,
-					SoundCategory.NEUTRAL,
-					1.0F,
-					1.0F
-			);
-			this.discard();
-		}
+				serverWorld.spawnParticles(
+					ParticleTypes.CAMPFIRE_SIGNAL_SMOKE,
+					pos.getX(), pos.getY() + 1.0d, pos.getZ(),
+					269, 1.2d, 1.2d, 1.2d, 0.0d
+				);
+				this.getWorld().playSound(
+						null,
+						pos.getX(),
+						pos.getY(),
+						pos.getZ(),
+						SoundEvents.ENTITY_SPLASH_POTION_BREAK,
+						SoundCategory.NEUTRAL,
+						1.0F,
+						1.0F
+				);
+				this.discard();
+			}
 	}
 }

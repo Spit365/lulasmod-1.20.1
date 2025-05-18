@@ -1,6 +1,7 @@
 package net.spit365.lulasmod.custom.item.seal;
 
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -24,9 +25,9 @@ public abstract class SealItem extends Item  implements SpellHotbar {
     @Override public LinkedList<Identifier> display(PlayerEntity player){return TagManager.readList(player, Mod.TagCategories.EQUIPPED_SPELLS);}
     @Override public void cycle(PlayerEntity player){TagManager.cycle(player, Mod.TagCategories.EQUIPPED_SPELLS);}
 
-    protected abstract Boolean canUse(PlayerEntity player);
-    protected abstract Float efficiencyMultiplier();
-    protected abstract Integer cooldownMultiplier();
+    public abstract Boolean canUse(LivingEntity entity);
+    public abstract Float efficiencyMultiplier();
+    public abstract Integer cooldownMultiplier();
 
     @Override
     public TypedActionResult<ItemStack> use(World world, PlayerEntity player, Hand hand) {
