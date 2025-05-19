@@ -5,15 +5,13 @@ import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
 import net.fabricmc.fabric.api.gamerule.v1.GameRuleFactory;
 import net.fabricmc.fabric.api.gamerule.v1.GameRuleRegistry;
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
+import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
 import net.fabricmc.fabric.api.particle.v1.FabricParticleTypes;
 import net.minecraft.client.particle.FlameParticle;
 import net.minecraft.client.particle.SweepAttackParticle;
 import net.minecraft.client.render.entity.EntityRendererFactory;
 import net.minecraft.client.render.entity.FlyingItemEntityRenderer;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.SpawnGroup;
+import net.minecraft.entity.*;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.damage.DamageType;
 import net.minecraft.entity.effect.StatusEffect;
@@ -39,9 +37,11 @@ import net.minecraft.world.World;
 import net.spit365.lulasmod.Lulasmod;
 import net.spit365.lulasmod.custom.effect.BleedingStatusEffect;
 import net.spit365.lulasmod.custom.effect.CushionedStatusEffect;
+import net.spit365.lulasmod.custom.entity.AmethystShardEntity;
 import net.spit365.lulasmod.custom.entity.MalignityEntity;
 import net.spit365.lulasmod.custom.entity.ParticleProjectileEntity;
 import net.spit365.lulasmod.custom.entity.SmokeBombEntity;
+import net.spit365.lulasmod.custom.entity.renderer.AmethystShardEntityRenderer;
 import net.spit365.lulasmod.custom.entity.renderer.ParticleProjectileEntityRenderer;
 import net.spit365.lulasmod.custom.item.*;
 import net.spit365.lulasmod.custom.item.seal.BloodsuckingSeal;
@@ -70,7 +70,7 @@ public class Mod {
           }
           private static ItemGroup ItemGroup(String name, Item item, List<Identifier> list) {
                return Registry.register(Registries.ITEM_GROUP, new Identifier(Lulasmod.MOD_ID, name), FabricItemGroup.builder()
-                       .displayName(Text.translatable("item_group." + name))
+                       .displayName(Text.translatable("item_group." + Lulasmod.MOD_ID + "." + name))
                        .icon(() -> new ItemStack(item))
                        .entries((displayContext, entries) -> {for (Identifier id : list) entries.add(Registries.ITEM.get(id));})
                        .build());
@@ -103,7 +103,9 @@ public class Mod {
 
      public static class DamageSources {
          public static DamageSource BLOODSUCKING(Entity attacker) {return getDamageSource(attacker.getWorld(), BLOODSUCKING);}
+         public static DamageSource AMETHYST_SHARD(Entity attacker) {return getDamageSource(attacker.getWorld(), AMETHYST_SHARD);}
          public static RegistryKey<DamageType> BLOODSUCKING = register.DamageType("bloodsucking");
+          private static final RegistryKey<DamageType> AMETHYST_SHARD = register.DamageType("amethyst_shard");
 
          private static DamageSource getDamageSource(World world, RegistryKey<DamageType> damageType){
              return new DamageSource(world.getRegistryManager()
@@ -137,6 +139,11 @@ public class Mod {
                ParticleProjectileEntity::new,
                ParticleProjectileEntityRenderer::new,
                0.5F, 0.5F, 4, 20);
+          public static final EntityType<AmethystShardEntity> AMETHYST_SHARD = register.Entity(
+               "amethyst_shard",
+               AmethystShardEntity::new,
+               AmethystShardEntityRenderer::new,
+               0.5f, 0.5f, 4, 20);
 
           public static void init(){}
      }
@@ -156,7 +163,6 @@ public class Mod {
          public static final Item HOME_BUTTON        = register.Item("home_button",           new HomeButtonItem(new Item.Settings().maxCount(1).maxDamage(100)));
          public static final Item GOLDEN_TRIDENT     = register.Item("golden_trident",        new GoldenTridentItem(new Item.Settings().maxCount(1).maxDamage(500)));
          public static final Item SHARP_TOME         = register.Item("sharp_tome",            new SharpTomeItem(new Item.Settings().maxCount(1).maxDamage(640)));
-         public static final Item LASCIVIOUSNESS     = register.Item("lasciviousness",        new LasciviousnessItem(new Item.Settings().maxCount(1).maxDamage(500)));
          public static final Item SINFUL             = register.Item("sinful",                new SinfulItem());
          public static final Item SPELL_BOOK         = register.Item("spell_book",            new SpellBookItem());
 
@@ -240,6 +246,12 @@ public class Mod {
                      Lulasmod.LOGGER.error("Could not perform teleport. Registry key: {}, Entity: {}", Dimensions.POCKET_DIMENSION, victim);
               }
           }});
+          public static final SpellItem AMETHYST_SLINGSHOT = register.Spell("amethyst_slingshot", new SpellItem(20) {@Override public void cast(ServerWorld world, PlayerEntity player, Hand hand, Float efficiencyMultiplier, Integer cooldownMultiplier) {
+               AmethystShardEntity amethystShardEntity = new AmethystShardEntity(player, world);
+               amethystShardEntity.addVelocity(player.getRotationVec(1).normalize().multiply(5));
+               amethystShardEntity.setDamage(2);
+               world.spawnEntity(amethystShardEntity);
+          }});
           public static final SpellItem HIGHLIGHTER_SPELL = register.Spell("highlighter_spell", new SpellItem(0) {@Override public void cast(ServerWorld world, PlayerEntity player, Hand hand, Float efficiencyMultiplier, Integer cooldownMultiplier) {
               boolean playerGlowing = !player.isGlowing();
               world.playSound(null, player.getBlockPos(), (playerGlowing ? BLOCK_BEACON_ACTIVATE : BLOCK_BEACON_DEACTIVATE), SoundCategory.PLAYERS);
@@ -264,8 +276,6 @@ public class Mod {
          public static final TagManager.TagCategory DAMAGE_DELAY = register.TagCategory("DamageDelay");
          public static final TagManager.TagCategory EQUIPPED_SPELLS = register.TagCategory("EquippedSpells");
          public static final TagManager.TagCategory DASH_SPELL = register.TagCategory("PurloiningSpell");
-         public static final TagManager.TagCategory LASCIVIOUSNESS_TARGET = register.TagCategory("LasciviousnessTarget");
-         public static final TagManager.TagCategory SPELL_BOOK_SPELLS = register.TagCategory("SpellBookSpells");
      }
 
      public static class Packets {

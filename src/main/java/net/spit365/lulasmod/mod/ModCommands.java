@@ -31,8 +31,8 @@ public class ModCommands {
                             booleanLinkedList.add(b);
                         }
                         if (booleanLinkedList.stream().allMatch(Boolean::booleanValue)) context.getSource().sendFeedback(() ->
-                                Text.literal("You obtained the powers of §kthe ancient tailed"), false);
-                    } else context.getSource().sendFeedback(() -> Text.literal("You cannot use this action"), false);
+                                Text.translatable("notify.lulasmod.command.contract_success"), false);
+                    } else context.getSource().sendFeedback(() -> Text.translatable("notify.lulasmod.command.contract_fail"), false);
                     return r;
                 })
 
@@ -40,25 +40,25 @@ public class ModCommands {
             dispatcher.register(literal("tag-manager")
                 .then(literal("add").then(CommandManager.argument("category", StringArgumentType.word()).then(CommandManager.argument("namespace", StringArgumentType.word()).then(CommandManager.argument("value", StringArgumentType.word()).executes(commandContext -> {
                     TagManager.add(Objects.requireNonNull(commandContext.getSource().getEntity()), new TagManager.TagCategory(StringArgumentType.getString(commandContext, "category")), new Identifier(StringArgumentType.getString(commandContext, "namespace"), StringArgumentType.getString(commandContext, "value")));
-                    commandContext.getSource().sendFeedback(() -> Text.literal("Added tag to you in category " + StringArgumentType.getString(commandContext, "category") + " with value " + StringArgumentType.getString(commandContext, "value")), true);
+                    commandContext.getSource().sendFeedback(() -> Text.translatable("notify.lulasmod.command.tag_manager_add", StringArgumentType.getString(commandContext, "category"), StringArgumentType.getString(commandContext, "value")), true);
                     return r;
                 }))))).then(literal("put").then(CommandManager.argument("category", StringArgumentType.word()).then(CommandManager.argument("namespace", StringArgumentType.word()).then(CommandManager.argument("value", StringArgumentType.word()).executes(commandContext -> {
                     TagManager.put(Objects.requireNonNull(commandContext.getSource().getEntity()), new TagManager.TagCategory(StringArgumentType.getString(commandContext, "category")), new Identifier(StringArgumentType.getString(commandContext, "namespace"), StringArgumentType.getString(commandContext, "value")));
-                    commandContext.getSource().sendFeedback(() -> Text.literal("You have been tagged in category " + StringArgumentType.getString(commandContext, "category") + " with value " + StringArgumentType.getString(commandContext, "value")), true);
+                    commandContext.getSource().sendFeedback(() -> Text.translatable("notify.lulasmod.command.tag_manager_put", StringArgumentType.getString(commandContext, "category"), StringArgumentType.getString(commandContext, "value")), true);
                     return r;
                 }))))).then(literal("read").then(CommandManager.argument("category", StringArgumentType.word()).executes(commandContext -> {
-                    commandContext.getSource().sendFeedback(() -> Text.literal("Category " + StringArgumentType.getString(commandContext, "category") + " contains " + TagManager.read(Objects.requireNonNull(commandContext.getSource().getEntity()), new TagManager.TagCategory(StringArgumentType.getString(commandContext, "category")))), true);
+                    commandContext.getSource().sendFeedback(() -> Text.translatable("notify.lulasmod.command.tag_manager_read", StringArgumentType.getString(commandContext, "category"), TagManager.read(Objects.requireNonNull(commandContext.getSource().getEntity()), new TagManager.TagCategory(StringArgumentType.getString(commandContext, "category")))), true);
                     return r;
                 }))).then(literal("remove").then(CommandManager.argument("category", StringArgumentType.word()).executes(commandContext -> {
                     TagManager.remove(Objects.requireNonNull(commandContext.getSource().getEntity()), new TagManager.TagCategory(StringArgumentType.getString(commandContext, "category")));
-                    commandContext.getSource().sendFeedback(() -> Text.literal("All tags in category " + StringArgumentType.getString(commandContext, "category") + " have been removed"), true);
+                    commandContext.getSource().sendFeedback(() -> Text.translatable("notify.lulasmod.command.tag_manager_remove_all", StringArgumentType.getString(commandContext, "category")), true);
                     return r;
                     }).then(CommandManager.argument("namespace", StringArgumentType.word()).then(CommandManager.argument("value", StringArgumentType.word()).executes(commandContext -> {
                         TagManager.remove(Objects.requireNonNull(commandContext.getSource().getEntity()), new TagManager.TagCategory(StringArgumentType.getString(commandContext, "category")), new Identifier(StringArgumentType.getString(commandContext, "namespace"), StringArgumentType.getString(commandContext, "value")));
-                        commandContext.getSource().sendFeedback(() -> Text.literal("Tag " + StringArgumentType.getString(commandContext, "value") + " in category " + StringArgumentType.getString(commandContext, "category") + " have been removed"), true);
+                        commandContext.getSource().sendFeedback(() -> Text.translatable("notify.lulasmod.command.tag_manager_remove_specific", StringArgumentType.getString(commandContext, "value"), StringArgumentType.getString(commandContext, "category")), true);
                         return r;
                 }))))).then(literal("check").then(CommandManager.argument("category", StringArgumentType.word()).then(CommandManager.argument("namespace", StringArgumentType.word()).then(CommandManager.argument("value", StringArgumentType.word()).executes(commandContext -> {
-                    commandContext.getSource().sendFeedback(() -> Text.literal("Category " + StringArgumentType.getString(commandContext, "category") + (TagManager.check(Objects.requireNonNull(commandContext.getSource().getEntity()), new TagManager.TagCategory(StringArgumentType.getString(commandContext, "category")), new Identifier(StringArgumentType.getString(commandContext, "namespace"), StringArgumentType.getString(commandContext, "value")))? " contains " : " does not contain ") + StringArgumentType.getString(commandContext, "value")), true);
+                    commandContext.getSource().sendFeedback(() -> Text.translatable((TagManager.check(Objects.requireNonNull(commandContext.getSource().getEntity()), new TagManager.TagCategory(StringArgumentType.getString(commandContext, "category")), new Identifier(StringArgumentType.getString(commandContext, "namespace"), StringArgumentType.getString(commandContext, "value")))? "notify.lulasmod.command.tag_manager_check_success" : "notify.lulasmod.command.tag_manager_check_fail"), StringArgumentType.getString(commandContext, "category"), StringArgumentType.getString(commandContext, "value")), true);
                     return r;
                 })))))
             );
