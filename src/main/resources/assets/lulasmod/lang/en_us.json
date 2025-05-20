@@ -1,7 +1,5 @@
 {
-  "item.lulasmod.dragon_fireball": "Dragon Fireball",
   "item.lulasmod.modified_tnt": "Modified TNT",
-  "item.lulasmod.highlighter": "Highlighter",
   "item.lulasmod.home_button": "Home Button",
   "item.lulasmod.smoke_bomb": "Smoke Bomb",
   "item.lulasmod.golden_trident": "Golden Trident",
@@ -23,6 +21,7 @@
   "item.lulasmod.emulations": "Emulations",
   "item.lulasmod.wickedness": "Wickedness",
   "item.lulasmod.heresies": "Heresies",
+  "item.lulasmod.envy": "Envy",
   "item.lulasmod.highlighter_spell": "Highlighter Spell",
 
   "entity.lulasmod.smoke_bomb": "Smoke Bomb",

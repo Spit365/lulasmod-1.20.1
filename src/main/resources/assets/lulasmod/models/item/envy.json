@@ -1,6 +1,6 @@
 {
   "parent": "lulasmod:item/empty_spell",
   "textures": {
-    "1": "lulasmod:item/spell_o_amethyst_slingshot"
+    "1": "lulasmod:item/spell_o_envy"
   }
 }

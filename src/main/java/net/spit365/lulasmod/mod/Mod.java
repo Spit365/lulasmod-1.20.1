@@ -5,7 +5,6 @@ import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
 import net.fabricmc.fabric.api.gamerule.v1.GameRuleFactory;
 import net.fabricmc.fabric.api.gamerule.v1.GameRuleRegistry;
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
-import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
 import net.fabricmc.fabric.api.particle.v1.FabricParticleTypes;
 import net.minecraft.client.particle.FlameParticle;
 import net.minecraft.client.particle.SweepAttackParticle;
@@ -246,10 +245,10 @@ public class Mod {
                      Lulasmod.LOGGER.error("Could not perform teleport. Registry key: {}, Entity: {}", Dimensions.POCKET_DIMENSION, victim);
               }
           }});
-          public static final SpellItem AMETHYST_SLINGSHOT = register.Spell("amethyst_slingshot", new SpellItem(20) {@Override public void cast(ServerWorld world, PlayerEntity player, Hand hand, Float efficiencyMultiplier, Integer cooldownMultiplier) {
+          public static final SpellItem AMETHYST_SPELL = register.Spell("envy", new SpellItem(20) {@Override public void cast(ServerWorld world, PlayerEntity player, Hand hand, Float efficiencyMultiplier, Integer cooldownMultiplier) {
                AmethystShardEntity amethystShardEntity = new AmethystShardEntity(player, world);
                amethystShardEntity.addVelocity(player.getRotationVec(1).normalize().multiply(5));
-               amethystShardEntity.setDamage(2);
+               amethystShardEntity.setDamage(5);
                world.spawnEntity(amethystShardEntity);
           }});
           public static final SpellItem HIGHLIGHTER_SPELL = register.Spell("highlighter_spell", new SpellItem(0) {@Override public void cast(ServerWorld world, PlayerEntity player, Hand hand, Float efficiencyMultiplier, Integer cooldownMultiplier) {
