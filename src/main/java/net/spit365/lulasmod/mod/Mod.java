@@ -6,6 +6,10 @@ import net.fabricmc.fabric.api.gamerule.v1.GameRuleFactory;
 import net.fabricmc.fabric.api.gamerule.v1.GameRuleRegistry;
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
 import net.fabricmc.fabric.api.particle.v1.FabricParticleTypes;
+import net.minecraft.block.AbstractBlock;
+import net.minecraft.block.Block;
+import net.minecraft.block.MapColor;
+import net.minecraft.block.enums.Instrument;
 import net.minecraft.client.particle.FlameParticle;
 import net.minecraft.client.particle.SweepAttackParticle;
 import net.minecraft.client.render.entity.EntityRendererFactory;
@@ -51,6 +55,8 @@ import java.util.*;
 import static net.minecraft.sound.SoundEvents.*;
 
 public class Mod {
+     private record BlockAndItem(Block block, BlockItem item){}
+
      private static class register {
           private static GameRules.Key<GameRules.BooleanRule> GameRule(String name, GameRules.Category category, boolean defaultValue) {
                return GameRuleRegistry.register(name, category, GameRuleFactory.createBooleanRule(defaultValue));
@@ -97,6 +103,14 @@ public class Mod {
           private static SpellItem Spell(String name, SpellItem item) {
                Spells.SpellTabItems.add(Identifier.of(Lulasmod.MOD_ID, name));
                return Registry.register(Registries.ITEM, Identifier.of(Lulasmod.MOD_ID, name), item);
+          }
+          private static BlockAndItem Block(String name, Block block) {
+               BlockItem item = Registry.register(Registries.ITEM, new Identifier(Lulasmod.MOD_ID, name), new BlockItem(block, new Item.Settings()));
+               Items.CreativeTabItems.add(new Identifier(Lulasmod.MOD_ID, name));
+               return new BlockAndItem(
+                       Registry.register(Registries.BLOCK, new Identifier(Lulasmod.MOD_ID, name), block),
+                       item
+               );
           }
      }
 
@@ -260,6 +274,22 @@ public class Mod {
           public static void init() {}
      }
 
+     public static class Blocks {
+          public static final BlockAndItem BEDROCK = register.Block(
+                  "dungeon_block",
+                  new Block(
+                          AbstractBlock.Settings.create()
+                                  .mapColor(MapColor.STONE_GRAY)
+                                  .instrument(Instrument.BASEDRUM)
+                                  .strength(-1.0F, 3600000.0F)
+                                  .dropsNothing()
+                                  .allowsSpawning(net.minecraft.block.Blocks::never)
+                  )
+          );
+
+          public static void init() {}
+     }
+
      public static class StatusEffects {
          public static final StatusEffect CUSHIONED = register.StatusEffect("cushioned", new CushionedStatusEffect());
          public static final StatusEffect BLEEDING = register.StatusEffect("bleeding", new BleedingStatusEffect());
@@ -285,6 +315,7 @@ public class Mod {
      public static void init() {
           Items.init();
           Spells.init();
+          Blocks.init();
           ItemGroups.init();
           Entities.init();
           DamageSources.init();
