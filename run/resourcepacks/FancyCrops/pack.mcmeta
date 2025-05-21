@@ -1,0 +1,10 @@
+{
+	"pack": {
+		"description": "§7A take on prettier Minecraft crop farming",
+		"pack_format": 9,
+		"supported_formats": [
+			5,
+			99
+		]
+	}
+}

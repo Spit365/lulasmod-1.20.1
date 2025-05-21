@@ -36,3 +36,5 @@ run/servers.essential.dat
 run/usercache.json
 run/usernamecache.json
 run/whitelist.json
+/run/debug/
+/run/saves/
