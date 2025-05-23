@@ -38,6 +38,7 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
 import net.spit365.lulasmod.Lulasmod;
+import net.spit365.lulasmod.custom.block.SpellPedestalBlock;
 import net.spit365.lulasmod.custom.effect.BleedingStatusEffect;
 import net.spit365.lulasmod.custom.effect.CushionedStatusEffect;
 import net.spit365.lulasmod.custom.entity.AmethystShardEntity;
@@ -170,6 +171,7 @@ public class Mod {
 
      public static class Items {
          public static final List<Identifier> CreativeTabItems = new LinkedList<>() {};
+          public static final List<Item> tailedExclusive = List.of(Mod.Items.HELLISH_SEAL, Mod.Spells.SLASH_SPELL, Mod.Spells.BLOOD_SPELL, Mod.Spells.POCKET_SPELL);
 
          public static final Item MODIFIED_TNT       = register.Item("modified_tnt",          new ModifiedTntItem(new Item.Settings().maxCount(16)));
          public static final Item SMOKE_BOMB         = register.Item("smoke_bomb",            new SmokeBombItem(new Item.Settings().maxCount(16)));
@@ -275,9 +277,9 @@ public class Mod {
      }
 
      public static class Blocks {
-          public static final BlockAndItem BEDROCK = register.Block(
-                  "dungeon_block",
-                  new Block(
+          public static final BlockAndItem SPELL_PEDESTAL = register.Block(
+                  "spell_pedestal",
+                  new SpellPedestalBlock(
                           AbstractBlock.Settings.create()
                                   .mapColor(MapColor.STONE_GRAY)
                                   .instrument(Instrument.BASEDRUM)
@@ -305,6 +307,7 @@ public class Mod {
          public static final TagManager.TagCategory DAMAGE_DELAY = register.TagCategory("DamageDelay");
          public static final TagManager.TagCategory EQUIPPED_SPELLS = register.TagCategory("EquippedSpells");
          public static final TagManager.TagCategory DASH_SPELL = register.TagCategory("PurloiningSpell");
+         public static final TagManager.TagCategory ABSORBED_PEDESTALS = register.TagCategory("absorbed_pedestals");
      }
 
      public static class Packets {

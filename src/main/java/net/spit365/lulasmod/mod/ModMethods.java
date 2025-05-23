@@ -2,6 +2,7 @@ package net.spit365.lulasmod.mod;
 
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
@@ -10,6 +11,7 @@ import net.minecraft.entity.mob.EndermanEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.particle.ParticleEffect;
 import net.minecraft.particle.ParticleTypes;
@@ -18,14 +20,19 @@ import net.minecraft.registry.RegistryKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.structure.StructurePlacementData;
+import net.minecraft.structure.StructureTemplate;
+import net.minecraft.structure.StructureTemplateManager;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.Heightmap;
 import net.minecraft.world.World;
 import net.spit365.lulasmod.Lulasmod;
 import net.spit365.lulasmod.custom.SpellHotbar;
 import net.spit365.lulasmod.custom.entity.ParticleProjectileEntity;
+import net.spit365.lulasmod.custom.item.SpellItem;
 import net.spit365.lulasmod.tag.TagManager;
 import org.jetbrains.annotations.Nullable;
 
@@ -81,14 +88,66 @@ public class ModMethods {
         return null;
     }
 
-    private static void sendSpellListPacket(ServerPlayerEntity player, Identifier packetId, LinkedList<Identifier> list) {
+//    public static void placeGazebos(ServerWorld world, List<SpellItem> spellList) {
+//        int radius = 1000;
+//        BlockPos origin = new BlockPos(0, 64, 0); // base Y is a guess, will adjust below
+//
+//        for (int i = 0; i < spellList.size(); i++) {
+//            double angle = (2 * Math.PI / spellList.size()) * i;
+//            int x = origin.getX() + (int)(radius * Math.cos(angle));
+//            int z = origin.getZ() + (int)(radius * Math.sin(angle));
+//            int y = world.getTopY(Heightmap.Type.WORLD_SURFACE, x, z);
+//
+//            BlockPos gazeboPos = new BlockPos(x, y, z);
+//            SpellItem spell = spellList.get(i);
+//
+//            // Place structure and inject spell into pedestal block entity
+//            placeGazeboWithSpell(world, gazeboPos, spell);
+//        }
+//    }
+//    public static void placeGazeboWithSpell(ServerWorld world, BlockPos pos, SpellItem spell) {
+//        // 1. Load the structure template
+//        StructureTemplateManager templateManager = world.getStructureTemplateManager();
+//        Identifier gazeboId = new Identifier("yourmodid", "gazebo"); // data/yourmodid/structures/gazebo.nbt
+//
+//        Optional<StructureTemplate> optionalTemplate = templateManager.getTemplate(gazeboId);
+//        if (optionalTemplate.isEmpty()) {
+//            System.err.println("Failed to load gazebo structure: " + gazeboId);
+//            return;
+//        }
+//
+//        StructureTemplate template = optionalTemplate.get();
+//
+//        // 2. Place the structure
+//        StructurePlacementData settings = new StructurePlacementData();
+//
+//        template.place(world, pos, pos, settings, world.getRandom(), 3);
+//
+//        // 3. Find and update the pedestal
+//        // (Assume the pedestal is always at a known offset in the structure)
+//        BlockPos pedestalPos = pos.add(5, 1, 5); // Adjust this if needed
+//
+//        if (world.getBlockEntity(pedestalPos) instanceof PedestalBlockEntity pedestal) {
+//            NbtCompound spellData = new NbtCompound();
+//            spell.writeNbt(spellData); // If you have custom serialization
+//            pedestal.setSpell(spell); // Or just set the ID or name
+//            pedestal.markDirty();
+//            world.updateListeners(pedestalPos, world.getBlockState(pedestalPos), world.getBlockState(pedestalPos), Block.NOTIFY_ALL);
+//        } else {
+//            System.err.println("Pedestal not found at expected position: " + pedestalPos);
+//        }
+//    }
+
+
+
+    private static void sendSpellListPacket(ServerPlayerEntity player, LinkedList<Identifier> list) {
         Map<Integer, ItemStack> map = new HashMap<>();
         for (int i = 0; i < list.size(); i++) {
             map.put(i, new ItemStack(Registries.ITEM.get(list.get(i))));
         }
         PacketByteBuf buf = PacketByteBufs.create();
         buf.writeMap(map, PacketByteBuf::writeInt, PacketByteBuf::writeItemStack);
-        ServerPlayNetworking.send(player, packetId, buf);
+        ServerPlayNetworking.send(player, Mod.Packets.PLAYER_SPELL_LIST, buf);
     }
 
     public static Boolean impale(PlayerEntity player, Item item, Integer baseCooldown, Integer maxCooldown, Integer iterations, ParticleEffect particle) {
@@ -129,8 +188,8 @@ public class ModMethods {
             }
         }
         protected static void updateSpells(ServerPlayerEntity player) {
-            if(player.getMainHandStack().getItem() instanceof SpellHotbar item) sendSpellListPacket(player, Mod.Packets.PLAYER_SPELL_LIST, item.display(player));
-            else if(player.getOffHandStack().getItem() instanceof SpellHotbar item) sendSpellListPacket(player, Mod.Packets.PLAYER_SPELL_LIST, item.display(player));
+            if(player.getMainHandStack().getItem() instanceof SpellHotbar item) sendSpellListPacket(player, item.display(player));
+            else if(player.getOffHandStack().getItem() instanceof SpellHotbar item) sendSpellListPacket(player, item.display(player));
         }
         protected static void repelMiner(ServerPlayerEntity player) {
             if (player.getCommandTags().contains("miner")) {

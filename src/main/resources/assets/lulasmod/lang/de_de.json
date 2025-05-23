@@ -24,6 +24,9 @@
   "item.lulasmod.envy": "Neid",
   "item.lulasmod.highlighter_spell": "Highlighter Zauber",
 
+  "block.lulasmod.spell_pedestal": "Zauber Sockel",
+  "item.lulasmod.spell_pedestal": "Zauber Sockel",
+
   "entity.lulasmod.smoke_bomb": "Rauch Bombe",
   "entity.lulasmod.malignity": "Bösartigkeit",
   "entity.lulasmod.particle_projectile": "Partikel Projektil",

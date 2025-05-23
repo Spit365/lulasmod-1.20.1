@@ -23,7 +23,7 @@ capabilities {
     allowClickingHistoryInEditor=false
     altMenuToggleInsteadOfHold=false
     # Place blocks in mid-air
-    angelPlacement=true
+    angelPlacement=false
     # Automatically swap to creative when opening the Context Menu
     autoSwapToCreative=true
     autoSwapToOtherHotbarWithItem=false

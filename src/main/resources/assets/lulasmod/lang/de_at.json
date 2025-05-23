@@ -24,6 +24,9 @@
   "item.lulasmod.envy": "Neid",
   "item.lulasmod.highlighter_spell": "Highlighter Zauba",
 
+  "block.lulasmod.spell_pedestal": "Zauba Gschtö",
+  "item.lulasmod.spell_pedestal": "Zauba Gschtö",
+
   "entity.lulasmod.smoke_bomb": "Rauch Bombm",
   "entity.lulasmod.malignity": "Bösoartigkeit",
   "entity.lulasmod.particle_projectile": "Partikl Projektil",

@@ -15,6 +15,7 @@ import net.minecraft.util.Identifier;
 import net.spit365.lulasmod.tag.TagManager;
 import java.util.*;
 import static net.minecraft.server.command.CommandManager.literal;
+import static net.spit365.lulasmod.mod.Mod.Items.tailedExclusive;
 
 public class ModCommands {
     public static void init(){
@@ -25,7 +26,7 @@ public class ModCommands {
                     PlayerEntity player = context.getSource().getPlayer();
                     if (player != null && player.getCommandTags().contains("tailed")){
                         Set<Boolean> booleanLinkedList = new HashSet<>();
-                        for (Item item : List.of(Mod.Items.HELLISH_SEAL, Mod.Spells.SLASH_SPELL, Mod.Spells.BLOOD_SPELL, Mod.Spells.POCKET_SPELL)) {
+                        for (Item item : tailedExclusive) {
                             boolean b = ModMethods.getItemStack(player, item) == null;
                             if (b) player.giveItemStack(new ItemStack(item));
                             booleanLinkedList.add(b);
