@@ -5,7 +5,6 @@ import net.minecraft.client.render.entity.ProjectileEntityRenderer;
 import net.minecraft.entity.projectile.PersistentProjectileEntity;
 import net.minecraft.util.Identifier;
 import net.spit365.lulasmod.Lulasmod;
-import net.spit365.lulasmod.custom.entity.AmethystShardEntity;
 
 public class FancyProjectileEntityRenderer<T extends PersistentProjectileEntity> extends ProjectileEntityRenderer<T> {
     public final Identifier texture;

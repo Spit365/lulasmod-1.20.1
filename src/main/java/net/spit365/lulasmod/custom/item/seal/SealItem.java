@@ -14,7 +14,6 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.world.World;
-import net.spit365.lulasmod.Lulasmod;
 import net.spit365.lulasmod.custom.SpellHotbar;
 import net.spit365.lulasmod.custom.item.SpellItem;
 import net.spit365.lulasmod.mod.Mod;

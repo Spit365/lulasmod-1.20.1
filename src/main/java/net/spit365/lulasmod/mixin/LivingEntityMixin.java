@@ -16,7 +16,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(LivingEntity.class)
 public abstract class LivingEntityMixin extends Entity implements Attackable {
-
     public LivingEntityMixin(EntityType<?> entityType, World world) {
         super(entityType, world);
     }

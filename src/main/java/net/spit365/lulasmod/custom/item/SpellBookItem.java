@@ -14,7 +14,6 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.world.World;
-import net.spit365.lulasmod.Lulasmod;
 import net.spit365.lulasmod.custom.SpellHotbar;
 import org.jetbrains.annotations.Nullable;
 
@@ -68,6 +67,13 @@ public class SpellBookItem extends Item implements SpellHotbar {
                }
           }
           return TypedActionResult.pass(player.getStackInHand(hand));
+     }
+
+     @Override
+     public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context) {
+          getListFromString(stack.getOrCreateNbt().getString("Spells")).forEach(id ->
+                  tooltip.add(Registries.ITEM.get(id).getName())
+          );
      }
 
      private static LinkedList<Identifier> getListFromString(String s){

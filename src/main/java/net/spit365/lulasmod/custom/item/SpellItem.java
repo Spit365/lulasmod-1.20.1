@@ -14,7 +14,6 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.world.World;
-import net.spit365.lulasmod.custom.SpellHotbar;
 import net.spit365.lulasmod.mod.Mod;
 import net.spit365.lulasmod.tag.TagManager;
 import org.jetbrains.annotations.Nullable;
@@ -23,7 +22,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 public abstract class SpellItem extends Item {
-    public int cooldown;
+    public final int cooldown;
     protected SoundEvent sound = SoundEvents.BLOCK_RESPAWN_ANCHOR_CHARGE;
 
     public SpellItem(Integer cooldown, SoundEvent soundEvent) {

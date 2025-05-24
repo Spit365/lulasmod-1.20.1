@@ -119,7 +119,7 @@ public class Mod {
      public static class DamageSources {
          public static DamageSource BLOODSUCKING(Entity attacker) {return getDamageSource(attacker.getWorld(), BLOODSUCKING);}
          public static DamageSource AMETHYST_SHARD(Entity attacker) {return getDamageSource(attacker.getWorld(), AMETHYST_SHARD);}
-         public static RegistryKey<DamageType> BLOODSUCKING = register.DamageType("bloodsucking");
+         public static final RegistryKey<DamageType> BLOODSUCKING = register.DamageType("bloodsucking");
           private static final RegistryKey<DamageType> AMETHYST_SHARD = register.DamageType("amethyst_shard");
 
          private static DamageSource getDamageSource(World world, RegistryKey<DamageType> damageType){

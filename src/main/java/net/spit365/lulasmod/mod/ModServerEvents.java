@@ -4,8 +4,6 @@ import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.fabricmc.fabric.api.event.server.ServerTickCallback;
 import net.spit365.lulasmod.custom.SpellHotbar;
-import net.spit365.lulasmod.custom.item.seal.SealItem;
-import net.spit365.lulasmod.tag.TagManager;
 
 public class ModServerEvents extends ModMethods.ServerUpdates{
     @SuppressWarnings("deprecation")
