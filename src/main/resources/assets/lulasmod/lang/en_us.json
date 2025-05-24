@@ -24,6 +24,17 @@
   "item.lulasmod.envy": "Envy",
   "item.lulasmod.highlighter_spell": "Highlighter Spell",
 
+  "spell.lulasmod.tooltip.treachery_judecca": "Produces a blade from the side of the hand, to cleave through your enemies.",
+  "spell.lulasmod.tooltip.malignity": "Fires a fireball from the seal of the user to deal great damage",
+  "spell.lulasmod.tooltip.purloining": "Purloining",
+  "spell.lulasmod.tooltip.guile": "Guile",
+  "spell.lulasmod.tooltip.appeasing": "Appeasing",
+  "spell.lulasmod.tooltip.emulations": "Emulations",
+  "spell.lulasmod.tooltip.wickedness": "Wickedness",
+  "spell.lulasmod.tooltip.heresies": "Heresies",
+  "spell.lulasmod.tooltip.envy": "Envy",
+  "spell.lulasmod.tooltip.highlighter_spell": "Highlighter Spell",
+
   "block.lulasmod.spell_pedestal": "Spell Pedestal",
   "item.lulasmod.spell_pedestal": "Spell Pedestal",
 

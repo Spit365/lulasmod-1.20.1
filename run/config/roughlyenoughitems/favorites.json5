@@ -1,6 +1,8 @@
 {
 	"favorites": [
-		"{data:{Count:1b,id:\"minecraft:mossy_cobblestone_slab\",type:\"minecraft:item\"},type:\"roughlyenoughitems:entry_stack\"}"
+		"{mode:\"NIGHT\",type:\"roughlyenoughitems:time\"}",
+		"{mode:\"MORN\",type:\"roughlyenoughitems:time\"}",
+		"{type:\"roughlyenoughitems:weather\",weather:\"CLEAR\"}"
 	],
 	"hiddenFavorites": [],
 	"displays": []

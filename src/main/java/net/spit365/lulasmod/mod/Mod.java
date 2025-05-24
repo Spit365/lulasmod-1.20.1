@@ -6,9 +6,7 @@ import net.fabricmc.fabric.api.gamerule.v1.GameRuleFactory;
 import net.fabricmc.fabric.api.gamerule.v1.GameRuleRegistry;
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
 import net.fabricmc.fabric.api.particle.v1.FabricParticleTypes;
-import net.minecraft.block.AbstractBlock;
-import net.minecraft.block.Block;
-import net.minecraft.block.MapColor;
+import net.minecraft.block.*;
 import net.minecraft.block.enums.Instrument;
 import net.minecraft.client.particle.FlameParticle;
 import net.minecraft.client.particle.SweepAttackParticle;
@@ -33,8 +31,11 @@ import net.minecraft.sound.SoundCategory;
 import net.minecraft.text.Text;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.shape.VoxelShape;
+import net.minecraft.world.BlockView;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
 import net.spit365.lulasmod.Lulasmod;
@@ -171,7 +172,6 @@ public class Mod {
 
      public static class Items {
          public static final List<Identifier> CreativeTabItems = new LinkedList<>() {};
-          public static final List<Item> tailedExclusive = List.of(Mod.Items.HELLISH_SEAL, Mod.Spells.SLASH_SPELL, Mod.Spells.BLOOD_SPELL, Mod.Spells.POCKET_SPELL);
 
          public static final Item MODIFIED_TNT       = register.Item("modified_tnt",          new ModifiedTntItem(new Item.Settings().maxCount(16)));
          public static final Item SMOKE_BOMB         = register.Item("smoke_bomb",            new SmokeBombItem(new Item.Settings().maxCount(16)));
@@ -184,6 +184,8 @@ public class Mod {
          public static final Item HELLISH_SEAL       = register.Item("hellish_seal",          new HellishSeal());
          public static final Item GOLDEN_SEAL        = register.Item("golden_seal",           new GoldenSeal());
          public static final Item BLOODSUCKING_SEAL  = register.Item("bloodsucking_seal",     new BloodsuckingSeal());
+
+         public static final List<Item> tailedExclusive = List.of(Mod.Items.HELLISH_SEAL, Mod.Spells.SLASH_SPELL, Mod.Spells.BLOOD_SPELL, Mod.Spells.POCKET_SPELL);
 
          public static void init() {}
      }
@@ -226,6 +228,7 @@ public class Mod {
                      )));
                      player.addVelocity(player.getRotationVec(1).normalize().add(0, 0.25, 0));
                      player.velocityModified = true;
+                     player.fallDistance = 0;
                      world.spawnParticles(ParticleTypes.CLOUD, player.getX(), player.getY(), player.getZ(), 25, 0.75, 0.2, 0.75, 0);
                 } else player.getItemCooldownManager().set(player.getStackInHand(hand).getItem(), 20);
           }});
@@ -286,7 +289,10 @@ public class Mod {
                                   .strength(-1.0F, 3600000.0F)
                                   .dropsNothing()
                                   .allowsSpawning(net.minecraft.block.Blocks::never)
-                  )
+                  ){
+                       private static final VoxelShape SHAPE = Block.createCuboidShape(0, 0, 0, 16.0, 12.0, 16.0);
+                       @Override public VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context){return SHAPE;}
+                  }
           );
 
           public static void init() {}
@@ -307,7 +313,7 @@ public class Mod {
          public static final TagManager.TagCategory DAMAGE_DELAY = register.TagCategory("DamageDelay");
          public static final TagManager.TagCategory EQUIPPED_SPELLS = register.TagCategory("EquippedSpells");
          public static final TagManager.TagCategory DASH_SPELL = register.TagCategory("PurloiningSpell");
-         public static final TagManager.TagCategory ABSORBED_PEDESTALS = register.TagCategory("absorbed_pedestals");
+         public static final TagManager.TagCategory ABSORBED_PEDESTALS = register.TagCategory("AbsorbedPedestals");
      }
 
      public static class Packets {

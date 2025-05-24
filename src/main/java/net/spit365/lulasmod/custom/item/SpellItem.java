@@ -1,5 +1,6 @@
 package net.spit365.lulasmod.custom.item;
 
+import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -8,6 +9,7 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
+import net.minecraft.text.Text;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.TypedActionResult;
@@ -15,8 +17,10 @@ import net.minecraft.world.World;
 import net.spit365.lulasmod.custom.SpellHotbar;
 import net.spit365.lulasmod.mod.Mod;
 import net.spit365.lulasmod.tag.TagManager;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.LinkedList;
+import java.util.List;
 
 public abstract class SpellItem extends Item {
     public int cooldown;
@@ -50,4 +54,9 @@ public abstract class SpellItem extends Item {
         return TypedActionResult.pass(player.getStackInHand(hand));
     }
     private Identifier getSpellName() {return Registries.ITEM.getId(this);}
+
+    @Override
+    public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context) {
+        tooltip.add(Text.translatable("spell." + Registries.ITEM.getId(this).getNamespace() + ".tooltip." + Registries.ITEM.getId(this).getPath()));
+    }
 }
