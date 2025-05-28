@@ -1,0 +1,49 @@
+    public static void placeGazebos(ServerWorld world, List<SpellItem> spellList) {
+        int radius = 1000;
+        BlockPos origin = new BlockPos(0, 64, 0); // base Y is a guess, will adjust below
+
+        for (int i = 0; i < spellList.size(); i++) {
+            double angle = (2 * Math.PI / spellList.size()) * i;
+            int x = origin.getX() + (int)(radius * Math.cos(angle));
+            int z = origin.getZ() + (int)(radius * Math.sin(angle));
+            int y = world.getTopY(Heightmap.Type.WORLD_SURFACE, x, z);
+
+            BlockPos gazeboPos = new BlockPos(x, y, z);
+            SpellItem spell = spellList.get(i);
+
+            // Place structure and inject spell into pedestal block entity
+            placeGazeboWithSpell(world, gazeboPos, spell);
+        }
+    }
+    public static void placeGazeboWithSpell(ServerWorld world, BlockPos pos, SpellItem spell) {
+        // 1. Load the structure template
+        StructureTemplateManager templateManager = world.getStructureTemplateManager();
+        Identifier gazeboId = new Identifier("ModID", "gazebo"); // data/ModID/structures/gazebo.nbt
+
+        Optional<StructureTemplate> optionalTemplate = templateManager.getTemplate(gazeboId);
+        if (optionalTemplate.isEmpty()) {
+            System.err.println("Failed to load gazebo structure: " + gazeboId);
+            return;
+        }
+
+        StructureTemplate template = optionalTemplate.get();
+
+        // 2. Place the structure
+        StructurePlacementData settings = new StructurePlacementData();
+
+        template.place(world, pos, pos, settings, world.getRandom(), 3);
+
+        // 3. Find and update the pedestal
+        // (Assume the pedestal is always at a known offset in the structure)
+        BlockPos pedestalPos = pos.add(5, 1, 5); // Adjust this if needed
+
+        if (world.getBlockEntity(pedestalPos) instanceof PedestalBlockEntity pedestal) {
+            NbtCompound spellData = new NbtCompound();
+            spell.writeNbt(spellData); // If you have custom serialization
+            pedestal.setSpell(spell); // Or just set the ID or name
+            pedestal.markDirty();
+            world.updateListeners(pedestalPos, world.getBlockState(pedestalPos), world.getBlockState(pedestalPos), Block.NOTIFY_ALL);
+        } else {
+            System.err.println("Pedestal not found at expected position: " + pedestalPos);
+        }
+    }

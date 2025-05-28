@@ -21,7 +21,6 @@ public class MilkBucketItemMixin {
             user.clearStatusEffects();
             user.addStatusEffect(effectInstance);
             cir.setReturnValue(stack.isEmpty() ? new ItemStack(Items.BUCKET) : stack);
-            cir.cancel();
         }
     }
 }

@@ -13,7 +13,7 @@ public class ModServerEvents extends ModMethods.ServerUpdates{
                 ModMethods.ServerUpdates.repelMiner(player);
                 ModMethods.ServerUpdates.updateSpells(player);
             }
-            ModMethods.ServerUpdates.updateSpores(minecraftServer);
+            ModMethods.ServerUpdates.updateTailedVisuals(minecraftServer);
             ModMethods.ServerUpdates.updateImpaled();
         });
         ServerPlayNetworking.registerGlobalReceiver(Mod.Packets.CYCLE_PLAYER_SPELL, (a, player, b, c, d) -> {

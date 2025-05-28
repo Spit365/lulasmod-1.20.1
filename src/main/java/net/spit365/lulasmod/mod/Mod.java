@@ -120,7 +120,7 @@ public class Mod {
          public static DamageSource BLOODSUCKING(Entity attacker) {return getDamageSource(attacker.getWorld(), BLOODSUCKING);}
          public static DamageSource AMETHYST_SHARD(Entity attacker) {return getDamageSource(attacker.getWorld(), AMETHYST_SHARD);}
          public static final RegistryKey<DamageType> BLOODSUCKING = register.DamageType("bloodsucking");
-          private static final RegistryKey<DamageType> AMETHYST_SHARD = register.DamageType("amethyst_shard");
+         public static final RegistryKey<DamageType> AMETHYST_SHARD = register.DamageType("amethyst_shard");
 
          private static DamageSource getDamageSource(World world, RegistryKey<DamageType> damageType){
              return new DamageSource(world.getRegistryManager()
@@ -258,8 +258,8 @@ public class Mod {
                  world.spawnParticles(ParticleTypes.PORTAL, victim.getX(), victim.getY() + 0.5, victim.getZ(), 50, 0, 0, 0, 1);
                  if (!victim.teleport(Objects.requireNonNull(victim.getServer()).getWorld((
                      world.getRegistryKey().equals(Dimensions.POCKET_DIMENSION)?
-                     World.OVERWORLD :
-                     Dimensions.POCKET_DIMENSION
+                         World.OVERWORLD :
+                         Dimensions.POCKET_DIMENSION
                  )), victim.getX(), victim.getY(), victim.getZ(), EnumSet.noneOf(PositionFlag.class), victim.getYaw(), victim.getPitch()))
                      Lulasmod.LOGGER.error("Could not perform teleport. Registry key: {}, Entity: {}", Dimensions.POCKET_DIMENSION, victim);
               }
@@ -291,7 +291,7 @@ public class Mod {
                                   .allowsSpawning(net.minecraft.block.Blocks::never)
                   ){
                        private static final VoxelShape SHAPE = Block.createCuboidShape(0, 0, 0, 16.0, 12.0, 16.0);
-                       @Override public VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context){return SHAPE;}
+                       @SuppressWarnings("deprecation") @Override public VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context){return SHAPE;}
                   }
           );
 
@@ -319,6 +319,7 @@ public class Mod {
      public static class Packets {
           public static final Identifier PLAYER_SPELL_LIST = new Identifier(Lulasmod.MOD_ID, "player_spell_list");
           public static final Identifier CYCLE_PLAYER_SPELL = new Identifier(Lulasmod.MOD_ID, "cycle_player_spell");
+          public static final Identifier TAILED_PLAYER_LIST = new Identifier(Lulasmod.MOD_ID, "tailed_player_list");
      }
 
      public static void init() {

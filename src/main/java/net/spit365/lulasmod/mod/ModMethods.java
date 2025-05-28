@@ -81,63 +81,31 @@ public class ModMethods {
         return null;
     }
 
-//    public static void placeGazebos(ServerWorld world, List<SpellItem> spellList) {
-//        int radius = 1000;
-//        BlockPos origin = new BlockPos(0, 64, 0); // base Y is a guess, will adjust below
-//
-//        for (int i = 0; i < spellList.size(); i++) {
-//            double angle = (2 * Math.PI / spellList.size()) * i;
-//            int x = origin.getX() + (int)(radius * Math.cos(angle));
-//            int z = origin.getZ() + (int)(radius * Math.sin(angle));
-//            int y = world.getTopY(Heightmap.Type.WORLD_SURFACE, x, z);
-//
-//            BlockPos gazeboPos = new BlockPos(x, y, z);
-//            SpellItem spell = spellList.get(i);
-//
-//            // Place structure and inject spell into pedestal block entity
-//            placeGazeboWithSpell(world, gazeboPos, spell);
-//        }
-//    }
-//    public static void placeGazeboWithSpell(ServerWorld world, BlockPos pos, SpellItem spell) {
-//        // 1. Load the structure template
-//        StructureTemplateManager templateManager = world.getStructureTemplateManager();
-//        Identifier gazeboId = new Identifier("yourmodid", "gazebo"); // data/yourmodid/structures/gazebo.nbt
-//
-//        Optional<StructureTemplate> optionalTemplate = templateManager.getTemplate(gazeboId);
-//        if (optionalTemplate.isEmpty()) {
-//            System.err.println("Failed to load gazebo structure: " + gazeboId);
-//            return;
-//        }
-//
-//        StructureTemplate template = optionalTemplate.get();
-//
-//        // 2. Place the structure
-//        StructurePlacementData settings = new StructurePlacementData();
-//
-//        template.place(world, pos, pos, settings, world.getRandom(), 3);
-//
-//        // 3. Find and update the pedestal
-//        // (Assume the pedestal is always at a known offset in the structure)
-//        BlockPos pedestalPos = pos.add(5, 1, 5); // Adjust this if needed
-//
-//        if (world.getBlockEntity(pedestalPos) instanceof PedestalBlockEntity pedestal) {
-//            NbtCompound spellData = new NbtCompound();
-//            spell.writeNbt(spellData); // If you have custom serialization
-//            pedestal.setSpell(spell); // Or just set the ID or name
-//            pedestal.markDirty();
-//            world.updateListeners(pedestalPos, world.getBlockState(pedestalPos), world.getBlockState(pedestalPos), Block.NOTIFY_ALL);
-//        } else {
-//            System.err.println("Pedestal not found at expected position: " + pedestalPos);
-//        }
-//    }
+    public static void outlineBox(Box box, ServerWorld world){
+        final Vec3d start = box.getCenter().add(box.getXLength() / -2, box.getYLength() / -2, box.getZLength() / -2);
+        final Vec3d end = box.getCenter().add(box.getXLength() / 2, box.getYLength() / 2, box.getZLength() / 2);
 
+        for (double i = 0; i < box.getXLength(); i += 0.625) world.spawnParticles(Mod.Particles.GOLDEN_SHIMMER, start.getX() + i, start.getY(), start.getZ(), 0, 0, 0, 0, 0);
+        for (double i = 0; i < box.getXLength(); i += 0.625) world.spawnParticles(Mod.Particles.GOLDEN_SHIMMER, start.getX() + i, start.getY(), end.getZ(), 0, 0, 0, 0, 0);
+        for (double i = 0; i < box.getXLength(); i += 0.625) world.spawnParticles(Mod.Particles.GOLDEN_SHIMMER, start.getX() + i, end.getY(), start.getZ(), 0, 0, 0, 0, 0);
+        for (double i = 0; i < box.getXLength(); i += 0.625) world.spawnParticles(Mod.Particles.GOLDEN_SHIMMER, start.getX() + i, end.getY(), end.getZ(), 0, 0, 0, 0, 0);
 
+        for (double i = 0; i < box.getYLength(); i += 0.625) world.spawnParticles(Mod.Particles.GOLDEN_SHIMMER, start.getX(), start.getY() + i, start.getZ(), 0, 0, 0, 0, 0);
+        for (double i = 0; i < box.getYLength(); i += 0.625) world.spawnParticles(Mod.Particles.GOLDEN_SHIMMER, start.getX(), start.getY() + i, end.getZ(), 0, 0, 0, 0, 0);
+        for (double i = 0; i < box.getYLength(); i += 0.625) world.spawnParticles(Mod.Particles.GOLDEN_SHIMMER, end.getX(), start.getY() + i, start.getZ(), 0, 0, 0, 0, 0);
+        for (double i = 0; i < box.getYLength(); i += 0.625) world.spawnParticles(Mod.Particles.GOLDEN_SHIMMER, end.getX(), start.getY() + i, end.getZ(), 0, 0, 0, 0, 0);
+
+        for (double i = 0; i < box.getZLength(); i += 0.625) world.spawnParticles(Mod.Particles.GOLDEN_SHIMMER, start.getX(), start.getY(), start.getZ() + i, 0, 0, 0, 0, 0);
+        for (double i = 0; i < box.getZLength(); i += 0.625) world.spawnParticles(Mod.Particles.GOLDEN_SHIMMER, start.getX(), end.getY(), start.getZ() + i, 0, 0, 0, 0, 0);
+        for (double i = 0; i < box.getZLength(); i += 0.625) world.spawnParticles(Mod.Particles.GOLDEN_SHIMMER, end.getX(), start.getY(), start.getZ() + i, 0, 0, 0, 0, 0);
+        for (double i = 0; i < box.getZLength(); i += 0.625) world.spawnParticles(Mod.Particles.GOLDEN_SHIMMER, end.getX(), end.getY(), start.getZ() + i, 0, 0, 0, 0, 0);
+
+    }
 
     private static void sendSpellListPacket(ServerPlayerEntity player, LinkedList<Identifier> list) {
         Map<Integer, ItemStack> map = new HashMap<>();
-        for (int i = 0; i < list.size(); i++) {
+        for (int i = 0; i < list.size(); i++)
             map.put(i, new ItemStack(Registries.ITEM.get(list.get(i))));
-        }
         PacketByteBuf buf = PacketByteBufs.create();
         buf.writeMap(map, PacketByteBuf::writeInt, PacketByteBuf::writeItemStack);
         ServerPlayNetworking.send(player, Mod.Packets.PLAYER_SPELL_LIST, buf);
@@ -206,14 +174,20 @@ public class ModMethods {
                 }
             }
         }
-        protected static void updateSpores(MinecraftServer minecraftServer){
+        protected static void updateTailedVisuals(MinecraftServer minecraftServer){
             sporesCounter--;
-             if (sporesCounter <= 0) {
-                  for (ServerPlayerEntity player : minecraftServer.getPlayerManager().getPlayerList())
-                       if (player.getCommandTags().contains("tailed") && player.getWorld() instanceof ServerWorld world)
-                            world.spawnParticles(ParticleTypes.CRIMSON_SPORE, player.getX(), 1 + player.getY(), player.getZ(), new Random(world.getSeed()).nextInt(2, 4), 0, 0, 0, 0);
-                  sporesCounter = new Random().nextInt(30, 60);
-             }
+            Map<Integer, String> tailedPlayers = new HashMap<>();
+            minecraftServer.getPlayerManager().getPlayerList().forEach(player -> {
+                if (player.getCommandTags().contains("tailed")) {
+                    tailedPlayers.put(tailedPlayers.size(), player.getUuidAsString());
+                    if (sporesCounter <= 0 && player.getWorld() instanceof ServerWorld world){
+                        world.spawnParticles(ParticleTypes.CRIMSON_SPORE, player.getX(), player.getY() +1, player.getZ(), player.getRandom().nextBetweenExclusive(2, 4), 0, 0, 0, 0);
+            }}});
+            if (sporesCounter <= 0) sporesCounter = new Random().nextInt(30, 60);
+            PacketByteBuf buf = PacketByteBufs.create();
+            buf.writeMap(tailedPlayers, PacketByteBuf::writeInt, PacketByteBuf::writeString);
+            for (ServerPlayerEntity player : minecraftServer.getPlayerManager().getPlayerList())
+                ServerPlayNetworking.send(player, Mod.Packets.TAILED_PLAYER_LIST, buf);
         }
     }
 }
