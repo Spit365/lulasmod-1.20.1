@@ -58,6 +58,7 @@
 
   "notify.lulasmod.duplicate_seal": "You can only hold one seal at a time.",
   "notify.lulasmod.already_absorbed_pedestal": "You have already absorbed this pedestal",
+  "notify.lulasmod.pedestal.all_spells": "You have already every Spell",
   "notify.lulasmod.command.contract_success": "You obtained the powers of §kthe ancient tailed",
   "notify.lulasmod.command.contract_fail": "You cannot use this action",
   "notify.lulasmod.command.tag_manager_add": "Added tag to you in category %1$s with value %2$s",

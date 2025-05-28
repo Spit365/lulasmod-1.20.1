@@ -16,11 +16,12 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.spit365.lulasmod.Lulasmod;
 import net.spit365.lulasmod.mod.Mod;
-import net.spit365.lulasmod.mod.ModMethods;
 import net.spit365.lulasmod.tag.TagManager;
 
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 public class SpellPedestalBlock extends Block {
     public SpellPedestalBlock(Settings settings) {
@@ -28,26 +29,20 @@ public class SpellPedestalBlock extends Block {
     }
     @SuppressWarnings("deprecation")
     @Override
-    public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit){
+    public ActionResult onUse(BlockState state, World world, BlockPos blockPos, PlayerEntity player, Hand hand, BlockHitResult hit){
         if (!world.isClient()){
             LinkedList<Identifier> absorbedPedestals = TagManager.readList(player, Mod.TagCategories.ABSORBED_PEDESTALS);
-            Identifier posAsId = new Identifier(Lulasmod.MOD_ID, pos.getX() + "_" + pos.getY() + "_" + pos.getZ());
-            if (!absorbedPedestals.contains(posAsId)) {
-                 absorbedPedestals.add(posAsId);
-                 TagManager.put(player, Mod.TagCategories.ABSORBED_PEDESTALS, absorbedPedestals);
-                 ((ServerWorld) world).spawnParticles(ParticleTypes.CRIMSON_SPORE, pos.getX(), pos.getY(), pos.getZ(), 500, 1.5, 1.5, 1.5, 0);
-                 List<Identifier> spells = new LinkedList<>();
-                 Mod.Spells.SpellTabItems.forEach(identifier -> {
-                      Item item = Registries.ITEM.get(identifier);
-                      if (!Mod.Items.tailedExclusive.contains(item)) spells.add(identifier);
-                 });
-                 for(Identifier id : spells){
-                      Item spell = Registries.ITEM.get(id);
-                      if(ModMethods.getItemStack(player, spell) == null) {
-                          player.giveItemStack(new ItemStack(spell));
-                          break;
-                      }
-                 }
+            Identifier idPos = new Identifier(Lulasmod.MOD_ID, blockPos.getX() + "_" + blockPos.getY() + "_" + blockPos.getZ());
+            if(!absorbedPedestals.contains(idPos) && absorbedPedestals.add(idPos)){
+                 List<Identifier> spells = Mod.Spells.SpellTabItems;
+                 Set<Item> excluded = new HashSet<>(Mod.Items.tailedExclusive);
+                 excluded.add(Mod.Spells.HIGHLIGHTER_SPELL);
+                 spells.removeIf(id -> excluded.contains(Registries.ITEM.get(id)));
+                 if (absorbedPedestals.size() <= spells.size()){
+                      TagManager.put(player, Mod.TagCategories.ABSORBED_PEDESTALS, absorbedPedestals);
+                      ((ServerWorld) world).spawnParticles(ParticleTypes.CRIMSON_SPORE, blockPos.getX(), blockPos.getY(), blockPos.getZ(), 500, 1.5, 1.5, 1.5, 0);
+                      player.giveItemStack(new ItemStack(Registries.ITEM.get(spells.get(absorbedPedestals.size() - 1))));
+                 } else player.sendMessage(Text.translatable("notify.lulasmod.pedestal.all_spells"), true);
                  return ActionResult.success(true);
             }else player.sendMessage(Text.translatable("notify.lulasmod.already_absorbed_pedestal"), true);
         }

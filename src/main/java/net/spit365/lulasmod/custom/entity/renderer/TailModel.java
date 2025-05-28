@@ -40,6 +40,5 @@ public class TailModel<T extends LivingEntity> extends SinglePartEntityModel<T> 
 	@Override public void render(MatrixStack matrices, VertexConsumer vertexConsumer, int light, int overlay, float red, float green, float blue, float alpha) {
 		tail.render(matrices, vertexConsumer, light, overlay, red, green, blue, alpha);
 	}
-	@Override
-	public ModelPart getPart() {return tail;}
+	@Override public ModelPart getPart() {return tail;}
 }

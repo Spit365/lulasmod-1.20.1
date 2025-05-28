@@ -15,14 +15,10 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(PlayerEntityRenderer.class)
 public class PlayerEntityRendererMixin extends LivingEntityRenderer<AbstractClientPlayerEntity, PlayerEntityModel<AbstractClientPlayerEntity>> {
      public PlayerEntityRendererMixin(EntityRendererFactory.Context ctx, PlayerEntityModel<AbstractClientPlayerEntity> model, float shadowRadius) {super(ctx, model, shadowRadius);}
+     @Override public Identifier getTexture(AbstractClientPlayerEntity abstractClientPlayerEntity) {return abstractClientPlayerEntity.getSkinTexture();}
 
      @Inject(at = @At("TAIL"), method = "<init>")
      public void init(EntityRendererFactory.Context ctx, boolean slim, CallbackInfo ci) {
           addFeature(new TailFeatureRenderer((PlayerEntityRenderer) (Object) this));
-     }
-
-     @Override
-     public Identifier getTexture(AbstractClientPlayerEntity abstractClientPlayerEntity) {
-          return abstractClientPlayerEntity.getSkinTexture();
      }
 }

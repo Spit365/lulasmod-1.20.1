@@ -45,8 +45,9 @@
   "key.lulasmod.cycle_spell": "Zauba durchlaufn",
 
   "gamerule.newDeathSystem": "Neis Todessystem verwenden (beta)",
-
   "notify.lulasmod.duplicate_seal": "Du konnst immer nur a Siegel hoidn.",
+  "notify.lulasmod.already_absorbed_pedestal": "You have already absorbed this pedestal",
+  "notify.lulasmod.pedestal.all_spells": "You have already every Spell",
   "notify.lulasmod.command.contract_success": "Du host die Macht von §kthe ancient tailed§r erhaltn",
   "notify.lulasmod.command.contract_fail": "Du konnst die Aktion net verwendn",
   "notify.lulasmod.command.tag_manager_add": "Tag in Kategorie %1$s mit Weat %2$s hinzugfügt",
