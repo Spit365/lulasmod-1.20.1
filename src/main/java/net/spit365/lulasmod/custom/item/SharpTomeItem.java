@@ -13,7 +13,7 @@ import net.minecraft.world.World;
 import net.spit365.lulasmod.mod.ModMethods;
 
 public class SharpTomeItem extends Item{
-    public SharpTomeItem(Settings settings) {super(settings);}
+    public SharpTomeItem() {super(new Item.Settings().maxCount(1).maxDamage(640));}
 
     @Override
     public TypedActionResult<ItemStack> use(World world, PlayerEntity player, Hand hand) {
@@ -35,6 +35,4 @@ public class SharpTomeItem extends Item{
         }
         return TypedActionResult.pass(stack);
     }
-
-
 }

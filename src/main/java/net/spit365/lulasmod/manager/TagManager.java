@@ -1,4 +1,4 @@
-package net.spit365.lulasmod.tag;
+package net.spit365.lulasmod.manager;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.util.Identifier;

@@ -15,6 +15,7 @@ import org.spongepowered.asm.mixin.injection.ModifyVariable;
 
 @Mixin(ItemRenderer.class)
 public abstract class ItemRendererMixin {
+    @SuppressWarnings("AmbiguousMixinReference")
     @ModifyVariable(method = "renderItem", at = @At(value = "HEAD"), argsOnly = true)
     public BakedModel useGoldenTridentModel(BakedModel value, ItemStack stack, ModelTransformationMode renderMode, boolean leftHanded, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, int overlay) {
         if (stack.isOf(Mod.Items.GOLDEN_TRIDENT) && renderMode != ModelTransformationMode.GUI) {

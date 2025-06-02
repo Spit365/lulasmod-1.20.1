@@ -32,7 +32,7 @@ public class TailFeatureRenderer extends FeatureRenderer<AbstractClientPlayerEnt
 			matrixStack.push();
 			matrixStack.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(o));
 			matrixStack.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(-o));
-			TailModel.getTexturedModelData().createModel().render(matrixStack, vertexConsumer, i, LivingEntityRenderer.getOverlay(abstractClientPlayerEntity, 0f), 1f, 1f, 1f, 1f);
+			TailModel.getAnimatedTexturedModelData().createModel().render(matrixStack, vertexConsumer, i, LivingEntityRenderer.getOverlay(abstractClientPlayerEntity, 0f), 1f, 1f, 1f, 1f);
 			matrixStack.pop();
 		}
 	}

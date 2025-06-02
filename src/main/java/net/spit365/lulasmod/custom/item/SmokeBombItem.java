@@ -14,7 +14,7 @@ import net.minecraft.world.World;
 import net.spit365.lulasmod.custom.entity.SmokeBombEntity;
 
 public class SmokeBombItem extends Item {
-    public SmokeBombItem(Settings settings) {super(settings);}
+    public SmokeBombItem() {super(new Item.Settings().maxCount(16));}
 
     @Override
     public TypedActionResult<ItemStack> use(World world, PlayerEntity player, Hand hand){

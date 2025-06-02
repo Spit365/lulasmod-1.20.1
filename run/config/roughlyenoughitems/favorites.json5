@@ -2,7 +2,8 @@
 	"favorites": [
 		"{mode:\"NIGHT\",type:\"roughlyenoughitems:time\"}",
 		"{mode:\"MORN\",type:\"roughlyenoughitems:time\"}",
-		"{type:\"roughlyenoughitems:weather\",weather:\"CLEAR\"}"
+		"{type:\"roughlyenoughitems:weather\",weather:\"CLEAR\"}",
+		"{data:{Count:1b,id:\"minecraft:stripped_cherry_wood\",type:\"minecraft:item\"},type:\"roughlyenoughitems:entry_stack\"}"
 	],
 	"hiddenFavorites": [],
 	"displays": []

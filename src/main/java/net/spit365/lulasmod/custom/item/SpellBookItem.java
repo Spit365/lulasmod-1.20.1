@@ -5,7 +5,6 @@ import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.registry.Registries;
 import net.minecraft.server.world.ServerWorld;
@@ -46,24 +45,21 @@ public class SpellBookItem extends Item implements SpellHotbar {
                ItemStack spell = (hand.equals(Hand.MAIN_HAND)? player.getOffHandStack() : player.getMainHandStack());
                ItemStack spellbook = player.getStackInHand(hand);
                NbtCompound nbt = spellbook.getOrCreateNbt();
-               if (spell.getItem() instanceof SpellItem spellItem) {
-                    Identifier id = Registries.ITEM.getId(spellItem);
-                    LinkedList<Identifier> list = getListFromString(nbt.getString("Spells"));
-                    if (!list.contains(id)) list.add(id);
+               LinkedList<Identifier> list = getListFromString(nbt.getString("Spells"));
+               if (spell.getItem() instanceof SpellItem) {
+                    Identifier id = Registries.ITEM.getId(spell.getItem());
+                    list.add(id);
                     nbt.putString("Spells", getStringFromList(list));
                     spellbook.setNbt(nbt);
                     spell.decrement(1);
                     return TypedActionResult.success(player.getStackInHand(hand));
-               } else if (spell.getItem().equals(Items.AIR)){
-                    LinkedList<Identifier> list = getListFromString(nbt.getString("Spells"));
-                    if (!list.isEmpty()) {
-                         Identifier id = list.pollFirst();
-                         list.remove(id);
-                         spellbook.setNbt(nbt);
-                         nbt.putString("Spells", getStringFromList(list));
-                         player.giveItemStack(new ItemStack(Registries.ITEM.get(id)));
-                         return TypedActionResult.success(player.getStackInHand(hand));
-                    }
+               } else if (!list.isEmpty()) {
+                    Identifier id = list.pollFirst();
+                    list.remove(id);
+                    nbt.putString("Spells", getStringFromList(list));
+                    spellbook.setNbt(nbt);
+                    player.giveItemStack(new ItemStack(Registries.ITEM.get(id)));
+                    return TypedActionResult.success(player.getStackInHand(hand));
                }
           }
           return TypedActionResult.pass(player.getStackInHand(hand));
@@ -78,7 +74,7 @@ public class SpellBookItem extends Item implements SpellHotbar {
 
      private static LinkedList<Identifier> getListFromString(String s){
           LinkedList<Identifier> list = new LinkedList<>();
-          for (String s1 : s.split(";")){
+          for (String s1 : s.split(", ")){
 
                String[] s2 = s1.split(":");
                if (s2.length == 2) list.add(new Identifier(s2[0], s2[1]));
@@ -88,7 +84,7 @@ public class SpellBookItem extends Item implements SpellHotbar {
      private static String getStringFromList(LinkedList<Identifier> list){
           StringBuilder stringBuilder = new StringBuilder();
           for (Identifier id : list){
-               stringBuilder.append(";").append(id);
+               stringBuilder.append(", ").append(id);
           }
           return stringBuilder.toString();
      }

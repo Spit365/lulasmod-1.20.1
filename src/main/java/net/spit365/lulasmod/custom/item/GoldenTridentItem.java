@@ -1,6 +1,7 @@
 package net.spit365.lulasmod.custom.item;
 
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.TridentItem;
 import net.minecraft.util.Hand;
@@ -10,7 +11,7 @@ import net.spit365.lulasmod.mod.Mod;
 import net.spit365.lulasmod.mod.ModMethods;
 
 public class GoldenTridentItem extends TridentItem {
-    public GoldenTridentItem(Settings settings) {super(settings);}
+    public GoldenTridentItem() {super(new Item.Settings().maxCount(1).maxDamage(500));}
 
     @Override
     public TypedActionResult<ItemStack> use(World world, PlayerEntity player, Hand hand){

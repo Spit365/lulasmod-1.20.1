@@ -15,7 +15,7 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.world.World;
 import net.spit365.lulasmod.mod.Mod;
-import net.spit365.lulasmod.tag.TagManager;
+import net.spit365.lulasmod.manager.TagManager;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.LinkedList;

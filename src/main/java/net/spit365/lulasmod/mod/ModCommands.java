@@ -12,7 +12,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
-import net.spit365.lulasmod.tag.TagManager;
+import net.spit365.lulasmod.manager.TagManager;
 import java.util.*;
 import static net.minecraft.server.command.CommandManager.literal;
 import static net.spit365.lulasmod.mod.Mod.Items.tailedExclusive;

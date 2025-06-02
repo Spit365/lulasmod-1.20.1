@@ -16,7 +16,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.spit365.lulasmod.Lulasmod;
 import net.spit365.lulasmod.mod.Mod;
-import net.spit365.lulasmod.tag.TagManager;
+import net.spit365.lulasmod.manager.TagManager;
 
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -24,9 +24,7 @@ import java.util.List;
 import java.util.Set;
 
 public class SpellPedestalBlock extends Block {
-    public SpellPedestalBlock(Settings settings) {
-        super(settings);
-    }
+    public SpellPedestalBlock(Settings settings) {super(settings);}
     @SuppressWarnings("deprecation")
     @Override
     public ActionResult onUse(BlockState state, World world, BlockPos blockPos, PlayerEntity player, Hand hand, BlockHitResult hit){

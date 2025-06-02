@@ -5,9 +5,12 @@ import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
 import net.fabricmc.fabric.api.gamerule.v1.GameRuleFactory;
 import net.fabricmc.fabric.api.gamerule.v1.GameRuleRegistry;
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
+import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.fabric.api.particle.v1.FabricParticleTypes;
 import net.minecraft.block.*;
 import net.minecraft.block.enums.Instrument;
+import net.minecraft.client.particle.ExplosionLargeParticle;
 import net.minecraft.client.particle.FlameParticle;
 import net.minecraft.client.particle.SweepAttackParticle;
 import net.minecraft.client.render.entity.EntityRendererFactory;
@@ -17,15 +20,20 @@ import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.damage.DamageType;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectInstance;
+import net.minecraft.entity.mob.EndermanEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.*;
+import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.packet.s2c.play.PositionFlag;
 import net.minecraft.particle.DefaultParticleType;
+import net.minecraft.particle.ParticleEffect;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.text.Text;
@@ -39,6 +47,7 @@ import net.minecraft.world.BlockView;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
 import net.spit365.lulasmod.Lulasmod;
+import net.spit365.lulasmod.custom.SpellHotbar;
 import net.spit365.lulasmod.custom.block.SpellPedestalBlock;
 import net.spit365.lulasmod.custom.effect.BleedingStatusEffect;
 import net.spit365.lulasmod.custom.effect.CushionedStatusEffect;
@@ -52,9 +61,12 @@ import net.spit365.lulasmod.custom.item.*;
 import net.spit365.lulasmod.custom.item.seal.BloodsuckingSeal;
 import net.spit365.lulasmod.custom.item.seal.GoldenSeal;
 import net.spit365.lulasmod.custom.item.seal.HellishSeal;
-import net.spit365.lulasmod.tag.TagManager;
+import net.spit365.lulasmod.manager.TagManager;
+import net.spit365.lulasmod.manager.TickerManager;
+
 import java.util.*;
 import static net.minecraft.sound.SoundEvents.*;
+import static net.spit365.lulasmod.mod.ModMethods.impaled;
 
 public class Mod {
      private record BlockAndItem(Block block, BlockItem item){}
@@ -173,13 +185,14 @@ public class Mod {
      public static class Items {
          public static final List<Identifier> CreativeTabItems = new LinkedList<>() {};
 
-         public static final Item MODIFIED_TNT       = register.Item("modified_tnt",          new ModifiedTntItem(new Item.Settings().maxCount(16)));
-         public static final Item SMOKE_BOMB         = register.Item("smoke_bomb",            new SmokeBombItem(new Item.Settings().maxCount(16)));
-         public static final Item HOME_BUTTON        = register.Item("home_button",           new HomeButtonItem(new Item.Settings().maxCount(1).maxDamage(100)));
-         public static final Item GOLDEN_TRIDENT     = register.Item("golden_trident",        new GoldenTridentItem(new Item.Settings().maxCount(1).maxDamage(500)));
-         public static final Item SHARP_TOME         = register.Item("sharp_tome",            new SharpTomeItem(new Item.Settings().maxCount(1).maxDamage(640)));
+         public static final Item MODIFIED_TNT       = register.Item("modified_tnt",          new ModifiedTntItem());
+         public static final Item SMOKE_BOMB         = register.Item("smoke_bomb",            new SmokeBombItem());
+         public static final Item HOME_BUTTON        = register.Item("home_button",           new HomeButtonItem());
+         public static final Item GOLDEN_TRIDENT     = register.Item("golden_trident",        new GoldenTridentItem());
+         public static final Item SHARP_TOME         = register.Item("sharp_tome",            new SharpTomeItem());
          public static final Item SINFUL             = register.Item("sinful",                new SinfulItem());
          public static final Item SPELL_BOOK         = register.Item("spell_book",            new SpellBookItem());
+         public static final Item RAMEN              = register.Item("ramen",                 new RamenItem());
 
          public static final Item HELLISH_SEAL       = register.Item("hellish_seal",          new HellishSeal());
          public static final Item GOLDEN_SEAL        = register.Item("golden_seal",           new GoldenSeal());
@@ -194,6 +207,7 @@ public class Mod {
          public static final DefaultParticleType SCRATCH = register.Particle("scratch", true, SweepAttackParticle.Factory::new);
          public static final DefaultParticleType GOLDEN_SHIMMER = register.Particle("golden_shimmer", false, FlameParticle.Factory::new);
          public static final DefaultParticleType CURSED_BLOOD = register.Particle("cursed_blood", false, FlameParticle.Factory::new);
+         public static final DefaultParticleType EXPLOSION = register.Particle("explosion", false, ExplosionLargeParticle.Factory::new);
 
          public static void init(){}
      }
@@ -242,6 +256,7 @@ public class Mod {
           }});
           public static final SpellItem HEAL_SPELL = register.Spell("appeasing", new SpellItem(300) {@Override public void cast(ServerWorld world, PlayerEntity player, Hand hand, Float efficiencyMultiplier, Integer cooldownMultiplier) {
               player.setHealth(player.getMaxHealth());
+               player.getHungerManager().add(100, 0f);
           }});
           public static final SpellItem BLOOD_SPELL = register.Spell("emulations", new SpellItem(0, ENTITY_ZOMBIE_VILLAGER_CURE) {@Override public void cast(ServerWorld world, PlayerEntity player, Hand hand, Float efficiencyMultiplier, Integer cooldownMultiplier) {
              if (ModMethods.selectClosestEntity(player, 5d) instanceof LivingEntity victim)
@@ -322,6 +337,98 @@ public class Mod {
           public static final Identifier TAILED_PLAYER_LIST = new Identifier(Lulasmod.MOD_ID, "tailed_player_list");
      }
 
+     public static class Tickers {
+          private static int sporesCounter = 0;
+          private static int impaledCounter = 0;
+          private static void sendSpellListPacket(ServerPlayerEntity player, LinkedList<Identifier> list) {
+               Map<Integer, ItemStack> map = new HashMap<>();
+               for (int i = 0; i < list.size(); i++)
+                    map.put(i, new ItemStack(Registries.ITEM.get(list.get(i))));
+               PacketByteBuf buf = PacketByteBufs.create();
+               buf.writeMap(map, PacketByteBuf::writeInt, PacketByteBuf::writeItemStack);
+               ServerPlayNetworking.send(player, Mod.Packets.PLAYER_SPELL_LIST, buf);
+          }
+
+          public static final TickerManager.Ticker<MinecraftServer> repelMiner = TickerManager.createTicker(MinecraftServer.class, input -> {
+               for (ServerPlayerEntity player : input.getPlayerManager().getPlayerList()) {
+                    if (player.getCommandTags().contains("miner")) {
+                         BlockPos playerPos = player.getBlockPos();
+                         BlockPos closestPortal = null;
+                         for (BlockPos pos : BlockPos.stream(
+                                 playerPos.add(-5, -5, -5),
+                                 playerPos.add(5, 5, 5)
+                         ).map(BlockPos::toImmutable).toList())
+                              if ((
+                                      player.getWorld().getBlockState(pos).isOf(net.minecraft.block.Blocks.END_PORTAL) ||
+                                              player.getWorld().getBlockState(pos).isOf(net.minecraft.block.Blocks.NETHER_PORTAL)) &&
+                                      (closestPortal == null || pos.getSquaredDistance(playerPos) < closestPortal.getSquaredDistance(playerPos)))
+                                   closestPortal = pos;
+                         if (closestPortal != null) {
+                              ModMethods.outlineBox(new Box(closestPortal.add(-5, -5, -5), closestPortal.add(5, 5, 5)), player.getServerWorld(), Particles.GOLDEN_SHIMMER);
+                              Vec3d repelVec = player.getPos().subtract(Vec3d.ofCenter(closestPortal)).normalize();
+                              if (!repelVec.equals(Vec3d.ZERO)) {
+                                   player.setVelocity(repelVec);
+                                   player.velocityModified = true;
+                              }
+                         }
+                    }
+               }
+          });
+          public static final TickerManager.Ticker<MinecraftServer> updateSpells = TickerManager.createTicker(MinecraftServer.class, input -> {
+               for (ServerPlayerEntity player : input.getPlayerManager().getPlayerList()) {
+                    if(player.getMainHandStack().getItem() instanceof SpellHotbar item) sendSpellListPacket(player, item.display(player));
+                    else if(player.getOffHandStack().getItem() instanceof SpellHotbar item) sendSpellListPacket(player, item.display(player));
+               }
+          });
+
+          public static final TickerManager.Ticker<Void> updateImpaled = TickerManager.createTicker(Void.class, input -> {
+               impaledCounter++;
+               for (ImpaledContext context : impaled) {
+                    LivingEntity victim = context.livingEntity;
+                    if (context.iterations > 0 && victim.isAlive()) {
+                         if (victim instanceof EndermanEntity) victim.kill();
+                         victim.setVelocity(0, 0, 0);
+                         if (impaledCounter >= 25) {
+                              impaledCounter = 0;
+                              Vec3d pos = new Vec3d(Math.random() * 2 - 1, Math.random() * 2 - 1, Math.random() * 2 - 1).normalize().multiply(5).add(victim.getPos());
+                              TagManager.put(context.player, Mod.TagCategories.DAMAGE_DELAY, new Identifier(Lulasmod.MOD_ID, "0"));
+                              victim.getWorld().spawnEntity(new ParticleProjectileEntity(
+                                      victim.getWorld(), context.player, pos, pos.subtract(victim.getPos()).multiply(-0.5), context.particle));
+                              impaled.remove(context);
+                              impaled.add(new ImpaledContext(context, context.iterations - 1));
+                         }
+                    } else {
+                         impaled.remove(context);
+                         TagManager.remove(context.player, Mod.TagCategories.DAMAGE_DELAY);
+                         victim.addStatusEffect(new StatusEffectInstance(net.minecraft.entity.effect.StatusEffects.SLOW_FALLING, 50));
+                    }
+               }
+          });
+          public static final TickerManager.Ticker<MinecraftServer> updateTailedVisuals = TickerManager.createTicker(MinecraftServer.class, input -> {
+               sporesCounter--;
+               Map<Integer, String> tailedPlayers = new HashMap<>();
+               input.getPlayerManager().getPlayerList().forEach(player -> {
+                    if (player.getCommandTags().contains("tailed")) {
+                         tailedPlayers.put(tailedPlayers.size(), player.getUuidAsString());
+                         if (sporesCounter <= 0 && player.getWorld() instanceof ServerWorld world){
+                              world.spawnParticles(ParticleTypes.CRIMSON_SPORE, player.getX(), player.getY() +1, player.getZ(), player.getRandom().nextBetweenExclusive(2, 4), 0, 0, 0, 0);
+                         }}});
+               if (sporesCounter <= 0) sporesCounter = new Random().nextInt(30, 60);
+               PacketByteBuf buf = PacketByteBufs.create();
+               buf.writeMap(tailedPlayers, PacketByteBuf::writeInt, PacketByteBuf::writeString);
+               for (ServerPlayerEntity player : input.getPlayerManager().getPlayerList())
+                    ServerPlayNetworking.send(player, Mod.Packets.TAILED_PLAYER_LIST, buf);
+          });
+          public record ImpaledContext(PlayerEntity player, LivingEntity livingEntity, ParticleEffect particle, Integer iterations) {
+              public ImpaledContext(ImpaledContext context, Integer iterations) {
+                  this(context.player(), context.livingEntity(), context.particle(), iterations);
+              }
+          }
+
+          public static void init(){}
+
+     }
+
      public static void init() {
           Items.init();
           Spells.init();
@@ -332,5 +439,6 @@ public class Mod {
           StatusEffects.init();
           Particles.init();
           Gamerules.init();
+          Tickers.init();
      }
 }

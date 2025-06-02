@@ -47,8 +47,8 @@
   "gamerule.newDeathSystem": "Neues Todessystem verwenden (beta)",
 
   "notify.lulasmod.duplicate_seal": "Du kannst immer nur ein Siegel halten.",
-  "notify.lulasmod.already_absorbed_pedestal": "You have already absorbed this pedestal",
-  "notify.lulasmod.pedestal.all_spells": "You have already every Spell",
+  "notify.lulasmod.already_absorbed_pedestal": "Du hast schon dieses Podest absorbiert",
+  "notify.lulasmod.pedestal.all_spells": "Du hast schon jeden Zauber",
   "notify.lulasmod.command.contract_success": "Du hast die Macht von §kthe ancient tailed§r erhalten",
   "notify.lulasmod.command.contract_fail": "Du kannst diese Aktion nicht verwenden",
   "notify.lulasmod.command.tag_manager_add": "Tag in Kategorie %1$s mit Wert %2$s hinzugefügt",

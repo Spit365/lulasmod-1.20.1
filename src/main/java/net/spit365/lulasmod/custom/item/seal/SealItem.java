@@ -18,7 +18,7 @@ import net.spit365.lulasmod.custom.SpellHotbar;
 import net.spit365.lulasmod.custom.item.SpellItem;
 import net.spit365.lulasmod.mod.Mod;
 import net.spit365.lulasmod.mod.ModMethods;
-import net.spit365.lulasmod.tag.TagManager;
+import net.spit365.lulasmod.manager.TagManager;
 
 import java.util.LinkedList;
 import java.util.Objects;

@@ -10,9 +10,8 @@ import net.minecraft.util.TypedActionResult;
 import net.minecraft.world.World;
 
 public class ModifiedTntItem extends Item {
-    public ModifiedTntItem(Settings settings) {
-        super(settings);
-    }
+    public ModifiedTntItem() {super(new Item.Settings().maxCount(16));}
+
     @Override
     public TypedActionResult<ItemStack> use(World world, PlayerEntity player, Hand hand){
         if (!world.isClient()  && (player.experienceLevel > 0 || player.isCreative())){
