@@ -282,7 +282,7 @@ public class Mod {
           public static final SpellItem AMETHYST_SPELL = register.Spell("envy", new SpellItem(20) {@Override public void cast(ServerWorld world, PlayerEntity player, Hand hand, Float efficiencyMultiplier, Integer cooldownMultiplier) {
                AmethystShardEntity amethystShardEntity = new AmethystShardEntity(player, world);
                amethystShardEntity.addVelocity(player.getRotationVec(1).normalize().multiply(5));
-               amethystShardEntity.setDamage(5);
+               amethystShardEntity.setDamage(8);
                world.spawnEntity(amethystShardEntity);
           }});
           public static final SpellItem HIGHLIGHTER_SPELL = register.Spell("highlighter_spell", new SpellItem(0) {@Override public void cast(ServerWorld world, PlayerEntity player, Hand hand, Float efficiencyMultiplier, Integer cooldownMultiplier) {
@@ -340,6 +340,11 @@ public class Mod {
      public static class Tickers {
           private static int sporesCounter = 0;
           private static int impaledCounter = 0;
+          public record ImpaledContext(PlayerEntity player, LivingEntity livingEntity, ParticleEffect particle, Integer iterations) {
+               public ImpaledContext(ImpaledContext context, Integer iterations) {
+                    this(context.player(), context.livingEntity(), context.particle(), iterations);
+               }
+          }
           private static void sendSpellListPacket(ServerPlayerEntity player, LinkedList<Identifier> list) {
                Map<Integer, ItemStack> map = new HashMap<>();
                for (int i = 0; i < list.size(); i++)
@@ -359,17 +364,14 @@ public class Mod {
                                  playerPos.add(5, 5, 5)
                          ).map(BlockPos::toImmutable).toList())
                               if ((
-                                      player.getWorld().getBlockState(pos).isOf(net.minecraft.block.Blocks.END_PORTAL) ||
-                                              player.getWorld().getBlockState(pos).isOf(net.minecraft.block.Blocks.NETHER_PORTAL)) &&
-                                      (closestPortal == null || pos.getSquaredDistance(playerPos) < closestPortal.getSquaredDistance(playerPos)))
-                                   closestPortal = pos;
+                                   player.getWorld().getBlockState(pos).isOf(net.minecraft.block.Blocks.END_PORTAL) ||
+                                   player.getWorld().getBlockState(pos).isOf(net.minecraft.block.Blocks.NETHER_PORTAL)) &&
+                                   (closestPortal == null || pos.getSquaredDistance(playerPos) < closestPortal.getSquaredDistance(playerPos)
+                              )) closestPortal = pos;
                          if (closestPortal != null) {
                               ModMethods.outlineBox(new Box(closestPortal.add(-5, -5, -5), closestPortal.add(5, 5, 5)), player.getServerWorld(), Particles.GOLDEN_SHIMMER);
-                              Vec3d repelVec = player.getPos().subtract(Vec3d.ofCenter(closestPortal)).normalize();
-                              if (!repelVec.equals(Vec3d.ZERO)) {
-                                   player.setVelocity(repelVec);
-                                   player.velocityModified = true;
-                              }
+                              player.setVelocity(player.getPos().subtract(Vec3d.ofCenter(closestPortal)).normalize());
+                              player.velocityModified = true;
                          }
                     }
                }
@@ -380,7 +382,6 @@ public class Mod {
                     else if(player.getOffHandStack().getItem() instanceof SpellHotbar item) sendSpellListPacket(player, item.display(player));
                }
           });
-
           public static final TickerManager.Ticker<Void> updateImpaled = TickerManager.createTicker(Void.class, input -> {
                impaledCounter++;
                for (ImpaledContext context : impaled) {
@@ -419,14 +420,8 @@ public class Mod {
                for (ServerPlayerEntity player : input.getPlayerManager().getPlayerList())
                     ServerPlayNetworking.send(player, Mod.Packets.TAILED_PLAYER_LIST, buf);
           });
-          public record ImpaledContext(PlayerEntity player, LivingEntity livingEntity, ParticleEffect particle, Integer iterations) {
-              public ImpaledContext(ImpaledContext context, Integer iterations) {
-                  this(context.player(), context.livingEntity(), context.particle(), iterations);
-              }
-          }
 
           public static void init(){}
-
      }
 
      public static void init() {
