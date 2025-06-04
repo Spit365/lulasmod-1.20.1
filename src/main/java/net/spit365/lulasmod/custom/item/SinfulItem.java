@@ -7,7 +7,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.SwordItem;
 import net.minecraft.item.ToolMaterials;
 import net.minecraft.util.Hand;
-import net.spit365.lulasmod.custom.item.seal.SealItem;
 import net.spit365.lulasmod.mod.ModMethods;
 
 public class SinfulItem extends SwordItem {
@@ -16,9 +15,9 @@ public class SinfulItem extends SwordItem {
      @Override
      public boolean postHit(ItemStack stack, LivingEntity target, LivingEntity attacker){
           ModMethods.applyBleed(target, 100 * (int)(
-               attacker.getStackInHand(Hand.OFF_HAND).getItem() instanceof SealItem sealItem &&
-               sealItem.canUse(attacker)?
-                    sealItem.efficiencyMultiplier() :
+               attacker.getStackInHand(Hand.OFF_HAND).getItem() instanceof AbstractSealItem abstractSealItem &&
+               abstractSealItem.canUse(attacker)?
+                    abstractSealItem.efficiencyMultiplier() :
                     1
           ));
           if (!attacker.getCommandTags().contains("tailed")) stack.damage(1, attacker, e -> e.sendEquipmentBreakStatus(EquipmentSlot.MAINHAND));

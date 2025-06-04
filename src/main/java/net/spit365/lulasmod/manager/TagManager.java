@@ -22,16 +22,15 @@ public class TagManager {
     public static void put(Entity entity, TagCategory category, LinkedList<Identifier> list){
         remove(entity, category);
         StringBuilder stringBuilder = new StringBuilder(c(category));
-        for (Identifier id : list){
+        for (Identifier id : list)
             stringBuilder.append(";").append(id);
-        }
         entity.addCommandTag(stringBuilder.toString());
     }
     public static Identifier read(Entity entity, TagCategory category){
         for (String tag : entity.getCommandTags()){
-            if (tag.contains(c(category))){
-                String[] s = tag.replace(c(category), "").split(":");
-                return new Identifier(s[0], s[1]);
+            if (tag.contains(c(category))) {
+                String s = tag.replace(c(category), "");
+                if (s.split(":").length == 2) return new Identifier(s);
             }
         }
         return null;
@@ -40,10 +39,8 @@ public class TagManager {
         for (String tag : entity.getCommandTags()){
             if (tag.contains(c(category))) {
                 LinkedList<Identifier> list = new LinkedList<>();
-                for (String s1 : tag.replace(c(category), "").split(";")){
-                    String[] s2 = s1.split(":");
-                    if (s2.length == 2) list.add(new Identifier(s2[0], s2[1]));
-                }
+                for (String s : tag.replace(c(category), "").split(";"))
+                    if (s.split(":").length == 2) list.add(new Identifier(s));
                 return list;
             }
         }

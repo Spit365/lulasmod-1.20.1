@@ -15,7 +15,6 @@ import net.minecraft.util.TypedActionResult;
 import net.minecraft.world.World;
 import net.spit365.lulasmod.custom.SpellHotbar;
 import org.jetbrains.annotations.Nullable;
-
 import java.util.LinkedList;
 import java.util.List;
 
@@ -42,8 +41,8 @@ public class SpellBookItem extends Item implements SpellHotbar {
      @Override
      public TypedActionResult<ItemStack> use(World world, PlayerEntity player, Hand hand){
           if (world instanceof ServerWorld){
-               ItemStack spell = (hand.equals(Hand.MAIN_HAND)? player.getOffHandStack() : player.getMainHandStack());
                ItemStack spellbook = player.getStackInHand(hand);
+               ItemStack spell = (hand.equals(Hand.MAIN_HAND)? player.getOffHandStack() : player.getMainHandStack());
                NbtCompound nbt = spellbook.getOrCreateNbt();
                LinkedList<Identifier> list = getListFromString(nbt.getString("Spells"));
                if (spell.getItem() instanceof SpellItem) {
@@ -68,24 +67,19 @@ public class SpellBookItem extends Item implements SpellHotbar {
      @Override
      public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context) {
           getListFromString(stack.getOrCreateNbt().getString("Spells")).forEach(id ->
-                  tooltip.add(Registries.ITEM.get(id).getName())
-          );
+                  tooltip.add(Registries.ITEM.get(id).getName()));
      }
 
      private static LinkedList<Identifier> getListFromString(String s){
           LinkedList<Identifier> list = new LinkedList<>();
-          for (String s1 : s.split(", ")){
-
-               String[] s2 = s1.split(":");
-               if (s2.length == 2) list.add(new Identifier(s2[0], s2[1]));
-          }
+          for (String s1 : s.split(", "))
+               if (s1.split(":").length == 2) list.add(new Identifier(s1));
           return list;
      }
      private static String getStringFromList(LinkedList<Identifier> list){
           StringBuilder stringBuilder = new StringBuilder();
-          for (Identifier id : list){
+          for (Identifier id : list)
                stringBuilder.append(", ").append(id);
-          }
           return stringBuilder.toString();
      }
 }

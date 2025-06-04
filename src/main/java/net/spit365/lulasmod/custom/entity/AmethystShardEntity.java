@@ -1,5 +1,6 @@
 package net.spit365.lulasmod.custom.entity;
 
+import net.minecraft.block.BlockState;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
@@ -19,6 +20,7 @@ import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.EntityHitResult;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.spit365.lulasmod.mod.Mod;
 
@@ -41,9 +43,9 @@ public class AmethystShardEntity extends PersistentProjectileEntity {
     @Override protected void onBlockHit(BlockHitResult hitResult) {
         for (int i = 0; i < 8; i++) if (this.getWorld() instanceof ServerWorld sw) sw.spawnParticles(
             new ItemStackParticleEffect(ParticleTypes.ITEM, new ItemStack(Items.AMETHYST_BLOCK, 1)),
-            this.getX() + random.nextGaussian() / 20,
-            this.getY() + random.nextGaussian() / 20,
-            this.getZ() + random.nextGaussian() / 20,
+            hitResult.getPos().getX() + random.nextGaussian() / 20,
+            hitResult.getPos().getY() + random.nextGaussian() / 20,
+            hitResult.getPos().getZ() + random.nextGaussian() / 20,
             1,
             random.nextGaussian() / 20,
             0.2 + random.nextGaussian() / 20,
@@ -82,6 +84,6 @@ public class AmethystShardEntity extends PersistentProjectileEntity {
             this.setYaw(this.getYaw() + 180f);
             this.prevYaw += 180f;
         }
-        this.getWorld().playSound(null, this.getBlockPos(), SoundEvents.ENTITY_PLAYER_HURT_SWEET_BERRY_BUSH, SoundCategory.NEUTRAL, 1.0f, 1.5f);
+        this.getWorld().playSound(null, BlockPos.ofFloored(entityHitResult.getPos()), SoundEvents.ENTITY_PLAYER_HURT_SWEET_BERRY_BUSH, SoundCategory.NEUTRAL, 1.0f, 1.5f);
     }
 }

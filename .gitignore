@@ -38,3 +38,4 @@ run/usernamecache.json
 run/whitelist.json
 /run/debug/
 /run/saves/
+/run/config/

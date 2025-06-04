@@ -5,21 +5,21 @@ import java.util.Set;
 import java.util.function.Consumer;
 
 public class TickerManager<T>{
-     private static Set<Ticker<?>> tickers = new HashSet<>();
+     private static final Set<Ticker<?>> tickers = new HashSet<>();
 
      public static class Ticker<I>{
-          public Consumer<I> tick;
-          private final Class<I> type;
+          public Consumer<I> output;
+          private final Class<I> input;
 
-          public Ticker(Class<I> type, Consumer<I> tick) {
-               this.tick = tick;
-               this.type = type;
+          private Ticker(Class<I> input, Consumer<I> output) {
+               this.output = output;
+               this.input = input;
                tickers.add(this);
           }
 
           public void tick(Object input) {
-               if (type.isInstance(input)) tick.accept(type.cast(input));
-               else tick.accept(null);
+               if (this.input.isInstance(input)) output.accept(this.input.cast(input));
+               else output.accept(null);
           }
      }
      public static void tickAll(Object input){

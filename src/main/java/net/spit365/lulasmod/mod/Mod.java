@@ -58,9 +58,7 @@ import net.spit365.lulasmod.custom.entity.SmokeBombEntity;
 import net.spit365.lulasmod.custom.entity.renderer.AmethystShardEntityRenderer;
 import net.spit365.lulasmod.custom.entity.renderer.ParticleProjectileEntityRenderer;
 import net.spit365.lulasmod.custom.item.*;
-import net.spit365.lulasmod.custom.item.seal.BloodsuckingSeal;
-import net.spit365.lulasmod.custom.item.seal.GoldenSeal;
-import net.spit365.lulasmod.custom.item.seal.HellishSeal;
+import net.spit365.lulasmod.custom.item.AbstractSealItem;
 import net.spit365.lulasmod.manager.TagManager;
 import net.spit365.lulasmod.manager.TickerManager;
 
@@ -141,13 +139,13 @@ public class Mod {
                      .orElseThrow());
          }
 
-         public static void init(){}
+         private static void init(){}
      }
 
      public static class Gamerules {
           public static final GameRules.Key<GameRules.BooleanRule> NEW_DEATH_SYSTEM = register.GameRule("newDeathSystem", GameRules.Category.PLAYER, false);
 
-          public static void init(){}
+          private static void init(){}
      }
 
      public static class Entities {
@@ -172,14 +170,14 @@ public class Mod {
                AmethystShardEntityRenderer::new,
                0.5f, 0.5f, 4, 20);
 
-          public static void init(){}
+          private static void init(){}
      }
 
      public static class ItemGroups {
          public static final ItemGroup LULAS_GROUP = register.ItemGroup("lulasmod_group", Items.SMOKE_BOMB, Items.CreativeTabItems);
          public static final ItemGroup SPELLS_GROUP = register.ItemGroup("lulasmod_spells", Spells.HOME_SPELL, Spells.SpellTabItems);
 
-         public static  void init(){}
+         private static  void init(){}
      }
 
      public static class Items {
@@ -192,15 +190,29 @@ public class Mod {
          public static final Item SHARP_TOME         = register.Item("sharp_tome",            new SharpTomeItem());
          public static final Item SINFUL             = register.Item("sinful",                new SinfulItem());
          public static final Item SPELL_BOOK         = register.Item("spell_book",            new SpellBookItem());
-         public static final Item RAMEN              = register.Item("ramen",                 new RamenItem());
 
-         public static final Item HELLISH_SEAL       = register.Item("hellish_seal",          new HellishSeal());
-         public static final Item GOLDEN_SEAL        = register.Item("golden_seal",           new GoldenSeal());
-         public static final Item BLOODSUCKING_SEAL  = register.Item("bloodsucking_seal",     new BloodsuckingSeal());
+         public static final Item HELLISH_SEAL = register.Item("hellish_seal", new AbstractSealItem() {
+              @Override public Boolean canUse(LivingEntity entity) {return entity.getCommandTags().contains("tailed");}
+              @Override public Float efficiencyMultiplier(){return 2f;}
+              @Override public Integer cooldownMultiplier() {return 1;}
+         });
+         public static final Item GOLDEN_SEAL = register.Item("golden_seal", new AbstractSealItem() {
+              @Override public Boolean canUse(LivingEntity entity) {return true;}
+              @Override public Float efficiencyMultiplier() {return 1f;}
+              @Override public Integer cooldownMultiplier() {return 2;}
+         });
+         public static final Item BLOODSUCKING_SEAL = register.Item("bloodsucking_seal", new AbstractSealItem() {
+              @Override public Boolean canUse(LivingEntity entity) {
+                  ModMethods.applyBleed(entity, 100);
+                  return true;
+              }
+              @Override public Float efficiencyMultiplier() {return 2f;}
+              @Override public Integer cooldownMultiplier() {return 1;}
+         });
 
          public static final List<Item> tailedExclusive = List.of(Mod.Items.HELLISH_SEAL, Mod.Spells.SLASH_SPELL, Mod.Spells.BLOOD_SPELL, Mod.Spells.POCKET_SPELL);
 
-         public static void init() {}
+         private static void init() {}
      }
 
      public static class Particles {
@@ -209,7 +221,7 @@ public class Mod {
          public static final DefaultParticleType CURSED_BLOOD = register.Particle("cursed_blood", false, FlameParticle.Factory::new);
          public static final DefaultParticleType EXPLOSION = register.Particle("explosion", false, ExplosionLargeParticle.Factory::new);
 
-         public static void init(){}
+          private static void init(){}
      }
 
      public static class Spells {
@@ -291,7 +303,7 @@ public class Mod {
               for (PlayerEntity playerEntity : world.getPlayers()){playerEntity.setGlowing(playerGlowing);}
           }});
 
-          public static void init() {}
+          private static void init() {}
      }
 
      public static class Blocks {
@@ -310,14 +322,14 @@ public class Mod {
                   }
           );
 
-          public static void init() {}
+          private static void init() {}
      }
 
      public static class StatusEffects {
          public static final StatusEffect CUSHIONED = register.StatusEffect("cushioned", new CushionedStatusEffect());
          public static final StatusEffect BLEEDING = register.StatusEffect("bleeding", new BleedingStatusEffect());
 
-         public static void init(){}
+          private static void init(){}
      }
 
      public static class Dimensions {
@@ -391,7 +403,8 @@ public class Mod {
                          victim.setVelocity(0, 0, 0);
                          if (impaledCounter >= 25) {
                               impaledCounter = 0;
-                              Vec3d pos = new Vec3d(Math.random() * 2 - 1, Math.random() * 2 - 1, Math.random() * 2 - 1).normalize().multiply(5).add(victim.getPos());
+                              double radius = 5;
+                              Vec3d pos = new Vec3d(Math.random() * radius - radius / 2, Math.random() * radius - radius / 2, Math.random() * radius - radius / 2).normalize().multiply(radius).add(victim.getPos());
                               TagManager.put(context.player, Mod.TagCategories.DAMAGE_DELAY, new Identifier(Lulasmod.MOD_ID, "0"));
                               victim.getWorld().spawnEntity(new ParticleProjectileEntity(
                                       victim.getWorld(), context.player, pos, pos.subtract(victim.getPos()).multiply(-0.5), context.particle));
@@ -411,9 +424,9 @@ public class Mod {
                input.getPlayerManager().getPlayerList().forEach(player -> {
                     if (player.getCommandTags().contains("tailed")) {
                          tailedPlayers.put(tailedPlayers.size(), player.getUuidAsString());
-                         if (sporesCounter <= 0 && player.getWorld() instanceof ServerWorld world){
+                         if (sporesCounter <= 0 && player.getWorld() instanceof ServerWorld world)
                               world.spawnParticles(ParticleTypes.CRIMSON_SPORE, player.getX(), player.getY() +1, player.getZ(), player.getRandom().nextBetweenExclusive(2, 4), 0, 0, 0, 0);
-                         }}});
+               }});
                if (sporesCounter <= 0) sporesCounter = new Random().nextInt(30, 60);
                PacketByteBuf buf = PacketByteBufs.create();
                buf.writeMap(tailedPlayers, PacketByteBuf::writeInt, PacketByteBuf::writeString);
@@ -421,7 +434,7 @@ public class Mod {
                     ServerPlayNetworking.send(player, Mod.Packets.TAILED_PLAYER_LIST, buf);
           });
 
-          public static void init(){}
+          private static void init(){}
      }
 
      public static void init() {
