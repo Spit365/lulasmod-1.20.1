@@ -4,11 +4,11 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Consumer;
 
-public class TickerManager<T>{
+public class TickerManager {
      private static final Set<Ticker<?>> tickers = new HashSet<>();
 
      public static class Ticker<I>{
-          public Consumer<I> output;
+          private final Consumer<I> output;
           private final Class<I> input;
 
           private Ticker(Class<I> input, Consumer<I> output) {
@@ -22,11 +22,7 @@ public class TickerManager<T>{
                else output.accept(null);
           }
      }
-     public static void tickAll(Object input){
-          tickers.forEach(ticker -> ticker.tick(input));
-     }
+     public static void tickAll(Object input){tickers.forEach(ticker -> ticker.tick(input));}
 
-     public static <I> Ticker<I> createTicker(Class<I> type, Consumer<I> tick){
-          return new Ticker<>(type, tick);
-     }
+     public static <I> Ticker<I> createTicker(Class<I> type, Consumer<I> tick){return new Ticker<>(type, tick);}
 }

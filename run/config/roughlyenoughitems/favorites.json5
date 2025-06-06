@@ -3,7 +3,8 @@
 		"{mode:\"NIGHT\",type:\"roughlyenoughitems:time\"}",
 		"{mode:\"MORN\",type:\"roughlyenoughitems:time\"}",
 		"{type:\"roughlyenoughitems:weather\",weather:\"CLEAR\"}",
-		"{data:{Count:1b,id:\"minecraft:stripped_cherry_wood\",type:\"minecraft:item\"},type:\"roughlyenoughitems:entry_stack\"}"
+		"{data:{Count:1b,id:\"minecraft:stripped_cherry_wood\",type:\"minecraft:item\"},type:\"roughlyenoughitems:entry_stack\"}",
+		"{data:{Count:1b,id:\"minecraft:spruce_slab\",type:\"minecraft:item\"},type:\"roughlyenoughitems:entry_stack\"}"
 	],
 	"hiddenFavorites": [],
 	"displays": []

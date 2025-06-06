@@ -13,6 +13,8 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.shape.VoxelShape;
+import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 import net.spit365.lulasmod.Lulasmod;
 import net.spit365.lulasmod.mod.Mod;
@@ -23,9 +25,12 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+@SuppressWarnings("deprecation")
 public class SpellPedestalBlock extends Block {
     public SpellPedestalBlock(Settings settings) {super(settings);}
-    @SuppressWarnings("deprecation")
+
+    private static final VoxelShape SHAPE = Block.createCuboidShape(0, 0, 0, 16.0, 12.0, 16.0);
+
     @Override
     public ActionResult onUse(BlockState state, World world, BlockPos blockPos, PlayerEntity player, Hand hand, BlockHitResult hit){
         if (!world.isClient()){
@@ -46,4 +51,5 @@ public class SpellPedestalBlock extends Block {
         }
         return ActionResult.PASS;
     }
+    @Override public VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context){return SHAPE;}
 }

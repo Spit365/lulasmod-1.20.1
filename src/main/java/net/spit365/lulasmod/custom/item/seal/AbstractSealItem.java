@@ -1,4 +1,4 @@
-package net.spit365.lulasmod.custom.item;
+package net.spit365.lulasmod.custom.item.seal;
 
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.minecraft.entity.Entity;
@@ -15,6 +15,7 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.world.World;
 import net.spit365.lulasmod.custom.SpellHotbar;
+import net.spit365.lulasmod.custom.item.SpellItem;
 import net.spit365.lulasmod.mod.Mod;
 import net.spit365.lulasmod.mod.ModMethods;
 import net.spit365.lulasmod.manager.TagManager;
@@ -25,8 +26,8 @@ import java.util.Objects;
 public abstract class AbstractSealItem extends Item  implements SpellHotbar {
     public AbstractSealItem() {super(new FabricItemSettings().maxCount(1));}
 
-    @Override public LinkedList<Identifier> display(PlayerEntity player){return TagManager.readList(player, Mod.TagCategories.EQUIPPED_SPELLS);}
-    @Override public void cycle(PlayerEntity player){TagManager.cycle(player, Mod.TagCategories.EQUIPPED_SPELLS);}
+    @Override public LinkedList<Identifier> displayList(PlayerEntity player){return TagManager.readList(player, Mod.TagCategories.EQUIPPED_SPELLS);}
+    @Override public void cycleList(PlayerEntity player){TagManager.cycle(player, Mod.TagCategories.EQUIPPED_SPELLS);}
 
     public abstract Boolean canUse(LivingEntity entity);
     public abstract Float efficiencyMultiplier();
@@ -45,6 +46,7 @@ public abstract class AbstractSealItem extends Item  implements SpellHotbar {
         }
         return TypedActionResult.pass(player.getStackInHand(hand));
     }
+    @Override
     public void inventoryTick(ItemStack stack, World world, Entity entity, int slot, boolean selected) {
         if(entity instanceof PlayerEntity player && !Objects.equals(ModMethods.getItemStack(player, stack.getItem()), stack)) {
             player.sendMessage(Text.translatable("notify.lulasmod.duplicate_seal"), true);

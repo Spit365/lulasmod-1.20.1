@@ -20,14 +20,14 @@ import java.util.List;
 
 public class SpellBookItem extends Item implements SpellHotbar {
      public SpellBookItem() {super(new Settings().maxCount(1));}
-     @Override public LinkedList<Identifier> display(PlayerEntity player){
+     @Override public LinkedList<Identifier> displayList(PlayerEntity player){
           ItemStack stack = (player.getMainHandStack().getItem().equals(this)? player.getMainHandStack() : player.getOffHandStack());
           NbtCompound nbt = stack.getOrCreateNbt();
           return getListFromString(nbt.getString("Spells"));
      }
 
      @Override
-     public void cycle(PlayerEntity player) {
+     public void cycleList(PlayerEntity player) {
           ItemStack stack = (player.getMainHandStack().getItem().equals(this)? player.getMainHandStack() : player.getOffHandStack());
           NbtCompound nbt = stack.getOrCreateNbt();
           LinkedList<Identifier> list = getListFromString(nbt.getString("Spells"));

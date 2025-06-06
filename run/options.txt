@@ -42,8 +42,8 @@ ao:true
 prioritizeChunkUpdates:0
 biomeBlendRadius:7
 renderClouds:"false"
-resourcePacks:["vanilla","fabric","Moonlight Mods Dynamic Assets","continuity:default","continuity:glass_pane_culling_fix","file/StayTrue","file/FancyCrops","file/FreshAnimations","file/DarkEverywhere","file/Expressive Fresh Moves v3.0.1"]
-incompatibleResourcePacks:["file/FancyCrops"]
+resourcePacks:["vanilla","fabric","Moonlight Mods Dynamic Assets","continuity:default","continuity:glass_pane_culling_fix","file/StayTrue","file/FancyCrops","file/lanternUpHead","file/FreshAnimations","file/DarkEverywhere","file/Expressive Fresh Moves v3.0.1"]
+incompatibleResourcePacks:["file/FancyCrops","file/lanternUpHead"]
 lastServer:
 lang:en_gb
 soundDevice:""
@@ -135,18 +135,18 @@ key_axiom.keybind.toggle_bulldozer_cap:key.keyboard.unknown
 key_axiom.keybind.nudge_with_scroll:key.keyboard.unknown
 key_axiom.keybind.nudge_forwards:key.keyboard.unknown
 key_axiom.keybind.nudge_backwards:key.keyboard.unknown
-key_key.presencefootsteps.settings:key.keyboard.f10
-key_key.presencefootsteps.toggle:key.keyboard.unknown
+key_key.lulasmod.cycle_spell:key.keyboard.r
 key_key.origins.primary_active:key.keyboard.g
 key_key.origins.secondary_active:key.keyboard.h
 key_key.origins.view_origin:key.keyboard.equal
+key_key.presencefootsteps.settings:key.keyboard.f10
+key_key.presencefootsteps.toggle:key.keyboard.unknown
 key_key.jade.config:key.keyboard.keypad.0
 key_key.jade.show_overlay:key.keyboard.keypad.1
 key_key.jade.toggle_liquid:key.keyboard.keypad.2
 key_key.jade.narrate:key.keyboard.keypad.5
 key_key.jade.show_details_alternative:key.keyboard.unknown
 key_key.modmenu.open_menu:key.keyboard.unknown
-key_key.lulasmod.cycle_spell:key.keyboard.r
 key_key.freecam.toggle:key.keyboard.f4
 key_key.freecam.playerControl:key.keyboard.period
 key_key.freecam.tripodReset:key.keyboard.unknown

@@ -9,7 +9,6 @@ import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.fabric.api.particle.v1.FabricParticleTypes;
 import net.minecraft.block.*;
-import net.minecraft.block.enums.Instrument;
 import net.minecraft.client.particle.ExplosionLargeParticle;
 import net.minecraft.client.particle.FlameParticle;
 import net.minecraft.client.particle.SweepAttackParticle;
@@ -42,8 +41,6 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.util.shape.VoxelShape;
-import net.minecraft.world.BlockView;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
 import net.spit365.lulasmod.Lulasmod;
@@ -58,16 +55,15 @@ import net.spit365.lulasmod.custom.entity.SmokeBombEntity;
 import net.spit365.lulasmod.custom.entity.renderer.AmethystShardEntityRenderer;
 import net.spit365.lulasmod.custom.entity.renderer.ParticleProjectileEntityRenderer;
 import net.spit365.lulasmod.custom.item.*;
-import net.spit365.lulasmod.custom.item.AbstractSealItem;
-import net.spit365.lulasmod.manager.TagManager;
-import net.spit365.lulasmod.manager.TickerManager;
+import net.spit365.lulasmod.custom.item.seal.*;
+import net.spit365.lulasmod.manager.*;
 
 import java.util.*;
 import static net.minecraft.sound.SoundEvents.*;
 import static net.spit365.lulasmod.mod.ModMethods.impaled;
 
 public class Mod {
-     private record BlockAndItem(Block block, BlockItem item){}
+     public record BlockAndItem(Block block, BlockItem item){}
 
      private static class register {
           private static GameRules.Key<GameRules.BooleanRule> GameRule(String name, GameRules.Category category, boolean defaultValue) {
@@ -117,11 +113,11 @@ public class Mod {
                return Registry.register(Registries.ITEM, Identifier.of(Lulasmod.MOD_ID, name), item);
           }
           private static BlockAndItem Block(String name, Block block) {
-               BlockItem item = Registry.register(Registries.ITEM, new Identifier(Lulasmod.MOD_ID, name), new BlockItem(block, new Item.Settings()));
-               Items.CreativeTabItems.add(new Identifier(Lulasmod.MOD_ID, name));
+               Identifier id = new Identifier(Lulasmod.MOD_ID, name);
+               Items.CreativeTabItems.add(id);
                return new BlockAndItem(
-                       Registry.register(Registries.BLOCK, new Identifier(Lulasmod.MOD_ID, name), block),
-                       item
+                       Registry.register(Registries.BLOCK, id, block),
+                       Registry.register(Registries.ITEM, id, new BlockItem(block, new Item.Settings()))
                );
           }
      }
@@ -191,28 +187,15 @@ public class Mod {
          public static final Item SINFUL             = register.Item("sinful",                new SinfulItem());
          public static final Item SPELL_BOOK         = register.Item("spell_book",            new SpellBookItem());
 
-         public static final Item HELLISH_SEAL = register.Item("hellish_seal", new AbstractSealItem() {
-              @Override public Boolean canUse(LivingEntity entity) {return entity.getCommandTags().contains("tailed");}
-              @Override public Float efficiencyMultiplier(){return 2f;}
-              @Override public Integer cooldownMultiplier() {return 1;}
-         });
-         public static final Item GOLDEN_SEAL = register.Item("golden_seal", new AbstractSealItem() {
-              @Override public Boolean canUse(LivingEntity entity) {return true;}
-              @Override public Float efficiencyMultiplier() {return 1f;}
-              @Override public Integer cooldownMultiplier() {return 2;}
-         });
-         public static final Item BLOODSUCKING_SEAL = register.Item("bloodsucking_seal", new AbstractSealItem() {
-              @Override public Boolean canUse(LivingEntity entity) {
-                  ModMethods.applyBleed(entity, 100);
-                  return true;
-              }
-              @Override public Float efficiencyMultiplier() {return 2f;}
-              @Override public Integer cooldownMultiplier() {return 1;}
-         });
+         public static final Item SEAL               = register.Item("seal", new StandartSeal());
+         public static final Item HELLISH_SEAL       = register.Item("hellish_seal", new HellishSeal());
+         public static final Item GOLDEN_SEAL        = register.Item("golden_seal", new GoldenSeal());
+         public static final Item BLOODSUCKING_SEAL  = register.Item("bloodsucking_seal", new BloodsuckingSeal());
 
          public static final List<Item> tailedExclusive = List.of(Mod.Items.HELLISH_SEAL, Mod.Spells.SLASH_SPELL, Mod.Spells.BLOOD_SPELL, Mod.Spells.POCKET_SPELL);
 
          private static void init() {}
+
      }
 
      public static class Particles {
@@ -312,15 +295,9 @@ public class Mod {
                   new SpellPedestalBlock(
                           AbstractBlock.Settings.create()
                                   .mapColor(MapColor.STONE_GRAY)
-                                  .instrument(Instrument.BASEDRUM)
-                                  .strength(-1.0F, 3600000.0F)
+                                  .strength(-1.0F, Float.MAX_VALUE)
                                   .dropsNothing()
-                                  .allowsSpawning(net.minecraft.block.Blocks::never)
-                  ){
-                       private static final VoxelShape SHAPE = Block.createCuboidShape(0, 0, 0, 16.0, 12.0, 16.0);
-                       @SuppressWarnings("deprecation") @Override public VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context){return SHAPE;}
-                  }
-          );
+                                  .allowsSpawning(net.minecraft.block.Blocks::never)));
 
           private static void init() {}
      }
@@ -390,8 +367,8 @@ public class Mod {
           });
           public static final TickerManager.Ticker<MinecraftServer> updateSpells = TickerManager.createTicker(MinecraftServer.class, input -> {
                for (ServerPlayerEntity player : input.getPlayerManager().getPlayerList()) {
-                    if(player.getMainHandStack().getItem() instanceof SpellHotbar item) sendSpellListPacket(player, item.display(player));
-                    else if(player.getOffHandStack().getItem() instanceof SpellHotbar item) sendSpellListPacket(player, item.display(player));
+                    if(player.getMainHandStack().getItem() instanceof SpellHotbar item) sendSpellListPacket(player, item.displayList(player));
+                    else if(player.getOffHandStack().getItem() instanceof SpellHotbar item) sendSpellListPacket(player, item.displayList(player));
                }
           });
           public static final TickerManager.Ticker<Void> updateImpaled = TickerManager.createTicker(Void.class, input -> {

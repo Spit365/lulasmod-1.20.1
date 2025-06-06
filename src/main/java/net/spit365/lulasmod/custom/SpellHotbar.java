@@ -6,6 +6,6 @@ import net.minecraft.util.Identifier;
 import java.util.LinkedList;
 
 public interface SpellHotbar {
-     LinkedList<Identifier> display(PlayerEntity player);
-     void cycle(PlayerEntity player);
+     LinkedList<Identifier> displayList(PlayerEntity player);
+     void cycleList(PlayerEntity player);
 }

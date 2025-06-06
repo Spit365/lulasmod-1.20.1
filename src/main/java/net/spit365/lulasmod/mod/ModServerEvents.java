@@ -10,8 +10,8 @@ public class ModServerEvents {
     public static void init(){
         ServerTickCallback.EVENT.register(TickerManager::tickAll);
         ServerPlayNetworking.registerGlobalReceiver(Mod.Packets.CYCLE_PLAYER_SPELL, (a, player, b, c, d) -> {
-            if (player.getMainHandStack().getItem() instanceof SpellHotbar item) item.cycle(player);
-            else if (player.getOffHandStack().getItem() instanceof SpellHotbar item) item.cycle(player);
+            if (player.getMainHandStack().getItem() instanceof SpellHotbar item) item.cycleList(player);
+            else if (player.getOffHandStack().getItem() instanceof SpellHotbar item) item.cycleList(player);
         });
     }
 }

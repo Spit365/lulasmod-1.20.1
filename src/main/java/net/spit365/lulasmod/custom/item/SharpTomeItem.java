@@ -20,12 +20,12 @@ public class SharpTomeItem extends Item{
         ItemStack stack = player.getStackInHand(hand);
         ItemStack paper = ModMethods.getItemStack(player, Items.PAPER);
         boolean requirePaper = player.isCreative() || EnchantmentHelper.getLevel(Enchantments.INFINITY, stack) > 0;
-        if (!world.isClient() && (paper != null || !requirePaper)){
+        if (!world.isClient() && (paper != null || requirePaper)){
             player.getItemCooldownManager().set(this, 5);
-            if (requirePaper) paper.decrement(1);
+            if (!requirePaper) paper.decrement(1);
             ArrowEntity arrow = new ArrowEntity(world, player);
             arrow.pickupType = PersistentProjectileEntity.PickupPermission.CREATIVE_ONLY;
-            arrow.addVelocity(player.getRotationVec(1).normalize().multiply(2));
+            arrow.setVelocity(player, player.getPitch(), player.getYaw(), 0f, 3f, 1f);
             if (EnchantmentHelper.getLevel(Enchantments.POWER, stack) > 0) arrow.setDamage(arrow.getDamage() + (double)EnchantmentHelper.getLevel(Enchantments.POWER, stack) * 0.5 + 0.5);
             if (EnchantmentHelper.getLevel(Enchantments.PUNCH, stack) > 0) arrow.setPunch(EnchantmentHelper.getLevel(Enchantments.PUNCH, stack));
             if (EnchantmentHelper.getLevel(Enchantments.FLAME, stack) > 0) arrow.setOnFireFor(100);

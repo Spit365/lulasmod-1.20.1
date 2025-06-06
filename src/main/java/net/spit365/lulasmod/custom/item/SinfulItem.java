@@ -7,6 +7,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.SwordItem;
 import net.minecraft.item.ToolMaterials;
 import net.minecraft.util.Hand;
+import net.spit365.lulasmod.custom.item.seal.AbstractSealItem;
 import net.spit365.lulasmod.mod.ModMethods;
 
 public class SinfulItem extends SwordItem {
