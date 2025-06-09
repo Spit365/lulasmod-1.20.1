@@ -1,6 +1,8 @@
 package net.spit365.lulasmod;
 
 import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
@@ -9,6 +11,7 @@ import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
+import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketByteBuf;
@@ -20,15 +23,18 @@ import org.lwjgl.glfw.GLFW;
 import java.util.LinkedList;
 import java.util.Map;
 
+@Environment(EnvType.CLIENT)
 public class LulasmodClient implements ClientModInitializer {
     private static final Identifier SPELL_HOTBAR_TEXTURE = new Identifier(Lulasmod.MOD_ID, "textures/gui/spell_hotbar.png");
     private static final LinkedList<ItemStack> spellList = new LinkedList<>();
+    private static int forwardCounter = 2400;
     private static final KeyBinding cycleSpellKey = KeyBindingHelper.registerKeyBinding(new KeyBinding(
         "key.lulasmod.cycle_spell",
         InputUtil.Type.KEYSYM,
         GLFW.GLFW_KEY_R,
-        "category.lulasmod"
+        "key.categories.lulasmod"
     ));
+    private static void startTimeForwardAnimation(){forwardCounter = 1;}
 
     @Override
     public void onInitializeClient() {
@@ -49,6 +55,20 @@ public class LulasmodClient implements ClientModInitializer {
         });
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             if (cycleSpellKey.wasPressed() && client.player != null) ClientPlayNetworking.send(Mod.Packets.CYCLE_PLAYER_SPELL, PacketByteBufs.create());
+            ClientWorld world = client.world;
+            if (world != null) {
+                long timeOfDay = world.getTimeOfDay();
+                if (forwardCounter < 300) {
+                    forwardCounter += 2;
+                    timeOfDay += forwardCounter;
+                    world.setTimeOfDay(timeOfDay);
+                } else if (forwardCounter < 600) {
+                    forwardCounter++;
+                    timeOfDay += 1200;
+                    world.setTimeOfDay(timeOfDay);
+                }
+
+            }
         });
         ClientPlayNetworking.registerGlobalReceiver(Mod.Packets.PLAYER_SPELL_LIST, (client, handler, buf, responseSender) -> {
             Map<Integer, ItemStack> map = buf.readMap(PacketByteBuf::readInt, PacketByteBuf::readItemStack);
@@ -64,6 +84,8 @@ public class LulasmodClient implements ClientModInitializer {
                 for (int i = 0; i < map.size(); i++) TailFeatureRenderer.tailedPlayerList.add(map.get(i));
             });
         });
+        ClientPlayNetworking.registerGlobalReceiver(Mod.Packets.TIME_FORWARD_ANIMATION, (client, handler, buf, responseSender) ->
+                client.execute(LulasmodClient::startTimeForwardAnimation));
     }
 
 

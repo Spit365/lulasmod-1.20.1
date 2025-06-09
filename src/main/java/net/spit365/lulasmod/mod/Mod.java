@@ -263,15 +263,14 @@ public class Mod {
           }});
           public static final SpellItem POCKET_SPELL = register.Spell("heresies", new SpellItem(0, ENTITY_ZOMBIE_VILLAGER_CURE) {@Override public void cast(ServerWorld world, PlayerEntity player, Hand hand, Float efficiencyMultiplier, Integer cooldownMultiplier) {
               List<Entity> entities = world.getOtherEntities(player, new Box(player.getPos().add(-5d, -5d, -5d), player.getPos().add(5d, 5d, 5d)));
+              entities.removeIf(entity -> TagManager.read(entity, TagCategories.TIME_FORWARD_ANIMATION_FRAMES) != null);
               if (entities.isEmpty()) entities.add(player);
               for (Entity victim : entities) {
                  world.spawnParticles(ParticleTypes.PORTAL, victim.getX(), victim.getY() + 0.5, victim.getZ(), 50, 0, 0, 0, 1);
-                 if (!victim.teleport(Objects.requireNonNull(victim.getServer()).getWorld((
-                     world.getRegistryKey().equals(Dimensions.POCKET_DIMENSION)?
-                         World.OVERWORLD :
-                         Dimensions.POCKET_DIMENSION
-                 )), victim.getX(), victim.getY(), victim.getZ(), EnumSet.noneOf(PositionFlag.class), victim.getYaw(), victim.getPitch()))
-                     Lulasmod.LOGGER.error("Could not perform teleport. Registry key: {}, Entity: {}", Dimensions.POCKET_DIMENSION, victim);
+                 if (world.getRegistryKey().equals(World.OVERWORLD) && victim instanceof ServerPlayerEntity serverPlayer){
+                    ServerPlayNetworking.send(serverPlayer, Packets.TIME_FORWARD_ANIMATION, PacketByteBufs.create());
+                    TagManager.put(victim, TagCategories.TIME_FORWARD_ANIMATION_FRAMES, new Identifier(Lulasmod.MOD_ID, "450"));
+                 } else ModMethods.pocketTeleport(victim);
               }
           }});
           public static final SpellItem AMETHYST_SPELL = register.Spell("envy", new SpellItem(20) {@Override public void cast(ServerWorld world, PlayerEntity player, Hand hand, Float efficiencyMultiplier, Integer cooldownMultiplier) {
@@ -318,12 +317,14 @@ public class Mod {
          public static final TagManager.TagCategory EQUIPPED_SPELLS = register.TagCategory("EquippedSpells");
          public static final TagManager.TagCategory DASH_SPELL = register.TagCategory("PurloiningSpell");
          public static final TagManager.TagCategory ABSORBED_PEDESTALS = register.TagCategory("AbsorbedPedestals");
+         public static final TagManager.TagCategory TIME_FORWARD_ANIMATION_FRAMES = register.TagCategory("TimeForwardAnimationFrames");
      }
 
      public static class Packets {
           public static final Identifier PLAYER_SPELL_LIST = new Identifier(Lulasmod.MOD_ID, "player_spell_list");
           public static final Identifier CYCLE_PLAYER_SPELL = new Identifier(Lulasmod.MOD_ID, "cycle_player_spell");
           public static final Identifier TAILED_PLAYER_LIST = new Identifier(Lulasmod.MOD_ID, "tailed_player_list");
+          public static final Identifier TIME_FORWARD_ANIMATION = new Identifier(Lulasmod.MOD_ID, "time_forward_animation");
      }
 
      public static class Tickers {
@@ -409,6 +410,19 @@ public class Mod {
                buf.writeMap(tailedPlayers, PacketByteBuf::writeInt, PacketByteBuf::writeString);
                for (ServerPlayerEntity player : input.getPlayerManager().getPlayerList())
                     ServerPlayNetworking.send(player, Mod.Packets.TAILED_PLAYER_LIST, buf);
+          });
+          public static final TickerManager.Ticker<MinecraftServer> updateForwardAnimation = TickerManager.createTicker(MinecraftServer.class, input ->{
+               for (ServerPlayerEntity player : input.getPlayerManager().getPlayerList()){
+                    Identifier read = TagManager.read(player, TagCategories.TIME_FORWARD_ANIMATION_FRAMES);
+                    if (read != null) {
+                         int i = Integer.parseInt(read.getPath());
+                         if (i > 0) TagManager.put(player, TagCategories.TIME_FORWARD_ANIMATION_FRAMES, new Identifier(Lulasmod.MOD_ID, String.valueOf(i -1)));
+                         else {
+                              TagManager.remove(player, TagCategories.TIME_FORWARD_ANIMATION_FRAMES);
+                              ModMethods.pocketTeleport(player);
+                         }
+                    }
+               }
           });
 
           private static void init(){}

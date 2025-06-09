@@ -6,6 +6,7 @@ import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.network.packet.s2c.play.PositionFlag;
 import net.minecraft.particle.DefaultParticleType;
 import net.minecraft.particle.ParticleEffect;
 import net.minecraft.registry.RegistryKey;
@@ -93,5 +94,14 @@ public class ModMethods {
             return true;
         } else player.getItemCooldownManager().set(item, baseCooldown - 2);
         return false;
+    }
+
+    public static void pocketTeleport(Entity victim) {
+        if (!victim.teleport(Objects.requireNonNull(victim.getServer()).getWorld((
+                victim.getWorld().getRegistryKey().equals(Mod.Dimensions.POCKET_DIMENSION)?
+                        World.OVERWORLD :
+                        Mod.Dimensions.POCKET_DIMENSION
+        )), victim.getX(), victim.getY(), victim.getZ(), EnumSet.noneOf(PositionFlag.class), victim.getYaw(), victim.getPitch()))
+            Lulasmod.LOGGER.error("Could not perform teleport. Registry key: {}, Entity: {}", Mod.Dimensions.POCKET_DIMENSION, victim);
     }
 }

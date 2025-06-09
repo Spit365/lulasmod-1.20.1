@@ -52,8 +52,8 @@
   "item_group.lulasmod.lulasmod_group": "Lulasmod",
   "item_group.lulasmod.lulasmod_spells": "Lulasmod Spells",
 
-  "category.lulasmod": "Lulasmod",
   "key.lulasmod.cycle_spell": "Cycle Spell",
+  "key.categories.lulasmod": "Lulasmod",
 
   "gamerule.newDeathSystem": "Use new death system (beta)",
 

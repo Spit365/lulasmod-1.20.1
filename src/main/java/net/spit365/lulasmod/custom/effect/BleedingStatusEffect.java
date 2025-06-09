@@ -14,7 +14,7 @@ public class BleedingStatusEffect extends StatusEffect {
   @Override public boolean canApplyUpdateEffect(int duration, int amplifier) {return true;}
   @Override public void applyUpdateEffect(LivingEntity entity, int amplifier) {
     int duration = Objects.requireNonNull(entity.getStatusEffect(Mod.StatusEffects.BLEEDING)).getDuration();
-    int min = Math.min((int) (entity.getMaxHealth() * 60) -1, 1200);
+    int min = Math.min((int) (Math.min(entity.getHealth(), entity.getMaxHealth()) * 60) -1, 1200);
     if (duration > min) {
       entity.setStatusEffect(new StatusEffectInstance(Mod.StatusEffects.BLEEDING, duration - min), entity);
       entity.damage(Mod.DamageSources.BLOODSUCKING(entity), entity.getMaxHealth() * 0.15f + 10f);
