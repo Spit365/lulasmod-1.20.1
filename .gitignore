@@ -17,25 +17,4 @@ replay_*.log
 *.jfr
 
 #fabric
-run/.fabric/
-run/.mixin.out/
-run/crash-reports/
-run/data/
-run/essential/
-run/logs/
-run/resources/
-run/resourcify-temp/
-run/saves/New World/
-run/screenshots/
-run/imgui.ini
-run/ops.json
-run/irisUpdateInfo.json
-run/servers.dat
-run/servers.dat_old
-run/servers.essential.dat
-run/usercache.json
-run/usernamecache.json
-run/whitelist.json
-/run/debug/
-/run/saves/
-/run/config/
+run/
