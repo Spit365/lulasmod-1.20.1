@@ -2,7 +2,7 @@
   "splashes": true,
   "splashThreshold": 0.3,
   "flowingWaterSplashingDensity": 50,
-  "cascades": false,
+  "cascades": true,
   "cascadeCloudDensity": 0.0,
   "cascadeMistDensity": 0.0,
   "shouldFlowingWaterSpawnParticlesOnFirstTick": true,

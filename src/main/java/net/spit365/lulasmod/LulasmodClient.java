@@ -1,5 +1,6 @@
 package net.spit365.lulasmod;
 
+import com.mojang.blaze3d.systems.RenderSystem;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -17,47 +18,46 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.util.Identifier;
 import net.spit365.lulasmod.custom.SpellHotbar;
-import net.spit365.lulasmod.custom.entity.renderer.TailFeatureRenderer;
 import net.spit365.lulasmod.mod.Mod;
 import org.lwjgl.glfw.GLFW;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.stream.StreamSupport;
+import static net.spit365.lulasmod.custom.entity.renderer.TailFeatureRenderer.TAILED_PLAYER_LIST;
 
 @Environment(EnvType.CLIENT)
 public class LulasmodClient implements ClientModInitializer {
-    private static final Identifier SPELL_HOTBAR_TEXTURE = new Identifier(Lulasmod.MOD_ID, "textures/gui/spell_hotbar.png");
-    private static final LinkedList<ItemStack> spellList = new LinkedList<>();
     private static int forwardCounter = 2400;
-    private static final KeyBinding cycleSpellKey = KeyBindingHelper.registerKeyBinding(new KeyBinding(
+    private static long timeOfDay = 0;
+    private static final LinkedList<ItemStack> SPELL_HOTBAR_LIST = new LinkedList<>();
+    private static final Identifier SPELL_HOTBAR_TEXTURE = new Identifier(Lulasmod.MOD_ID, "textures/gui/spell_hotbar.png");
+    private static final KeyBinding CYCLE_SPELL_KEY = KeyBindingHelper.registerKeyBinding(new KeyBinding(
         "key.lulasmod.cycle_spell",
         InputUtil.Type.KEYSYM,
         GLFW.GLFW_KEY_R,
         "key.categories.lulasmod"
     ));
-    private static void startTimeForwardAnimation(){forwardCounter = 1;}
 
     @Override
     public void onInitializeClient() {
         HudRenderCallback.EVENT.register((context, v) -> {
             PlayerEntity player = MinecraftClient.getInstance().player;
             if (player == null) return;
-            if (player.getMainHandStack().getItem() instanceof SpellHotbar) {
-                int x =  context.getScaledWindowWidth() / 2 - 92 + (player.getInventory().selectedSlot * 20);
-                int y = context.getScaledWindowHeight() - 42;
-                context.drawTexture(SPELL_HOTBAR_TEXTURE, x, y -44, 0, 0,24, 64, 24, 64);
-                for (int i = 0; i < Math.min(spellList.size(), 3); i++) context.drawItem(spellList.get(i), x +4, y + (i * -20));
-            } else if (player.getOffHandStack().getItem() instanceof SpellHotbar){
+            if (StreamSupport.stream(player.getItemsEquipped().spliterator(), false).anyMatch(stack -> stack.getItem() instanceof SpellHotbar)){
+                RenderSystem.enableBlend();
                 int x =  context.getScaledWindowWidth() / 2 - 121;
                 int y = context.getScaledWindowHeight() - 42;
+                if (player.getMainHandStack().getItem() instanceof SpellHotbar)
+                    x += (player.getInventory().selectedSlot * 20) + 29;
                 context.drawTexture(SPELL_HOTBAR_TEXTURE, x, y -44, 0, 0,24, 64, 24, 64);
-                for (int i = 0; i < Math.min(spellList.size(), 3); i++) context.drawItem(spellList.get(i), x +4, y + (i * -20));
+                for (int i = 0; i < Math.min(SPELL_HOTBAR_LIST.size(), 3); i++) context.drawItem(SPELL_HOTBAR_LIST.get(i), x +4, y + (i * -20));
+                RenderSystem.disableBlend();
             }
         });
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
-            if (cycleSpellKey.wasPressed() && client.player != null) ClientPlayNetworking.send(Mod.Packets.CYCLE_PLAYER_SPELL, PacketByteBufs.create());
+            if (CYCLE_SPELL_KEY.wasPressed() && client.player != null) ClientPlayNetworking.send(Mod.Packets.CYCLE_PLAYER_SPELL, PacketByteBufs.create());
             ClientWorld world = client.world;
             if (world != null) {
-                long timeOfDay = world.getTimeOfDay();
                 if (forwardCounter < 300) {
                     forwardCounter += 2;
                     timeOfDay += forwardCounter;
@@ -67,26 +67,26 @@ public class LulasmodClient implements ClientModInitializer {
                     timeOfDay += 1200;
                     world.setTimeOfDay(timeOfDay);
                 }
-
             }
         });
-        ClientPlayNetworking.registerGlobalReceiver(Mod.Packets.PLAYER_SPELL_LIST, (client, handler, buf, responseSender) -> {
+        ClientPlayNetworking.registerGlobalReceiver(Mod.Packets.SPELL_HOTBAR_LIST, (client, handler, buf, responseSender) -> {
             Map<Integer, ItemStack> map = buf.readMap(PacketByteBuf::readInt, PacketByteBuf::readItemStack);
             client.execute(() -> {
-                spellList.clear();
-                for (int i = 0; i < map.size(); i++) spellList.add(map.get(i));
+                SPELL_HOTBAR_LIST.clear();
+                for (int i = 0; i < map.size(); i++) SPELL_HOTBAR_LIST.add(map.get(i));
             });
         });
         ClientPlayNetworking.registerGlobalReceiver(Mod.Packets.TAILED_PLAYER_LIST, (client, handler, buf, responseSender) -> {
             Map<Integer, String> map = buf.readMap(PacketByteBuf::readInt, PacketByteBuf::readString);
             client.execute(() -> {
-                TailFeatureRenderer.tailedPlayerList.clear();
-                for (int i = 0; i < map.size(); i++) TailFeatureRenderer.tailedPlayerList.add(map.get(i));
+                TAILED_PLAYER_LIST.clear();
+                for (int i = 0; i < map.size(); i++) TAILED_PLAYER_LIST.add(map.get(i));
             });
         });
         ClientPlayNetworking.registerGlobalReceiver(Mod.Packets.TIME_FORWARD_ANIMATION, (client, handler, buf, responseSender) ->
-                client.execute(LulasmodClient::startTimeForwardAnimation));
+            client.execute(() -> {
+                forwardCounter = 1;
+                if (client.world != null) timeOfDay = client.world.getTimeOfDay();
+        }));
     }
-
-
 }

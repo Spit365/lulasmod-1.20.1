@@ -21,10 +21,10 @@ import java.util.LinkedList;
 public class TailFeatureRenderer extends FeatureRenderer<AbstractClientPlayerEntity, PlayerEntityModel<AbstractClientPlayerEntity>> {
 	public TailFeatureRenderer(FeatureRendererContext<AbstractClientPlayerEntity, PlayerEntityModel<AbstractClientPlayerEntity>> context) {super(context);}
 
-	public static final LinkedList<String> tailedPlayerList = new LinkedList<>();
+	public static final LinkedList<String> TAILED_PLAYER_LIST = new LinkedList<>();
 
 	public void render(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, AbstractClientPlayerEntity abstractClientPlayerEntity, float f, float g, float h, float j, float k, float l) {
-		if (tailedPlayerList.contains(abstractClientPlayerEntity.getUuidAsString())
+		if (TAILED_PLAYER_LIST.contains(abstractClientPlayerEntity.getUuidAsString())
 			&& abstractClientPlayerEntity.hasSkinTexture()
 			&& !abstractClientPlayerEntity.isInvisible()
 		) {

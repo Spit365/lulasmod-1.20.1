@@ -4,8 +4,9 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Identifier;
 
 import java.util.LinkedList;
+import java.util.List;
 
 public interface SpellHotbar {
-     LinkedList<Identifier> displayList(PlayerEntity player);
+     List<Identifier> displayList(PlayerEntity player);
      void cycleList(PlayerEntity player);
 }

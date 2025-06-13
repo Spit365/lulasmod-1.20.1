@@ -23,7 +23,6 @@ import net.minecraft.entity.mob.EndermanEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.*;
 import net.minecraft.network.PacketByteBuf;
-import net.minecraft.network.packet.s2c.play.PositionFlag;
 import net.minecraft.particle.DefaultParticleType;
 import net.minecraft.particle.ParticleEffect;
 import net.minecraft.particle.ParticleTypes;
@@ -229,16 +228,16 @@ public class Mod {
                          TagManager.put(player, TagCategories.DASH_SPELL, id);
                  }
                  String usages = id.getPath();
-                 player.getItemCooldownManager().set(player.getStackInHand(hand).getItem(), (usages.equals("1")? 50 : 2));
+                 player.getItemCooldownManager().set(player.getStackInHand(hand).getItem(), (usages.equals("1")? (player.isOnGround()? 20 : 40) : 5));
                  TagManager.put(player, TagCategories.DASH_SPELL, new Identifier(Lulasmod.MOD_ID, String.valueOf(
                      (usages.equals("1")?
                              5 * cooldownMultiplier :
                              Math.min(5 * cooldownMultiplier, Integer.parseInt(usages)) - 1)
                      )));
-                     player.addVelocity(player.getRotationVec(1).normalize().add(0, 0.25, 0));
-                     player.velocityModified = true;
-                     player.fallDistance = 0;
-                     world.spawnParticles(ParticleTypes.CLOUD, player.getX(), player.getY(), player.getZ(), 25, 0.75, 0.2, 0.75, 0);
+                player.addVelocity(player.getRotationVec(1).normalize().add(0, 0.25, 0));
+                player.velocityModified = true;
+                player.fallDistance = 0;
+                world.spawnParticles(ParticleTypes.CLOUD, player.getX(), player.getY(), player.getZ(), 25, 0.75, 0.2, 0.75, 0);
                 } else player.getItemCooldownManager().set(player.getStackInHand(hand).getItem(), 20);
           }});
           public static final SpellItem SMOKE_SPELL = register.Spell("guile", new SpellItem(20) {@Override public void cast(ServerWorld world, PlayerEntity player, Hand hand, Float efficiencyMultiplier, Integer cooldownMultiplier) {
@@ -321,7 +320,7 @@ public class Mod {
      }
 
      public static class Packets {
-          public static final Identifier PLAYER_SPELL_LIST = new Identifier(Lulasmod.MOD_ID, "player_spell_list");
+          public static final Identifier SPELL_HOTBAR_LIST = new Identifier(Lulasmod.MOD_ID, "spell_hotbar_list");
           public static final Identifier CYCLE_PLAYER_SPELL = new Identifier(Lulasmod.MOD_ID, "cycle_player_spell");
           public static final Identifier TAILED_PLAYER_LIST = new Identifier(Lulasmod.MOD_ID, "tailed_player_list");
           public static final Identifier TIME_FORWARD_ANIMATION = new Identifier(Lulasmod.MOD_ID, "time_forward_animation");
@@ -335,13 +334,13 @@ public class Mod {
                     this(context.player(), context.livingEntity(), context.particle(), iterations);
                }
           }
-          private static void sendSpellListPacket(ServerPlayerEntity player, LinkedList<Identifier> list) {
+          private static void sendSpellListPacket(ServerPlayerEntity player, List<Identifier> list) {
                Map<Integer, ItemStack> map = new HashMap<>();
                for (int i = 0; i < list.size(); i++)
                     map.put(i, new ItemStack(Registries.ITEM.get(list.get(i))));
                PacketByteBuf buf = PacketByteBufs.create();
                buf.writeMap(map, PacketByteBuf::writeInt, PacketByteBuf::writeItemStack);
-               ServerPlayNetworking.send(player, Mod.Packets.PLAYER_SPELL_LIST, buf);
+               ServerPlayNetworking.send(player, Mod.Packets.SPELL_HOTBAR_LIST, buf);
           }
 
           public static final TickerManager.Ticker<MinecraftServer> repelMiner = TickerManager.createTicker(MinecraftServer.class, input -> {

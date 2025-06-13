@@ -9,7 +9,7 @@ import net.spit365.lulasmod.mod.Mod;
 import java.util.Objects;
 
 public class BleedingStatusEffect extends StatusEffect {
-  public BleedingStatusEffect() {super(StatusEffectCategory.HARMFUL,0xac2726); }
+  public BleedingStatusEffect() {super(StatusEffectCategory.HARMFUL, 0xac2726); }
 
   @Override public boolean canApplyUpdateEffect(int duration, int amplifier) {return true;}
   @Override public void applyUpdateEffect(LivingEntity entity, int amplifier) {
