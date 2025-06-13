@@ -7,8 +7,8 @@ import net.minecraft.client.render.model.json.ModelTransformationMode;
 import net.minecraft.client.util.ModelIdentifier;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemStack;
-import net.spit365.lulasmod.Lulasmod;
-import net.spit365.lulasmod.mod.Mod;
+import net.spit365.lulasmod.Server;
+import net.spit365.lulasmod.mod.ModServer;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
@@ -18,8 +18,8 @@ public abstract class ItemRendererMixin {
     @SuppressWarnings("AmbiguousMixinReference")
     @ModifyVariable(method = "renderItem", at = @At(value = "HEAD"), argsOnly = true)
     public BakedModel useGoldenTridentModel(BakedModel value, ItemStack stack, ModelTransformationMode renderMode, boolean leftHanded, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, int overlay) {
-        if (stack.isOf(Mod.Items.GOLDEN_TRIDENT) && renderMode != ModelTransformationMode.GUI) {
-            return ((ItemRendererAccessor) this).lulasmod$getModels().getModelManager().getModel(new ModelIdentifier(Lulasmod.MOD_ID, "golden_trident_in_hand", "inventory"));
+        if (stack.isOf(ModServer.Items.GOLDEN_TRIDENT) && renderMode != ModelTransformationMode.GUI) {
+            return ((ItemRendererAccessor) this).lulasmod$getModels().getModelManager().getModel(new ModelIdentifier(Server.MOD_ID, "golden_trident_in_hand", "inventory"));
         }
         return value;
     }

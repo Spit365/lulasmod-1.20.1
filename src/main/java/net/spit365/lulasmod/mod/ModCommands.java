@@ -15,7 +15,7 @@ import net.minecraft.util.Identifier;
 import net.spit365.lulasmod.manager.TagManager;
 import java.util.*;
 import static net.minecraft.server.command.CommandManager.literal;
-import static net.spit365.lulasmod.mod.Mod.Items.tailedExclusive;
+import static net.spit365.lulasmod.mod.ModServer.Items.tailedExclusive;
 
 public class ModCommands {
     public static void init(){

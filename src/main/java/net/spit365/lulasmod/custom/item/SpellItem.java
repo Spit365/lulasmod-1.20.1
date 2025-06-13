@@ -14,7 +14,7 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.world.World;
-import net.spit365.lulasmod.mod.Mod;
+import net.spit365.lulasmod.mod.ModServer;
 import net.spit365.lulasmod.manager.TagManager;
 import org.jetbrains.annotations.Nullable;
 
@@ -44,10 +44,10 @@ public abstract class SpellItem extends Item {
         if (!world.isClient() && !(player.getOffHandStack().getItem() instanceof SpellBookItem)){
             player.getItemCooldownManager().set(this, 5);
             world.playSound(null, player.getBlockPos(), sound, SoundCategory.PLAYERS);
-            LinkedList<Identifier> list = TagManager.readList(player, Mod.TagCategories.EQUIPPED_SPELLS);
+            LinkedList<Identifier> list = TagManager.readList(player, ModServer.TagCategories.EQUIPPED_SPELLS);
             if (player.isSneaking()) list.remove(getSpellName());
             else if (!list.contains(getSpellName())) list.add(getSpellName());
-            TagManager.put(player, Mod.TagCategories.EQUIPPED_SPELLS, list);
+            TagManager.put(player, ModServer.TagCategories.EQUIPPED_SPELLS, list);
             return TypedActionResult.success(player.getStackInHand(hand));
         }
         return TypedActionResult.pass(player.getStackInHand(hand));

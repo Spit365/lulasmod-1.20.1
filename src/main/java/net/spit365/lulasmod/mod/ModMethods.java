@@ -16,15 +16,13 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
-import net.spit365.lulasmod.Lulasmod;
+import net.spit365.lulasmod.Server;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
 public class ModMethods {
-    public static final LinkedList<Mod.Tickers.ImpaledContext> impaled = new LinkedList<>();
-
-
+    public static final LinkedList<ModServer.Tickers.ImpaledContext> impaled = new LinkedList<>();
 
     public static @Nullable Entity selectClosestEntity(Entity selector, Double radius) {
         Vec3d selectionCenter = selector.getRotationVec(1).normalize().multiply(radius).add(selector.getPos());
@@ -37,10 +35,10 @@ public class ModMethods {
     }
 
     public static void applyBleed(LivingEntity entity, Integer duration){
-        StatusEffectInstance effectInstance = entity.getStatusEffect(Mod.StatusEffects.BLEEDING);
+        StatusEffectInstance effectInstance = entity.getStatusEffect(ModServer.StatusEffects.BLEEDING);
         if (effectInstance != null){
-            entity.setStatusEffect(new StatusEffectInstance(Mod.StatusEffects.BLEEDING, effectInstance.getDuration() + duration), entity);
-        } else entity.addStatusEffect(new StatusEffectInstance(Mod.StatusEffects.BLEEDING, duration));
+            entity.setStatusEffect(new StatusEffectInstance(ModServer.StatusEffects.BLEEDING, effectInstance.getDuration() + duration), entity);
+        } else entity.addStatusEffect(new StatusEffectInstance(ModServer.StatusEffects.BLEEDING, duration));
     }
 
     public static void sendHome(PlayerEntity player, Item item){
@@ -51,7 +49,7 @@ public class ModMethods {
             } else player.requestTeleport(pos.getX(), pos.getY(), pos.getZ());
             RegistryKey<World> targetDimension = serverPlayer.getSpawnPointDimension();
             if (player.teleport(Objects.requireNonNull(player.getServer()).getWorld(targetDimension), pos.getX(), pos.getY(), pos.getZ(), Set.of(), player.getYaw(), player.getPitch()))
-                Lulasmod.LOGGER.info("{} was sent home to {} {} {} {} (with {})", player.getName(), pos.getX(), pos.getY(), pos.getZ(), targetDimension, item);
+                Server.LOGGER.info("{} was sent home to {} {} {} {} (with {})", player.getName(), pos.getX(), pos.getY(), pos.getZ(), targetDimension, item);
         }
     }
 
@@ -90,7 +88,7 @@ public class ModMethods {
         if (selectClosestEntity(player, 5d) instanceof LivingEntity selectedEntity) {
             player.getItemCooldownManager().set(item, maxCooldown);
             selectedEntity.requestTeleport(selectedEntity.getX(), selectedEntity.getY() + 5, selectedEntity.getZ());
-            impaled.add(new Mod.Tickers.ImpaledContext(player, selectedEntity, particle, iterations));
+            impaled.add(new ModServer.Tickers.ImpaledContext(player, selectedEntity, particle, iterations));
             return true;
         } else player.getItemCooldownManager().set(item, baseCooldown - 2);
         return false;
@@ -98,10 +96,10 @@ public class ModMethods {
 
     public static void pocketTeleport(Entity victim) {
         if (!victim.teleport(Objects.requireNonNull(victim.getServer()).getWorld((
-                victim.getWorld().getRegistryKey().equals(Mod.Dimensions.POCKET_DIMENSION)?
+                victim.getWorld().getRegistryKey().equals(ModServer.Dimensions.POCKET_DIMENSION)?
                         World.OVERWORLD :
-                        Mod.Dimensions.POCKET_DIMENSION
+                        ModServer.Dimensions.POCKET_DIMENSION
         )), victim.getX(), victim.getY(), victim.getZ(), EnumSet.noneOf(PositionFlag.class), victim.getYaw(), victim.getPitch()))
-            Lulasmod.LOGGER.error("Could not perform teleport. Registry key: {}, Entity: {}", Mod.Dimensions.POCKET_DIMENSION, victim);
+            Server.LOGGER.error("Could not perform teleport. Registry key: {}, Entity: {}", ModServer.Dimensions.POCKET_DIMENSION, victim);
     }
 }

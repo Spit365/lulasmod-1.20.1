@@ -6,12 +6,12 @@ import net.minecraft.client.render.entity.model.SinglePartEntityModel;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.Identifier;
-import net.spit365.lulasmod.Lulasmod;
+import net.spit365.lulasmod.Server;
 
 public class TailModel<T extends LivingEntity> extends SinglePartEntityModel<T> {
 	public TailModel(ModelPart root) {this.tail = root.getChild("tail");}
 
-	public static final Identifier TEXTURE = new Identifier(Lulasmod.MOD_ID, "textures/entity/tail_feature.png");
+	public static final Identifier TEXTURE = new Identifier(Server.MOD_ID, "textures/entity/tail_feature.png");
 	private final ModelPart tail;
 
 	public static TexturedModelData getAnimatedTexturedModelData() {

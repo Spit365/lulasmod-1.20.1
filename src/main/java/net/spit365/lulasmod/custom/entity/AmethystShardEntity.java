@@ -1,6 +1,5 @@
 package net.spit365.lulasmod.custom.entity;
 
-import net.minecraft.block.BlockState;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
@@ -22,7 +21,8 @@ import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.spit365.lulasmod.mod.Mod;
+import net.spit365.lulasmod.mod.ModClient;
+import net.spit365.lulasmod.mod.ModServer;
 
 public class AmethystShardEntity extends PersistentProjectileEntity {
     public AmethystShardEntity(EntityType<? extends AmethystShardEntity> entityType, World world) {
@@ -32,7 +32,7 @@ public class AmethystShardEntity extends PersistentProjectileEntity {
         this.pickupType = PickupPermission.DISALLOWED;
     }
     public AmethystShardEntity(LivingEntity owner, World world) {
-        super(Mod.Entities.AMETHYST_SHARD, owner, world);
+        super(ModClient.Entities.AMETHYST_SHARD, owner, world);
         this.setSound(this.getHitSound());
         this.setDamage(8);
         this.pickupType = PickupPermission.DISALLOWED;
@@ -65,9 +65,9 @@ public class AmethystShardEntity extends PersistentProjectileEntity {
         DamageSource damageSource2;
          if (owner != null) {
              if (owner.equals(target)) return;
-             damageSource2 = Mod.DamageSources.AMETHYST_SHARD(owner);
+             damageSource2 = ModServer.DamageSources.AMETHYST_SHARD(owner);
              if (owner instanceof LivingEntity livingEntity) livingEntity.onAttacking(target);
-         } else damageSource2 = Mod.DamageSources.AMETHYST_SHARD(this);
+         } else damageSource2 = ModServer.DamageSources.AMETHYST_SHARD(this);
          if (target.damage(damageSource2, (float) this.getDamage())) {
             if (target.getType().equals(EntityType.ENDERMAN)) return;
             if (target instanceof LivingEntity livingEntity) {

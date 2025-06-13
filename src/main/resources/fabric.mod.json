@@ -11,12 +11,8 @@
 	"icon": "assets/lulasmod/icon.png",
 	"environment": "*",
 	"entrypoints": {
-		"main": [
-			"net.spit365.lulasmod.Lulasmod"
-		],
-		"client": [
-			"net.spit365.lulasmod.LulasmodClient"
-		]
+		"main": ["net.spit365.lulasmod.Server"],
+		"client": ["net.spit365.lulasmod.Client"]
 	},
 	"mixins": [
 		"lulasmod.mixins.json"

@@ -2,8 +2,6 @@ package net.spit365.lulasmod.custom.entity;
 
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.ShapeContext;
 import net.minecraft.command.argument.ParticleEffectArgumentType;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
@@ -15,15 +13,10 @@ import net.minecraft.nbt.NbtElement;
 import net.minecraft.particle.ParticleEffect;
 import net.minecraft.registry.Registries;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.function.BooleanBiFunction;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.util.shape.VoxelShape;
-import net.minecraft.util.shape.VoxelShapes;
 import net.minecraft.world.World;
-import net.spit365.lulasmod.Lulasmod;
-import net.spit365.lulasmod.mod.Mod;
+import net.spit365.lulasmod.Server;
+import net.spit365.lulasmod.mod.ModClient;
 import org.jetbrains.annotations.Nullable;
 
 public class ParticleProjectileEntity extends PersistentProjectileEntity {
@@ -36,7 +29,7 @@ public class ParticleProjectileEntity extends PersistentProjectileEntity {
     }
 
     public ParticleProjectileEntity(World world, LivingEntity owner, Vec3d pos, Vec3d velocity, @Nullable ParticleEffect particleEffect) {
-        super(Mod.Entities.PARTICLE_PROJECTILE, owner, world);
+        super(ModClient.Entities.PARTICLE_PROJECTILE, owner, world);
         this.particleEffect = particleEffect;
         this.setPos(pos.getX(), pos.getY(), pos.getZ());
         this.setVelocity(velocity);
@@ -60,7 +53,7 @@ public class ParticleProjectileEntity extends PersistentProjectileEntity {
             try {
                 this.particleEffect = ParticleEffectArgumentType.readParameters(new StringReader(nbt.getString("Particle")), Registries.PARTICLE_TYPE.getReadOnlyWrapper());
             } catch (CommandSyntaxException var5) {
-                Lulasmod.LOGGER.warn("Couldn't load custom particle {}", nbt.getString("Particle"), var5);
+                Server.LOGGER.warn("Couldn't load custom particle {}", nbt.getString("Particle"), var5);
             }
         }
     }
