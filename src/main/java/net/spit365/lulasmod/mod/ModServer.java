@@ -195,7 +195,7 @@ public class ModServer {
           public static final SpellItem BLOOD_SPELL = RegisterHelper.spell("emulations", new SpellItem(0, ENTITY_ZOMBIE_VILLAGER_CURE) {@Override public void cast(ServerWorld world, PlayerEntity player, Hand hand, Float efficiencyMultiplier, Integer cooldownMultiplier) {
              if (ModMethods.selectClosestEntity(player, 5d) instanceof LivingEntity victim)
                  ModMethods.applyBleed(victim, (int) (1200 * efficiencyMultiplier) -80);
-             ModMethods.impale(player, player.getStackInHand(hand).getItem(), 20, 600, 6, ModClient.Particles.CURSED_BLOOD);
+             ModMethods.impale(player, player.getStackInHand(hand), 20, 600, 6, ModClient.Particles.CURSED_BLOOD);
           }});
           public static final SpellItem HOME_SPELL = RegisterHelper.spell("wickedness", new SpellItem(600) {@Override public void cast(ServerWorld world, PlayerEntity player, Hand hand, Float efficiencyMultiplier, Integer cooldownMultiplier) {
               ModMethods.sendHome(player, player.getStackInHand(hand).getItem());
@@ -266,107 +266,6 @@ public class ModServer {
           public static final Identifier TIME_FORWARD_ANIMATION = Identifier.of(Server.MOD_ID, "time_forward_animation");
      }
 
-     public static class Tickers {
-          private static int sporesCounter = 0;
-          private static int impaledCounter = 0;
-          public record ImpaledContext(PlayerEntity player, LivingEntity livingEntity, ParticleEffect particle, Integer iterations, ItemStack item) {
-               public ImpaledContext(ImpaledContext context, Integer iterations, ItemStack item) {
-                    this(context.player(), context.livingEntity(), context.particle(), iterations, item);
-               }
-          }
-          private static void sendSpellListPacket(ServerPlayerEntity player, List<Identifier> list) {
-               Map<Integer, ItemStack> map = new HashMap<>();
-               for (int i = 0; i < list.size(); i++)
-                    map.put(i, new ItemStack(Registries.ITEM.get(list.get(i))));
-               PacketByteBuf buf = PacketByteBufs.create();
-               buf.writeMap(map, PacketByteBuf::writeInt, PacketByteBuf::writeItemStack);
-               ServerPlayNetworking.send(player, ModServer.Packets.SPELL_HOTBAR_LIST, buf);
-          }
-
-          public static final TickerManager.Ticker<MinecraftServer> repelMiner = TickerManager.createTicker(MinecraftServer.class, input -> {
-               for (ServerPlayerEntity player : input.getPlayerManager().getPlayerList()) {
-                    if (player.getCommandTags().contains("miner")) {
-                         BlockPos playerPos = player.getBlockPos();
-                         BlockPos closestPortal = null;
-                         for (BlockPos pos : BlockPos.stream(
-                                 playerPos.add(-5, -5, -5),
-                                 playerPos.add(5, 5, 5)
-                         ).map(BlockPos::toImmutable).toList())
-                              if ((
-                                   player.getWorld().getBlockState(pos).isOf(net.minecraft.block.Blocks.END_PORTAL) ||
-                                   player.getWorld().getBlockState(pos).isOf(net.minecraft.block.Blocks.NETHER_PORTAL)) &&
-                                   (closestPortal == null || pos.getSquaredDistance(playerPos) < closestPortal.getSquaredDistance(playerPos)
-                              )) closestPortal = pos;
-                         if (closestPortal != null) {
-                              ModMethods.outlineBox(new Box(closestPortal.add(-5, -5, -5), closestPortal.add(5, 5, 5)), player.getServerWorld(), ModClient.Particles.GOLDEN_SHIMMER);
-                              player.setVelocity(player.getPos().subtract(Vec3d.ofCenter(closestPortal)).normalize());
-                              player.velocityModified = true;
-                         }
-                    }
-               }
-          });
-          public static final TickerManager.Ticker<MinecraftServer> updateSpells = TickerManager.createTicker(MinecraftServer.class, input -> {
-               for (ServerPlayerEntity player : input.getPlayerManager().getPlayerList()) {
-                    if(player.getMainHandStack().getItem() instanceof SpellHotbar item) sendSpellListPacket(player, item.displayList(player));
-                    else if(player.getOffHandStack().getItem() instanceof SpellHotbar item) sendSpellListPacket(player, item.displayList(player));
-               }
-          });
-          public static final TickerManager.Ticker<Void> updateImpaled = TickerManager.createTicker(Void.class, input -> {
-               impaledCounter++;
-               for (ImpaledContext context : impaled) {
-                    LivingEntity victim = context.livingEntity;
-                    if (context.iterations > 0 && victim.isAlive()) {
-                         if (victim instanceof EndermanEntity) victim.kill((ServerWorld) victim.getWorld());
-                         victim.setVelocity(0, 0, 0);
-                         if (impaledCounter >= 25) {
-                              impaledCounter = 0;
-                              double radius = 5;
-                              Vec3d pos = new Vec3d(Math.random() * radius - radius / 2, Math.random() * radius - radius / 2, Math.random() * radius - radius / 2).normalize().multiply(radius).add(victim.getPos());
-                              TagManager.put(context.player, ModServer.TagCategories.DAMAGE_DELAY, Identifier.of(Server.MOD_ID, "0"));
-                              victim.getWorld().spawnEntity(new ParticleProjectileEntity(
-                                      victim.getWorld(), context.player, pos, pos.subtract(victim.getPos()).multiply(-0.5), context.particle, context.item));
-                              impaled.remove(context);
-                              impaled.add(new ImpaledContext(context, context.iterations - 1, context.item));
-                         }
-                    } else {
-                         impaled.remove(context);
-                         TagManager.remove(context.player, ModServer.TagCategories.DAMAGE_DELAY);
-                         victim.addStatusEffect(new StatusEffectInstance(net.minecraft.entity.effect.StatusEffects.SLOW_FALLING, 50));
-                    }
-               }
-          });
-          public static final TickerManager.Ticker<MinecraftServer> updateTailedVisuals = TickerManager.createTicker(MinecraftServer.class, input -> {
-               sporesCounter--;
-               Map<Integer, String> tailedPlayers = new HashMap<>();
-               input.getPlayerManager().getPlayerList().forEach(player -> {
-                    if (player.getCommandTags().contains("tailed")) {
-                         tailedPlayers.put(tailedPlayers.size(), player.getUuidAsString());
-                         if (sporesCounter <= 0 && player.getWorld() instanceof ServerWorld world)
-                              world.spawnParticles(ParticleTypes.CRIMSON_SPORE, player.getX(), player.getY() +1, player.getZ(), player.getRandom().nextBetweenExclusive(2, 4), 0, 0, 0, 0);
-               }});
-               if (sporesCounter <= 0) sporesCounter = new Random().nextInt(30, 60);
-               PacketByteBuf buf = PacketByteBufs.create();
-               buf.writeMap(tailedPlayers, PacketByteBuf::writeInt, PacketByteBuf::writeString);
-               for (ServerPlayerEntity player : input.getPlayerManager().getPlayerList())
-                    ServerPlayNetworking.send(player, ModServer.Packets.TAILED_PLAYER_LIST, buf);
-          });
-          public static final TickerManager.Ticker<MinecraftServer> updateForwardAnimation = TickerManager.createTicker(MinecraftServer.class, input ->{
-               for (ServerPlayerEntity player : input.getPlayerManager().getPlayerList()){
-                    Identifier read = TagManager.read(player, TagCategories.TIME_FORWARD_ANIMATION_FRAMES);
-                    if (read != null) {
-                         int i = Integer.parseInt(read.getPath());
-                         if (i > 0) TagManager.put(player, TagCategories.TIME_FORWARD_ANIMATION_FRAMES, Identifier.of(Server.MOD_ID, String.valueOf(i -1)));
-                         else {
-                              TagManager.remove(player, TagCategories.TIME_FORWARD_ANIMATION_FRAMES);
-                              ModMethods.pocketTeleport(player);
-                         }
-                    }
-               }
-          });
-
-          private static void init(){}
-     }
-
      public static void init() {
           Items.init();
           Spells.init();
@@ -375,6 +274,5 @@ public class ModServer {
           DamageSources.init();
           StatusEffects.init();
           Gamerules.init();
-          Tickers.init();
      }
 }

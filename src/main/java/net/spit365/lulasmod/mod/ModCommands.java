@@ -27,7 +27,7 @@ public class ModCommands {
                     if (player != null && player.getCommandTags().contains("tailed")){
                         Set<Boolean> booleanLinkedList = new HashSet<>();
                         for (Item item : tailedExclusive) {
-                            boolean b = ModMethods.getItemStack(player, item) == null;
+                            boolean b = ModMethods.getInventoryStack(player, item) == null;
                             if (b) player.giveItemStack(new ItemStack(item));
                             booleanLinkedList.add(b);
                         }

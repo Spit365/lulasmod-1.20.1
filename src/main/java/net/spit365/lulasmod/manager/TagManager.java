@@ -30,7 +30,7 @@ public class TagManager {
         for (String tag : entity.getCommandTags()){
             if (tag.contains(c(category))) {
                 String s = tag.replace(c(category), "");
-                if (s.split(":").length == 2) return new Identifier(s);
+                if (s.split(":").length == 2) return Identifier.of(s);
             }
         }
         return null;
@@ -40,7 +40,7 @@ public class TagManager {
             if (tag.contains(c(category))) {
                 LinkedList<Identifier> list = new LinkedList<>();
                 for (String s : tag.replace(c(category), "").split(";"))
-                    if (s.split(":").length == 2) list.add(new Identifier(s));
+                    if (s.split(":").length == 2) list.add(Identifier.of(s));
                 return list;
             }
         }

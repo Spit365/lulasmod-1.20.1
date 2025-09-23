@@ -51,7 +51,7 @@ public abstract class AbstractSealItem extends Item  implements SpellHotbar {
     }
     @Override
     public void inventoryTick(ItemStack stack, ServerWorld world, Entity entity, @Nullable EquipmentSlot slot) {
-        if(entity instanceof PlayerEntity player && !Objects.equals(ModMethods.getItemStack(player, stack.getItem()), stack)) {
+        if(entity instanceof PlayerEntity player && !Objects.equals(ModMethods.getInventoryStack(player, stack.getItem()), stack)) {
             player.sendMessage(Text.translatable("notify.lulasmod.duplicate_seal"), true);
             stack.decrement(stack.getCount());
         }
