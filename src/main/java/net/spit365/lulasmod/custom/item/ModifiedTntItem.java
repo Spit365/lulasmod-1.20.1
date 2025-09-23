@@ -5,6 +5,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.stat.Stats;
+import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.world.World;
@@ -13,7 +14,7 @@ public class ModifiedTntItem extends Item {
     public ModifiedTntItem() {super(new Item.Settings().maxCount(16));}
 
     @Override
-    public TypedActionResult<ItemStack> use(World world, PlayerEntity player, Hand hand){
+    public ActionResult use(World world, PlayerEntity player, Hand hand){
         if (!world.isClient()  && (player.experienceLevel > 0 || player.isCreative())){
             player.getItemCooldownManager().set(this, 20);
             TntEntity tnt = new TntEntity(world, player.getX(), player.getY() +1, player.getZ(), player);

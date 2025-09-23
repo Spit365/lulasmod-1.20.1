@@ -1,5 +1,6 @@
 package net.spit365.lulasmod.custom.entity;
 
+import net.minecraft.component.DataComponentTypes;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
@@ -31,14 +32,18 @@ public class AmethystShardEntity extends PersistentProjectileEntity {
         this.setDamage(8);
         this.pickupType = PickupPermission.DISALLOWED;
     }
-    public AmethystShardEntity(LivingEntity owner, World world) {
-        super(ModClient.Entities.AMETHYST_SHARD, owner, world);
+    public AmethystShardEntity(LivingEntity owner, World world, ItemStack seal) {
+        super(ModClient.Entities.AMETHYST_SHARD, owner, world, seal, ItemStack.EMPTY);
         this.setSound(this.getHitSound());
         this.setDamage(8);
         this.pickupType = PickupPermission.DISALLOWED;
     }
 
-    @Override protected ItemStack asItemStack() {return new ItemStack(Items.AIR);}
+    @Override
+    protected ItemStack getDefaultItemStack() {
+        return ItemStack.EMPTY;
+    }
+
     @Override protected SoundEvent getHitSound() {return SoundEvents.BLOCK_AMETHYST_CLUSTER_BREAK;}
     @Override protected void onBlockHit(BlockHitResult hitResult) {
         for (int i = 0; i < 8; i++) if (this.getWorld() instanceof ServerWorld sw) sw.spawnParticles(
@@ -62,19 +67,17 @@ public class AmethystShardEntity extends PersistentProjectileEntity {
     protected void onEntityHit(EntityHitResult entityHitResult) {
         Entity target = entityHitResult.getEntity();
         Entity owner = this.getOwner();
-        DamageSource damageSource2;
+        DamageSource damageSource;
          if (owner != null) {
              if (owner.equals(target)) return;
-             damageSource2 = ModServer.DamageSources.AMETHYST_SHARD(owner);
+             damageSource = ModServer.DamageSources.AMETHYST_SHARD(owner);
              if (owner instanceof LivingEntity livingEntity) livingEntity.onAttacking(target);
-         } else damageSource2 = ModServer.DamageSources.AMETHYST_SHARD(this);
-         if (target.damage(damageSource2, (float) this.getDamage())) {
+         } else damageSource = ModServer.DamageSources.AMETHYST_SHARD(this);
+        Integer amount = this.get(DataComponentTypes.DAMAGE);
+        if (getWorld() instanceof ServerWorld serverWorld && amount != null && target.damage(serverWorld, damageSource, amount)) {
             if (target.getType().equals(EntityType.ENDERMAN)) return;
             if (target instanceof LivingEntity livingEntity) {
-                if (!this.getWorld().isClient && owner instanceof LivingEntity) {
-                    EnchantmentHelper.onUserDamaged(livingEntity, owner);
-                    EnchantmentHelper.onTargetDamaged((LivingEntity) owner, livingEntity);
-                }
+                if (!this.getWorld().isClient && owner instanceof LivingEntity) EnchantmentHelper.onTargetDamaged(serverWorld, livingEntity, damageSource);
                 this.onHit(livingEntity);
                 if (livingEntity != owner && livingEntity instanceof PlayerEntity && owner instanceof ServerPlayerEntity && !this.isSilent())
                     ((ServerPlayerEntity) owner).networkHandler.sendPacket(new GameStateChangeS2CPacket(GameStateChangeS2CPacket.PROJECTILE_HIT_PLAYER, GameStateChangeS2CPacket.DEMO_OPEN_SCREEN));
@@ -82,7 +85,7 @@ public class AmethystShardEntity extends PersistentProjectileEntity {
         } else {
             this.setVelocity(this.getVelocity().multiply(-0.1d));
             this.setYaw(this.getYaw() + 180f);
-            this.prevYaw += 180f;
+            this.lastYaw += 180f;
         }
         this.getWorld().playSound(null, BlockPos.ofFloored(entityHitResult.getPos()), SoundEvents.ENTITY_PLAYER_HURT_SWEET_BERRY_BUSH, SoundCategory.NEUTRAL, 1.0f, 1.5f);
     }

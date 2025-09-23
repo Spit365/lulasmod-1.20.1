@@ -4,6 +4,7 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.projectile.thrown.ThrownItemEntity;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
@@ -17,7 +18,7 @@ import net.spit365.lulasmod.mod.ModServer;
 
 public class SmokeBombEntity extends ThrownItemEntity {
 	public SmokeBombEntity(EntityType<? extends SmokeBombEntity> entityType, World world) {super(entityType, world);}
-	public SmokeBombEntity(World world, LivingEntity owner) {super(ModClient.Entities.SMOKE_BOMB, owner, world);}
+	public SmokeBombEntity(World world, LivingEntity owner, ItemStack stack) {super(ModClient.Entities.SMOKE_BOMB, owner, world, stack);}
 
 	@Override protected Item getDefaultItem() {return ModServer.Items.SMOKE_BOMB;}
 	@Override protected void onEntityHit(EntityHitResult entityHitResult) {collision(entityHitResult.getPos());}

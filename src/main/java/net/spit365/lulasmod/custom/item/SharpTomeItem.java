@@ -7,6 +7,7 @@ import net.minecraft.entity.projectile.ArrowEntity;
 import net.minecraft.entity.projectile.PersistentProjectileEntity;
 import net.minecraft.item.*;
 import net.minecraft.stat.Stats;
+import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.world.World;
@@ -16,7 +17,7 @@ public class SharpTomeItem extends Item{
     public SharpTomeItem() {super(new Item.Settings().maxCount(1).maxDamage(640));}
 
     @Override
-    public TypedActionResult<ItemStack> use(World world, PlayerEntity player, Hand hand) {
+    public ActionResult use(World world, PlayerEntity player, Hand hand) {
         ItemStack stack = player.getStackInHand(hand);
         ItemStack paper = ModMethods.getItemStack(player, Items.PAPER);
         boolean requirePaper = player.isCreative() || EnchantmentHelper.getLevel(Enchantments.INFINITY, stack) > 0;
@@ -31,8 +32,8 @@ public class SharpTomeItem extends Item{
             if (EnchantmentHelper.getLevel(Enchantments.FLAME, stack) > 0) arrow.setOnFireFor(100);
             world.spawnEntity(arrow);
             player.incrementStat(Stats.USED.getOrCreateStat(this));
-            return TypedActionResult.success(stack);
+            return ActionResult.SUCCESS;
         }
-        return TypedActionResult.pass(stack);
+        return ActionResult.PASS;
     }
 }

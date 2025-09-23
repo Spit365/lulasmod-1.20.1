@@ -83,12 +83,12 @@ public class ModMethods {
         for (double i = 0; i < box.getZLength(); i += 0.625) world.spawnParticles(particle, end.getX(), end.getY(), start.getZ() + i, 0, 0, 0, 0, 0);
     }
 
-    public static Boolean impale(PlayerEntity player, Item item, Integer baseCooldown, Integer maxCooldown, Integer iterations, ParticleEffect particle) {
+    public static Boolean impale(PlayerEntity player, ItemStack item, Integer baseCooldown, Integer maxCooldown, Integer iterations, ParticleEffect particle) {
         player.getItemCooldownManager().set(item, 2);
         if (selectClosestEntity(player, 5d) instanceof LivingEntity selectedEntity) {
             player.getItemCooldownManager().set(item, maxCooldown);
             selectedEntity.requestTeleport(selectedEntity.getX(), selectedEntity.getY() + 5, selectedEntity.getZ());
-            impaled.add(new ModServer.Tickers.ImpaledContext(player, selectedEntity, particle, iterations));
+            impaled.add(new ModServer.Tickers.ImpaledContext(player, selectedEntity, particle, iterations, item));
             return true;
         } else player.getItemCooldownManager().set(item, baseCooldown - 2);
         return false;

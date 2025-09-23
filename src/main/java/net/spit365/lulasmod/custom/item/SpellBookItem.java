@@ -9,6 +9,7 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.registry.Registries;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
+import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.TypedActionResult;
@@ -39,7 +40,7 @@ public class SpellBookItem extends Item implements SpellHotbar {
           }
      }
      @Override
-     public TypedActionResult<ItemStack> use(World world, PlayerEntity player, Hand hand){
+     public ActionResult use(World world, PlayerEntity player, Hand hand){
           if (world instanceof ServerWorld){
                ItemStack spellbook = player.getStackInHand(hand);
                ItemStack spell = (hand.equals(Hand.MAIN_HAND)? player.getOffHandStack() : player.getMainHandStack());
