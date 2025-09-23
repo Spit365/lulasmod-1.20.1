@@ -3,6 +3,11 @@ package net.spit365.lulasmod.mod;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.WindowSettings;
+import net.minecraft.client.util.Monitor;
+import net.minecraft.client.util.MonitorTracker;
+import net.minecraft.client.util.WindowProvider;
 import net.minecraft.command.argument.EntityArgumentType;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
@@ -13,6 +18,8 @@ import net.minecraft.server.command.CommandManager;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.spit365.lulasmod.manager.TagManager;
+import org.lwjgl.glfw.GLFW;
+
 import java.util.*;
 import static net.minecraft.server.command.CommandManager.literal;
 import static net.spit365.lulasmod.mod.ModServer.Items.tailedExclusive;
@@ -25,14 +32,13 @@ public class ModCommands {
                 .executes(context ->{
                     PlayerEntity player = context.getSource().getPlayer();
                     if (player != null && player.getCommandTags().contains("tailed")){
-                        Set<Boolean> booleanLinkedList = new HashSet<>();
+                        Set<Boolean> booleanSet = new HashSet<>();
                         for (Item item : tailedExclusive) {
                             boolean b = ModMethods.getItemStack(player, item) == null;
                             if (b) player.giveItemStack(new ItemStack(item));
-                            booleanLinkedList.add(b);
+                            booleanSet.add(b);
                         }
-                        if (booleanLinkedList.stream().allMatch(Boolean::booleanValue)) context.getSource().sendFeedback(() ->
-                                Text.translatable("notify.lulasmod.command.contract_success"), false);
+                        if (booleanSet.stream().allMatch(Boolean::booleanValue)) context.getSource().sendFeedback(() -> Text.translatable("notify.lulasmod.command.contract_success"), false);
                     } else context.getSource().sendFeedback(() -> Text.translatable("notify.lulasmod.command.contract_fail"), false);
                     return r;
                 })
@@ -73,6 +79,7 @@ public class ModCommands {
                     player.getItemCooldownManager().set(player.getInventory().getStack(i).getItem(), 0);
                 return r;
             }));
+
         });
     }
 }

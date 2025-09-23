@@ -43,11 +43,12 @@ public class ModMethods {
 
     public static void sendHome(PlayerEntity player, Item item){
         if (player instanceof ServerPlayerEntity serverPlayer) {
+            RegistryKey<World> targetDimension;
             BlockPos pos = serverPlayer.getSpawnPointPosition();
             if (pos == null){
                 pos = player.getWorld().getSpawnPos();
-            } else player.requestTeleport(pos.getX(), pos.getY(), pos.getZ());
-            RegistryKey<World> targetDimension = serverPlayer.getSpawnPointDimension();
+                targetDimension = World.OVERWORLD;
+            } else targetDimension = serverPlayer.getSpawnPointDimension();
             if (player.teleport(Objects.requireNonNull(player.getServer()).getWorld(targetDimension), pos.getX(), pos.getY(), pos.getZ(), Set.of(), player.getYaw(), player.getPitch()))
                 Server.LOGGER.info("{} was sent home to {} {} {} {} (with {})", player.getName(), pos.getX(), pos.getY(), pos.getZ(), targetDimension, item);
         }
