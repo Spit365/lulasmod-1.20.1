@@ -6,7 +6,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.stat.Stats;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
-import net.minecraft.util.TypedActionResult;
 import net.minecraft.world.World;
 import net.spit365.lulasmod.mod.ModMethods;
 
@@ -15,12 +14,13 @@ public class HomeButtonItem extends Item {
     @Override
     public ActionResult use(World world, PlayerEntity player, Hand hand){
         if (!world.isClient()) {
-            player.getItemCooldownManager().set(this, 6000);
+			ItemStack stack = player.getStackInHand(hand);
+            player.getItemCooldownManager().set(stack, 6000);
             ModMethods.sendHome(player, this);
-            player.getStackInHand(hand).damage(1, player, p -> p.sendToolBreakStatus(player.getActiveHand()));
+			stack.damage(1, player, hand);
             player.incrementStat(Stats.USED.getOrCreateStat(this));
-            return TypedActionResult.success(player.getStackInHand(hand));
+            return ActionResult.SUCCESS;
         }
-        return TypedActionResult.pass(player.getStackInHand(hand));
+        return ActionResult.PASS;
     }
 }

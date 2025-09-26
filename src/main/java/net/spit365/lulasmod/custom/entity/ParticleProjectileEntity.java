@@ -7,19 +7,15 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.projectile.PersistentProjectileEntity;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtElement;
 import net.minecraft.particle.ParticleEffect;
-import net.minecraft.registry.Registries;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.storage.ReadView;
 import net.minecraft.storage.WriteView;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
-import net.spit365.lulasmod.Server;
-import net.spit365.lulasmod.mod.ModClient;
+import net.spit365.lulasmod.Lulasmod;
+import net.spit365.lulasmod.mod.ModEntities;
 import org.jetbrains.annotations.Nullable;
 
 public class ParticleProjectileEntity extends PersistentProjectileEntity {
@@ -32,7 +28,7 @@ public class ParticleProjectileEntity extends PersistentProjectileEntity {
     }
 
     public ParticleProjectileEntity(World world, LivingEntity owner, Vec3d pos, Vec3d velocity, @Nullable ParticleEffect particleEffect, ItemStack origin) {
-        super(ModClient.Entities.PARTICLE_PROJECTILE, owner, world, origin, ItemStack.EMPTY);
+        super(ModEntities.PARTICLE_PROJECTILE, owner, world, origin, ItemStack.EMPTY);
         this.particleEffect = particleEffect;
         this.setPos(pos.getX(), pos.getY(), pos.getZ());
         this.setVelocity(velocity);
@@ -57,7 +53,7 @@ public class ParticleProjectileEntity extends PersistentProjectileEntity {
             try {
                 this.particleEffect = ParticleEffectArgumentType.readParameters(new StringReader(particle), this.getWorld().getRegistryManager());
             } catch (CommandSyntaxException var5) {
-                Server.LOGGER.warn("Couldn't load custom particle {}: {}", particle, var5);
+                Lulasmod.LOGGER.warn("Couldn't load custom particle {}: {}", particle, var5);
             }
         }
     }

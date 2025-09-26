@@ -15,10 +15,9 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
 import net.minecraft.world.World;
-import net.spit365.lulasmod.mod.ModServer;
-import net.spit365.lulasmod.manager.TagManager;
+import net.spit365.lulasmod.mod.ModData;
 
-import java.util.LinkedList;
+import java.util.List;
 import java.util.function.Consumer;
 
 public abstract class SpellItem extends Item {
@@ -44,11 +43,14 @@ public abstract class SpellItem extends Item {
         if (!world.isClient() && !(player.getOffHandStack().getItem() instanceof SpellBookItem)){
             player.getItemCooldownManager().set(player.getStackInHand(hand), 5);
             world.playSound(null, player.getBlockPos(), sound, SoundCategory.PLAYERS);
-            LinkedList<Identifier> list = TagManager.readList(player, ModServer.TagCategories.EQUIPPED_SPELLS);
-            if (player.isSneaking()) list.remove(getSpellName());
-            else if (!list.contains(getSpellName())) list.add(getSpellName());
-            TagManager.put(player, ModServer.TagCategories.EQUIPPED_SPELLS, list);
-            return ActionResult.SUCCESS;
+
+			List<Identifier> list = player.getAttached(ModData.EQUIPPED_SPELLS);
+			if (list != null) {
+				if (player.isSneaking()) list.remove(getSpellName());
+				else if (!list.contains(getSpellName())) list.add(getSpellName());
+				player.setAttached(ModData.EQUIPPED_SPELLS, list);
+				return ActionResult.SUCCESS;
+			}
         }
         return ActionResult.PASS;
     }

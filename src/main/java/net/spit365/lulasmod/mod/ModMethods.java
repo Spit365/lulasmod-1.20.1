@@ -1,6 +1,5 @@
 package net.spit365.lulasmod.mod;
 
-import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
@@ -8,9 +7,7 @@ import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.packet.s2c.play.PositionFlag;
-import net.minecraft.particle.DefaultParticleType;
 import net.minecraft.particle.ParticleEffect;
 import net.minecraft.particle.SimpleParticleType;
 import net.minecraft.registry.Registries;
@@ -22,13 +19,13 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
-import net.spit365.lulasmod.Server;
+import net.spit365.lulasmod.Lulasmod;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
 public class ModMethods {
-    public static final LinkedList<ModServerEvents.ImpaledContext> impaled = new LinkedList<>();
+    public static final LinkedList<ImpaledContext> impaled = new LinkedList<>();
 
     public static @Nullable Entity selectClosestEntity(Entity selector, Double radius) {
         Vec3d selectionCenter = selector.getRotationVec(1).normalize().multiply(radius).add(selector.getPos());
@@ -41,10 +38,8 @@ public class ModMethods {
     }
 
     public static void applyBleed(LivingEntity entity, Integer duration){
-        StatusEffectInstance effectInstance = entity.getStatusEffect(ModServer.StatusEffects.BLEEDING);
-        if (effectInstance != null){
-            entity.setStatusEffect(new StatusEffectInstance(ModServer.StatusEffects.BLEEDING, effectInstance.getDuration() + duration), entity);
-        } else entity.addStatusEffect(new StatusEffectInstance(ModServer.StatusEffects.BLEEDING, duration));
+		Integer bleed = entity.getAttached(ModData.BLEED_VALUE);
+		entity.setAttached(ModData.BLEED_VALUE, duration + (bleed != null? bleed : 0));
     }
     public static void sendHome(PlayerEntity player, Item item){
 		try {
@@ -61,10 +56,10 @@ public class ModMethods {
 					pos = targetDimension.getSpawnPos();
 				}
 				if (player.teleport(targetDimension, pos.getX(), pos.getY(), pos.getZ(), Set.of(), player.getYaw(), player.getPitch(), true))
-					Server.LOGGER.info("{} was sent home to {} {} {} in {} (with {})", player.getName(), pos.getX(), pos.getY(), pos.getZ(), targetDimension.getRegistryKey().getValue(), item);
+					Lulasmod.LOGGER.info("{} was sent home to {} {} {} in {} (with {})", player.getName(), pos.getX(), pos.getY(), pos.getZ(), targetDimension.getRegistryKey().getValue(), item);
 			}
 		} catch (NullPointerException e) {
-			Server.LOGGER.error("Couldn't find the specified dimension");
+			Lulasmod.LOGGER.error("Couldn't find the specified dimension");
 		}
 	}
 
@@ -103,7 +98,7 @@ public class ModMethods {
         if (selectClosestEntity(player, 5d) instanceof LivingEntity selectedEntity) {
             player.getItemCooldownManager().set(item, maxCooldown);
             selectedEntity.requestTeleport(selectedEntity.getX(), selectedEntity.getY() + 5, selectedEntity.getZ());
-            impaled.add(new ModServer.Tickers.ImpaledContext(player, selectedEntity, particle, iterations, item));
+            impaled.add(new ImpaledContext(player, selectedEntity, particle, iterations, item));
             return true;
         } else player.getItemCooldownManager().set(item, baseCooldown - 2);
         return false;
@@ -112,19 +107,20 @@ public class ModMethods {
     public static void pocketTeleport(Entity victim) {
         if (!victim.teleport(
 		   Objects.requireNonNull(victim.getServer()).getWorld((
-			   victim.getWorld().getRegistryKey().equals(ModServer.Dimensions.POCKET_DIMENSION)?
+			   victim.getWorld().getRegistryKey().equals(ModDimensions.POCKET_DIMENSION)?
                         World.OVERWORLD :
-                        ModServer.Dimensions.POCKET_DIMENSION))
+                        ModDimensions.POCKET_DIMENSION))
 		   , victim.getX(), victim.getY(), victim.getZ(), EnumSet.noneOf(PositionFlag.class), victim.getYaw(), victim.getPitch(), false))
-            Server.LOGGER.error("Could not perform teleport. Registry key: {}, Entity: {}", ModServer.Dimensions.POCKET_DIMENSION, victim);
+            Lulasmod.LOGGER.error("Could not perform teleport. Registry key: {}, Entity: {}", ModDimensions.POCKET_DIMENSION, victim);
     }
 
 	static void sendSpellListPacket(ServerPlayerEntity player, List<Identifier> list) {
-		Map<Integer, ItemStack> map = new HashMap<>();
-		for (int i = 0; i < list.size(); i++)
-			map.put(i, new ItemStack(Registries.ITEM.get(list.get(i))));
-		PacketByteBuf buf = PacketByteBufs.create();
-		buf.writeMap(map, PacketByteBuf::writeInt, PacketByteBuf::writeItemStack);
-		ServerPlayNetworking.send(player, ModServer.Packets.SPELL_HOTBAR_LIST, buf);
+		ServerPlayNetworking.send(player, new ModPackets.SpellHotbarListS2CPacket(list.stream().map(id -> new ItemStack(Registries.ITEM.get(id))).toList()));
+	}
+
+	public record ImpaledContext(PlayerEntity player, LivingEntity livingEntity, ParticleEffect particle, Integer iterations, ItemStack item) {
+		public ImpaledContext(ImpaledContext context, Integer iterations, ItemStack item) {
+			this(context.player(), context.livingEntity(), context.particle(), iterations, item);
+		}
 	}
 }
