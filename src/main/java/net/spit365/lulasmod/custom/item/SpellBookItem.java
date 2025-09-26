@@ -1,42 +1,42 @@
 package net.spit365.lulasmod.custom.item;
 
 
-import net.minecraft.client.item.TooltipContext;
+import net.minecraft.component.type.TooltipDisplayComponent;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NbtCompound;
+import net.minecraft.item.tooltip.TooltipType;
 import net.minecraft.registry.Registries;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.TypedActionResult;
 import net.minecraft.world.World;
 import net.spit365.lulasmod.custom.SpellHotbar;
+import net.spit365.lulasmod.mod.ModDataComponentTypes;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
+import java.util.function.Consumer;
 
 public class SpellBookItem extends Item implements SpellHotbar {
      public SpellBookItem() {super(new Settings().maxCount(1));}
-     @Override public LinkedList<Identifier> displayList(PlayerEntity player){
-          ItemStack stack = (player.getMainHandStack().getItem().equals(this)? player.getMainHandStack() : player.getOffHandStack());
-          NbtCompound nbt = stack.getOrCreateNbt();
-          return getListFromString(nbt.getString("Spells"));
+     @Override public List<Identifier> displayList(PlayerEntity player){
+         ItemStack stack = (player.getMainHandStack().getItem().equals(this)? player.getMainHandStack() : player.getOffHandStack());
+         return stack.get(ModDataComponentTypes.SPELL_BOOK_SPELLS);
      }
 
      @Override
      public void cycleList(PlayerEntity player) {
           ItemStack stack = (player.getMainHandStack().getItem().equals(this)? player.getMainHandStack() : player.getOffHandStack());
-          NbtCompound nbt = stack.getOrCreateNbt();
-          LinkedList<Identifier> list = getListFromString(nbt.getString("Spells"));
-          if (!list.isEmpty()) {
-               Identifier first = list.pollFirst();
-               list.addLast(first);
-               stack.setNbt(nbt);
-               nbt.putString("Spells", getStringFromList(list));
+          List<Identifier> list = stack.get(ModDataComponentTypes.SPELL_BOOK_SPELLS);
+          if (list != null && list.isEmpty()) {
+              Collections.rotate(list, -1);
+              stack.set(ModDataComponentTypes.SPELL_BOOK_SPELLS, list);
           }
      }
      @Override
@@ -44,43 +44,28 @@ public class SpellBookItem extends Item implements SpellHotbar {
           if (world instanceof ServerWorld){
                ItemStack spellbook = player.getStackInHand(hand);
                ItemStack spell = (hand.equals(Hand.MAIN_HAND)? player.getOffHandStack() : player.getMainHandStack());
-               NbtCompound nbt = spellbook.getOrCreateNbt();
-               LinkedList<Identifier> list = getListFromString(nbt.getString("Spells"));
-               if (spell.getItem() instanceof SpellItem) {
-                    Identifier id = Registries.ITEM.getId(spell.getItem());
-                    list.add(id);
-                    nbt.putString("Spells", getStringFromList(list));
-                    spellbook.setNbt(nbt);
-                    spell.decrement(1);
-                    return TypedActionResult.success(player.getStackInHand(hand));
-               } else if (!list.isEmpty()) {
-                    Identifier id = list.pollFirst();
-                    list.remove(id);
-                    nbt.putString("Spells", getStringFromList(list));
-                    spellbook.setNbt(nbt);
-                    player.giveItemStack(new ItemStack(Registries.ITEM.get(id)));
-                    return TypedActionResult.success(player.getStackInHand(hand));
-               }
+               List<Identifier> list = spellbook.get(ModDataComponentTypes.SPELL_BOOK_SPELLS);
+               if (list != null)
+                   if (spell.getItem() instanceof SpellItem) {
+                        Identifier id = Registries.ITEM.getId(spell.getItem());
+                        list.add(id);
+                        spellbook.set(ModDataComponentTypes.SPELL_BOOK_SPELLS, list);
+                        spell.decrement(1);
+                        return ActionResult.SUCCESS;
+                   } else if (!list.isEmpty()) {
+                        Identifier id = list.getFirst();
+                        list.remove(id);
+                        spellbook.set(ModDataComponentTypes.SPELL_BOOK_SPELLS, list);
+                        player.giveItemStack(new ItemStack(Registries.ITEM.get(id)));
+                       return ActionResult.SUCCESS;
+                   }
           }
-          return TypedActionResult.pass(player.getStackInHand(hand));
+          return ActionResult.PASS;
      }
 
-     @Override
-     public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context) {
-          getListFromString(stack.getOrCreateNbt().getString("Spells")).forEach(id ->
-                  tooltip.add(Registries.ITEM.get(id).getName()));
-     }
-
-     private static LinkedList<Identifier> getListFromString(String s){
-          LinkedList<Identifier> list = new LinkedList<>();
-          for (String s1 : s.split(", "))
-               if (s1.split(":").length == 2) list.add(new Identifier(s1));
-          return list;
-     }
-     private static String getStringFromList(LinkedList<Identifier> list){
-          StringBuilder stringBuilder = new StringBuilder();
-          for (Identifier id : list)
-               stringBuilder.append(", ").append(id);
-          return stringBuilder.toString();
-     }
+    @Override
+    public void appendTooltip(ItemStack stack, TooltipContext context, TooltipDisplayComponent displayComponent, Consumer<Text> textConsumer, TooltipType type) {
+        Objects.requireNonNull(stack.get(ModDataComponentTypes.SPELL_BOOK_SPELLS)).forEach(id ->
+                textConsumer.accept(Registries.ITEM.get(id).getName()));
+    }
 }

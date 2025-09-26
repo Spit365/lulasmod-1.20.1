@@ -1,21 +1,15 @@
 package net.spit365.lulasmod.custom.item;
 
-import it.unimi.dsi.fastutil.objects.ReferenceSortedSet;
-import it.unimi.dsi.fastutil.objects.ReferenceSortedSets;
-import net.minecraft.component.ComponentType;
-import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.TooltipDisplayComponent;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.tooltip.BundleTooltipData;
-import net.minecraft.item.tooltip.TooltipData;
+import net.minecraft.item.tooltip.TooltipType;
 import net.minecraft.registry.Registries;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
-import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
@@ -23,11 +17,9 @@ import net.minecraft.util.Identifier;
 import net.minecraft.world.World;
 import net.spit365.lulasmod.mod.ModServer;
 import net.spit365.lulasmod.manager.TagManager;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.LinkedList;
-import java.util.List;
-import java.util.Optional;
+import java.util.function.Consumer;
 
 public abstract class SpellItem extends Item {
     public final int cooldown;
@@ -63,14 +55,8 @@ public abstract class SpellItem extends Item {
     private Identifier getSpellName() {return Registries.ITEM.getId(this);}
 
     @Override
-    public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context) {
-        tooltip.add(Text.translatable("spell." + Registries.ITEM.getId(this).getNamespace() + ".tooltip." + Registries.ITEM.getId(this).getPath()));
-    }
-    @Override
-    public Optional<TooltipData> getTooltipData(ItemStack stack) {
-        MutableText text = Text.translatable("spell." + Registries.ITEM.getId(this).getNamespace() + ".tooltip." + Registries.ITEM.getId(this).getPath());
-        return Optional.empty();
+    public void appendTooltip(ItemStack stack, TooltipContext context, TooltipDisplayComponent displayComponent, Consumer<Text> textConsumer, TooltipType type) {
+        textConsumer.accept(Text.translatable("spell." + Registries.ITEM.getId(this).getNamespace() + ".tooltip." + Registries.ITEM.getId(this).getPath()));
     }
 
-    private 
 }
