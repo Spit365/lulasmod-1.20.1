@@ -52,6 +52,7 @@ public class ModPackets {
 				break;
 			}
 		});
+
 		ClientPlayNetworking.registerGlobalReceiver(ModPackets.SpellHotbarListS2CPacket.ID, (spellHotbarListS2CPacket, context) -> {
 			ModGui.SPELL_HOTBAR_LIST.clear();
 			ModGui.SPELL_HOTBAR_LIST.addAll(spellHotbarListS2CPacket.list());

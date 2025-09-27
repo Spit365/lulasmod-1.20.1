@@ -27,6 +27,7 @@ public class Lulasmod implements ModInitializer, ClientModInitializer {
 		ModBlocks.init();
 		ModStatusEffects.init();
 		ModGamerules.init();
+		ModData.init();
 		ModDamageSources.init();
 		ModServerTick.init();
 		ModCommands.init();
@@ -49,7 +50,7 @@ public class Lulasmod implements ModInitializer, ClientModInitializer {
 
 	@Override
 	public void onInitializeClient() {
-		ModPackets.init();
+		ModKeybinds.init();
 		ModEntities.init();
 		ModParticles.init();
 		ModClientTick.init();

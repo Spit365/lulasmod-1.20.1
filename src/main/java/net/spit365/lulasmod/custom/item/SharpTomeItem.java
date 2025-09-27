@@ -11,7 +11,7 @@ import net.minecraft.world.World;
 import net.spit365.lulasmod.mod.ModMethods;
 
 public class SharpTomeItem extends Item{
-    public SharpTomeItem() {super(new Item.Settings().maxCount(1).maxDamage(640));}
+    public SharpTomeItem(Settings settings) {super(settings);}
 
     @Override
     public ActionResult use(World world, PlayerEntity player, Hand hand) {

@@ -8,15 +8,15 @@ import net.spit365.lulasmod.custom.block.SpellPedestalBlock;
 import net.spit365.lulasmod.manager.RegisterHelper;
 
 public class ModBlocks {
-	public record BlockAndItem(Block block, BlockItem item){}
-	public static final BlockAndItem SPELL_PEDESTAL = RegisterHelper.block(
+	public record BlockAndItem<T extends Block>(T block, BlockItem item){}
+	public static final BlockAndItem<SpellPedestalBlock> SPELL_PEDESTAL = RegisterHelper.block(
 		"spell_pedestal",
-		new SpellPedestalBlock(
-			AbstractBlock.Settings.create()
-				.mapColor(MapColor.STONE_GRAY)
-				.strength(-1.0F, Float.MAX_VALUE)
-				.dropsNothing()
-				.allowsSpawning(net.minecraft.block.Blocks::never)));
+		SpellPedestalBlock::new,
+		AbstractBlock.Settings.create()
+			.mapColor(MapColor.STONE_GRAY)
+			.strength(-1.0F, Float.MAX_VALUE)
+			.dropsNothing()
+			.allowsSpawning(net.minecraft.block.Blocks::never));
 
 	public static void init() {}
 }

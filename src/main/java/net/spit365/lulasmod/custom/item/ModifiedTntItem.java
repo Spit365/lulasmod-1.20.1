@@ -10,7 +10,7 @@ import net.minecraft.util.Hand;
 import net.minecraft.world.World;
 
 public class ModifiedTntItem extends Item {
-    public ModifiedTntItem() {super(new Item.Settings().maxCount(16));}
+    public ModifiedTntItem(Settings settings) {super(settings);}
 
     @Override
     public ActionResult use(World world, PlayerEntity player, Hand hand){

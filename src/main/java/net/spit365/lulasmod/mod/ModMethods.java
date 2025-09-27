@@ -115,7 +115,7 @@ public class ModMethods {
     }
 
 	static void sendSpellListPacket(ServerPlayerEntity player, List<Identifier> list) {
-		ServerPlayNetworking.send(player, new ModPackets.SpellHotbarListS2CPacket(list.stream().map(id -> new ItemStack(Registries.ITEM.get(id))).toList()));
+		if (list != null) ServerPlayNetworking.send(player, new ModPackets.SpellHotbarListS2CPacket(list.stream().map(id -> new ItemStack(Registries.ITEM.get(id))).toList()));
 	}
 
 	public record ImpaledContext(PlayerEntity player, LivingEntity livingEntity, ParticleEffect particle, Integer iterations, ItemStack item) {

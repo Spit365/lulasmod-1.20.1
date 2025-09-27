@@ -10,7 +10,7 @@ import net.minecraft.world.World;
 import net.spit365.lulasmod.mod.ModMethods;
 
 public class HomeButtonItem extends Item {
-    public HomeButtonItem() {super(new Item.Settings().maxCount(1).maxDamage(100));}
+    public HomeButtonItem(Settings settings) {super(settings);}
     @Override
     public ActionResult use(World world, PlayerEntity player, Hand hand){
         if (!world.isClient()) {

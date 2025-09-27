@@ -17,12 +17,13 @@ import net.spit365.lulasmod.custom.SpellHotbar;
 import net.spit365.lulasmod.mod.ModData;
 
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
 
 public class SpellBookItem extends Item implements SpellHotbar {
-     public SpellBookItem() {super(new Settings().maxCount(1));}
+     public SpellBookItem(Settings settings) {super(settings);}
      @Override public List<Identifier> getHotbarList(PlayerEntity player){
          ItemStack stack = (player.getMainHandStack().getItem().equals(this)? player.getMainHandStack() : player.getOffHandStack());
          return stack.get(ModData.SPELL_BOOK_SPELLS);
@@ -31,10 +32,11 @@ public class SpellBookItem extends Item implements SpellHotbar {
      @Override
      public void onCycle(PlayerEntity player) {
           ItemStack stack = (player.getMainHandStack().getItem().equals(this)? player.getMainHandStack() : player.getOffHandStack());
-          List<Identifier> list = stack.get(ModData.SPELL_BOOK_SPELLS);
+          List<Identifier> list = (stack.get(ModData.SPELL_BOOK_SPELLS));
           if (list != null && list.isEmpty()) {
-              Collections.rotate(list, -1);
-              stack.set(ModData.SPELL_BOOK_SPELLS, list);
+			  List<Identifier> mutable = new LinkedList<>(list);
+              Collections.rotate(mutable, -1);
+              stack.set(ModData.SPELL_BOOK_SPELLS, mutable);
           }
      }
      @Override
@@ -43,27 +45,31 @@ public class SpellBookItem extends Item implements SpellHotbar {
                ItemStack spellbook = player.getStackInHand(hand);
                ItemStack spell = (hand.equals(Hand.MAIN_HAND)? player.getOffHandStack() : player.getMainHandStack());
                List<Identifier> list = spellbook.get(ModData.SPELL_BOOK_SPELLS);
-               if (list != null)
-                   if (spell.getItem() instanceof SpellItem) {
-                        Identifier id = Registries.ITEM.getId(spell.getItem());
-                        list.add(id);
-                        spellbook.set(ModData.SPELL_BOOK_SPELLS, list);
-                        spell.decrement(1);
-                        return ActionResult.SUCCESS;
-                   } else if (!list.isEmpty()) {
-                        Identifier id = list.getFirst();
-                        list.remove(id);
-                        spellbook.set(ModData.SPELL_BOOK_SPELLS, list);
-                        player.giveItemStack(new ItemStack(Registries.ITEM.get(id)));
-                       return ActionResult.SUCCESS;
-                   }
+				  List<Identifier> mutable;
+			  if (list != null) mutable = new LinkedList<>(list);
+			  else mutable = new LinkedList<>();
+			   if (spell.getItem() instanceof SpellItem) {
+				   Identifier id = Registries.ITEM.getId(spell.getItem());
+				   mutable.add(id);
+				   spellbook.set(ModData.SPELL_BOOK_SPELLS, mutable);
+				   spell.decrement(1);
+				   return ActionResult.SUCCESS;
+			   } else if (!mutable.isEmpty()) {
+				   Identifier id = mutable.getFirst();
+				   mutable.remove(id);
+				   spellbook.set(ModData.SPELL_BOOK_SPELLS, mutable);
+				   player.giveItemStack(new ItemStack(Registries.ITEM.get(id)));
+				   return ActionResult.SUCCESS;
+			   }
+
           }
           return ActionResult.PASS;
      }
 
     @Override
     public void appendTooltip(ItemStack stack, TooltipContext context, TooltipDisplayComponent displayComponent, Consumer<Text> textConsumer, TooltipType type) {
-        Objects.requireNonNull(stack.get(ModData.SPELL_BOOK_SPELLS)).forEach(id ->
+		List<Identifier> spells = stack.get(ModData.SPELL_BOOK_SPELLS);
+		if (spells != null && !spells.isEmpty()) spells.forEach(id ->
                 textConsumer.accept(Registries.ITEM.get(id).getName()));
     }
 }

@@ -10,7 +10,7 @@ import net.spit365.lulasmod.mod.ModMethods;
 import net.spit365.lulasmod.mod.ModParticles;
 
 public class GoldenTridentItem extends TridentItem {
-    public GoldenTridentItem() {super(new Item.Settings().maxCount(1).maxDamage(500));}
+    public GoldenTridentItem(Item.Settings settings) {super(settings);}
 
     @Override
     public ActionResult use(World world, PlayerEntity player, Hand hand){

@@ -15,28 +15,29 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
 import net.minecraft.world.World;
+import net.spit365.lulasmod.Lulasmod;
 import net.spit365.lulasmod.mod.ModData;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Consumer;
 
-public abstract class SpellItem extends Item {
-    public final int cooldown;
+public class SpellItem extends Item {
+	public final Spell spell;
     protected SoundEvent sound = SoundEvents.BLOCK_RESPAWN_ANCHOR_CHARGE;
 
-    public SpellItem(Integer cooldown, SoundEvent soundEvent) {
-        super(new Item.Settings().maxCount(1));
-        this.cooldown = cooldown;
+    public SpellItem(Settings settings, Spell spell, SoundEvent soundEvent) {
+        super(settings);
+		this.spell = spell;
         this.sound = soundEvent;
 
     }
-    public SpellItem(Integer cooldown) {
-        super(new Item.Settings().maxCount(1));
-        this.cooldown = cooldown;
+    public SpellItem(Settings settings, Spell spell) {
+        super(settings);
+		this.spell = spell;
     }
 
-    public abstract void cast(ServerWorld world, PlayerEntity player, Hand hand, Float efficiencyMultiplier, Integer cooldownMultiplier);
-
+	@FunctionalInterface public interface Spell {int cast(ServerWorld world, PlayerEntity player, Hand hand, Float efficiencyMultiplier, Integer cooldownMultiplier);}
 
     @Override
     public ActionResult use(World world, PlayerEntity player, Hand hand){
@@ -45,12 +46,13 @@ public abstract class SpellItem extends Item {
             world.playSound(null, player.getBlockPos(), sound, SoundCategory.PLAYERS);
 
 			List<Identifier> list = player.getAttached(ModData.EQUIPPED_SPELLS);
-			if (list != null) {
-				if (player.isSneaking()) list.remove(getSpellName());
-				else if (!list.contains(getSpellName())) list.add(getSpellName());
-				player.setAttached(ModData.EQUIPPED_SPELLS, list);
-				return ActionResult.SUCCESS;
-			}
+			List<Identifier> mutable;
+			if (list != null) mutable = new LinkedList<>(list);
+			else mutable = new LinkedList<>();
+			if (player.isSneaking()) mutable.remove(getSpellName());
+			else if (!mutable.contains(getSpellName())) mutable.add(getSpellName());
+			player.setAttached(ModData.EQUIPPED_SPELLS, mutable);
+			return ActionResult.SUCCESS;
         }
         return ActionResult.PASS;
     }

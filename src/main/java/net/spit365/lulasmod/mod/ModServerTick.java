@@ -9,17 +9,22 @@ import net.minecraft.entity.mob.EndermanEntity;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
+import net.spit365.lulasmod.Lulasmod;
 import net.spit365.lulasmod.custom.SpellHotbar;
 import net.spit365.lulasmod.custom.entity.ParticleProjectileEntity;
 
+import java.util.List;
 import java.util.stream.StreamSupport;
 
 import static net.spit365.lulasmod.mod.ModMethods.impaled;
 
 public class ModServerTick {
+	private static int impaledCounter = 0;
+
     public static void init(){
 		ServerTickEvents.END_SERVER_TICK.register(input -> {
 			for (ServerPlayerEntity player : input.getPlayerManager().getPlayerList()) {
@@ -41,11 +46,21 @@ public class ModServerTick {
 						player.velocityModified = true;
 					}
 				}
-			}
 
-			for (ServerPlayerEntity player : input.getPlayerManager().getPlayerList()) {
+				List<Identifier> list = player.getAttached(ModData.EQUIPPED_SPELLS);
+				if (list != null) Lulasmod.LOGGER.warn(list.toString());
+
 				if(player.getMainHandStack().getItem() instanceof SpellHotbar item) ModMethods.sendSpellListPacket(player, item.getHotbarList(player));
 				else if(player.getOffHandStack().getItem() instanceof SpellHotbar item) ModMethods.sendSpellListPacket(player, item.getHotbarList(player));
+
+				Integer i = player.getAttached(ModData.TIME_FORWARD_ANIMATION_FRAMES);
+				if (i != null) {
+					if (i > 0) player.setAttached(ModData.TIME_FORWARD_ANIMATION_FRAMES, i -1);
+					else {
+						player.removeAttached(ModData.TIME_FORWARD_ANIMATION_FRAMES);
+						ModMethods.pocketTeleport(player);
+					}
+				}
 			}
 
 			impaledCounter++;
@@ -71,17 +86,6 @@ public class ModServerTick {
 				}
 			}
 
-			for (ServerPlayerEntity player : input.getPlayerManager().getPlayerList()){
-				Integer i = player.getAttached(ModData.TIME_FORWARD_ANIMATION_FRAMES);
-				if (i != null) {
-					if (i > 0) player.setAttached(ModData.TIME_FORWARD_ANIMATION_FRAMES, i -1);
-					else {
-						player.removeAttached(ModData.TIME_FORWARD_ANIMATION_FRAMES);
-						ModMethods.pocketTeleport(player);
-					}
-				}
-			}
-
 			input.getWorlds().forEach(serverWorld -> StreamSupport.stream(serverWorld.iterateEntities().spliterator(), true).filter(entity -> entity instanceof LivingEntity && entity.getAttached(ModData.BLEED_VALUE) != null).map(LivingEntity.class::cast).forEach(entity -> {
 				Integer duration = entity.getAttached(ModData.BLEED_VALUE);
 				if (duration == null) return;
@@ -95,5 +99,4 @@ public class ModServerTick {
 
 		});
     }
-	private static int impaledCounter = 0;
 }

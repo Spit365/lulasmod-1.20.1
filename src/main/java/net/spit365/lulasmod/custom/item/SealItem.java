@@ -20,12 +20,13 @@ import net.spit365.lulasmod.mod.ModMethods;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 
 public class SealItem extends Item  implements SpellHotbar {
-    public SealItem(Usable canUse, float efficiencyMultiplier, int cooldownDivisor) {
-		super(new Item.Settings().maxCount(1));
+    public SealItem(Settings settings, Usable canUse, float efficiencyMultiplier, int cooldownDivisor) {
+		super(settings);
 		this.canUse = canUse;
 		this.efficiencyMultiplier = efficiencyMultiplier;
 		this.cooldownDivisor = cooldownDivisor;
@@ -38,10 +39,11 @@ public class SealItem extends Item  implements SpellHotbar {
     @Override public List<Identifier> getHotbarList(PlayerEntity player){return player.getAttached(ModData.EQUIPPED_SPELLS);}
     @Override public void onCycle(PlayerEntity player){
 		List<Identifier> list = player.getAttached(ModData.EQUIPPED_SPELLS);
-		if (list != null) {
-			Collections.rotate(list, -1);
-			player.setAttached(ModData.EQUIPPED_SPELLS, list);
-		}
+		List<Identifier> mutable;
+		if (list != null) mutable = new LinkedList<>(list);
+		else mutable = new LinkedList<>();
+		Collections.rotate(mutable, -1);
+		player.setAttached(ModData.EQUIPPED_SPELLS, mutable);
 	}
 
 
@@ -50,8 +52,8 @@ public class SealItem extends Item  implements SpellHotbar {
         if (world instanceof ServerWorld serverWorld && canUse.accept(player)) {
             List<Identifier> spellList = player.getAttached(ModData.EQUIPPED_SPELLS);
             if(spellList != null && !spellList.isEmpty() && Registries.ITEM.get(spellList.getFirst()) instanceof SpellItem spellItem) {
-                player.getItemCooldownManager().set(player.getStackInHand(hand), Math.max(spellItem.cooldown, 2));
-                spellItem.cast(serverWorld, player, hand, efficiencyMultiplier, cooldownDivisor);
+                player.getItemCooldownManager().set(player.getStackInHand(hand), Math.max(
+					spellItem.spell.cast(serverWorld, player, hand, efficiencyMultiplier, cooldownDivisor), 2));
                 player.incrementStat(Stats.USED.getOrCreateStat(this));
                 return ActionResult.SUCCESS;
             }

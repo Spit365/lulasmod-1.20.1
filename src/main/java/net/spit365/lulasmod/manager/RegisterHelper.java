@@ -10,6 +10,7 @@ import net.fabricmc.fabric.api.gamerule.v1.GameRuleFactory;
 import net.fabricmc.fabric.api.gamerule.v1.GameRuleRegistry;
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
 import net.fabricmc.fabric.api.particle.v1.FabricParticleTypes;
+import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.render.entity.EntityRendererFactory;
@@ -30,6 +31,7 @@ import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.entry.RegistryEntry;
+import net.minecraft.sound.SoundEvent;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.world.GameRules;
@@ -42,6 +44,7 @@ import net.spit365.lulasmod.mod.ModSpells;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.List;
+import java.util.function.Function;
 import java.util.function.UnaryOperator;
 
 public class RegisterHelper {
@@ -49,12 +52,15 @@ public class RegisterHelper {
 		return AttachmentRegistry.createPersistent(Identifier.of(name, Lulasmod.MOD_ID), codec);
 	}
 
-	public static ModBlocks.BlockAndItem block(String name, Block block) {
+	public static <T extends Block> ModBlocks.BlockAndItem<T> block(String name, Function<AbstractBlock.Settings, T> factory, AbstractBlock.Settings settings) {
 		Identifier id = Identifier.of(Lulasmod.MOD_ID, name);
 		ModItems.CreativeTabItems.add(id);
-		return new ModBlocks.BlockAndItem(
-			Registry.register(Registries.BLOCK, id, block),
-			Registry.register(Registries.ITEM, id, new BlockItem(block, new Item.Settings()))
+		RegistryKey<Block> blockRegistryKey = RegistryKey.of(RegistryKeys.BLOCK, id);
+		RegistryKey<Item> itemRegistryKey = RegistryKey.of(RegistryKeys.ITEM, id);
+		T block = factory.apply(settings.registryKey(blockRegistryKey));
+		return new ModBlocks.BlockAndItem<>(
+			Registry.register(Registries.BLOCK, blockRegistryKey, block),
+			Registry.register(Registries.ITEM, itemRegistryKey, new BlockItem(block, new Item.Settings().registryKey(itemRegistryKey)))
 		);
 	}
 
@@ -87,9 +93,13 @@ public class RegisterHelper {
 		return GameRuleRegistry.register(name, category, GameRuleFactory.createBooleanRule(defaultValue));
 	}
 
-	public static Item item(String name, Item item) {
+	public static <T extends Item> T item(String name, Function<Item.Settings, T> factory, Item.Settings settings) {
 		ModItems.CreativeTabItems.add(Identifier.of(Lulasmod.MOD_ID, name));
-		return Registry.register(Registries.ITEM, Identifier.of(Lulasmod.MOD_ID, name), item);
+		return itemInternal(name, factory, settings);
+	}
+	private static <T extends Item> T itemInternal(String name, Function<Item.Settings, T> factory, Item.Settings settings) {
+		RegistryKey<Item> key = RegistryKey.of(RegistryKeys.ITEM, Identifier.of(Lulasmod.MOD_ID, name));
+		return Registry.register(Registries.ITEM, key, factory.apply(settings.registryKey(key)));
 	}
 
 	public static ItemGroup itemGroup(String name, Item item, List<Identifier> list) {
@@ -118,9 +128,13 @@ public class RegisterHelper {
 		 return particle;
 	}
 
-	public static SpellItem spell(String name, SpellItem item) {
+	public static SpellItem spell(String name, SpellItem.Spell spell) {
 		ModSpells.SpellTabItems.add(Identifier.of(Lulasmod.MOD_ID, name));
-		return Registry.register(Registries.ITEM, Identifier.of(Lulasmod.MOD_ID, name), item);
+		return itemInternal(name, settings -> new SpellItem(settings, spell), new Item.Settings().maxCount(1));
+	}
+	public static SpellItem spell(String name, SpellItem.Spell spell, SoundEvent onLearn) {
+		ModSpells.SpellTabItems.add(Identifier.of(Lulasmod.MOD_ID, name));
+		return itemInternal(name, settings -> new SpellItem(settings, spell, onLearn), new Item.Settings().maxCount(1));
 	}
 
 	public static RegistryEntry<StatusEffect> statusEffect(String id, StatusEffect effect) {

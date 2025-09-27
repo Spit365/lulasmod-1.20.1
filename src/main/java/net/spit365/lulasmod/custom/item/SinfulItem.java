@@ -10,7 +10,7 @@ import net.spit365.lulasmod.mod.ModMethods;
 import java.util.Arrays;
 
 public class SinfulItem extends Item {
-     public SinfulItem() {super(new Settings().sword(ToolMaterial.NETHERITE, 3, -2.4F).fireproof().maxCount(1).maxDamage(2500));}
+     public SinfulItem(Settings settings) {super(settings);}
 
 
      @Override

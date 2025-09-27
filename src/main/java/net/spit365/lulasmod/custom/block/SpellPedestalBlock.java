@@ -20,6 +20,7 @@ import net.spit365.lulasmod.mod.ModItems;
 import net.spit365.lulasmod.mod.ModSpells;
 
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
@@ -31,19 +32,21 @@ public class SpellPedestalBlock extends Block {
     @Override
     protected ActionResult onUse(BlockState state, World world, BlockPos blockPos, PlayerEntity player, BlockHitResult hit) {
         if (!world.isClient()){
-            List<ModData.WorldBlockPos> absorbedPedestals = player.getAttached(ModData.ABSORBED_PEDESTALS);
-			if (absorbedPedestals == null) absorbedPedestals = List.of();
+            List<ModData.WorldBlockPos> list = player.getAttached(ModData.ABSORBED_PEDESTALS);
+			List<ModData.WorldBlockPos> mutable;
+			if (list != null) mutable = new LinkedList<>(list);
+			else mutable = new LinkedList<>();
 			ModData.WorldBlockPos worldBlockPos = new ModData.WorldBlockPos(world.getRegistryKey(), blockPos);
-			if (!absorbedPedestals.contains(worldBlockPos)) {
-				absorbedPedestals.add(worldBlockPos);
+			if (!mutable.contains(worldBlockPos)) {
+				mutable.add(worldBlockPos);
 				List<Identifier> spells = ModSpells.SpellTabItems;
 				Set<Item> excluded = new HashSet<>(ModItems.tailedExclusive);
 				excluded.add(ModSpells.HIGHLIGHTER_SPELL);
 				spells.removeIf(id -> excluded.contains(Registries.ITEM.get(id)));
-				if (absorbedPedestals.size() <= spells.size()) {
-					player.setAttached(ModData.ABSORBED_PEDESTALS,  absorbedPedestals);
+				if (mutable.size() <= spells.size()) {
+					player.setAttached(ModData.ABSORBED_PEDESTALS,  mutable);
 					((ServerWorld) world).spawnParticles(ParticleTypes.CRIMSON_SPORE, blockPos.getX(), blockPos.getY(), blockPos.getZ(), 500, 1.5, 1.5, 1.5, 0);
-					player.giveItemStack(new ItemStack(Registries.ITEM.get(spells.get(absorbedPedestals.size() - 1))));
+					player.giveItemStack(new ItemStack(Registries.ITEM.get(spells.get(mutable.size() - 1))));
 				} else player.sendMessage(Text.translatable("notify.lulasmod.pedestal.all_spells"), true);
 				return ActionResult.SUCCESS;
 			} else player.sendMessage(Text.translatable("notify.lulasmod.already_absorbed_pedestal"), true);
