@@ -9,15 +9,12 @@ import net.minecraft.entity.mob.EndermanEntity;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
-import net.spit365.lulasmod.Lulasmod;
 import net.spit365.lulasmod.custom.SpellHotbar;
 import net.spit365.lulasmod.custom.entity.ParticleProjectileEntity;
 
-import java.util.List;
 import java.util.stream.StreamSupport;
 
 import static net.spit365.lulasmod.mod.ModMethods.impaled;
@@ -47,9 +44,6 @@ public class ModServerTick {
 					}
 				}
 
-				List<Identifier> list = player.getAttached(ModData.EQUIPPED_SPELLS);
-				if (list != null) Lulasmod.LOGGER.warn(list.toString());
-
 				if(player.getMainHandStack().getItem() instanceof SpellHotbar item) ModMethods.sendSpellListPacket(player, item.getHotbarList(player));
 				else if(player.getOffHandStack().getItem() instanceof SpellHotbar item) ModMethods.sendSpellListPacket(player, item.getHotbarList(player));
 
@@ -69,15 +63,15 @@ public class ModServerTick {
 				if (context.iterations() > 0 && victim.isAlive()) {
 					if (victim instanceof EndermanEntity) victim.kill((ServerWorld) victim.getWorld());
 					victim.setVelocity(0, 0, 0);
-					if (impaledCounter >= 25) {
+					if (impaledCounter >= context.intervalls()) {
 						impaledCounter = 0;
 						double radius = 5;
 						Vec3d pos = new Vec3d(Math.random() * radius - radius / 2, Math.random() * radius - radius / 2, Math.random() * radius - radius / 2).normalize().multiply(radius).add(victim.getPos());
 						context.player().setAttached(ModData.DAMAGE_DELAY, 0);
 						victim.getWorld().spawnEntity(new ParticleProjectileEntity(
-							victim.getWorld(), context.player(), pos, pos.subtract(victim.getPos()).multiply(-0.5), context.particle(), context.item()));
+							victim.getWorld(), context.player(), pos, pos.subtract(victim.getEyePos()).multiply(-0.5), context.particle()));
 						impaled.remove(context);
-						impaled.add(new ModMethods.ImpaledContext(context, context.iterations() - 1, context.item()));
+						impaled.add(new ModMethods.ImpaledContext(context, context.iterations() - 1, context.intervalls()));
 					}
 				} else {
 					impaled.remove(context);

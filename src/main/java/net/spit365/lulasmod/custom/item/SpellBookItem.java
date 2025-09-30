@@ -14,12 +14,12 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
 import net.minecraft.world.World;
 import net.spit365.lulasmod.custom.SpellHotbar;
+import net.spit365.lulasmod.custom.item.spell.SpellItem;
 import net.spit365.lulasmod.mod.ModData;
+import net.spit365.lulasmod.mod.ModMethods;
 
 import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Objects;
 import java.util.function.Consumer;
 
 public class SpellBookItem extends Item implements SpellHotbar {
@@ -32,9 +32,8 @@ public class SpellBookItem extends Item implements SpellHotbar {
      @Override
      public void onCycle(PlayerEntity player) {
           ItemStack stack = (player.getMainHandStack().getItem().equals(this)? player.getMainHandStack() : player.getOffHandStack());
-          List<Identifier> list = (stack.get(ModData.SPELL_BOOK_SPELLS));
-          if (list != null && list.isEmpty()) {
-			  List<Identifier> mutable = new LinkedList<>(list);
+		 List<Identifier> mutable = ModMethods.makeMutable(stack.get(ModData.SPELL_BOOK_SPELLS));
+          if (mutable.isEmpty()) {
               Collections.rotate(mutable, -1);
               stack.set(ModData.SPELL_BOOK_SPELLS, mutable);
           }
@@ -44,10 +43,7 @@ public class SpellBookItem extends Item implements SpellHotbar {
           if (world instanceof ServerWorld){
                ItemStack spellbook = player.getStackInHand(hand);
                ItemStack spell = (hand.equals(Hand.MAIN_HAND)? player.getOffHandStack() : player.getMainHandStack());
-               List<Identifier> list = spellbook.get(ModData.SPELL_BOOK_SPELLS);
-				  List<Identifier> mutable;
-			  if (list != null) mutable = new LinkedList<>(list);
-			  else mutable = new LinkedList<>();
+			   List<Identifier> mutable = ModMethods.makeMutable(spellbook.get(ModData.SPELL_BOOK_SPELLS));
 			   if (spell.getItem() instanceof SpellItem) {
 				   Identifier id = Registries.ITEM.getId(spell.getItem());
 				   mutable.add(id);

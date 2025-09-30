@@ -1,3 +1,4 @@
+GAZEBO
     public static void placeGazebos(ServerWorld world, List<SpellItem> spellList) {
         int radius = 1000;
         BlockPos origin = new BlockPos(0, 64, 0); // base Y is a guess, will adjust below
@@ -47,3 +48,6 @@
             System.err.println("Pedestal not found at expected position: " + pedestalPos);
         }
     }
+THINGS THAT NEED TO BE FIXED BUT I DONT WANT TO
+    Trident item model
+    pocket dimension

@@ -27,8 +27,8 @@ public class ParticleProjectileEntity extends PersistentProjectileEntity {
         this.particleEffect = null;
     }
 
-    public ParticleProjectileEntity(World world, LivingEntity owner, Vec3d pos, Vec3d velocity, @Nullable ParticleEffect particleEffect, ItemStack origin) {
-        super(ModEntities.PARTICLE_PROJECTILE, owner, world, origin, ItemStack.EMPTY);
+    public ParticleProjectileEntity(World world, LivingEntity owner, Vec3d pos, Vec3d velocity, @Nullable ParticleEffect particleEffect) {
+        super(ModEntities.PARTICLE_PROJECTILE, owner, world, ItemStack.EMPTY, null);
         this.particleEffect = particleEffect;
         this.setPos(pos.getX(), pos.getY(), pos.getZ());
         this.setVelocity(velocity);

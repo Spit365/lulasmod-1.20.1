@@ -18,6 +18,7 @@ import java.util.Set;
 public class Lulasmod implements ModInitializer, ClientModInitializer {
 	public static final String MOD_ID = "lulasmod";
 	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
+	public static int detail = 16;
 
 	@Override
 	public void onInitialize() {
@@ -50,6 +51,7 @@ public class Lulasmod implements ModInitializer, ClientModInitializer {
 
 	@Override
 	public void onInitializeClient() {
+		ModGui.init();
 		ModKeybinds.init();
 		ModEntities.init();
 		ModParticles.init();

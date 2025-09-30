@@ -31,19 +31,18 @@ import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.entry.RegistryEntry;
-import net.minecraft.sound.SoundEvent;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
 import net.spit365.lulasmod.Lulasmod;
-import net.spit365.lulasmod.custom.item.SpellItem;
+import net.spit365.lulasmod.custom.item.spell.SpellItem;
 import net.spit365.lulasmod.mod.ModBlocks;
 import net.spit365.lulasmod.mod.ModItems;
 import net.spit365.lulasmod.mod.ModSpells;
-import org.lwjgl.glfw.GLFW;
 
 import java.util.List;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.UnaryOperator;
 
@@ -128,13 +127,9 @@ public class RegisterHelper {
 		 return particle;
 	}
 
-	public static SpellItem spell(String name, SpellItem.Spell spell) {
+	public static <T extends SpellItem> T spell(String name, Function<Item.Settings, T> factory) {
 		ModSpells.SpellTabItems.add(Identifier.of(Lulasmod.MOD_ID, name));
-		return itemInternal(name, settings -> new SpellItem(settings, spell), new Item.Settings().maxCount(1));
-	}
-	public static SpellItem spell(String name, SpellItem.Spell spell, SoundEvent onLearn) {
-		ModSpells.SpellTabItems.add(Identifier.of(Lulasmod.MOD_ID, name));
-		return itemInternal(name, settings -> new SpellItem(settings, spell, onLearn), new Item.Settings().maxCount(1));
+		return itemInternal(name, factory, new Item.Settings().maxCount(1));
 	}
 
 	public static RegistryEntry<StatusEffect> statusEffect(String id, StatusEffect effect) {

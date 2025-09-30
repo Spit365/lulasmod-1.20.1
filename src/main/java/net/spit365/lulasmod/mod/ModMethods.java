@@ -14,12 +14,14 @@ import net.minecraft.registry.Registries;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.spit365.lulasmod.Lulasmod;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
@@ -93,14 +95,14 @@ public class ModMethods {
         for (double i = 0; i < box.getLengthZ(); i += 0.625) world.spawnParticles(particle, end.getX(), end.getY(), start.getZ() + i, 0, 0, 0, 0, 0);
     }
 
-    public static Boolean impale(PlayerEntity player, ItemStack item, Integer baseCooldown, Integer maxCooldown, Integer iterations, ParticleEffect particle) {
+    public static Boolean impale(PlayerEntity player, ItemStack item, Integer baseCooldown, Integer maxCooldown, Integer iterations, Integer intervalls, ParticleEffect particle) {
         player.getItemCooldownManager().set(item, 2);
-        if (selectClosestEntity(player, 5d) instanceof LivingEntity selectedEntity) {
+        if (selectClosestEntity(player, 5d) instanceof LivingEntity selectedEntity && impaled.stream().noneMatch(impaledContext -> impaledContext.livingEntity().equals(selectedEntity))) {
             player.getItemCooldownManager().set(item, maxCooldown);
             selectedEntity.requestTeleport(selectedEntity.getX(), selectedEntity.getY() + 5, selectedEntity.getZ());
-            impaled.add(new ImpaledContext(player, selectedEntity, particle, iterations, item));
+            impaled.add(new ImpaledContext(player, selectedEntity, particle, iterations, intervalls));
             return true;
-        } else player.getItemCooldownManager().set(item, baseCooldown - 2);
+        } else player.getItemCooldownManager().set(item, baseCooldown);
         return false;
     }
 
@@ -118,9 +120,17 @@ public class ModMethods {
 		if (list != null) ServerPlayNetworking.send(player, new ModPackets.SpellHotbarListS2CPacket(list.stream().map(id -> new ItemStack(Registries.ITEM.get(id))).toList()));
 	}
 
-	public record ImpaledContext(PlayerEntity player, LivingEntity livingEntity, ParticleEffect particle, Integer iterations, ItemStack item) {
-		public ImpaledContext(ImpaledContext context, Integer iterations, ItemStack item) {
-			this(context.player(), context.livingEntity(), context.particle(), iterations, item);
+	public static @NotNull Hand getHandFromStack(LivingEntity user, ItemStack stack) {
+		return Arrays.stream(Hand.values()).filter(hand -> user.getStackInHand(hand).equals(stack)).findFirst().orElse(Hand.MAIN_HAND);
+	}
+
+	public record ImpaledContext(PlayerEntity player, LivingEntity livingEntity, ParticleEffect particle, Integer iterations, Integer intervalls) {
+		public ImpaledContext(ImpaledContext context, Integer iterations, Integer intervalls) {
+			this(context.player(), context.livingEntity(), context.particle(), iterations, intervalls);
 		}
+	}
+
+	public static <T> LinkedList<T> makeMutable(List<T> immutable){
+		return immutable == null? new LinkedList<>() : new LinkedList<>(immutable);
 	}
 }

@@ -8,12 +8,14 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.registry.Registries;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.text.Text;
+import net.minecraft.util.Identifier;
+import net.spit365.lulasmod.custom.item.spell.ConjuringItem;
 
 import java.util.*;
 import static net.minecraft.server.command.CommandManager.literal;
-import static net.spit365.lulasmod.mod.ModItems.tailedExclusive;
 
 public class ModCommands {
     public static void init(){
@@ -24,7 +26,9 @@ public class ModCommands {
                     PlayerEntity player = context.getSource().getPlayer();
                     if (player != null && player.getCommandTags().contains("tailed")){
                         Set<Boolean> booleanLinkedList = new HashSet<>();
-                        for (Item item : tailedExclusive) {
+                        for (Identifier id : ModSpells.SpellTabItems) {
+							Item item = Registries.ITEM.get(id);
+							if (!(item instanceof ConjuringItem)) continue;
                             boolean b = ModMethods.getInventoryStack(player, item) == null;
                             if (b) player.giveItemStack(new ItemStack(item));
                             booleanLinkedList.add(b);
@@ -36,7 +40,6 @@ public class ModCommands {
                 })
 
             );
-
             dispatcher.register(literal("applyBleed").then(CommandManager.argument("targets", EntityArgumentType.entities()).then(CommandManager.argument("seconds", IntegerArgumentType.integer()).executes(context ->  {
                 for (Entity e : EntityArgumentType.getEntities(context, "targets")) if (e instanceof LivingEntity)
                     ModMethods.applyBleed((LivingEntity) e, IntegerArgumentType.getInteger(context, "seconds") * 20);

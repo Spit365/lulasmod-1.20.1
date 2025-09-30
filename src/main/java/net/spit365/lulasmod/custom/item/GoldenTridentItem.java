@@ -16,7 +16,7 @@ public class GoldenTridentItem extends TridentItem {
     public ActionResult use(World world, PlayerEntity player, Hand hand){
         return  !world.isClient() &&
                 player.isCreative() &&
-                ModMethods.impale(player, player.getStackInHand(hand), 20, 200, Integer.MAX_VALUE, ModParticles.GOLDEN_SHIMMER)?
+                ModMethods.impale(player, player.getStackInHand(hand), 20, 200, Integer.MAX_VALUE, 5, ModParticles.GOLDEN_SHIMMER)?
                     ActionResult.SUCCESS:
                     ActionResult.PASS;
     }

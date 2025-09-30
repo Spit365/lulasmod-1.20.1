@@ -1,5 +1,7 @@
 package net.spit365.lulasmod.mod;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gl.RenderPipelines;
@@ -12,10 +14,12 @@ import net.spit365.lulasmod.custom.SpellHotbar;
 
 import java.util.Arrays;
 import java.util.LinkedList;
+import java.util.List;
 
+@Environment(EnvType.CLIENT)
 public class ModGui {
 	private static final Identifier SPELL_HOTBAR_TEXTURE = Identifier.of(Lulasmod.MOD_ID, "textures/gui/spell_hotbar.png");
-	public static final LinkedList<ItemStack> SPELL_HOTBAR_LIST = new LinkedList<>();
+	public static List<ItemStack> SPELL_HOTBAR_LIST = new LinkedList<>();
 	public static void init(){
 		HudElementRegistry.addFirst(Identifier.of(Lulasmod.MOD_ID, "spell_hotbar"), (context, renderTickCounter) -> {
 			PlayerEntity player = MinecraftClient.getInstance().player;

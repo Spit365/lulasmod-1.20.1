@@ -36,8 +36,6 @@ public class ModItems {
 		return true;
 	}, 2, 1), new Item.Settings().maxCount(1));
 
-	public static final List<Item> tailedExclusive = List.of(ModItems.HELLISH_SEAL, ModSpells.SLASH_SPELL, ModSpells.BLOOD_SPELL, ModSpells.POCKET_SPELL);
-
 	public static final ItemGroup LULAS_GROUP = RegisterHelper.itemGroup("lulasmod_group", ModItems.SMOKE_BOMB, ModItems.CreativeTabItems);
 	public static final ItemGroup SPELLS_GROUP = RegisterHelper.itemGroup("lulasmod_spells", ModSpells.HOME_SPELL, ModSpells.SpellTabItems);
 

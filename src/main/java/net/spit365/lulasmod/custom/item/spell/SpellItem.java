@@ -1,4 +1,4 @@
-package net.spit365.lulasmod.custom.item;
+package net.spit365.lulasmod.custom.item.spell;
 
 import net.minecraft.component.type.TooltipDisplayComponent;
 import net.minecraft.entity.player.PlayerEntity;
@@ -15,24 +15,17 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
 import net.minecraft.world.World;
-import net.spit365.lulasmod.Lulasmod;
+import net.spit365.lulasmod.custom.item.SpellBookItem;
 import net.spit365.lulasmod.mod.ModData;
+import net.spit365.lulasmod.mod.ModMethods;
 
-import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Consumer;
 
 public class SpellItem extends Item {
 	public final Spell spell;
-    protected SoundEvent sound = SoundEvents.BLOCK_RESPAWN_ANCHOR_CHARGE;
 
-    public SpellItem(Settings settings, Spell spell, SoundEvent soundEvent) {
-        super(settings);
-		this.spell = spell;
-        this.sound = soundEvent;
-
-    }
-    public SpellItem(Settings settings, Spell spell) {
+	public SpellItem(Settings settings, Spell spell) {
         super(settings);
 		this.spell = spell;
     }
@@ -43,12 +36,8 @@ public class SpellItem extends Item {
     public ActionResult use(World world, PlayerEntity player, Hand hand){
         if (!world.isClient() && !(player.getOffHandStack().getItem() instanceof SpellBookItem)){
             player.getItemCooldownManager().set(player.getStackInHand(hand), 5);
-            world.playSound(null, player.getBlockPos(), sound, SoundCategory.PLAYERS);
-
-			List<Identifier> list = player.getAttached(ModData.EQUIPPED_SPELLS);
-			List<Identifier> mutable;
-			if (list != null) mutable = new LinkedList<>(list);
-			else mutable = new LinkedList<>();
+            world.playSound(null, player.getBlockPos(), getSound(), SoundCategory.PLAYERS);
+			List<Identifier> mutable = ModMethods.makeMutable(player.getAttached(ModData.EQUIPPED_SPELLS));
 			if (player.isSneaking()) mutable.remove(getSpellName());
 			else if (!mutable.contains(getSpellName())) mutable.add(getSpellName());
 			player.setAttached(ModData.EQUIPPED_SPELLS, mutable);
@@ -57,6 +46,7 @@ public class SpellItem extends Item {
         return ActionResult.PASS;
     }
     private Identifier getSpellName() {return Registries.ITEM.getId(this);}
+	protected SoundEvent getSound(){return SoundEvents.BLOCK_RESPAWN_ANCHOR_CHARGE;}
 
     @Override
     public void appendTooltip(ItemStack stack, TooltipContext context, TooltipDisplayComponent displayComponent, Consumer<Text> textConsumer, TooltipType type) {

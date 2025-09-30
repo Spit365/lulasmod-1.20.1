@@ -1,0 +1,50 @@
+package net.spit365.lulasmod.manager;
+
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.Vec3d;
+import net.spit365.lulasmod.Lulasmod;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
+
+public record MultiVec3d(Vec3d... vec3ds) {
+	public MultiVec3d(MultiVec3d original, Vec3d... overwrite) {
+		this(createFromOld(original, overwrite));
+	}
+
+	public MultiVec3d(List<Vec3d> vec3ds) {
+		this(vec3ds.toArray(Vec3d[]::new));
+	}
+
+	private static @NotNull Vec3d[] createFromOld(MultiVec3d original, Vec3d[] overwrite) {
+		Vec3d[] result = new Vec3d[overwrite.length + 1];
+		result[0] = original.get(0);
+		System.arraycopy(overwrite, 0, result, 1, overwrite.length);
+		return result;
+	}
+
+	public Vec3d get(int index){
+		return this.vec3ds[index];
+	}
+
+	public Stream<Vec3d> stream(){
+		return this.pairwiseSegments().flatMap(twoVec3d -> {
+			int detail = Math.max(1, (int) (twoVec3d.start().distanceTo(twoVec3d.end()) * Lulasmod.detail));
+			return IntStream.range(0, detail).mapToObj(j -> MathHelper.lerp((double) j / detail, twoVec3d.start(), twoVec3d.end()));
+		});
+	}
+
+	public record TwoVec3d(Vec3d start, Vec3d end){}
+	public Stream<TwoVec3d> pairwiseSegments(){
+		return IntStream.range(1, this.vec3ds.length).mapToObj(i -> new TwoVec3d(this.get(i -1), this.get(i)));
+	}
+
+	public static final Codec<MultiVec3d> CODEC =
+		RecordCodecBuilder.create(instance -> instance.group(
+			Vec3d.CODEC.listOf().fieldOf("vec3ds").forGetter(multiVec3d -> List.of(multiVec3d.vec3ds))
+		).apply(instance, MultiVec3d::new));
+}

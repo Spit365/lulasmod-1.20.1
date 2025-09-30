@@ -53,10 +53,7 @@ public class ModPackets {
 			}
 		});
 
-		ClientPlayNetworking.registerGlobalReceiver(ModPackets.SpellHotbarListS2CPacket.ID, (spellHotbarListS2CPacket, context) -> {
-			ModGui.SPELL_HOTBAR_LIST.clear();
-			ModGui.SPELL_HOTBAR_LIST.addAll(spellHotbarListS2CPacket.list());
-		});
+		ClientPlayNetworking.registerGlobalReceiver(ModPackets.SpellHotbarListS2CPacket.ID, (spellHotbarListS2CPacket, context) -> ModGui.SPELL_HOTBAR_LIST = spellHotbarListS2CPacket.list());
 		ClientPlayNetworking.registerGlobalReceiver(ModPackets.TimeForwardAnimationS2CPacket.ID, (cycleSpellHotbarC2SPacket, context) -> ModClientTick.timeForwardAnimator.start());
 	}
 }
