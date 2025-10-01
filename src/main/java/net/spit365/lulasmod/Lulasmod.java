@@ -23,8 +23,8 @@ public class Lulasmod implements ModInitializer, ClientModInitializer {
 	@Override
 	public void onInitialize() {
 		ModPackets.init();
-		ModItems.init();
 		ModSpells.init();
+		ModItems.init();
 		ModBlocks.init();
 		ModStatusEffects.init();
 		ModGamerules.init();

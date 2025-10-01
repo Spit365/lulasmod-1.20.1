@@ -20,15 +20,14 @@ import net.spit365.lulasmod.custom.entity.MalignityEntity;
 import net.spit365.lulasmod.custom.item.spell.ConjuringItem;
 import net.spit365.lulasmod.custom.item.spell.SorceryItem;
 import net.spit365.lulasmod.custom.item.spell.SpellItem;
+import net.spit365.lulasmod.custom.state.LinkedLightningPersistentState;
 import net.spit365.lulasmod.manager.MultiVec3d;
 import net.spit365.lulasmod.manager.RegisterHelper;
 
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static net.minecraft.sound.SoundEvents.*;
+import static net.spit365.lulasmod.custom.state.LinkedLightningPersistentState.lastLinks;
 
 public class ModSpells {
 	public static final List<Identifier> SpellTabItems = new LinkedList<>();
@@ -131,10 +130,7 @@ public class ModSpells {
 			return -1;
 		}
 
-		@Override
-		public int useEntity(ServerWorld world, PlayerEntity player, Hand hand, LivingEntity target, Float efficiencyMultiplier, Integer cooldownMultiplier) {
-			return -1;
-		}
+		@Override public int useEntity(ServerWorld world, PlayerEntity player, Hand hand, LivingEntity target, Float efficiencyMultiplier, Integer cooldownMultiplier) {return -1;}
 
 		@Override
 		public int cast(ServerWorld world, PlayerEntity player, Hand hand, Float efficiencyMultiplier, Integer cooldownMultiplier) {
@@ -151,41 +147,43 @@ public class ModSpells {
             return -1;
 		}
 
-		@Override
-		public int castTick(ServerWorld world, PlayerEntity player, Hand hand, int remainingUseTicks, Float efficiencyMultiplier, Integer cooldownMultiplier) {
-			return -1;
-		}
-
-		@Override
-		public int castStop(ServerWorld world, PlayerEntity player, Hand hand, int remainingUseTicks, Float efficiencyMultiplier, Integer cooldownMultiplier) {
-			return -1;
-		}
+		@Override public int castTick(ServerWorld world, PlayerEntity player, Hand hand, int remainingUseTicks, Float efficiencyMultiplier, Integer cooldownMultiplier) {return -1;}
+		@Override public int castStop(ServerWorld world, PlayerEntity player, Hand hand, int remainingUseTicks, Float efficiencyMultiplier, Integer cooldownMultiplier) {return -1;}
 	}));
     public static final SorceryItem CURRENT_SORCERY = RegisterHelper.spell("current", settings -> new SorceryItem(settings, new SorceryItem.Sorcery() {
-
-        @Override
-        public int hitEntity(ServerWorld world, PlayerEntity player, Hand hand, LivingEntity target, Float efficiencyMultiplier, Integer cooldownMultiplier) {
-            return -1;
-        }
-
-        @Override
-        public int useEntity(ServerWorld world, PlayerEntity player, Hand hand, LivingEntity target, Float efficiencyMultiplier, Integer cooldownMultiplier) {
-            return -1;
-        }
+		@Override public int hitEntity(ServerWorld world, PlayerEntity player, Hand hand, LivingEntity target, Float efficiencyMultiplier, Integer cooldownMultiplier) {return -1;}
+		@Override public int useEntity(ServerWorld world, PlayerEntity player, Hand hand, LivingEntity target, Float efficiencyMultiplier, Integer cooldownMultiplier) {return -1;}
 
         @Override
         public int cast(ServerWorld world, PlayerEntity player, Hand hand, Float efficiencyMultiplier, Integer cooldownMultiplier) {
-            return -1;
+            player.setCurrentHand(hand);
+			return 0;
         }
 
         @Override
         public int castTick(ServerWorld world, PlayerEntity player, Hand hand, int remainingUseTicks, Float efficiencyMultiplier, Integer cooldownMultiplier) {
-            return -1;
-        }
+			MultiVec3d lastLink = lastLinks.get(player);
+			int maxDistance = 100;
+			Vec3d raycast = player.raycast(maxDistance, 1, false).getPos();
+			Vec3d eyePos = player.getEyePos();
+			boolean failedResult = raycast.distanceTo(eyePos) >= maxDistance;
+			if (lastLink == null) {
+				if (failedResult) return -1;
+				lastLinks.put(player, new MultiVec3d(raycast, raycast));
+			}else{
+				MultiVec3d value = new MultiVec3d(lastLink, !failedResult? raycast : eyePos.add(player.getRotationVec(1).normalize().multiply(eyePos.distanceTo(lastLink.get(0)))));
+				lastLinks.put(player, value);
+				LinkedLightningPersistentState linkedLightnings = LinkedLightningPersistentState.get(world);
+				linkedLightnings.remove(lastLink);
+				linkedLightnings.add(value);
+			}
+			return 0;
+		}
 
         @Override
         public int castStop(ServerWorld world, PlayerEntity player, Hand hand, int remainingUseTicks, Float efficiencyMultiplier, Integer cooldownMultiplier) {
-            return -1;
+			lastLinks.remove(player);
+			return 100;
         }
     }));
 

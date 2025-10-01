@@ -1,7 +1,9 @@
 package net.spit365.lulasmod.mod;
 
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.block.Blocks;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
@@ -9,18 +11,28 @@ import net.minecraft.entity.mob.EndermanEntity;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.sound.SoundCategory;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
 import net.spit365.lulasmod.custom.SpellHotbar;
 import net.spit365.lulasmod.custom.entity.ParticleProjectileEntity;
+import net.spit365.lulasmod.custom.state.LinkedLightningPersistentState;
+import net.spit365.lulasmod.manager.MultiVec3d;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import static net.spit365.lulasmod.mod.ModMethods.impaled;
 
 public class ModServerTick {
 	private static int impaledCounter = 0;
+	private static final int CURRENT_UPDATE_RANGE = 1000000;
 
     public static void init(){
 		ServerTickEvents.END_SERVER_TICK.register(input -> {
@@ -91,6 +103,45 @@ public class ModServerTick {
 				}
 			}));
 
+			for (ServerWorld serverWorld : input.getWorlds()){
+				LinkedLightningPersistentState linkedLightningPersistentState = LinkedLightningPersistentState.get(serverWorld);
+				Set<MultiVec3d> links = linkedLightningPersistentState.getLinks();
+
+				outerloop:
+				for (MultiVec3d multiVec3d : links) {
+					if(multiVec3d.pairwiseSegments().allMatch(twoVec3d -> twoVec3d.start().distanceTo(twoVec3d.end()) < 0.5d)){
+						linkedLightningPersistentState.remove(multiVec3d);
+						break;
+					}
+					Vec3d[] laser = multiVec3d.stream().toArray(Vec3d[]::new);
+					for (int i = 1; i < laser.length; i++) {
+						List<Entity> otherEntities = serverWorld.getOtherEntities(null, new Box(laser[i - 1], laser[i]));
+						if (!otherEntities.isEmpty()) {
+							otherEntities.forEach(entity -> {
+								serverWorld.playSound(entity, entity.getX(), entity.getY(), entity.getZ(), SoundEvents.ENTITY_LIGHTNING_BOLT_THUNDER, SoundCategory.PLAYERS);
+								entity.damage(serverWorld, serverWorld.getDamageSources().lightningBolt(), 10);
+							});
+							links.remove(multiVec3d);
+							Set<LivingEntity> livingEntitySet = new HashSet<>();
+							LinkedLightningPersistentState.lastLinks.entrySet().removeIf(entityMultiVec3dEntry -> {
+								boolean result = entityMultiVec3dEntry.getValue().equals(multiVec3d);
+								if (result && entityMultiVec3dEntry.getKey() instanceof LivingEntity livingEntity) livingEntitySet.add(livingEntity);
+								return result;
+							});
+							livingEntitySet.forEach(LivingEntity::stopUsingItem);
+							break outerloop;
+						}
+					}
+				}
+
+				serverWorld.getPlayers().forEach(serverPlayer ->
+					ServerPlayNetworking.send(serverPlayer, new ModPackets.LightningLinkS2CPacket(
+						links.stream().filter(multiVec3d ->
+							Arrays.stream(multiVec3d.vec3ds()).anyMatch(vec3d -> serverPlayer.getPos().isInRange(vec3d, CURRENT_UPDATE_RANGE))
+						).collect(Collectors.toSet())
+					))
+				);
+			}
 		});
     }
 }
