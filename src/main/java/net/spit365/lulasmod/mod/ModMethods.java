@@ -1,6 +1,8 @@
 package net.spit365.lulasmod.mod;
 
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.minecraft.client.render.OverlayTexture;
+import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.StatusEffectInstance;
@@ -23,6 +25,7 @@ import net.minecraft.world.World;
 import net.spit365.lulasmod.Lulasmod;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.joml.Matrix4f;
 
 import java.util.*;
 
@@ -133,4 +136,20 @@ public class ModMethods {
 	public static <T> LinkedList<T> makeMutable(List<T> immutable){
 		return immutable == null? new LinkedList<>() : new LinkedList<>(immutable);
 	}
+
+    public static void addBillboardQuad(VertexConsumer vc, Matrix4f matrix, Vec3d p0, Vec3d p1, Vec3d offset, int segmentIndex) {
+        float u1 = segmentIndex + 1;
+        float v0 = 0;
+        float v1 = 1;
+
+        Vec3d p0a = p0.add(offset);
+        Vec3d p0b = p0.subtract(offset);
+        Vec3d p1a = p1.add(offset);
+        Vec3d p1b = p1.subtract(offset);
+
+        vc.vertex(matrix, (float) p0a.x, (float) p0a.y, (float) p0a.z).color(255, 255, 255, 255).texture(segmentIndex, v0).overlay(OverlayTexture.DEFAULT_UV).light(0xF000F0, 0xF000F0).normal(0, 1, 0);
+        vc.vertex(matrix, (float) p0b.x, (float) p0b.y, (float) p0b.z).color(255, 255, 255, 255).texture(segmentIndex, v1).overlay(OverlayTexture.DEFAULT_UV).light(0xF000F0, 0xF000F0).normal(0, 1, 0);
+        vc.vertex(matrix, (float) p1b.x, (float) p1b.y, (float) p1b.z).color(255, 255, 255, 255).texture(u1, v1).overlay(OverlayTexture.DEFAULT_UV).light(0xF000F0, 0xF000F0).normal(0, 1, 0);
+        vc.vertex(matrix, (float) p1a.x, (float) p1a.y, (float) p1a.z).color(255, 255, 255, 255).texture(u1, v0).overlay(OverlayTexture.DEFAULT_UV).light(0xF000F0, 0xF000F0).normal(0, 1, 0);
+    }
 }
