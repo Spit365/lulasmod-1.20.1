@@ -25,6 +25,7 @@ import net.spit365.lulasmod.manager.MultiVec3d;
 import net.spit365.lulasmod.manager.RegisterHelper;
 
 import java.util.*;
+import java.util.stream.StreamSupport;
 
 import static net.minecraft.sound.SoundEvents.*;
 import static net.spit365.lulasmod.custom.state.LinkedLightningPersistentState.lastLinks;
@@ -184,6 +185,51 @@ public class ModSpells {
         public int castStop(ServerWorld world, PlayerEntity player, Hand hand, int remainingUseTicks, Float efficiencyMultiplier, Integer cooldownMultiplier) {
 			lastLinks.remove(player);
 			return 100;
+        }
+    }));
+    public static final SorceryItem KINESIS_SORCERY = RegisterHelper.spell("kinesis", settings -> new SorceryItem(settings, new SorceryItem.Sorcery() {
+        private static final HashMap<Entity, List<Entity>> selectedEntities = new HashMap<>();
+
+        @Override
+        public int hitEntity(ServerWorld world, PlayerEntity player, Hand hand, LivingEntity target, Float efficiencyMultiplier, Integer cooldownMultiplier) {
+            player.addVelocity(player.getPos().subtract(target.getPos()).normalize().multiply(5));
+            player.fallDistance = 0;
+            player.velocityModified = true;
+            return 0;
+        }
+
+        @Override public int useEntity(ServerWorld world, PlayerEntity player, Hand hand, LivingEntity target, Float efficiencyMultiplier, Integer cooldownMultiplier) {return -1;}
+
+        @Override
+        public int cast(ServerWorld world, PlayerEntity player, Hand hand, Float efficiencyMultiplier, Integer cooldownMultiplier) {
+            player.setCurrentHand(hand);
+            if (selectedEntities.get(player) == null){
+                selectedEntities.put(player, selectEntities(world, player.getEyePos(), player.getRotationVec(1).normalize()));
+                return 0;
+            }
+            return -1;
+        }
+
+        @Override public int castTick(ServerWorld world, PlayerEntity player, Hand hand, int remainingUseTicks, Float efficiencyMultiplier, Integer cooldownMultiplier) {return -1;}
+
+        @Override
+        public int castStop(ServerWorld world, PlayerEntity player, Hand hand, int remainingUseTicks, Float efficiencyMultiplier, Integer cooldownMultiplier) {
+            List<Entity> selectedEntities = this.selectedEntities.remove(player);
+            if (selectedEntities != null && !selectedEntities.isEmpty()) {
+                for (Entity selectedEntity : selectedEntities) {
+                    Vec3d relativeEntityCoordinates = selectedEntity.getPos().subtract(player.getPos());
+                    selectedEntity.addVelocity(player.getRotationVec(1).normalize().multiply(relativeEntityCoordinates.length()).subtract(relativeEntityCoordinates).multiply(0.25));
+                    selectedEntity.velocityModified = true;
+                }
+                return 0;
+            }
+            return -1;
+        }
+
+        private static List<Entity> selectEntities(ServerWorld world, Vec3d center, Vec3d rotation){
+            return StreamSupport.stream(world.iterateEntities().spliterator(), false).filter(entity ->
+                    rotation.dotProduct(entity.getPos().subtract(center).normalize()) >= Math.cos(Math.toRadians(20))
+            ).toList();
         }
     }));
 
