@@ -18,11 +18,13 @@ import net.spit365.lulasmod.Lulasmod;
 import net.spit365.lulasmod.custom.SpellHotbar;
 import net.spit365.lulasmod.manager.MultiVec3d;
 import net.spit365.lulasmod.manager.TimeForwardAnimator;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Supplier;
 
 public class ModPackets {
     public static final Set<MultiVec3d> linkedLightnings = new HashSet<>();
@@ -37,27 +39,35 @@ public class ModPackets {
 	public record TimeForwardAnimationS2CPacket() implements CustomPayload {
 		@Override public Id<? extends CustomPayload> getId() {return ID;}
 		public static final Id<TimeForwardAnimationS2CPacket> ID = new Id<>(Identifier.of(Lulasmod.MOD_ID, "time_forward_animation"));
-		public static final PacketCodec<Object, TimeForwardAnimationS2CPacket> CODEC = PacketCodec.of((value, buf) -> {}, buf -> new TimeForwardAnimationS2CPacket());
+		public static final PacketCodec<Object, TimeForwardAnimationS2CPacket> CODEC = getEmptyCodec(TimeForwardAnimationS2CPacket::new);
 	}
-    public record LightningLinkS2CPacket(Set<MultiVec3d> linkedLightning) implements CustomPayload {
+	public record LightningLinkS2CPacket(Set<MultiVec3d> linkedLightning) implements CustomPayload {
         @Override public Id<? extends CustomPayload> getId() {return ID;}
         public static final Id<LightningLinkS2CPacket> ID = new Id<>(Identifier.of(Lulasmod.MOD_ID, "lightning_links"));
-        public static final Codec<Set<MultiVec3d>> MULTI_VEC3D_SET_CODEC = MultiVec3d.CODEC.listOf().xmap(HashSet::new, ArrayList::new);
-        public static final PacketCodec<ByteBuf, Set<MultiVec3d>> PACKET_CODEC = new PacketCodec<>() {
-            @Override public Set<MultiVec3d> decode(ByteBuf byteBuf) {
-                return new PacketByteBuf(byteBuf).decodeAsJson(MULTI_VEC3D_SET_CODEC);
-            }
-            @Override public void encode(ByteBuf byteBuf, Set<MultiVec3d> multiVec3DSet) {
-                new PacketByteBuf(byteBuf).encodeAsJson(MULTI_VEC3D_SET_CODEC, multiVec3DSet);
-            }
-        };
-        public static final PacketCodec<RegistryByteBuf, LightningLinkS2CPacket> CODEC = PacketCodec.tuple(PACKET_CODEC, LightningLinkS2CPacket::linkedLightning, LightningLinkS2CPacket::new);
-    }
+		public static final PacketCodec<RegistryByteBuf, LightningLinkS2CPacket> CODEC =
+			PacketCodec.of(
+				(value, buf) -> new PacketByteBuf(buf).encodeAsJson(
+					MultiVec3d.CODEC.listOf().xmap(HashSet::new, ArrayList::new),
+					value.linkedLightning()
+				),
+				buf -> new LightningLinkS2CPacket(
+					new PacketByteBuf(buf).decodeAsJson(
+						MultiVec3d.CODEC.listOf().xmap(HashSet::new, ArrayList::new)
+					)
+				)
+			);
+
+	}
 
 	public record CycleSpellHotbarC2SPacket() implements CustomPayload {
 		@Override public Id<? extends CustomPayload> getId() {return ID;}
 		public static final Id<CycleSpellHotbarC2SPacket> ID = new Id<>(Identifier.of(Lulasmod.MOD_ID, "cycle_spell_hotbar"));
-		public static final PacketCodec<Object, CycleSpellHotbarC2SPacket> CODEC = PacketCodec.of((value, buf) -> {}, buf -> new CycleSpellHotbarC2SPacket());
+		public static final PacketCodec<Object, CycleSpellHotbarC2SPacket> CODEC = getEmptyCodec(CycleSpellHotbarC2SPacket::new);
+	}
+	public record TailedContractC2SPacket() implements CustomPayload {
+		@Override public Id<? extends CustomPayload> getId() {return ID;}
+		public static final Id<TailedContractC2SPacket> ID = new Id<>(Identifier.of(Lulasmod.MOD_ID, "tailed_contract"));
+		public static final PacketCodec<Object, TailedContractC2SPacket> CODEC = getEmptyCodec(TailedContractC2SPacket::new);
 	}
 
 	public static void init(){
@@ -67,7 +77,8 @@ public class ModPackets {
 
 		PayloadTypeRegistry.playC2S().register(CycleSpellHotbarC2SPacket.ID, CycleSpellHotbarC2SPacket.CODEC);
 
-		ServerPlayNetworking.registerGlobalReceiver(ModPackets.CycleSpellHotbarC2SPacket.ID, (cycleSpellHotbarC2SPacket, context) -> {
+
+		ServerPlayNetworking.registerGlobalReceiver(CycleSpellHotbarC2SPacket.ID, (cycleSpellHotbarC2SPacket, context) -> {
 			ServerPlayerEntity player = context.player();
 			for (Hand hand : Hand.values()) if (player.getStackInHand(hand).getItem() instanceof SpellHotbar item){
 				item.onCycle(player);
@@ -75,11 +86,16 @@ public class ModPackets {
 			}
 		});
 
-		ClientPlayNetworking.registerGlobalReceiver(ModPackets.SpellHotbarListS2CPacket.ID, (spellHotbarListS2CPacket, context) -> ModGui.SPELL_HOTBAR_LIST = spellHotbarListS2CPacket.list());
-		ClientPlayNetworking.registerGlobalReceiver(ModPackets.TimeForwardAnimationS2CPacket.ID, (cycleSpellHotbarC2SPacket, context) -> TimeForwardAnimator.start(context.client().world));
+		ClientPlayNetworking.registerGlobalReceiver(SpellHotbarListS2CPacket.ID, (spellHotbarListS2CPacket, context) -> ModGui.SPELL_HOTBAR_LIST = spellHotbarListS2CPacket.list());
+		ClientPlayNetworking.registerGlobalReceiver(TimeForwardAnimationS2CPacket.ID, (cycleSpellHotbarC2SPacket, context) -> TimeForwardAnimator.start(context.client().world));
         ClientPlayNetworking.registerGlobalReceiver(LightningLinkS2CPacket.ID, (payload, context) -> {
             linkedLightnings.clear();
             linkedLightnings.addAll(payload.linkedLightning());
         });
+	}
+
+	private static @NotNull <T extends CustomPayload> PacketCodec<Object, T> getEmptyCodec(Supplier<T> packet) {
+		return PacketCodec.of((value, buf) -> {
+		}, buf -> packet.get());
 	}
 }
