@@ -25,7 +25,8 @@ public class ModClientEvents {
 	public static void init() {
         TimeForwardAnimator.init();
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
-            if (ModKeybinds.CYCLE_SPELL_KEY.wasPressed() && client.player != null) ClientPlayNetworking.send(new ModPackets.CycleSpellHotbarC2SPacket());
+            if (ModKeybinds.CYCLE_SPELL_KEY.wasPressed()) ClientPlayNetworking.send(new ModPackets.CycleSpellHotbarC2SPacket());
+            if (ModKeybinds.TAILED_CONTRACT_KEY.wasPressed()) ClientPlayNetworking.send(new ModPackets.TailedContractC2SPacket());
             TimeForwardAnimator.tick(client.world);
         });
         WorldRenderEvents.AFTER_ENTITIES.register(context -> {

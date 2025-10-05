@@ -5,17 +5,21 @@ import io.netty.buffer.ByteBuf;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.RegistryByteBuf;
 import net.minecraft.network.codec.PacketCodec;
 import net.minecraft.network.codec.PacketCodecs;
 import net.minecraft.network.packet.CustomPayload;
+import net.minecraft.registry.Registries;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.text.Text;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
 import net.spit365.lulasmod.Lulasmod;
 import net.spit365.lulasmod.custom.SpellHotbar;
+import net.spit365.lulasmod.custom.item.spell.ConjuringItem;
 import net.spit365.lulasmod.manager.MultiVec3d;
 import net.spit365.lulasmod.manager.TimeForwardAnimator;
 import org.jetbrains.annotations.NotNull;
@@ -76,6 +80,7 @@ public class ModPackets {
         PayloadTypeRegistry.playS2C().register(LightningLinkS2CPacket.ID, LightningLinkS2CPacket.CODEC);
 
 		PayloadTypeRegistry.playC2S().register(CycleSpellHotbarC2SPacket.ID, CycleSpellHotbarC2SPacket.CODEC);
+		PayloadTypeRegistry.playC2S().register(TailedContractC2SPacket.ID, TailedContractC2SPacket.CODEC);
 
 
 		ServerPlayNetworking.registerGlobalReceiver(CycleSpellHotbarC2SPacket.ID, (cycleSpellHotbarC2SPacket, context) -> {
@@ -83,6 +88,22 @@ public class ModPackets {
 			for (Hand hand : Hand.values()) if (player.getStackInHand(hand).getItem() instanceof SpellHotbar item){
 				item.onCycle(player);
 				break;
+			}
+		});
+		ServerPlayNetworking.registerGlobalReceiver(TailedContractC2SPacket.ID, (tailedContractC2SPacket, context) -> {
+			ServerPlayerEntity player = context.player();
+			if (player != null) {
+				if (player.getCommandTags().contains("tailed")){
+					boolean shouldDisplayMessage = true;
+					for (Identifier id : ModSpells.SpellTabItems) {
+						Item item = Registries.ITEM.get(id);
+						if (!(item instanceof ConjuringItem)) continue;
+						boolean notInInventory = ModMethods.getInventoryStack(player, item) == null;
+						if (notInInventory) player.giveItemStack(new ItemStack(item));
+						else if (shouldDisplayMessage) shouldDisplayMessage = false;
+					}
+					if (shouldDisplayMessage) player.sendMessage(Text.translatable("notify.lulasmod.command.contract_success"), false);
+				} else player.sendMessage(Text.translatable("notify.lulasmod.command.contract_fail"), false);
 			}
 		});
 
