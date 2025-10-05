@@ -6,18 +6,15 @@ import net.minecraft.command.argument.EntityArgumentType;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.server.command.CommandManager;
-
-import java.util.*;
-import static net.minecraft.server.command.CommandManager.literal;
+import static net.minecraft.server.command.CommandManager.*;
 
 public class ModCommands {
     public static void init(){
         CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
             int r = 0;
             dispatcher.register(literal("bleed")
-				.then(CommandManager.argument("targets", EntityArgumentType.entities())
-					.then(CommandManager.argument("seconds", IntegerArgumentType.integer())
+				.then(argument("targets", EntityArgumentType.entities())
+					.then(argument("seconds", IntegerArgumentType.integer())
 						.executes(context ->  {
                 			for (Entity e : EntityArgumentType.getEntities(context, "targets")) if (e instanceof LivingEntity)
                    				ModMethods.applyBleed((LivingEntity) e, IntegerArgumentType.getInteger(context, "seconds") * 20);

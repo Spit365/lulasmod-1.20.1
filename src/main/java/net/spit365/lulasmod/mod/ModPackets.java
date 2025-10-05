@@ -1,7 +1,5 @@
 package net.spit365.lulasmod.mod;
 
-import com.mojang.serialization.Codec;
-import io.netty.buffer.ByteBuf;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;

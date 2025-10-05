@@ -48,7 +48,7 @@ GAZEBO
             System.err.println("Pedestal not found at expected position: " + pedestalPos);
         }
     }
-THINGS THAT NEED TO BE FIXED BUT I DONT WANT TO
+THINGS THAT NEED TO BE FIXED BUT I DON'T WANT TO
     Trident item model
     update select method
     fix sharp tome enchants
