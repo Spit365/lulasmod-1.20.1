@@ -23,11 +23,10 @@ public class ModClientTick {
     private static final Identifier TEXTURE = Identifier.ofVanilla("textures/entity/creeper/creeper_armor.png");
 
 	public static void init() {
+        TimeForwardAnimator.init();
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             if (ModKeybinds.CYCLE_SPELL_KEY.wasPressed() && client.player != null) ClientPlayNetworking.send(new ModPackets.CycleSpellHotbarC2SPacket());
-            ClientWorld world = client.world;
-			if (timeForwardAnimator == null && world != null) timeForwardAnimator = new TimeForwardAnimator(world);
-			if (timeForwardAnimator != null) timeForwardAnimator.tick();
+            TimeForwardAnimator.tick(client.world);
         });
         WorldRenderEvents.AFTER_ENTITIES.register(context -> {
             MinecraftClient client = MinecraftClient.getInstance();

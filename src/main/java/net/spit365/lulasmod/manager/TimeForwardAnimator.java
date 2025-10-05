@@ -1,58 +1,62 @@
 package net.spit365.lulasmod.manager;
 
+import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext;
+import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
 import net.minecraft.client.world.ClientWorld;
+import net.minecraft.server.MinecraftServer;
+import net.spit365.lulasmod.Lulasmod;
 
 public final class TimeForwardAnimator {
-    private final ClientWorld world;
-    private long baseAbsTime;
-    private long baseDayTime;
-    private long forwardCounter = 0;
-    private boolean running = false;
+    private static long displayTime;
+    private static int animationDuration = 0;
+    private static boolean running = false;
+    private static final long DAY_LENGTH = 24000L;
 
-    public TimeForwardAnimator(ClientWorld world) {
-        this.world = world;
+    public static void init() {
+        WorldRenderEvents.START.register((context) -> {
+            if (running) update(context);
+        });
+        Lulasmod.LOGGER.info("init TFA");
     }
 
     private static long normDay(long t) {
-        long m = t % 24000L;
-        return m < 0 ? m + 24000L : m;
+        long m = t % DAY_LENGTH;
+        return m < 0 ? m + DAY_LENGTH : m;
     }
 
-    public void start() {
-        if (world == null || running) return;
+    public static void start(ClientWorld world) {
+        if (running) return;
         running = true;
-
-        baseAbsTime = world.getTime();
-        baseDayTime = world.getTimeOfDay();
-
-        world.setTime(baseAbsTime, baseDayTime, false);
-        forwardCounter = 0;
+        displayTime = world.getTimeOfDay();
+        animationDuration = 0;
+        Lulasmod.LOGGER.info("TFA start");
     }
 
-    public void tick() {
+    public static void tick(ClientWorld world) {
         if (!running || world == null) return;
-
-        long day = baseDayTime;
-
-        if (forwardCounter < 300) {
-            forwardCounter += 2;
-            day = normDay(day + forwardCounter);
-        } else if (forwardCounter < 600) {
-            forwardCounter += 1;
-            day = normDay(day + 1200);
-        } else {
-            stopAndResync();
-            return;
-        }
-        long abs = baseAbsTime + forwardCounter;
-        world.setTime(abs, day, false);
+        MinecraftServer server = world.getServer();
+        if (server != null && server.isPaused()) return;
+        if (animationDuration <= 450)
+            displayTime += animationDuration;
+         else stop();
+        animationDuration += 1;
     }
 
-    public void stopAndResync() {
+    public static void update(WorldRenderContext context){
+        ClientWorld world = context.world();
         if (!running || world == null) return;
+        world.getLevelProperties().setTimeOfDay(normDay(
+                displayTime + (long) (animationDuration * context.tickCounter().getTickProgress(false))
+        ));
+    }
+
+    public static void stop() {
+        if (!running) return;
         running = false;
-        world.setTime(world.getTime(), world.getTimeOfDay(), true);
+        Lulasmod.LOGGER.info("TFA stop");
     }
 
-    public boolean isRunning() { return running; }
+    public static boolean isRunning() {
+        return running;
+    }
 }

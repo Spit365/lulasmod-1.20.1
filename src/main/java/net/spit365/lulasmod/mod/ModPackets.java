@@ -17,6 +17,7 @@ import net.minecraft.util.Identifier;
 import net.spit365.lulasmod.Lulasmod;
 import net.spit365.lulasmod.custom.SpellHotbar;
 import net.spit365.lulasmod.manager.MultiVec3d;
+import net.spit365.lulasmod.manager.TimeForwardAnimator;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -35,8 +36,8 @@ public class ModPackets {
 	}
 	public record TimeForwardAnimationS2CPacket() implements CustomPayload {
 		@Override public Id<? extends CustomPayload> getId() {return ID;}
-		public static final Id<CycleSpellHotbarC2SPacket> ID = new Id<>(Identifier.of(Lulasmod.MOD_ID, "time_forward_animation"));
-		public static final PacketCodec<Object, CycleSpellHotbarC2SPacket> CODEC = PacketCodec.of((value, buf) -> {}, buf -> new CycleSpellHotbarC2SPacket());
+		public static final Id<TimeForwardAnimationS2CPacket> ID = new Id<>(Identifier.of(Lulasmod.MOD_ID, "time_forward_animation"));
+		public static final PacketCodec<Object, TimeForwardAnimationS2CPacket> CODEC = PacketCodec.of((value, buf) -> {}, buf -> new TimeForwardAnimationS2CPacket());
 	}
     public record LightningLinkS2CPacket(Set<MultiVec3d> linkedLightning) implements CustomPayload {
         @Override public Id<? extends CustomPayload> getId() {return ID;}
@@ -75,7 +76,7 @@ public class ModPackets {
 		});
 
 		ClientPlayNetworking.registerGlobalReceiver(ModPackets.SpellHotbarListS2CPacket.ID, (spellHotbarListS2CPacket, context) -> ModGui.SPELL_HOTBAR_LIST = spellHotbarListS2CPacket.list());
-		ClientPlayNetworking.registerGlobalReceiver(ModPackets.TimeForwardAnimationS2CPacket.ID, (cycleSpellHotbarC2SPacket, context) -> ModClientTick.timeForwardAnimator.start());
+		ClientPlayNetworking.registerGlobalReceiver(ModPackets.TimeForwardAnimationS2CPacket.ID, (cycleSpellHotbarC2SPacket, context) -> TimeForwardAnimator.start(context.client().world));
         ClientPlayNetworking.registerGlobalReceiver(LightningLinkS2CPacket.ID, (payload, context) -> {
             linkedLightnings.clear();
             linkedLightnings.addAll(payload.linkedLightning());
