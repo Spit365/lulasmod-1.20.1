@@ -2,13 +2,11 @@ package net.spit365.lulasmod.custom.item.spell;
 
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundEvent;
 
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.Hand;
-import net.minecraft.world.World;
 
 public class SorceryItem extends SpellItem{
 	public final Sorcery sorcery;

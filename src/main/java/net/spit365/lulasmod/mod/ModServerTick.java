@@ -1,5 +1,6 @@
 package net.spit365.lulasmod.mod;
 
+import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.block.Blocks;
@@ -16,39 +17,36 @@ import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.World;
+import net.spit365.lulasmod.Lulasmod;
 import net.spit365.lulasmod.custom.SpellHotbar;
 import net.spit365.lulasmod.custom.entity.ParticleProjectileEntity;
 import net.spit365.lulasmod.custom.state.LinkedLightningPersistentState;
 import net.spit365.lulasmod.manager.MultiVec3d;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import static net.spit365.lulasmod.mod.ModMethods.impaled;
 
 public class ModServerTick {
-	private static int impaledCounter = 0;
-	private static final int CURRENT_UPDATE_RANGE = 1000000;
-
     public static void init(){
-		ServerTickEvents.END_SERVER_TICK.register(input -> {
-			for (ServerPlayerEntity player : input.getPlayerManager().getPlayerList()) {
+		ServerTickEvents.END_SERVER_TICK.register(server -> {
+			for (ServerPlayerEntity player : server.getPlayerManager().getPlayerList()) {
 				if (player.getCommandTags().contains("miner")) {
 					BlockPos playerPos = player.getBlockPos();
 					BlockPos closestPortal = null;
 					for (BlockPos pos : BlockPos.stream(
 						playerPos.add(-5, -5, -5),
 						playerPos.add(5, 5, 5)
-					).map(BlockPos::toImmutable).toList())
-						if ((
-							player.getWorld().getBlockState(pos).isOf(Blocks.END_PORTAL) ||
-								player.getWorld().getBlockState(pos).isOf(Blocks.NETHER_PORTAL)) &&
-							(closestPortal == null || pos.getSquaredDistance(playerPos) < closestPortal.getSquaredDistance(playerPos)
-							)) closestPortal = pos;
+					).toList())
+                        if ((
+                                player.getWorld().getBlockState(pos).isOf(Blocks.END_PORTAL) ||
+                                player.getWorld().getBlockState(pos).isOf(Blocks.NETHER_PORTAL) ) && (
+                                closestPortal == null ||
+                                pos.getSquaredDistance(playerPos) < closestPortal.getSquaredDistance(playerPos)
+                        )) closestPortal = pos;
 					if (closestPortal != null) {
 						ModMethods.outlineBox(Box.enclosing(closestPortal.add(-5, -5, -5), closestPortal.add(5, 5, 5)), player.getWorld(), ModParticles.GOLDEN_SHIMMER);
 						player.setVelocity(player.getPos().subtract(Vec3d.ofCenter(closestPortal)).normalize());
@@ -69,22 +67,22 @@ public class ModServerTick {
 				}
 			}
 
-			impaledCounter++;
-			for (ModMethods.ImpaledContext context : impaled) {
+			for (Map.Entry<ModMethods.ImpaledContext, Integer> impaledEntry : impaled.entrySet()) {
+                ModMethods.ImpaledContext context = impaledEntry.getKey();
+                Integer counter = impaledEntry.getValue();
 				LivingEntity victim = context.livingEntity();
 				if (context.iterations() > 0 && victim.isAlive()) {
 					if (victim instanceof EndermanEntity) victim.kill((ServerWorld) victim.getWorld());
 					victim.setVelocity(0, 0, 0);
-					if (impaledCounter >= context.intervalls()) {
-						impaledCounter = 0;
+					if (counter >= context.intervalDuration()) {
 						double radius = 5;
 						Vec3d pos = new Vec3d(Math.random() * radius - radius / 2, Math.random() * radius - radius / 2, Math.random() * radius - radius / 2).normalize().multiply(radius).add(victim.getPos());
 						context.player().setAttached(ModData.DAMAGE_DELAY, 0);
 						victim.getWorld().spawnEntity(new ParticleProjectileEntity(
 							victim.getWorld(), context.player(), pos, pos.subtract(victim.getEyePos()).multiply(-0.5), context.particle()));
 						impaled.remove(context);
-						impaled.add(new ModMethods.ImpaledContext(context, context.iterations() - 1, context.intervalls()));
-					}
+						impaled.put(new ModMethods.ImpaledContext(context, context.iterations() - 1, context.intervalDuration()), 0);
+					} else impaled.put(context, counter + 1);
 				} else {
 					impaled.remove(context);
 					context.player().removeAttached(ModData.DAMAGE_DELAY);
@@ -92,22 +90,21 @@ public class ModServerTick {
 				}
 			}
 
-			input.getWorlds().forEach(serverWorld -> StreamSupport.stream(serverWorld.iterateEntities().spliterator(), true).filter(entity -> entity instanceof LivingEntity && entity.getAttached(ModData.BLEED_VALUE) != null).map(LivingEntity.class::cast).forEach(entity -> {
-				Integer duration = entity.getAttached(ModData.BLEED_VALUE);
-				if (duration == null) return;
-				int min = Math.min((int) (Math.min(entity.getHealth(), entity.getMaxHealth()) * 60) - 1, 1200);
-				if (duration > min) {
-					entity.setAttached(ModData.BLEED_VALUE, duration - min);
-					entity.damage(serverWorld, ModDamageSources.BLOODSUCKING(entity), entity.getMaxHealth() * 0.15f + 10f);
-					serverWorld.spawnParticles(ParticleTypes.EFFECT, entity.getX(), entity.getY(), entity.getZ(), 5, 1, 1, 1, 1);
-				}
-			}));
+			for (ServerWorld serverWorld : server.getWorlds()){
+                StreamSupport.stream(serverWorld.iterateEntities().spliterator(), true).filter(entity -> entity instanceof LivingEntity && entity.getAttached(ModData.BLEED_VALUE) != null).map(LivingEntity.class::cast).forEach(entity -> {
+                    Integer duration = entity.getAttached(ModData.BLEED_VALUE);
+                    if (duration == null) return;
+                    int min = Math.min((int) (Math.min(entity.getHealth(), entity.getMaxHealth()) * 60) - 1, 1200);
+                    if (duration > min) {
+                        entity.setAttached(ModData.BLEED_VALUE, duration - min);
+                        entity.damage(serverWorld, ModDamageSources.BLOODSUCKING(entity), entity.getMaxHealth() * 0.15f + 10f);
+                        serverWorld.spawnParticles(ParticleTypes.EFFECT, entity.getX(), entity.getY(), entity.getZ(), 5, 1, 1, 1, 1);
+                    }
+                });
 
-			for (ServerWorld serverWorld : input.getWorlds()){
 				LinkedLightningPersistentState linkedLightningPersistentState = LinkedLightningPersistentState.get(serverWorld);
 				Set<MultiVec3d> links = linkedLightningPersistentState.getLinks();
-
-				outerloop:
+				linkLoop:
 				for (MultiVec3d multiVec3d : links) {
 					if(multiVec3d.pairwiseSegments().allMatch(twoVec3d -> twoVec3d.start().distanceTo(twoVec3d.end()) < 0.5d)){
 						linkedLightningPersistentState.remove(multiVec3d);
@@ -129,19 +126,30 @@ public class ModServerTick {
 								return result;
 							});
 							livingEntitySet.forEach(LivingEntity::stopUsingItem);
-							break outerloop;
+							break linkLoop;
 						}
 					}
 				}
-
 				serverWorld.getPlayers().forEach(serverPlayer ->
 					ServerPlayNetworking.send(serverPlayer, new ModPackets.LightningLinkS2CPacket(
 						links.stream().filter(multiVec3d ->
-							Arrays.stream(multiVec3d.vec3ds()).anyMatch(vec3d -> serverPlayer.getPos().isInRange(vec3d, CURRENT_UPDATE_RANGE))
+							Arrays.stream(multiVec3d.vec3ds()).anyMatch(vec3d -> serverPlayer.getPos().isInRange(vec3d, Lulasmod.CURRENT_UPDATE_RANGE))
 						).collect(Collectors.toSet())
 					))
 				);
 			}
 		});
+        ServerPlayerEvents.AFTER_RESPAWN.register((oldPlayer, newPlayer, alive) -> {
+            if (Objects.requireNonNull(newPlayer.getServer()).getGameRules().getBoolean(ModGamerules.NEW_DEATH_SYSTEM)) {
+                ServerWorld nether = newPlayer.getServer().getWorld(World.NETHER);
+                if (nether != null) {
+                    ServerPlayerEntity.Respawn respawn = newPlayer.getRespawn();
+                    BlockPos pos;
+                    if (respawn == null) pos = newPlayer.getBlockPos();
+                    else pos = respawn.pos();
+                    newPlayer.teleport(nether, pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5, Set.of(), newPlayer.getYaw(), newPlayer.getPitch(), false);
+                }
+            }
+        });
     }
 }

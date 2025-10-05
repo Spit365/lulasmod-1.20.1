@@ -5,7 +5,6 @@ import net.minecraft.client.render.OverlayTexture;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -30,7 +29,7 @@ import org.joml.Matrix4f;
 import java.util.*;
 
 public class ModMethods {
-    public static final LinkedList<ImpaledContext> impaled = new LinkedList<>();
+    public static final HashMap<ImpaledContext, Integer> impaled = new HashMap<>();
 
     public static @Nullable Entity selectClosestEntity(Entity selector, Double radius) {
         Vec3d selectionCenter = selector.getRotationVec(1).normalize().multiply(radius).add(selector.getPos());
@@ -100,10 +99,10 @@ public class ModMethods {
 
     public static Boolean impale(PlayerEntity player, ItemStack item, Integer baseCooldown, Integer maxCooldown, Integer iterations, Integer intervalls, ParticleEffect particle) {
         player.getItemCooldownManager().set(item, 2);
-        if (selectClosestEntity(player, 5d) instanceof LivingEntity selectedEntity && impaled.stream().noneMatch(impaledContext -> impaledContext.livingEntity().equals(selectedEntity))) {
+        if (selectClosestEntity(player, 5d) instanceof LivingEntity selectedEntity && impaled.keySet().stream().noneMatch(impaledContext -> impaledContext.livingEntity().equals(selectedEntity))) {
             player.getItemCooldownManager().set(item, maxCooldown);
             selectedEntity.requestTeleport(selectedEntity.getX(), selectedEntity.getY() + 5, selectedEntity.getZ());
-            impaled.add(new ImpaledContext(player, selectedEntity, particle, iterations, intervalls));
+            impaled.put(new ImpaledContext(player, selectedEntity, particle, iterations, intervalls), 0);
             return true;
         } else player.getItemCooldownManager().set(item, baseCooldown);
         return false;
@@ -127,9 +126,9 @@ public class ModMethods {
 		return Arrays.stream(Hand.values()).filter(hand -> user.getStackInHand(hand).equals(stack)).findFirst().orElse(Hand.MAIN_HAND);
 	}
 
-	public record ImpaledContext(PlayerEntity player, LivingEntity livingEntity, ParticleEffect particle, Integer iterations, Integer intervalls) {
-		public ImpaledContext(ImpaledContext context, Integer iterations, Integer intervalls) {
-			this(context.player(), context.livingEntity(), context.particle(), iterations, intervalls);
+	public record ImpaledContext(PlayerEntity player, LivingEntity livingEntity, ParticleEffect particle, Integer iterations, Integer intervalDuration) {
+		public ImpaledContext(ImpaledContext context, Integer iterations, Integer intervals) {
+			this(context.player(), context.livingEntity(), context.particle(), iterations, intervals);
 		}
 	}
 

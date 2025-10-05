@@ -14,7 +14,6 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
-import net.spit365.lulasmod.Lulasmod;
 import net.spit365.lulasmod.custom.entity.AmethystShardEntity;
 import net.spit365.lulasmod.custom.entity.MalignityEntity;
 import net.spit365.lulasmod.custom.item.spell.ConjuringItem;
@@ -139,7 +138,7 @@ public class ModSpells {
             Vec3d[] laser = new MultiVec3d(eyePos, eyePos.add(player.getRotationVec(1).normalize().multiply(25))).stream().toArray(Vec3d[]::new);
             for (int i = 1; i < laser.length; i++) {
                 Vec3d currentPos = laser[i];
-                world.spawnParticles(ParticleTypes.FLAME, currentPos.getX(), currentPos.getY(), currentPos.getZ(), 60 / Lulasmod.detail, 0.25, 0.25, 0.25, 0);
+                world.spawnParticles(ParticleTypes.FLAME, currentPos.getX(), currentPos.getY(), currentPos.getZ(), 60 / MultiVec3d.MULTI_VEC_DETAIL, 0.25, 0.25, 0.25, 0);
                 world.getOtherEntities(player, new Box(laser[i -1], currentPos)).forEach(entity -> {
                     entity.damage(world, world.getDamageSources().inFire(), 4);
                     entity.setOnFireFor(entity.getFireTicks() / 20f + 3);

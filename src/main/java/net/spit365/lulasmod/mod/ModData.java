@@ -24,7 +24,7 @@ public class ModData {
 	public static final AttachmentType<Integer> BLEED_VALUE = RegisterHelper.attachmentType("bleed_value", Codec.INT);
 
 	public record WorldBlockPos(RegistryKey<World> world, BlockPos blockPos){
-		public static Codec<WorldBlockPos> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+		public static final Codec<WorldBlockPos> CODEC = RecordCodecBuilder.create(instance -> instance.group(
 			Identifier.CODEC.fieldOf("world").xmap(id -> RegistryKey.of(RegistryKeys.WORLD, id), RegistryKey::getValue)
 				.forGetter(WorldBlockPos::world),
 			BlockPos.CODEC.fieldOf("blockPos")

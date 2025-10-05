@@ -51,3 +51,4 @@ GAZEBO
 THINGS THAT NEED TO BE FIXED BUT I DONT WANT TO
     Trident item model
     update select method
+    fix sharp tome enchants

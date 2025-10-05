@@ -24,9 +24,6 @@ public class SharpTomeItem extends Item{
             ArrowEntity arrow = new ArrowEntity(world, player, stack, paper);
             arrow.pickupType = PersistentProjectileEntity.PickupPermission.CREATIVE_ONLY;
             arrow.setVelocity(player, player.getPitch(), player.getYaw(), 0f, 3f, 1f);
-//            if (EnchantmentHelper.getLevel(Enchantments.POWER, stack) > 0) arrow.setDamage(arrow.getDamage() + (double)EnchantmentHelper.getLevel(Enchantments.POWER, stack) * 0.5 + 0.5);
-//            if (EnchantmentHelper.getLevel(Enchantments.PUNCH, stack) > 0) arrow.setPunch(EnchantmentHelper.getLevel(Enchantments.PUNCH, stack));
-//            if (EnchantmentHelper.getLevel(Enchantments.FLAME, stack) > 0) arrow.setOnFireFor(100);
             world.spawnEntity(arrow);
             player.incrementStat(Stats.USED.getOrCreateStat(this));
             return ActionResult.SUCCESS;

@@ -18,7 +18,7 @@ import org.joml.Matrix4f;
 
 import static net.spit365.lulasmod.mod.ModMethods.addBillboardQuad;
 
-public class ModClientTick {
+public class ModClientEvents {
 	public static TimeForwardAnimator timeForwardAnimator;
     private static final Identifier TEXTURE = Identifier.ofVanilla("textures/entity/creeper/creeper_armor.png");
 

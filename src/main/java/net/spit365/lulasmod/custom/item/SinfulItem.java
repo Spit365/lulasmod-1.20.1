@@ -3,7 +3,6 @@ package net.spit365.lulasmod.custom.item;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.ToolMaterial;
 import net.minecraft.util.Hand;
 import net.spit365.lulasmod.mod.ModMethods;
 
