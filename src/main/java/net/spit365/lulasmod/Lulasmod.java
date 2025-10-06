@@ -21,7 +21,8 @@ public class Lulasmod implements ModInitializer, ClientModInitializer {
 		ModGamerules.init();
 		ModData.init();
 		ModDamageSources.init();
-		ModServerTick.init();
+        ModStructures.init();
+		ModServerEvents.init();
 		ModCommands.init();
 
 		LOGGER.info("Initializing for {}", MOD_ID);

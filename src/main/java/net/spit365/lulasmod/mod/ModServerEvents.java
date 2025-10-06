@@ -1,6 +1,7 @@
 package net.spit365.lulasmod.mod;
 
 import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerChunkEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.block.Blocks;
@@ -10,6 +11,7 @@ import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.mob.EndermanEntity;
 import net.minecraft.particle.ParticleTypes;
+import net.minecraft.registry.Registries;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
@@ -21,6 +23,7 @@ import net.minecraft.world.World;
 import net.spit365.lulasmod.Lulasmod;
 import net.spit365.lulasmod.custom.SpellHotbar;
 import net.spit365.lulasmod.custom.entity.ParticleProjectileEntity;
+import net.spit365.lulasmod.custom.item.spell.ConjuringItem;
 import net.spit365.lulasmod.custom.state.LinkedLightningPersistentState;
 import net.spit365.lulasmod.manager.MultiVec3d;
 
@@ -30,7 +33,7 @@ import java.util.stream.StreamSupport;
 
 import static net.spit365.lulasmod.mod.ModMethods.impaled;
 
-public class ModServerTick {
+public class ModServerEvents {
     public static void init(){
 		ServerTickEvents.END_SERVER_TICK.register(server -> {
 			for (ServerPlayerEntity player : server.getPlayerManager().getPlayerList()) {
