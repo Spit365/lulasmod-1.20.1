@@ -25,6 +25,7 @@ import net.spit365.lulasmod.custom.SpellHotbar;
 import net.spit365.lulasmod.custom.entity.ParticleProjectileEntity;
 import net.spit365.lulasmod.custom.item.spell.ConjuringItem;
 import net.spit365.lulasmod.custom.state.LinkedLightningPersistentState;
+import net.spit365.lulasmod.custom.structures.GazeboOfSins;
 import net.spit365.lulasmod.manager.MultiVec3d;
 
 import java.util.*;
@@ -94,6 +95,8 @@ public class ModServerEvents {
 			}
 
 			for (ServerWorld serverWorld : server.getWorlds()){
+				GazeboOfSins.place(serverWorld);
+
                 StreamSupport.stream(serverWorld.iterateEntities().spliterator(), true).filter(entity -> entity instanceof LivingEntity && entity.getAttached(ModData.BLEED_VALUE) != null).map(LivingEntity.class::cast).forEach(entity -> {
                     Integer duration = entity.getAttached(ModData.BLEED_VALUE);
                     if (duration == null) return;
