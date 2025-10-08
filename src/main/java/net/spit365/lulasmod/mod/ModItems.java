@@ -21,6 +21,7 @@ public class ModItems {
 	public static final Item SHARP_TOME = RegisterHelper.item("sharp_tome", SharpTomeItem::new, new Item.Settings().maxCount(1).maxDamage(640));
 	public static final Item SINFUL = RegisterHelper.item("sinful", SinfulItem::new, new Item.Settings().sword(ToolMaterial.NETHERITE, 3, -2.4F).fireproof().maxCount(1).maxDamage(2500));
 	public static final Item SPELL_BOOK = RegisterHelper.item("spell_book", SpellBookItem::new, new Item.Settings().maxCount(1));
+    public static final Item PIN_SWORD = RegisterHelper.item("pin_sword", PinSwordItem::new, new Item.Settings().sword(ToolMaterial.NETHERITE, 3, 0).maxCount(1).maxDamage(2500));
 
 	public static final Item SEAL = RegisterHelper.item("seal", settings -> new SealItem(settings, entity -> true, 1, 1), new Item.Settings().maxCount(1));
 	public static final Item HELLISH_SEAL = RegisterHelper.item("hellish_seal", settings -> new SealItem(settings, entity -> entity.getCommandTags().contains("tailed"), 2, 1), new Item.Settings().maxCount(1));

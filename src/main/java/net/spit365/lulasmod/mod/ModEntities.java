@@ -2,12 +2,10 @@ package net.spit365.lulasmod.mod;
 
 import net.minecraft.client.render.entity.FlyingItemEntityRenderer;
 import net.minecraft.entity.EntityType;
-import net.spit365.lulasmod.custom.entity.AmethystShardEntity;
-import net.spit365.lulasmod.custom.entity.MalignityEntity;
-import net.spit365.lulasmod.custom.entity.ParticleProjectileEntity;
-import net.spit365.lulasmod.custom.entity.SmokeBombEntity;
+import net.spit365.lulasmod.custom.entity.*;
 import net.spit365.lulasmod.custom.entity.renderer.AmethystShardEntityRenderer;
 import net.spit365.lulasmod.custom.entity.renderer.ParticleProjectileEntityRenderer;
+import net.spit365.lulasmod.custom.entity.renderer.PinSwordEntityRenderer;
 import net.spit365.lulasmod.manager.RegisterHelper;
 
 public class ModEntities {
@@ -30,6 +28,11 @@ public class ModEntities {
 		"amethyst_shard",
 		AmethystShardEntity::new,
 		AmethystShardEntityRenderer::new,
+		0.5f, 0.5f, 4, 20);
+    public static final EntityType<PinSwordEntity> PIN_SWORD = RegisterHelper.entity(
+		"pin_sword",
+		(type, world) -> new PinSwordEntity(type, world),
+		PinSwordEntityRenderer::new,
 		0.5f, 0.5f, 4, 20);
 
 	public static void init() {}
