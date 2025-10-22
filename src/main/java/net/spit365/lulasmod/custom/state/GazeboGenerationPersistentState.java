@@ -43,7 +43,6 @@ public class GazeboGenerationPersistentState extends PersistentState {
 		);
 
 	public static GazeboGenerationPersistentState get(ServerWorld world) {
-		if (!World.OVERWORLD.equals(world.getRegistryKey())) return null;
 		return world.getPersistentStateManager().getOrCreate(TYPE);
 	}
 
@@ -51,9 +50,11 @@ public class GazeboGenerationPersistentState extends PersistentState {
 		if (gazeboPos == null){
 			gazeboPos = IntStream.range(1, count).mapToObj(value -> {
 				double angle = (Math.PI * 2) * ((double) value / count);
-				int x = (int) Math.round(Math.cos(angle) * RADIUS_BLOCKS);
-				int z = (int) Math.round(Math.sin(angle) * RADIUS_BLOCKS);
-				return new BlockPos(x, world.getTopY(Heightmap.Type.WORLD_SURFACE, x, z), z);
+				return world.getTopPosition(Heightmap.Type.WORLD_SURFACE_WG, new BlockPos(
+					(int) Math.round(Math.cos(angle) * RADIUS_BLOCKS),
+					0,
+					(int) Math.round(Math.sin(angle) * RADIUS_BLOCKS)
+				));
 			}).collect(Collectors.toMap(pos -> pos, pos -> world.getChunk(pos).getPos().toLong()));
 		}
 		return gazeboPos;

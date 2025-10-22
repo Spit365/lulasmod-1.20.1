@@ -1,6 +1,7 @@
 package net.spit365.lulasmod.custom.structures;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.Blocks;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.structure.StructurePlacementData;
 import net.minecraft.structure.StructureTemplate;
@@ -19,21 +20,21 @@ public final class GazeboOfSins {
 	public static void place(ServerWorld serverWorld){
 		GazeboGenerationPersistentState gazeboGenerationPersistentState = GazeboGenerationPersistentState.get(serverWorld);
 		if (gazeboGenerationPersistentState != null) {
-			Map<BlockPos, Long> gazeboPos = gazeboGenerationPersistentState.getPos(serverWorld);
-			for (Map.Entry<BlockPos, Long> entry : gazeboPos.entrySet()){
+			Set<Map.Entry<BlockPos, Long>> gazeboPos = gazeboGenerationPersistentState.getPos(serverWorld).entrySet();
+			for (Map.Entry<BlockPos, Long> entry : gazeboPos){
 				if (serverWorld.isChunkLoaded(entry.getValue())){
 					BlockPos pos = entry.getKey();
-					gazeboGenerationPersistentState.remove(pos);
-					Optional<StructureTemplate> optional = serverWorld.getStructureTemplateManager().getTemplate(GAZEBO_OF_SINS_ID);
-					optional.ifPresent(structureTemplate -> structureTemplate.place(
-						serverWorld,
-						pos,
-						pos,
-						new StructurePlacementData(),
-						serverWorld.getRandom(),
-						Block.FORCE_STATE_AND_SKIP_CALLBACKS_AND_DROPS
-					));
-					break;
+					Lulasmod.LOGGER.info(String.valueOf(pos));
+//					Optional<StructureTemplate> optional = serverWorld.getStructureTemplateManager().getTemplate(GAZEBO_OF_SINS_ID);
+//					optional.ifPresent(structureTemplate -> structureTemplate.place(
+//						serverWorld,
+//						pos,
+//						pos,
+//						new StructurePlacementData(),
+//						serverWorld.getRandom(),
+//						Block.FORCE_STATE_AND_SKIP_CALLBACKS_AND_DROPS
+//					));
+//					gazeboGenerationPersistentState.remove(pos);
 				}
 			}
 		}
