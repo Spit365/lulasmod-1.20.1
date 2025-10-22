@@ -31,7 +31,7 @@ public class ModEntities {
 		0.5f, 0.5f, 4, 20);
     public static final EntityType<PinSwordEntity> PIN_SWORD = RegisterHelper.entity(
 		"pin_sword",
-		(type, world) -> new PinSwordEntity(type, world),
+        PinSwordEntity::new,
 		PinSwordEntityRenderer::new,
 		0.5f, 0.5f, 4, 20);
 

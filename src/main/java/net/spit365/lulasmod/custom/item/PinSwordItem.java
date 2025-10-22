@@ -3,6 +3,7 @@ package net.spit365.lulasmod.custom.item;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.ToolMaterial;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
@@ -12,7 +13,7 @@ import net.spit365.lulasmod.mod.ModEntities;
 
 public class PinSwordItem extends Item {
     public PinSwordItem(Settings settings) {
-        super(settings);
+        super(settings.sword(ToolMaterial.NETHERITE, 3f, -2.4f));
     }
 
     @Override
