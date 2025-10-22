@@ -9,17 +9,19 @@ import net.minecraft.world.World;
 import net.spit365.lulasmod.manager.RegisterHelper;
 
 public class ModDamageSources {
-	public static DamageSource BLOODSUCKING(Entity attacker) {return getDamageSource(attacker.getWorld(), BLOODSUCKING);}
-	public static DamageSource AMETHYST_SHARD(Entity attacker) {return getDamageSource(attacker.getWorld(), AMETHYST_SHARD);}
+	public static DamageSource bloodsucking(Entity attacker) {return getDamageSource(attacker, BLOODSUCKING);}
+	public static DamageSource amethystShard(Entity attacker) {return getDamageSource(attacker, AMETHYST_SHARD);}
+	public static DamageSource pinSword(Entity attacker) {return getDamageSource(attacker, PIN_SWORD);}
 
 	public static final RegistryKey<DamageType> BLOODSUCKING = RegisterHelper.damageType("bloodsucking");
 	public static final RegistryKey<DamageType> AMETHYST_SHARD = RegisterHelper.damageType("amethyst_shard");
+	public static final RegistryKey<DamageType> PIN_SWORD = RegisterHelper.damageType("pin_sword");
 
-	private static DamageSource getDamageSource(World world, RegistryKey<DamageType> damageType) {
-		return new DamageSource(world.getRegistryManager()
+	private static DamageSource getDamageSource(Entity attacker, RegistryKey<DamageType> damageType) {
+		return new DamageSource(attacker.getWorld().getRegistryManager()
 			.getOrThrow(RegistryKeys.DAMAGE_TYPE)
 			.getEntry(damageType.getValue())
-			.orElseThrow());
+			.orElseThrow(), attacker);
 	}
 
 	public static void init() {}

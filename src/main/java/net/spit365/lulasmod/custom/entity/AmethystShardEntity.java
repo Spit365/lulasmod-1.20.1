@@ -70,9 +70,9 @@ public class AmethystShardEntity extends PersistentProjectileEntity {
         DamageSource damageSource;
          if (owner != null) {
              if (owner.equals(target)) return;
-             damageSource = ModDamageSources.AMETHYST_SHARD(owner);
+             damageSource = ModDamageSources.amethystShard(owner);
              if (owner instanceof LivingEntity livingEntity) livingEntity.onAttacking(target);
-         } else damageSource = ModDamageSources.AMETHYST_SHARD(this);
+         } else damageSource = ModDamageSources.amethystShard(this);
         Integer amount = this.get(DataComponentTypes.DAMAGE);
         if (getWorld() instanceof ServerWorld serverWorld && amount != null && target.damage(serverWorld, damageSource, amount)) {
             if (target.getType().equals(EntityType.ENDERMAN)) return;

@@ -1,7 +1,6 @@
 package net.spit365.lulasmod.mod;
 
 import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
-import net.fabricmc.fabric.api.event.lifecycle.v1.ServerChunkEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.block.Blocks;
@@ -11,7 +10,6 @@ import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.mob.EndermanEntity;
 import net.minecraft.particle.ParticleTypes;
-import net.minecraft.registry.Registries;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
@@ -23,7 +21,6 @@ import net.minecraft.world.World;
 import net.spit365.lulasmod.Lulasmod;
 import net.spit365.lulasmod.custom.SpellHotbar;
 import net.spit365.lulasmod.custom.entity.ParticleProjectileEntity;
-import net.spit365.lulasmod.custom.item.spell.ConjuringItem;
 import net.spit365.lulasmod.custom.state.LinkedLightningPersistentState;
 import net.spit365.lulasmod.custom.structures.GazeboOfSins;
 import net.spit365.lulasmod.manager.MultiVec3d;
@@ -103,7 +100,7 @@ public class ModServerEvents {
                     int min = Math.min((int) (Math.min(entity.getHealth(), entity.getMaxHealth()) * 60) - 1, 1200);
                     if (duration > min) {
                         entity.setAttached(ModData.BLEED_VALUE, duration - min);
-                        entity.damage(serverWorld, ModDamageSources.BLOODSUCKING(entity), entity.getMaxHealth() * 0.15f + 10f);
+                        entity.damage(serverWorld, ModDamageSources.bloodsucking(entity), entity.getMaxHealth() * 0.15f + 10f);
                         serverWorld.spawnParticles(ParticleTypes.EFFECT, entity.getX(), entity.getY(), entity.getZ(), 5, 1, 1, 1, 1);
                     }
                 });
