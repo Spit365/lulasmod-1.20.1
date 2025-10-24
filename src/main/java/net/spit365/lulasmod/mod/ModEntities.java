@@ -5,7 +5,7 @@ import net.minecraft.entity.EntityType;
 import net.spit365.lulasmod.custom.entity.*;
 import net.spit365.lulasmod.custom.entity.renderer.AmethystShardEntityRenderer;
 import net.spit365.lulasmod.custom.entity.renderer.ParticleProjectileEntityRenderer;
-import net.spit365.lulasmod.custom.entity.renderer.PinSwordEntityRenderer;
+import net.spit365.lulasmod.custom.entity.renderer.NeedleSwordEntityRenderer;
 import net.spit365.lulasmod.manager.RegisterHelper;
 
 public class ModEntities {
@@ -29,10 +29,10 @@ public class ModEntities {
 		AmethystShardEntity::new,
 		AmethystShardEntityRenderer::new,
 		0.5f, 0.5f, 4, 20);
-    public static final EntityType<PinSwordEntity> PIN_SWORD = RegisterHelper.entity(
-		"pin_sword",
-        PinSwordEntity::new,
-		PinSwordEntityRenderer::new,
+    public static final EntityType<NeedleSwordEntity> NEEDLE_SWORD = RegisterHelper.entity(
+		"needle_sword",
+        NeedleSwordEntity::new,
+		NeedleSwordEntityRenderer::new,
 		0.5f, 0.5f, 4, 20);
 
 	public static void init() {}

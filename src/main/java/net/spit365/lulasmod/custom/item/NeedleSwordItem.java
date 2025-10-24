@@ -8,11 +8,11 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.world.World;
-import net.spit365.lulasmod.custom.entity.PinSwordEntity;
+import net.spit365.lulasmod.custom.entity.NeedleSwordEntity;
 import net.spit365.lulasmod.mod.ModEntities;
 
-public class PinSwordItem extends Item {
-    public PinSwordItem(Settings settings) {
+public class NeedleSwordItem extends Item {
+    public NeedleSwordItem(Settings settings) {
         super(settings.sword(ToolMaterial.NETHERITE, 3f, -2.4f));
     }
 
@@ -20,7 +20,7 @@ public class PinSwordItem extends Item {
     public ActionResult use(World world, PlayerEntity user, Hand hand) {
         if (world instanceof ServerWorld){
             ItemStack sword = user.getStackInHand(hand);
-            world.spawnEntity(new PinSwordEntity(ModEntities.PIN_SWORD, user, world, sword.copy()));
+            world.spawnEntity(new NeedleSwordEntity(ModEntities.NEEDLE_SWORD, user, world, sword.copy()));
             sword.decrementUnlessCreative(1, user);
         }
         return ActionResult.PASS;

@@ -12,16 +12,16 @@ import net.minecraft.world.World;
 import net.spit365.lulasmod.mod.ModDamageSources;
 import net.spit365.lulasmod.mod.ModItems;
 
-public class PinSwordEntity extends PersistentProjectileEntity {
+public class NeedleSwordEntity extends PersistentProjectileEntity {
     private final ItemStack sword;
 
-    public PinSwordEntity(EntityType<? extends PersistentProjectileEntity> entityType, World world) {
+    public NeedleSwordEntity(EntityType<? extends PersistentProjectileEntity> entityType, World world) {
         super(entityType, world);
-        sword = new ItemStack(ModItems.PIN_SWORD);
+        sword = new ItemStack(ModItems.NEEDLE_SWORD);
         this.pickupType = PickupPermission.DISALLOWED;
     }
 
-    public PinSwordEntity(EntityType<? extends PersistentProjectileEntity> type, LivingEntity owner, World world, ItemStack sword) {
+    public NeedleSwordEntity(EntityType<? extends PersistentProjectileEntity> type, LivingEntity owner, World world, ItemStack sword) {
         super(type, owner, world, sword, sword);
         this.sword = sword;
         this.pickupType = PickupPermission.DISALLOWED;
@@ -39,8 +39,8 @@ public class PinSwordEntity extends PersistentProjectileEntity {
     @Override
     protected void onEntityHit(EntityHitResult entityHitResult) {
         Entity entity = entityHitResult.getEntity();
-        if (entity.getWorld() instanceof ServerWorld serverWorld)
-            entity.damage(serverWorld, ModDamageSources.pinSword(entity), 8f);
+        if (entity != this.getOwner() && entity.getWorld() instanceof ServerWorld serverWorld)
+            entity.damage(serverWorld, ModDamageSources.needleSword(entity), 8f);
     }
 
     @Override
