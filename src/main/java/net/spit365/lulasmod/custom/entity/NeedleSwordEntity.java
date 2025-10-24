@@ -6,6 +6,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.projectile.PersistentProjectileEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
@@ -30,6 +31,9 @@ public class NeedleSwordEntity extends PersistentProjectileEntity {
     public ItemStack getSword() {
         return sword;
     }
+    public boolean shouldReturn() {
+        return age > 15;
+    }
 
     @Override
     protected ItemStack getDefaultItemStack() {
@@ -43,20 +47,27 @@ public class NeedleSwordEntity extends PersistentProjectileEntity {
             entity.damage(serverWorld, ModDamageSources.needleSword(entity), 8f);
     }
 
+    @Override protected void onBlockHit(BlockHitResult blockHitResult) {
+        Vec3d dir = this.getPos().add(blockHitResult.getSide().getDoubleVector().multiply(0.5));
+        this.setPos(dir.x, dir.y, dir.z);
+        Entity entity = this.getOwner();
+        if (entity != null) entity.addVelocity(dir.subtract(entity.getPos()).normalize().multiply(0.75));
+    }
+
     @Override
     public void tick() {
         Entity entity = this.getOwner();
         if (entity != null)
-            if (this.age > 30) {
+            if (shouldReturn()) {
                 Vec3d relativePos = entity.getEyePos().subtract(this.getPos());
-                this.setVelocity(relativePos.normalize().multiply(0.5));
+                this.setVelocity(relativePos.normalize());
                 if (relativePos.length() < 0.5) {
                     ((LivingEntity) entity).giveOrDropStack(sword);
                     if (this.getWorld() instanceof ServerWorld serverWorld)
                         this.kill(serverWorld);
                 }
             } else
-                this.setVelocity(entity.getRotationVec(1).normalize().multiply(0.5));
+                this.setVelocity(entity.getRotationVec(1).normalize());
         super.tick();
     }
 }
