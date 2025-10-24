@@ -26,7 +26,7 @@ public class ModItems {
     public static final Item NEEDLE_HEAD = RegisterHelper.item("needle_head", Item::new, new Item.Settings().fireproof());
 
 	public static final Item SEAL = RegisterHelper.item("seal", settings -> new SealItem(settings, entity -> true, 1, 1), new Item.Settings().maxCount(1));
-	public static final Item HELLISH_SEAL = RegisterHelper.item("hellish_seal", settings -> new SealItem(settings, entity -> entity.getCommandTags().contains("tailed"), 2, 1), new Item.Settings().maxCount(1));
+	public static final Item HELLISH_SEAL = RegisterHelper.item("hellish_seal", settings -> new SealItem(settings, entity -> entity.getCommandTags().contains("tailed"), 2, 1), new Item.Settings().maxCount(1).fireproof());
 	public static final Item GOLDEN_SEAL = RegisterHelper.item("golden_seal", settings -> new SealItem(settings, entity -> {
 		if (entity instanceof ServerPlayerEntity player && !player.isCreative()) {
 			if (player.experienceLevel <= 0 && player.experienceProgress <= 0f) return false;
