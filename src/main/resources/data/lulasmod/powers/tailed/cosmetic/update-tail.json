@@ -1,0 +1,9 @@
+{
+    "type": "origins:action_over_time",
+    "entity_action": {
+        "type": "origins:execute_command",
+        "command": "function lulasmod:update_tail"
+    },
+    "interval": 1,
+    "hidden": true
+}

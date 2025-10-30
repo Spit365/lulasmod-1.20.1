@@ -1,0 +1,27 @@
+package net.spit365.lulasmod.manager;
+
+import java.util.HashSet;
+import java.util.Set;
+import java.util.function.Consumer;
+
+public class TickerManager {
+     private static final Set<Ticker<?>> tickers = new HashSet<>();
+
+     public static class Ticker<I>{
+          private final Consumer<I> output;
+          private final Class<I> input;
+
+          private Ticker(Class<I> input, Consumer<I> output) {
+               this.output = output;
+               this.input = input;
+               tickers.add(this);
+          }
+
+          public void tick(Object input) {
+               if (this.input.isInstance(input)) output.accept(this.input.cast(input));
+          }
+     }
+     public static void tickAll(Object input){tickers.forEach(ticker -> ticker.tick(input));}
+
+     public static <I> Ticker<I> createTicker(Class<I> type, Consumer<I> tick){return new Ticker<>(type, tick);}
+}
