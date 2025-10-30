@@ -7,10 +7,10 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.item.BowItem;
 import net.minecraft.item.ItemStack;
-import net.minecraft.server.world.ServerWorld;
+import net.minecraft.util.Identifier;
 import net.minecraft.world.World;
-import net.spit365.lulasmod.mod.ModDamageSources;
-import net.spit365.lulasmod.mod.ModData;
+import net.spit365.lulasmod.mod.ModServer;
+import net.spit365.lulasmod.manager.TagManager;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -26,15 +26,14 @@ public abstract class LivingEntityMixin extends Entity implements Attackable {
     @Shadow public abstract boolean isUsingItem();
 
     @Inject(method = "damage", at = @At("HEAD"))
-    private void damage(ServerWorld world, DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
-		Entity attacker = source.getAttacker();
-		if (attacker != null) {
-            Integer i = attacker.getAttached(ModData.DAMAGE_DELAY);
-            if (i != null) timeUntilRegen = i;
+    private void damage(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
+        if (source.getAttacker() != null) {
+            Identifier read = TagManager.read(source.getAttacker(), ModServer.TagCategories.DAMAGE_DELAY);
+            if (read != null) timeUntilRegen = Integer.parseInt(read.getPath());
         }
-        if (source.getTypeRegistryEntry().matchesKey(ModDamageSources.BLOODSUCKING)) timeUntilRegen = 0;
+        if (source.getTypeRegistryEntry().matchesKey(ModServer.DamageSources.BLOODSUCKING)) timeUntilRegen = 0;
     }
-    @ModifyVariable(method = "travelMidAir", at = @At("STORE"), ordinal = 0)
+    @ModifyVariable(method = "travel", at = @At("STORE"), ordinal = 1)
     private double travel(double d){
         LivingEntityMixin entity = this;
         if (

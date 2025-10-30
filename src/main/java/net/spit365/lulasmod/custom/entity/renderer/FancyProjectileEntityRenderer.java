@@ -2,21 +2,15 @@ package net.spit365.lulasmod.custom.entity.renderer;
 
 import net.minecraft.client.render.entity.EntityRendererFactory;
 import net.minecraft.client.render.entity.ProjectileEntityRenderer;
-import net.minecraft.client.render.entity.state.ProjectileEntityRenderState;
 import net.minecraft.entity.projectile.PersistentProjectileEntity;
 import net.minecraft.util.Identifier;
-import net.spit365.lulasmod.Lulasmod;
+import net.spit365.lulasmod.Server;
 
-public class FancyProjectileEntityRenderer<T extends PersistentProjectileEntity> extends ProjectileEntityRenderer<T, ProjectileEntityRenderState> {
+public class FancyProjectileEntityRenderer<T extends PersistentProjectileEntity> extends ProjectileEntityRenderer<T> {
     public final Identifier texture;
     public FancyProjectileEntityRenderer(EntityRendererFactory.Context context, String texture) {
         super(context);
-        this.texture = Identifier.of(Lulasmod.MOD_ID, "textures/entity/" + texture);
+        this.texture = Identifier.of(Server.MOD_ID, "textures/entity/" + texture);
     }
-    @Override protected Identifier getTexture(ProjectileEntityRenderState state) {return texture;}
-
-    @Override
-    public ProjectileEntityRenderState createRenderState() {
-        return new ProjectileEntityRenderState();
-    }
+    @Override public Identifier getTexture(T entity) {return texture;}
 }

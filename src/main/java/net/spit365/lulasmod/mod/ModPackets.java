@@ -1,120 +1,85 @@
 package net.spit365.lulasmod.mod;
 
-import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
-import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketByteBuf;
-import net.minecraft.network.RegistryByteBuf;
 import net.minecraft.network.codec.PacketCodec;
-import net.minecraft.network.codec.PacketCodecs;
 import net.minecraft.network.packet.CustomPayload;
-import net.minecraft.registry.Registries;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.Text;
-import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
-import net.spit365.lulasmod.Lulasmod;
-import net.spit365.lulasmod.custom.SpellHotbar;
-import net.spit365.lulasmod.custom.item.spell.ConjuringItem;
-import net.spit365.lulasmod.manager.MultiVec3d;
-import net.spit365.lulasmod.manager.TimeForwardAnimator;
-import org.jetbrains.annotations.NotNull;
+import net.spit365.lulasmod.Server;
 
-import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
-import java.util.function.Supplier;
+import java.util.Map;
 
 public class ModPackets {
-    public static final Set<MultiVec3d> linkedLightnings = new HashSet<>();
+     public record CYCLE_PLAYER_SPELL_C2S() implements CustomPayload {
+          private CYCLE_PLAYER_SPELL_C2S(PacketByteBuf buf) {this();}
+          public static final Id<CYCLE_PLAYER_SPELL_C2S> ID = new Id<>(Identifier.of(Server.MOD_ID, "cycle_player_spell"));
+          public static final PacketCodec<PacketByteBuf, CYCLE_PLAYER_SPELL_C2S> CODEC = CustomPayload.codecOf(CYCLE_PLAYER_SPELL_C2S::write, CYCLE_PLAYER_SPELL_C2S::new);
 
-    public record SpellHotbarListS2CPacket(List<ItemStack> list) implements CustomPayload {
-		@Override public Id<? extends CustomPayload> getId() {return ID;}
-		public static final Id<SpellHotbarListS2CPacket> ID = new Id<>(Identifier.of(Lulasmod.MOD_ID, "spell_hotbar_list"));
-		public static final PacketCodec<RegistryByteBuf, SpellHotbarListS2CPacket> CODEC =
-			PacketCodecs.collection(ArrayList::new, ItemStack.PACKET_CODEC)
-				.xmap(SpellHotbarListS2CPacket::new, spellHotbarListS2CPacket -> new ArrayList<>(spellHotbarListS2CPacket.list));
-	}
-	public record TimeForwardAnimationS2CPacket() implements CustomPayload {
-		@Override public Id<? extends CustomPayload> getId() {return ID;}
-		public static final Id<TimeForwardAnimationS2CPacket> ID = new Id<>(Identifier.of(Lulasmod.MOD_ID, "time_forward_animation"));
-		public static final PacketCodec<Object, TimeForwardAnimationS2CPacket> CODEC = getEmptyCodec(TimeForwardAnimationS2CPacket::new);
-	}
-	public record LightningLinkS2CPacket(Set<MultiVec3d> linkedLightning) implements CustomPayload {
-        @Override public Id<? extends CustomPayload> getId() {return ID;}
-        public static final Id<LightningLinkS2CPacket> ID = new Id<>(Identifier.of(Lulasmod.MOD_ID, "lightning_links"));
-		public static final PacketCodec<RegistryByteBuf, LightningLinkS2CPacket> CODEC =
-			PacketCodec.of(
-				(value, buf) -> new PacketByteBuf(buf).encodeAsJson(
-					MultiVec3d.CODEC.listOf().xmap(HashSet::new, ArrayList::new),
-					value.linkedLightning()
-				),
-				buf -> new LightningLinkS2CPacket(
-					new PacketByteBuf(buf).decodeAsJson(
-						MultiVec3d.CODEC.listOf().xmap(HashSet::new, ArrayList::new)
-					)
-				)
-			);
+          private void write(PacketByteBuf buf) {}
 
-	}
+          @Override
+          public CustomPayload.Id<CYCLE_PLAYER_SPELL_C2S> getId() {return ID;}
+     }
 
-	public record CycleSpellHotbarC2SPacket() implements CustomPayload {
-		@Override public Id<? extends CustomPayload> getId() {return ID;}
-		public static final Id<CycleSpellHotbarC2SPacket> ID = new Id<>(Identifier.of(Lulasmod.MOD_ID, "cycle_spell_hotbar"));
-		public static final PacketCodec<Object, CycleSpellHotbarC2SPacket> CODEC = getEmptyCodec(CycleSpellHotbarC2SPacket::new);
-	}
-	public record TailedContractC2SPacket() implements CustomPayload {
-		@Override public Id<? extends CustomPayload> getId() {return ID;}
-		public static final Id<TailedContractC2SPacket> ID = new Id<>(Identifier.of(Lulasmod.MOD_ID, "tailed_contract"));
-		public static final PacketCodec<Object, TailedContractC2SPacket> CODEC = getEmptyCodec(TailedContractC2SPacket::new);
-	}
+     public record SPELL_HOTBAR_LIST_S2C(List<Identifier> list) implements CustomPayload{
+          public static final Id<SPELL_HOTBAR_LIST_S2C> ID = new Id<>(Identifier.of(Server.MOD_ID, "spell_hotbar_list"));
+          private static final PacketCodec<PacketByteBuf, SPELL_HOTBAR_LIST_S2C> CODEC = CustomPayload.codecOf(SPELL_HOTBAR_LIST_S2C::write, SPELL_HOTBAR_LIST_S2C::read);
+          private void write(PacketByteBuf buf) {
+               Map<Integer, Identifier> map = new HashMap<>();
+               for (int i = 0; i < list.size(); i++)
+                    map.put(i, list.get(i));
+               buf.writeMap(map, PacketByteBuf::writeInt, PacketByteBuf::writeIdentifier);
+          }
+          private static SPELL_HOTBAR_LIST_S2C read(PacketByteBuf buf) {
+               List<Identifier> list = new LinkedList<>();
+               Map<Integer, Identifier> map = buf.readMap(PacketByteBuf::readInt, PacketByteBuf::readIdentifier);
+               for (int i = 0; i < map.size(); i++) list.add(map.get(i));
+               return new SPELL_HOTBAR_LIST_S2C(list);
+          }
 
-	public static void init(){
-		PayloadTypeRegistry.playS2C().register(SpellHotbarListS2CPacket.ID, SpellHotbarListS2CPacket.CODEC);
-		PayloadTypeRegistry.playS2C().register(TimeForwardAnimationS2CPacket.ID, TimeForwardAnimationS2CPacket.CODEC);
-        PayloadTypeRegistry.playS2C().register(LightningLinkS2CPacket.ID, LightningLinkS2CPacket.CODEC);
+          @Override
+          public Id<? extends CustomPayload> getId() {return ID;}
+     }     
+     public record TAILED_PLAYER_LIST_S2C(List<String> list) implements CustomPayload {
+          public static final Id<TAILED_PLAYER_LIST_S2C> ID = new Id<>(Identifier.of(Server.MOD_ID, "tailed_player_list"));
+          private static final PacketCodec<PacketByteBuf, TAILED_PLAYER_LIST_S2C> CODEC = CustomPayload.codecOf(TAILED_PLAYER_LIST_S2C::write, TAILED_PLAYER_LIST_S2C::read);
 
-		PayloadTypeRegistry.playC2S().register(CycleSpellHotbarC2SPacket.ID, CycleSpellHotbarC2SPacket.CODEC);
-		PayloadTypeRegistry.playC2S().register(TailedContractC2SPacket.ID, TailedContractC2SPacket.CODEC);
+          private void write(PacketByteBuf buf) {
+               Map<Integer, String> map = new HashMap<>();
+               for (int i = 0; i < list.size(); i++)
+                    map.put(i, list.get(i));
+               buf.writeMap(map, PacketByteBuf::writeInt, PacketByteBuf::writeString);
+          }
+          private static TAILED_PLAYER_LIST_S2C read(PacketByteBuf buf) {
+               List<String> list = new LinkedList<>();
+               Map<Integer, String> map = buf.readMap(PacketByteBuf::readInt, PacketByteBuf::readString);
+               for (int i = 0; i < map.size(); i++) list.add(map.get(i));
+               return new TAILED_PLAYER_LIST_S2C(list);
+          }
 
+          @Override
+          public Id<? extends CustomPayload> getId() {return ID;}
+     }
+     public record TIME_FORWARD_ANIMATION_S2C() implements CustomPayload {
+          private TIME_FORWARD_ANIMATION_S2C(PacketByteBuf buf) {this();}
+          public static final Id<TIME_FORWARD_ANIMATION_S2C> ID = new Id<>(Identifier.of(Server.MOD_ID, "time_forward_animation"));
+          public static final PacketCodec<PacketByteBuf, TIME_FORWARD_ANIMATION_S2C> CODEC = CustomPayload.codecOf(TIME_FORWARD_ANIMATION_S2C::write, TIME_FORWARD_ANIMATION_S2C::new);
 
-		ServerPlayNetworking.registerGlobalReceiver(CycleSpellHotbarC2SPacket.ID, (cycleSpellHotbarC2SPacket, context) -> {
-			ServerPlayerEntity player = context.player();
-			for (Hand hand : Hand.values()) if (player.getStackInHand(hand).getItem() instanceof SpellHotbar item){
-				item.onCycle(player);
-				break;
-			}
-		});
-		ServerPlayNetworking.registerGlobalReceiver(TailedContractC2SPacket.ID, (tailedContractC2SPacket, context) -> {
-			ServerPlayerEntity player = context.player();
-			if (player != null) {
-				if (player.getCommandTags().contains("tailed")){
-					boolean shouldDisplayMessage = true;
-					for (Identifier id : ModSpells.SpellTabItems) {
-						Item item = Registries.ITEM.get(id);
-						if (!(item instanceof ConjuringItem)) continue;
-						boolean notInInventory = ModMethods.getInventoryStack(player, item) == null;
-						if (notInInventory) player.giveItemStack(new ItemStack(item));
-						else if (shouldDisplayMessage) shouldDisplayMessage = false;
-					}
-					if (shouldDisplayMessage) player.sendMessage(Text.translatable("notify.lulasmod.command.contract_success"), false);
-				} else player.sendMessage(Text.translatable("notify.lulasmod.command.contract_fail"), false);
-			}
-		});
+          private void write(PacketByteBuf buf) {}
 
-		ClientPlayNetworking.registerGlobalReceiver(SpellHotbarListS2CPacket.ID, (spellHotbarListS2CPacket, context) -> ModGui.SPELL_HOTBAR_LIST = spellHotbarListS2CPacket.list());
-		ClientPlayNetworking.registerGlobalReceiver(TimeForwardAnimationS2CPacket.ID, (cycleSpellHotbarC2SPacket, context) -> TimeForwardAnimator.start(context.client().world));
-        ClientPlayNetworking.registerGlobalReceiver(LightningLinkS2CPacket.ID, (payload, context) -> {
-            linkedLightnings.clear();
-            linkedLightnings.addAll(payload.linkedLightning());
-        });
-	}
+          @Override
+          public CustomPayload.Id<TIME_FORWARD_ANIMATION_S2C> getId() {return ID;}
+     }
 
-	private static @NotNull <T extends CustomPayload> PacketCodec<Object, T> getEmptyCodec(Supplier<T> packet) {
-		return PacketCodec.of((value, buf) -> {
-		}, buf -> packet.get());
-	}
+     public static void init(){
+          PayloadTypeRegistry.playC2S().register(CYCLE_PLAYER_SPELL_C2S.ID, CYCLE_PLAYER_SPELL_C2S.CODEC);
+          PayloadTypeRegistry.playS2C().register(SPELL_HOTBAR_LIST_S2C.ID, SPELL_HOTBAR_LIST_S2C.CODEC);
+          PayloadTypeRegistry.playS2C().register(TAILED_PLAYER_LIST_S2C.ID, TAILED_PLAYER_LIST_S2C.CODEC);
+          PayloadTypeRegistry.playS2C().register(TIME_FORWARD_ANIMATION_S2C.ID, TIME_FORWARD_ANIMATION_S2C.CODEC);
+     }
 }

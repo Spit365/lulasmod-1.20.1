@@ -1,6 +1,0 @@
-{
-  "parent": "lulasmod:item/empty_sorcery",
-  "textures": {
-    "1": "lulasmod:item/sorcery_o_current"
-  }
-}
