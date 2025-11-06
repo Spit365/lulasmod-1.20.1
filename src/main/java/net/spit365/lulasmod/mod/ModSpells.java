@@ -172,7 +172,7 @@ public class ModSpells {
 				if (failedResult) return -1;
 				lastLinks.put(player, new MultiVec3d(raycast, raycast));
 			}else{
-				MultiVec3d value = new MultiVec3d(lastLink, !failedResult? raycast : eyePos.add(player.getRotationVec(1).normalize().multiply(eyePos.distanceTo(lastLink.get(0)))));
+                MultiVec3d value = new MultiVec3d(lastLink.get(0), !failedResult? raycast : eyePos.add(player.getRotationVec(1).normalize().multiply(eyePos.distanceTo(lastLink.get(0)))));
 				lastLinks.put(player, value);
 				LinkedLightningPersistentState linkedLightnings = LinkedLightningPersistentState.get(world);
 				linkedLightnings.remove(lastLink);
