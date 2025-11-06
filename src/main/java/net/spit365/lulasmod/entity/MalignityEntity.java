@@ -10,11 +10,12 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraft.world.event.GameEvent;
+import net.spit365.lulasmod.mod.ModEntities;
 
 public class MalignityEntity extends FireballEntity {
     private int explosionPower = 1;
 
-    public MalignityEntity(EntityType<? extends FireballEntity> entityType, World world) {super(entityType, world);}
+    public MalignityEntity(EntityType<? extends FireballEntity> entityType, World world) {super(ModEntities.MALIGNITY, world);}
     public MalignityEntity(World world, LivingEntity owner, Vec3d velocity, int explosionPower) {
         super(world, owner, velocity, explosionPower);
         this.explosionPower = explosionPower;

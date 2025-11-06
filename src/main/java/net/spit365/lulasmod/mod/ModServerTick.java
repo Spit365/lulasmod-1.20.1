@@ -19,6 +19,7 @@ public class ModServerTick {
             for (ServerWorld serverWorld : server.getWorlds()){
 				GazeboOfSins.tick(serverWorld);
                 LinkedLightning.tick(serverWorld);
+                Bleed.tick(serverWorld);
             }
 		});
     }

@@ -12,20 +12,14 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.RotationAxis;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.util.math.random.Random;
 import net.minecraft.world.World;
 import net.spit365.lulasmod.entity.NeedleSwordEntity;
 import net.spit365.lulasmod.mod.ModItems;
-import org.jetbrains.annotations.NotNull;
 import org.joml.Matrix4f;
 
 import java.util.Optional;
 
 public class NeedleSwordEntityRenderer extends EntityRenderer<NeedleSwordEntity, NeedleSwordEntityRenderer.NeedleSwordRenderState> {
-
-    private static @NotNull Identifier getTexture() {
-        return Identifier.ofVanilla("textures/block/redstone_dust_line" + Random.create().nextBetween(0, 1) + ".png");
-    }
 
     private final ItemRenderer itemRenderer;
 

@@ -23,16 +23,14 @@ public final class GazeboOfSins {
             BlockPos pos = entry.getKey();
             ChunkPos chunkPos = new ChunkPos(pos);
             if (!serverWorld.getChunkManager().isChunkLoaded(chunkPos.x, chunkPos.z)) continue;
-            serverWorld.getStructureTemplateManager().getTemplate(GAZEBO_OF_SINS_ID).ifPresent(structureTemplate -> {
-                structureTemplate.place(
-                    serverWorld,
-                    pos,
-                    pos,
-                    new StructurePlacementData(),
-                    serverWorld.getRandom(),
-                    Block.FORCE_STATE_AND_SKIP_CALLBACKS_AND_DROPS
-                );
-            });
+            serverWorld.getStructureTemplateManager().getTemplate(GAZEBO_OF_SINS_ID).ifPresent(structureTemplate -> structureTemplate.place(
+                serverWorld,
+                pos,
+                pos,
+                new StructurePlacementData(),
+                serverWorld.getRandom(),
+                Block.FORCE_STATE_AND_SKIP_CALLBACKS_AND_DROPS
+            ));
             gazeboGenerationPersistentState.markAsLoaded(pos);
         }
 	}
