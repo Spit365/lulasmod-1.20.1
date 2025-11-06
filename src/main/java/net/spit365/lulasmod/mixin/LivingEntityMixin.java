@@ -28,21 +28,20 @@ public abstract class LivingEntityMixin extends Entity implements Attackable {
     @Inject(method = "damage", at = @At("HEAD"))
     private void damage(ServerWorld world, DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
 		Entity attacker = source.getAttacker();
+        if (source.getTypeRegistryEntry().matchesKey(ModDamageSources.BLOODSUCKING)) timeUntilRegen = 0;
 		if (attacker != null) {
             Integer i = attacker.getAttached(ModData.DAMAGE_DELAY);
             if (i != null) timeUntilRegen = i;
         }
-        if (source.getTypeRegistryEntry().matchesKey(ModDamageSources.BLOODSUCKING)) timeUntilRegen = 0;
     }
     @ModifyVariable(method = "travelMidAir", at = @At("STORE"), ordinal = 0)
-    private double travel(double d){
+    private double travelMidAir(double d){
         LivingEntityMixin entity = this;
-        if (
+        return  (
             entity.getMainHandStack().getItem() instanceof BowItem &&
             entity.isUsingItem() &&
             !entity.isOnGround() &&
             entity.getVelocity().y <= 0.0
-        ) return -0.07;
-        return d;
+        ) ? -0.07 : d;
     }
 }
