@@ -9,7 +9,7 @@ import net.minecraft.registry.RegistryKeys;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.spit365.lulasmod.manager.RegisterHelper;
+import net.spit365.lulasmod.util.RegisterHelper;
 
 import java.util.List;
 

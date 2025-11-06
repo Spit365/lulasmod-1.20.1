@@ -2,11 +2,11 @@ package net.spit365.lulasmod.mod;
 
 import net.minecraft.client.render.entity.FlyingItemEntityRenderer;
 import net.minecraft.entity.EntityType;
-import net.spit365.lulasmod.custom.entity.*;
-import net.spit365.lulasmod.custom.entity.renderer.AmethystShardEntityRenderer;
-import net.spit365.lulasmod.custom.entity.renderer.ParticleProjectileEntityRenderer;
-import net.spit365.lulasmod.custom.entity.renderer.NeedleSwordEntityRenderer;
-import net.spit365.lulasmod.manager.RegisterHelper;
+import net.spit365.lulasmod.entity.*;
+import net.spit365.lulasmod.renderer.AmethystShardEntityRenderer;
+import net.spit365.lulasmod.renderer.ParticleProjectileEntityRenderer;
+import net.spit365.lulasmod.renderer.NeedleSwordEntityRenderer;
+import net.spit365.lulasmod.util.RegisterHelper;
 
 public class ModEntities {
 	public static final EntityType<SmokeBombEntity> SMOKE_BOMB = RegisterHelper.entity(

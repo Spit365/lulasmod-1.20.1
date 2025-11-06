@@ -2,6 +2,9 @@ package net.spit365.lulasmod;
 
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.ModInitializer;
+import net.spit365.lulasmod.custom.LinkedLightning;
+import net.spit365.lulasmod.custom.NetherDeathSystem;
+import net.spit365.lulasmod.custom.TimeForward;
 import net.spit365.lulasmod.mod.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,7 +12,6 @@ import org.slf4j.LoggerFactory;
 public class Lulasmod implements ModInitializer, ClientModInitializer {
 	public static final String MOD_ID = "lulasmod";
 	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
-    public static final int CURRENT_UPDATE_RANGE = 1000;
 
     @Override
 	public void onInitialize() {
@@ -21,8 +23,9 @@ public class Lulasmod implements ModInitializer, ClientModInitializer {
 		ModGamerules.init();
 		ModData.init();
 		ModDamageSources.init();
-		ModServerEvents.init();
 		ModCommands.init();
+		ModServerTick.init();
+        NetherDeathSystem.init();
 
 		LOGGER.info("Initializing for {}", MOD_ID);
 	}
@@ -33,7 +36,8 @@ public class Lulasmod implements ModInitializer, ClientModInitializer {
 		ModKeybinds.init();
 		ModEntities.init();
 		ModParticles.init();
-		ModClientEvents.init();
+        TimeForward.Animator.init();
+        LinkedLightning.Render.init();
 
 		LOGGER.info("Initializing Client for {}", MOD_ID);
 	}

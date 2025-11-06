@@ -5,8 +5,8 @@ import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ToolMaterial;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
-import net.spit365.lulasmod.custom.item.*;
-import net.spit365.lulasmod.manager.RegisterHelper;
+import net.spit365.lulasmod.item.*;
+import net.spit365.lulasmod.util.RegisterHelper;
 
 import java.util.LinkedList;
 import java.util.List;

@@ -16,10 +16,11 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
 import net.spit365.lulasmod.Lulasmod;
-import net.spit365.lulasmod.custom.SpellHotbar;
-import net.spit365.lulasmod.custom.item.spell.ConjuringItem;
-import net.spit365.lulasmod.manager.MultiVec3d;
-import net.spit365.lulasmod.manager.TimeForwardAnimator;
+import net.spit365.lulasmod.custom.LinkedLightning;
+import net.spit365.lulasmod.custom.TimeForward;
+import net.spit365.lulasmod.util.SpellHotbar;
+import net.spit365.lulasmod.item.spell.ConjuringItem;
+import net.spit365.lulasmod.util.MultiVec3d;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -29,8 +30,6 @@ import java.util.Set;
 import java.util.function.Supplier;
 
 public class ModPackets {
-    public static final Set<MultiVec3d> linkedLightnings = new HashSet<>();
-
     public record SpellHotbarListS2CPacket(List<ItemStack> list) implements CustomPayload {
 		@Override public Id<? extends CustomPayload> getId() {return ID;}
 		public static final Id<SpellHotbarListS2CPacket> ID = new Id<>(Identifier.of(Lulasmod.MOD_ID, "spell_hotbar_list"));
@@ -106,10 +105,10 @@ public class ModPackets {
 		});
 
 		ClientPlayNetworking.registerGlobalReceiver(SpellHotbarListS2CPacket.ID, (spellHotbarListS2CPacket, context) -> ModGui.SPELL_HOTBAR_LIST = spellHotbarListS2CPacket.list());
-		ClientPlayNetworking.registerGlobalReceiver(TimeForwardAnimationS2CPacket.ID, (cycleSpellHotbarC2SPacket, context) -> TimeForwardAnimator.start(context.client().world));
+		ClientPlayNetworking.registerGlobalReceiver(TimeForwardAnimationS2CPacket.ID, (cycleSpellHotbarC2SPacket, context) -> TimeForward.Animator.start(context.client().world));
         ClientPlayNetworking.registerGlobalReceiver(LightningLinkS2CPacket.ID, (payload, context) -> {
-            linkedLightnings.clear();
-            linkedLightnings.addAll(payload.linkedLightning());
+            LinkedLightning.Render.linkedLightnings.clear();
+            LinkedLightning.Render.linkedLightnings.addAll(payload.linkedLightning());
         });
 	}
 

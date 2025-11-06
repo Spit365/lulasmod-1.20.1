@@ -5,7 +5,7 @@ import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.damage.DamageType;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
-import net.spit365.lulasmod.manager.RegisterHelper;
+import net.spit365.lulasmod.util.RegisterHelper;
 
 public class ModDamageSources {
 	public static DamageSource bloodsucking(Entity attacker) {return getDamageSource(attacker, BLOODSUCKING);}

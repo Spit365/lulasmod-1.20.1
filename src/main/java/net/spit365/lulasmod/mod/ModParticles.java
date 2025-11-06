@@ -4,7 +4,7 @@ import net.minecraft.client.particle.ExplosionLargeParticle;
 import net.minecraft.client.particle.FlameParticle;
 import net.minecraft.client.particle.SweepAttackParticle;
 import net.minecraft.particle.SimpleParticleType;
-import net.spit365.lulasmod.manager.RegisterHelper;
+import net.spit365.lulasmod.util.RegisterHelper;
 
 public class ModParticles {
 	public static final SimpleParticleType SCRATCH = RegisterHelper.particle("scratch", true, SweepAttackParticle.Factory::new);

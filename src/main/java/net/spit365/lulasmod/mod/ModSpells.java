@@ -14,20 +14,21 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
-import net.spit365.lulasmod.custom.entity.AmethystShardEntity;
-import net.spit365.lulasmod.custom.entity.MalignityEntity;
-import net.spit365.lulasmod.custom.item.spell.ConjuringItem;
-import net.spit365.lulasmod.custom.item.spell.SorceryItem;
-import net.spit365.lulasmod.custom.item.spell.SpellItem;
-import net.spit365.lulasmod.custom.state.LinkedLightningPersistentState;
-import net.spit365.lulasmod.manager.MultiVec3d;
-import net.spit365.lulasmod.manager.RegisterHelper;
+import net.spit365.lulasmod.custom.Impaled;
+import net.spit365.lulasmod.entity.AmethystShardEntity;
+import net.spit365.lulasmod.entity.MalignityEntity;
+import net.spit365.lulasmod.item.spell.ConjuringItem;
+import net.spit365.lulasmod.item.spell.SorceryItem;
+import net.spit365.lulasmod.item.spell.SpellItem;
+import net.spit365.lulasmod.state.LinkedLightningPersistentState;
+import net.spit365.lulasmod.util.MultiVec3d;
+import net.spit365.lulasmod.util.RegisterHelper;
 
 import java.util.*;
 import java.util.stream.StreamSupport;
 
 import static net.minecraft.sound.SoundEvents.*;
-import static net.spit365.lulasmod.custom.state.LinkedLightningPersistentState.lastLinks;
+import static net.spit365.lulasmod.state.LinkedLightningPersistentState.lastLinks;
 
 public class ModSpells {
 	public static final List<Identifier> SpellTabItems = new LinkedList<>();
@@ -102,7 +103,7 @@ public class ModSpells {
     public static final ConjuringItem BLOOD_CONJURING = RegisterHelper.spell("emulations", settings -> new ConjuringItem(settings, (world, player, hand, efficiencyMultiplier, cooldownMultiplier) -> {
         if (ModMethods.selectClosestEntity(player, 5d) instanceof LivingEntity victim)
             ModMethods.applyBleed(victim, (int) (1200 * efficiencyMultiplier) - 80);
-        ModMethods.impale(player, player.getStackInHand(hand), 20, 600, 6, 25, ModParticles.CURSED_BLOOD);
+        Impaled.impale(player, player.getStackInHand(hand), 20, 600, 6, 25, ModParticles.CURSED_BLOOD);
         return 0;
     }));
     public static final ConjuringItem POCKET_CONJURING = RegisterHelper.spell("heresies", settings -> new ConjuringItem(settings, (world, player, hand, efficiencyMultiplier, cooldownMultiplier) -> {

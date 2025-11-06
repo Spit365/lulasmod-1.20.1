@@ -1,22 +1,16 @@
 package net.spit365.lulasmod.mod;
 
-import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
-import net.minecraft.client.render.OverlayTexture;
-import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.packet.s2c.play.PositionFlag;
-import net.minecraft.particle.ParticleEffect;
 import net.minecraft.particle.SimpleParticleType;
-import net.minecraft.registry.Registries;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Hand;
-import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
@@ -24,12 +18,10 @@ import net.minecraft.world.World;
 import net.spit365.lulasmod.Lulasmod;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.joml.Matrix4f;
 
 import java.util.*;
 
 public class ModMethods {
-    public static final HashMap<ImpaledContext, Integer> impaled = new HashMap<>();
 
     public static @Nullable Entity selectClosestEntity(Entity selector, Double radius) {
         Vec3d selectionCenter = selector.getRotationVec(1).normalize().multiply(radius).add(selector.getPos());
@@ -97,17 +89,6 @@ public class ModMethods {
         for (double i = 0; i < box.getLengthZ(); i += 0.625) world.spawnParticles(particle, end.getX(), end.getY(), start.getZ() + i, 0, 0, 0, 0, 0);
     }
 
-    public static Boolean impale(PlayerEntity player, ItemStack item, Integer baseCooldown, Integer maxCooldown, Integer iterations, Integer intervalls, ParticleEffect particle) {
-        player.getItemCooldownManager().set(item, 2);
-        if (selectClosestEntity(player, 5d) instanceof LivingEntity selectedEntity && impaled.keySet().stream().noneMatch(impaledContext -> impaledContext.livingEntity().equals(selectedEntity))) {
-            player.getItemCooldownManager().set(item, maxCooldown);
-            selectedEntity.requestTeleport(selectedEntity.getX(), selectedEntity.getY() + 5, selectedEntity.getZ());
-            impaled.put(new ImpaledContext(player, selectedEntity, particle, iterations, intervalls), 0);
-            return true;
-        } else player.getItemCooldownManager().set(item, baseCooldown);
-        return false;
-    }
-
     public static void pocketTeleport(Entity victim) {
         if (!victim.teleport(
 		   Objects.requireNonNull(victim.getServer()).getWorld((
@@ -118,37 +99,12 @@ public class ModMethods {
             Lulasmod.LOGGER.error("Could not perform teleport. Registry key: {}, Entity: {}", ModDimensions.POCKET_DIMENSION, victim);
     }
 
-	static void sendSpellListPacket(ServerPlayerEntity player, List<Identifier> list) {
-		if (list != null) ServerPlayNetworking.send(player, new ModPackets.SpellHotbarListS2CPacket(list.stream().map(id -> new ItemStack(Registries.ITEM.get(id))).toList()));
-	}
-
 	public static @NotNull Hand getHandFromStack(LivingEntity user, ItemStack stack) {
 		return Arrays.stream(Hand.values()).filter(hand -> user.getStackInHand(hand).equals(stack)).findFirst().orElse(Hand.MAIN_HAND);
 	}
 
-	public record ImpaledContext(PlayerEntity player, LivingEntity livingEntity, ParticleEffect particle, Integer iterations, Integer intervalDuration) {
-		public ImpaledContext(ImpaledContext context, Integer iterations, Integer intervals) {
-			this(context.player(), context.livingEntity(), context.particle(), iterations, intervals);
-		}
-	}
-
-	public static <T> LinkedList<T> makeMutable(List<T> immutable){
+    public static <T> LinkedList<T> makeMutable(List<T> immutable){
 		return immutable == null? new LinkedList<>() : new LinkedList<>(immutable);
 	}
 
-    public static void addBillboardQuad(VertexConsumer vc, Matrix4f matrix, Vec3d p0, Vec3d p1, Vec3d offset, int segmentIndex) {
-        float u1 = segmentIndex + 1;
-        float v0 = 0;
-        float v1 = 1;
-
-        Vec3d p0a = p0.add(offset);
-        Vec3d p0b = p0.subtract(offset);
-        Vec3d p1a = p1.add(offset);
-        Vec3d p1b = p1.subtract(offset);
-
-        vc.vertex(matrix, (float) p0a.x, (float) p0a.y, (float) p0a.z).color(255, 255, 255, 255).texture(segmentIndex, v0).overlay(OverlayTexture.DEFAULT_UV).light(0xF000F0, 0xF000F0).normal(0, 1, 0);
-        vc.vertex(matrix, (float) p0b.x, (float) p0b.y, (float) p0b.z).color(255, 255, 255, 255).texture(segmentIndex, v1).overlay(OverlayTexture.DEFAULT_UV).light(0xF000F0, 0xF000F0).normal(0, 1, 0);
-        vc.vertex(matrix, (float) p1b.x, (float) p1b.y, (float) p1b.z).color(255, 255, 255, 255).texture(u1, v1).overlay(OverlayTexture.DEFAULT_UV).light(0xF000F0, 0xF000F0).normal(0, 1, 0);
-        vc.vertex(matrix, (float) p1a.x, (float) p1a.y, (float) p1a.z).color(255, 255, 255, 255).texture(u1, v0).overlay(OverlayTexture.DEFAULT_UV).light(0xF000F0, 0xF000F0).normal(0, 1, 0);
-    }
 }
