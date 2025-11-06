@@ -4,8 +4,8 @@ import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.MapColor;
 import net.minecraft.item.BlockItem;
-import net.spit365.lulasmod.custom.block.SpellPedestalBlock;
-import net.spit365.lulasmod.manager.RegisterHelper;
+import net.spit365.lulasmod.block.SpellPedestalBlock;
+import net.spit365.lulasmod.util.RegisterHelper;
 
 public class ModBlocks {
 	public record BlockAndItem<T extends Block>(T block, BlockItem item){}
