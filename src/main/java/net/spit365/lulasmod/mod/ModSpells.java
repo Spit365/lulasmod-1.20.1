@@ -192,7 +192,9 @@ public class ModSpells {
 
         @Override
         public int hitEntity(ServerWorld world, PlayerEntity player, Hand hand, LivingEntity target, Float efficiencyMultiplier, Integer cooldownMultiplier) {
-            player.addVelocity(player.getPos().subtract(target.getPos()).normalize().multiply(5));
+            Vec3d vec3d = player.getPos().subtract(target.getPos()).normalize().multiply(2);
+            if (player.isOnGround()) target.addVelocity(vec3d.multiply(-1).add(0, 0.25, 0));
+            else player.addVelocity(vec3d);
             player.fallDistance = 0;
             player.velocityModified = true;
             return 0;
