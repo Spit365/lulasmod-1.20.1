@@ -31,7 +31,7 @@ public class GazeboGenerationPersistentState extends PersistentState {
 		).apply(instance, AbstractMap.SimpleEntry::new)
 	).listOf().xmap(list -> {
 		GazeboGenerationPersistentState storage = new GazeboGenerationPersistentState();
-		storage.pendingPos.entrySet().addAll(list);
+        if (storage.pendingPos != null)	storage.pendingPos.entrySet().addAll(list);
 		return storage;
 	}, storage -> new ArrayList<>(storage.pendingPos.entrySet()));
 
