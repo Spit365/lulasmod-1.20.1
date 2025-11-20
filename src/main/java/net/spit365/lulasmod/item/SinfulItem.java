@@ -11,7 +11,6 @@ import java.util.Arrays;
 public class SinfulItem extends Item {
      public SinfulItem(Settings settings) {super(settings);}
 
-
      @Override
      public void postHit(ItemStack stack, LivingEntity target, LivingEntity attacker){
           ModMethods.applyBleed(target, 100 * (int)(

@@ -21,7 +21,7 @@ import java.util.stream.IntStream;
 public class GazeboGenerationPersistentState extends PersistentState {
 	private static final int count = (int) ModSpells.SpellTabItems.stream().filter(identifier -> !(Registries.ITEM.get(identifier) instanceof ConjuringItem)).count();
 	private Map<BlockPos, Boolean> pendingPos;
-	public static int RADIUS_BLOCKS = 1000;
+	public static final int RADIUS_BLOCKS = 1000;
 
 
 	public static final Codec<GazeboGenerationPersistentState> CODEC = RecordCodecBuilder.<Map.Entry<BlockPos, Boolean>>create(instance ->
