@@ -14,7 +14,7 @@ import net.spit365.lulasmod.util.RegisterHelper;
 import java.util.List;
 
 public class ModData {
-    public static final ComponentType<List<Identifier>> SPELL_BOOK_SPELLS = RegisterHelper.componentType("spells", builder -> builder.codec(Identifier.CODEC.listOf()));
+    public static final ComponentType<List<Identifier>> SPELL_BOOK_SPELLS = RegisterHelper.componentType("spell_book_spells", builder -> builder.codec(Identifier.CODEC.listOf()));
 
 	public static final AttachmentType<Integer> DAMAGE_DELAY = RegisterHelper.attachmentType("damage_delay", Codec.INT);
 	public static final AttachmentType<List<Identifier>> EQUIPPED_SPELLS = RegisterHelper.attachmentType("equipped_spells", Identifier.CODEC.listOf());
