@@ -21,10 +21,7 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.SpawnGroup;
 import net.minecraft.entity.damage.DamageType;
 import net.minecraft.entity.effect.StatusEffect;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemGroup;
-import net.minecraft.item.ItemStack;
+import net.minecraft.item.*;
 import net.minecraft.particle.SimpleParticleType;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
@@ -45,7 +42,7 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.function.UnaryOperator;
 
-public class RegisterHelper {
+public final class RegisterHelper {
 	public static <T> AttachmentType<T>	attachmentType(String name, Codec<T> codec){
 		return AttachmentRegistry.createPersistent(Identifier.of(name, Lulasmod.MOD_ID), codec);
 	}
