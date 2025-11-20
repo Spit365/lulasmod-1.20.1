@@ -5,6 +5,7 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.projectile.PersistentProjectileEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.EntityHitResult;
@@ -43,7 +44,7 @@ public class NeedleSwordEntity extends PersistentProjectileEntity {
     @Override
     protected void onEntityHit(EntityHitResult entityHitResult) {
         Entity entity = entityHitResult.getEntity();
-        if (entity != this.getOwner() && entity.getWorld() instanceof ServerWorld serverWorld)
+        if (takeDamage(entity) && entity.getWorld() instanceof ServerWorld serverWorld)
             entity.damage(serverWorld, ModDamageSources.needleSword(entity), 8f);
     }
 
@@ -52,6 +53,13 @@ public class NeedleSwordEntity extends PersistentProjectileEntity {
         this.setPos(dir.x, dir.y, dir.z);
         Entity entity = this.getOwner();
         if (entity != null) entity.addVelocity(dir.subtract(entity.getPos()).normalize().multiply(0.75));
+    }
+
+    private boolean takeDamage(Entity entity){
+        Entity thisOwner = this.getOwner();
+        if (entity.equals(thisOwner)) return true;
+        if (thisOwner instanceof LivingEntity livingEntity) return livingEntity.getMainHandStack().isOf(Items.AIR);
+        return true;
     }
 
     @Override
