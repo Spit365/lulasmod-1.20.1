@@ -25,7 +25,7 @@ import java.util.List;
 public class ModGui {
 	private static final Identifier SPELL_HOTBAR_TEXTURE = Identifier.of(Lulasmod.MOD_ID, "textures/gui/spell_hotbar.png");
 	public static List<ItemStack> SPELL_HOTBAR_LIST = new LinkedList<>();
-    private static double lastFOV = 360;
+    private static double lastFOV;
 	public static void init(){
 		HudElementRegistry.addFirst(Identifier.of(Lulasmod.MOD_ID, "spell_hotbar"), (context, renderTickCounter) -> {
 			PlayerEntity player = MinecraftClient.getInstance().player;
@@ -43,7 +43,6 @@ public class ModGui {
             ClientPlayerEntity player = mc.player;
             if (player == null) return;
 			if (Arrays.stream(Hand.values()).anyMatch(hand -> player.getStackInHand(hand).getItem() instanceof SpellHotbar) && !SPELL_HOTBAR_LIST.isEmpty() && SPELL_HOTBAR_LIST.getFirst().isOf(ModSpells.KINESIS_SORCERY)) {
-
                 Window win = mc.getWindow();
 
                 int w = win.getScaledWidth();
@@ -53,7 +52,7 @@ public class ModGui {
 
                 GameOptions options = mc.options;
                 double vFov = Math.toRadians(options.getFov().getValue()) * player.getFovMultiplier(options.getPerspective().equals(Perspective.FIRST_PERSON), 1f);
-                double lerpedFOV = MathHelper.lerp(renderTickCounter.getTickProgress(true), lastFOV, vFov);
+                double lerpedFOV = lastFOV == 0L? vFov : MathHelper.lerp(renderTickCounter.getTickProgress(true), lastFOV, vFov);
                 lastFOV = vFov;
 
                 double theta = Math.toRadians(20.0);
@@ -66,22 +65,20 @@ public class ModGui {
 
                 int color = 0xFF50C8FF; //argb
 
-                final int thickness = 2;
-                int half = Math.max(0, thickness / 2);
-
+                int halfThickness = 1;
                 for (int i = 0; i < segments; i++) {
                     double ang = (Math.PI * 2.0) * (i / (double) segments);
                     float x = cx + (float) (rx * Math.cos(ang));
                     float y = cy + (float) (ry * Math.sin(ang));
-                    int ix = MathHelper.floor(x);
-                    int iy = MathHelper.floor(y);
+                    int ix = Math.round(x);
+                    int iy = Math.round(y);
 
                     context.fill(
-                        ix - half, iy - half,
-                        ix + (thickness - half), iy + (thickness - half),
+                        ix - halfThickness, iy - halfThickness,
+                        ix + halfThickness, iy + halfThickness,
                         color);
                 }
-            } else lastFOV = 360;
+            }
 		});
 	}
 }
