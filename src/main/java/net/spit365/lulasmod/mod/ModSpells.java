@@ -204,7 +204,9 @@ public class ModSpells {
         public int cast(ServerWorld world, PlayerEntity player, Hand hand, Float efficiencyMultiplier, Integer cooldownMultiplier) {
             player.setCurrentHand(hand);
             if (selectedEntities.get(player) == null){
-                selectedEntities.put(player, selectEntities(world, player.getEyePos(), player.getRotationVec(1).normalize()));
+                selectedEntities.put(player, StreamSupport.stream(world.iterateEntities().spliterator(), false)
+                    .filter(entity -> player.getRotationVec(1).normalize().dotProduct(entity.getEyePos().subtract(player.getEyePos()).normalize()) >= Math.cos(Math.toRadians(20))).toList()
+                );
                 return 0;
             }
             return -1;
@@ -226,11 +228,6 @@ public class ModSpells {
             return -1;
         }
 
-        private static List<Entity> selectEntities(ServerWorld world, Vec3d center, Vec3d rotation){
-            return StreamSupport.stream(world.iterateEntities().spliterator(), false).filter(entity ->
-                    rotation.dotProduct(entity.getPos().subtract(center).normalize()) >= Math.cos(Math.toRadians(20))
-            ).toList();
-        }
     }));
 
 
