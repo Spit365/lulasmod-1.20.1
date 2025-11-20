@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "lulasmod:item/vial_overlay",
+    "layer1": "lulasmod:item/vial"
+  }
+}

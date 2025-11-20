@@ -22,6 +22,7 @@ public class ModItems {
 	public static final Item SINFUL = RegisterHelper.item("sinful", SinfulItem::new, new Item.Settings().sword(ToolMaterial.NETHERITE, 3, -2.4F).fireproof().maxCount(1).maxDamage(2500));
 	public static final Item SPELL_BOOK = RegisterHelper.item("spell_book", SpellBookItem::new, new Item.Settings().maxCount(1));
     public static final Item NEEDLE_SWORD = RegisterHelper.item("needle_sword", NeedleSwordItem::new, new Item.Settings().sword(ToolMaterial.NETHERITE, 3, 0).maxCount(1).maxDamage(2500).fireproof());
+    public static final Item VIAL = RegisterHelper.item("vial", VialItem::new, new Item.Settings().maxCount(16));
 
     public static final Item NEEDLE_HEAD = RegisterHelper.item("needle_head", Item::new, new Item.Settings().fireproof());
 
