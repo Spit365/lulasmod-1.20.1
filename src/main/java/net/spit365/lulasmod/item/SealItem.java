@@ -31,6 +31,8 @@ public class SealItem extends Item  implements SpellHotbar {
 		this.efficiencyMultiplier = efficiencyMultiplier;
 		this.cooldownDivisor = cooldownDivisor;
 	}
+	public static final int NO_COOLDOWN_RESULT = 0;
+	public static final int FAIL_RESULT = -1;
 	public interface Usable{boolean accept(LivingEntity entity);}
     public final Usable canUse;
     public final Float efficiencyMultiplier;
@@ -46,13 +48,13 @@ public class SealItem extends Item  implements SpellHotbar {
 	@Override
 	public void postHit(ItemStack stack, LivingEntity target, LivingEntity attacker) {
 		sealLogic(null, null, attacker, ModMethods.getHandFromStack(attacker, stack), (serverWorld, player, hand, spellItem) ->
-			spellItem instanceof SorceryItem sorceryItem ? sorceryItem.sorcery.hitEntity(serverWorld, player, hand, target, efficiencyMultiplier, cooldownDivisor) : -1);
+			spellItem instanceof SorceryItem sorceryItem ? sorceryItem.sorcery.hitEntity(serverWorld, player, hand, target, efficiencyMultiplier, cooldownDivisor) : FAIL_RESULT);
 	}
 
 	@Override
 	public ActionResult useOnEntity(ItemStack stack, PlayerEntity player, LivingEntity entity, Hand hand) {
 		return sealLogic(ActionResult.SUCCESS, ActionResult.PASS, player, hand, (serverWorld, player1, hand1,spellItem) ->
-			spellItem instanceof SorceryItem sorceryItem ? sorceryItem.sorcery.useEntity(serverWorld, player, hand, entity, efficiencyMultiplier, cooldownDivisor) : -1);
+			spellItem instanceof SorceryItem sorceryItem ? sorceryItem.sorcery.useEntity(serverWorld, player, hand, entity, efficiencyMultiplier, cooldownDivisor) : FAIL_RESULT);
 	}
 
 	@Override
@@ -64,26 +66,38 @@ public class SealItem extends Item  implements SpellHotbar {
 	@Override
 	public void usageTick(World world, LivingEntity user, ItemStack stack, int remainingUseTicks) {
 		sealLogic(null, null, user, ModMethods.getHandFromStack(user, stack), (serverWorld, player, hand, spellItem) ->
-			spellItem instanceof SorceryItem sorceryItem ? sorceryItem.sorcery.castTick(serverWorld, player, hand, remainingUseTicks, efficiencyMultiplier, cooldownDivisor) : -1);
+			spellItem instanceof SorceryItem sorceryItem ? sorceryItem.sorcery.castTick(serverWorld, player, hand, remainingUseTicks, efficiencyMultiplier, cooldownDivisor) : FAIL_RESULT);
 	}
 
 	@Override
 	public boolean onStoppedUsing(ItemStack stack, World world, LivingEntity user, int remainingUseTicks) {
 		return sealLogic(true, false, user, ModMethods.getHandFromStack(user, stack), (serverWorld, player, hand, spellItem) ->
-			spellItem instanceof SorceryItem sorceryItem ? sorceryItem.sorcery.castStop(serverWorld, player, hand, remainingUseTicks, efficiencyMultiplier, cooldownDivisor) : -1);
+			spellItem instanceof SorceryItem sorceryItem ? sorceryItem.sorcery.castStop(serverWorld, player, hand, remainingUseTicks, efficiencyMultiplier, cooldownDivisor) : FAIL_RESULT);
 	}
 
 	private <T> T sealLogic(T resultSuccess, T resultFail, LivingEntity user, Hand hand, SpellAction spellAction){
 		if (user instanceof PlayerEntity player && player.getWorld() instanceof ServerWorld serverWorld && canUse.accept(player)) {
 			List<Identifier> spellList = player.getAttached(ModData.EQUIPPED_SPELLS);
 			if(spellList != null && !spellList.isEmpty() && Registries.ITEM.get(spellList.getFirst()) instanceof SpellItem spellItem){
-				int cooldown = spellAction.accept(serverWorld, player, hand, spellItem);
-				if (cooldown > 0) player.getItemCooldownManager().set(player.getStackInHand(hand), Math.max(cooldown, 2));
-				if (cooldown < 0) return resultFail;
-				return resultSuccess;
+				int result = spellAction.accept(serverWorld, player, hand, spellItem);
+				return handleResult(resultSuccess, resultFail, hand, player, result);
 			}
 		}
 		return resultFail;
+	}
+
+	private static <T> T handleResult(T resultSuccess, T resultFail, Hand hand, PlayerEntity player, int result) {
+		return switch (result) {
+			case NO_COOLDOWN_RESULT -> resultSuccess;
+			case FAIL_RESULT -> resultFail;
+			default -> {
+				if (result > 0) {
+					player.getItemCooldownManager().set(player.getStackInHand(hand), Math.max(result, 2));
+					yield resultSuccess;
+				}
+				throw new IllegalArgumentException("Result integer from Spell must be >= -1, got " + result);
+			}
+		};
 	}
 
 	@FunctionalInterface private interface SpellAction{int accept(ServerWorld serverWorld, PlayerEntity player, Hand hand, SpellItem spellItem);}

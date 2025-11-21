@@ -28,6 +28,8 @@ import java.util.*;
 import java.util.stream.StreamSupport;
 
 import static net.minecraft.sound.SoundEvents.*;
+import static net.spit365.lulasmod.item.SealItem.FAIL_RESULT;
+import static net.spit365.lulasmod.item.SealItem.NO_COOLDOWN_RESULT;
 import static net.spit365.lulasmod.state.LinkedLightningPersistentState.lastLinks;
 
 public class ModSpells {
@@ -37,7 +39,7 @@ public class ModSpells {
         boolean playerGlowing = !player.isGlowing();
         world.playSound(null, player.getBlockPos(), (playerGlowing ? BLOCK_BEACON_ACTIVATE : BLOCK_BEACON_DEACTIVATE), SoundCategory.PLAYERS);
         for (PlayerEntity playerEntity : world.getPlayers()) playerEntity.setGlowing(playerGlowing);
-        return 0;
+        return NO_COOLDOWN_RESULT;
     }));
 
 	public static final SpellItem FIRE_SPELL = RegisterHelper.spell("malignity",  settings -> new SpellItem(settings, (world, player, hand, efficiencyMultiplier, cooldownMultiplier) -> {
@@ -104,7 +106,7 @@ public class ModSpells {
         if (ModMethods.selectClosestEntity(player, 5d) instanceof LivingEntity victim)
             ModMethods.applyBleed(victim, (int) (1200 * efficiencyMultiplier) - 80);
         Impaled.impale(player, player.getStackInHand(hand), 20, 600, 6, 25, ModParticles.CURSED_BLOOD);
-        return 0;
+        return NO_COOLDOWN_RESULT;
     }));
     public static final ConjuringItem POCKET_CONJURING = RegisterHelper.spell("heresies", settings -> new ConjuringItem(settings, (world, player, hand, efficiencyMultiplier, cooldownMultiplier) -> {
         List<Entity> entities = world.getOtherEntities(player, new Box(player.getPos().add(-5d, -5d, -5d), player.getPos().add(5d, 5d, 5d)));
@@ -117,7 +119,7 @@ public class ModSpells {
                 victim.setAttached(ModData.TIME_FORWARD_ANIMATION_FRAMES, 450);
             } else ModMethods.pocketTeleport(victim);
         }
-        return 0;
+        return NO_COOLDOWN_RESULT;
     }));
 
 	public static final SorceryItem COMBUSTION_SORCERY = RegisterHelper.spell("combustion", settings -> new SorceryItem(settings, new SorceryItem.Sorcery() {
@@ -128,10 +130,10 @@ public class ModSpells {
 				player.damage(world, world.getDamageSources().inFire(), 2);
 				return 100;
 			}
-			return -1;
+			return FAIL_RESULT;
 		}
 
-		@Override public int useEntity(ServerWorld world, PlayerEntity player, Hand hand, LivingEntity target, Float efficiencyMultiplier, Integer cooldownMultiplier) {return -1;}
+		@Override public int useEntity(ServerWorld world, PlayerEntity player, Hand hand, LivingEntity target, Float efficiencyMultiplier, Integer cooldownMultiplier) {return FAIL_RESULT;}
 
 		@Override
 		public int cast(ServerWorld world, PlayerEntity player, Hand hand, Float efficiencyMultiplier, Integer cooldownMultiplier) {
@@ -145,20 +147,20 @@ public class ModSpells {
                     entity.setOnFireFor(entity.getFireTicks() / 20f + 3);
                 });
             }
-            return -1;
+            return FAIL_RESULT;
 		}
 
-		@Override public int castTick(ServerWorld world, PlayerEntity player, Hand hand, int remainingUseTicks, Float efficiencyMultiplier, Integer cooldownMultiplier) {return -1;}
-		@Override public int castStop(ServerWorld world, PlayerEntity player, Hand hand, int remainingUseTicks, Float efficiencyMultiplier, Integer cooldownMultiplier) {return -1;}
+		@Override public int castTick(ServerWorld world, PlayerEntity player, Hand hand, int remainingUseTicks, Float efficiencyMultiplier, Integer cooldownMultiplier) {return FAIL_RESULT;}
+		@Override public int castStop(ServerWorld world, PlayerEntity player, Hand hand, int remainingUseTicks, Float efficiencyMultiplier, Integer cooldownMultiplier) {return FAIL_RESULT;}
 	}));
     public static final SorceryItem CURRENT_SORCERY = RegisterHelper.spell("current", settings -> new SorceryItem(settings, new SorceryItem.Sorcery() {
-		@Override public int hitEntity(ServerWorld world, PlayerEntity player, Hand hand, LivingEntity target, Float efficiencyMultiplier, Integer cooldownMultiplier) {return -1;}
-		@Override public int useEntity(ServerWorld world, PlayerEntity player, Hand hand, LivingEntity target, Float efficiencyMultiplier, Integer cooldownMultiplier) {return -1;}
+		@Override public int hitEntity(ServerWorld world, PlayerEntity player, Hand hand, LivingEntity target, Float efficiencyMultiplier, Integer cooldownMultiplier) {return FAIL_RESULT;}
+		@Override public int useEntity(ServerWorld world, PlayerEntity player, Hand hand, LivingEntity target, Float efficiencyMultiplier, Integer cooldownMultiplier) {return FAIL_RESULT;}
 
         @Override
         public int cast(ServerWorld world, PlayerEntity player, Hand hand, Float efficiencyMultiplier, Integer cooldownMultiplier) {
             player.setCurrentHand(hand);
-			return 0;
+			return NO_COOLDOWN_RESULT;
         }
 
         @Override
@@ -169,7 +171,7 @@ public class ModSpells {
 			Vec3d eyePos = player.getEyePos();
 			boolean failedResult = raycast.distanceTo(eyePos) >= maxDistance;
 			if (lastLink == null) {
-				if (failedResult) return -1;
+				if (failedResult) return FAIL_RESULT;
 				lastLinks.put(player, new MultiVec3d(raycast, raycast));
 			}else{
                 MultiVec3d value = new MultiVec3d(lastLink.get(0), !failedResult? raycast : eyePos.add(player.getRotationVec(1).normalize().multiply(eyePos.distanceTo(lastLink.get(0)))));
@@ -178,7 +180,7 @@ public class ModSpells {
 				linkedLightnings.remove(lastLink);
 				linkedLightnings.add(value);
 			}
-			return 0;
+			return NO_COOLDOWN_RESULT;
 		}
 
         @Override
@@ -187,7 +189,7 @@ public class ModSpells {
 			return 100;
         }
     }));
-    public static final SorceryItem KINESIS_SORCERY = RegisterHelper.spell("kinesis", settings -> new SorceryItem(settings, new SorceryItem.Sorcery() {
+	public static final SorceryItem KINESIS_SORCERY = RegisterHelper.spell("kinesis", settings -> new SorceryItem(settings, new SorceryItem.Sorcery() {
         private static final HashMap<Entity, List<Entity>> selectedEntities = new HashMap<>();
 
         @Override
@@ -197,10 +199,10 @@ public class ModSpells {
             else player.addVelocity(vec3d);
             player.fallDistance = 0;
             player.velocityModified = true;
-            return 0;
+            return NO_COOLDOWN_RESULT;
         }
 
-        @Override public int useEntity(ServerWorld world, PlayerEntity player, Hand hand, LivingEntity target, Float efficiencyMultiplier, Integer cooldownMultiplier) {return -1;}
+        @Override public int useEntity(ServerWorld world, PlayerEntity player, Hand hand, LivingEntity target, Float efficiencyMultiplier, Integer cooldownMultiplier) {return FAIL_RESULT;}
 
         @Override
         public int cast(ServerWorld world, PlayerEntity player, Hand hand, Float efficiencyMultiplier, Integer cooldownMultiplier) {
@@ -209,12 +211,12 @@ public class ModSpells {
                 selectedEntities.put(player, StreamSupport.stream(world.iterateEntities().spliterator(), false)
                     .filter(entity -> player.getRotationVec(1).normalize().dotProduct(entity.getEyePos().subtract(player.getEyePos()).normalize()) >= Math.cos(Math.toRadians(20))).toList()
                 );
-                return 0;
+                return NO_COOLDOWN_RESULT;
             }
-            return -1;
+            return FAIL_RESULT;
         }
 
-        @Override public int castTick(ServerWorld world, PlayerEntity player, Hand hand, int remainingUseTicks, Float efficiencyMultiplier, Integer cooldownMultiplier) {return -1;}
+        @Override public int castTick(ServerWorld world, PlayerEntity player, Hand hand, int remainingUseTicks, Float efficiencyMultiplier, Integer cooldownMultiplier) {return FAIL_RESULT;}
 
         @Override
         public int castStop(ServerWorld world, PlayerEntity player, Hand hand, int remainingUseTicks, Float efficiencyMultiplier, Integer cooldownMultiplier) {
@@ -225,9 +227,9 @@ public class ModSpells {
                     selectedEntity.addVelocity(player.getRotationVec(1).normalize().multiply(relativeEntityCoordinates.length()).subtract(relativeEntityCoordinates).multiply(0.25));
                     selectedEntity.velocityModified = true;
                 }
-                return 0;
+                return NO_COOLDOWN_RESULT;
             }
-            return -1;
+            return FAIL_RESULT;
         }
 
     }));
