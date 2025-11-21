@@ -15,6 +15,7 @@ import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.spit365.lulasmod.custom.Impaled;
+import net.spit365.lulasmod.custom.Kinesis;
 import net.spit365.lulasmod.entity.AmethystShardEntity;
 import net.spit365.lulasmod.entity.MalignityEntity;
 import net.spit365.lulasmod.item.spell.ConjuringItem;
@@ -209,7 +210,7 @@ public class ModSpells {
             player.setCurrentHand(hand);
             if (selectedEntities.get(player) == null){
                 selectedEntities.put(player, StreamSupport.stream(world.iterateEntities().spliterator(), false)
-                    .filter(entity -> player.getRotationVec(1).normalize().dotProduct(entity.getEyePos().subtract(player.getEyePos()).normalize()) >= Math.cos(Math.toRadians(20))).toList()
+                    .filter(entity -> player.getRotationVec(1).normalize().dotProduct(entity.getEyePos().subtract(player.getEyePos()).normalize()) >= Math.cos(Kinesis.INTERACTION_RANGE_RADIANS)).toList()
                 );
                 return NO_COOLDOWN_RESULT;
             }
