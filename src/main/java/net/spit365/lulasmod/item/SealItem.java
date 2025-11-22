@@ -52,12 +52,6 @@ public class SealItem extends Item  implements SpellHotbar {
 	}
 
 	@Override
-	public ActionResult useOnEntity(ItemStack stack, PlayerEntity player, LivingEntity entity, Hand hand) {
-		return sealLogic(ActionResult.SUCCESS, ActionResult.PASS, player, hand, (serverWorld, player1, hand1,spellItem) ->
-			spellItem instanceof SorceryItem sorceryItem ? sorceryItem.sorcery.useEntity(serverWorld, player, hand, entity, efficiencyMultiplier, cooldownDivisor) : FAIL_RESULT);
-	}
-
-	@Override
     public ActionResult use(World world, PlayerEntity player, Hand hand) {
 		return sealLogic(ActionResult.SUCCESS, ActionResult.PASS, player, hand, (serverWorld, player1, hand1, spellItem) ->
 			spellItem.spell.cast(serverWorld, player, hand, efficiencyMultiplier, cooldownDivisor));
