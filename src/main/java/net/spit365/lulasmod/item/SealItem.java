@@ -35,8 +35,8 @@ public class SealItem extends Item  implements SpellHotbar {
 	public static final int FAIL_RESULT = -1;
 	public interface Usable{boolean accept(LivingEntity entity);}
     public final Usable canUse;
-    public final Float efficiencyMultiplier;
-    public final Integer cooldownDivisor;
+    public final float efficiencyMultiplier;
+    public final int cooldownDivisor;
 
     @Override public List<Identifier> getHotbarList(PlayerEntity player){return player.getAttached(ModData.EQUIPPED_SPELLS);}
     @Override public void onCycle(PlayerEntity player){
