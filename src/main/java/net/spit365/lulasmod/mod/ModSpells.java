@@ -134,8 +134,6 @@ public class ModSpells {
 			return FAIL_RESULT;
 		}
 
-		@Override public int useEntity(ServerWorld world, PlayerEntity player, Hand hand, LivingEntity target, Float efficiencyMultiplier, Integer cooldownMultiplier) {return FAIL_RESULT;}
-
 		@Override
 		public int cast(ServerWorld world, PlayerEntity player, Hand hand, Float efficiencyMultiplier, Integer cooldownDivisor) {
             Vec3d eyePos = player.getEyePos();
@@ -151,15 +149,10 @@ public class ModSpells {
             return FAIL_RESULT;
 		}
 
-		@Override public int castTick(ServerWorld world, PlayerEntity player, Hand hand, int remainingUseTicks, Float efficiencyMultiplier, Integer cooldownMultiplier) {return FAIL_RESULT;}
-		@Override public int castStop(ServerWorld world, PlayerEntity player, Hand hand, int remainingUseTicks, Float efficiencyMultiplier, Integer cooldownMultiplier) {return FAIL_RESULT;}
 	}));
     public static final SorceryItem CURRENT_SORCERY = RegisterHelper.spell("current", settings -> new SorceryItem(settings, new SorceryItem.Sorcery() {
-		@Override public int hitEntity(ServerWorld world, PlayerEntity player, Hand hand, LivingEntity target, Float efficiencyMultiplier, Integer cooldownMultiplier) {return FAIL_RESULT;}
-		@Override public int useEntity(ServerWorld world, PlayerEntity player, Hand hand, LivingEntity target, Float efficiencyMultiplier, Integer cooldownMultiplier) {return FAIL_RESULT;}
-
-        @Override
-        public int cast(ServerWorld world, PlayerEntity player, Hand hand, Float efficiencyMultiplier, Integer cooldownMultiplier) {
+		@Override
+        public int cast(ServerWorld world, PlayerEntity player, Hand hand, Float efficiencyMultiplier, Integer cooldownDivisor) {
             player.setCurrentHand(hand);
 			return NO_COOLDOWN_RESULT;
         }
@@ -203,10 +196,8 @@ public class ModSpells {
             return NO_COOLDOWN_RESULT;
         }
 
-        @Override public int useEntity(ServerWorld world, PlayerEntity player, Hand hand, LivingEntity target, Float efficiencyMultiplier, Integer cooldownMultiplier) {return FAIL_RESULT;}
-
-        @Override
-        public int cast(ServerWorld world, PlayerEntity player, Hand hand, Float efficiencyMultiplier, Integer cooldownMultiplier) {
+		@Override
+        public int cast(ServerWorld world, PlayerEntity player, Hand hand, Float efficiencyMultiplier, Integer cooldownDivisor) {
             player.setCurrentHand(hand);
             if (selectedEntities.get(player) == null){
                 selectedEntities.put(player, StreamSupport.stream(world.iterateEntities().spliterator(), false)
@@ -217,10 +208,8 @@ public class ModSpells {
             return FAIL_RESULT;
         }
 
-        @Override public int castTick(ServerWorld world, PlayerEntity player, Hand hand, int remainingUseTicks, Float efficiencyMultiplier, Integer cooldownMultiplier) {return FAIL_RESULT;}
-
-        @Override
-        public int castStop(ServerWorld world, PlayerEntity player, Hand hand, int remainingUseTicks, Float efficiencyMultiplier, Integer cooldownMultiplier) {
+		@Override
+        public int castStop(ServerWorld world, PlayerEntity player, Hand hand, int remainingUseTicks, Float efficiencyMultiplier, Integer cooldownDivisor) {
             List<Entity> selectedEntities = this.selectedEntities.remove(player);
             if (selectedEntities != null && !selectedEntities.isEmpty()) {
                 for (Entity selectedEntity : selectedEntities) {
