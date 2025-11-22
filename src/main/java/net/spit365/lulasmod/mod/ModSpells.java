@@ -36,24 +36,24 @@ import static net.spit365.lulasmod.state.LinkedLightningPersistentState.lastLink
 public class ModSpells {
 	public static final List<Identifier> SpellTabItems = new LinkedList<>();
 
-    public static final SpellItem HIGHLIGHTER_SPELL = RegisterHelper.spell("highlighter_spell",  settings -> new SpellItem(settings, (world, player, hand, efficiencyMultiplier, cooldownMultiplier) -> {
+    public static final SpellItem HIGHLIGHTER_SPELL = RegisterHelper.spell("highlighter_spell",  settings -> new SpellItem(settings, (world, player, hand, efficiencyMultiplier, cooldownDivisor) -> {
         boolean playerGlowing = !player.isGlowing();
         world.playSound(null, player.getBlockPos(), (playerGlowing ? BLOCK_BEACON_ACTIVATE : BLOCK_BEACON_DEACTIVATE), SoundCategory.PLAYERS);
         for (PlayerEntity playerEntity : world.getPlayers()) playerEntity.setGlowing(playerGlowing);
         return NO_COOLDOWN_RESULT;
     }));
 
-	public static final SpellItem FIRE_SPELL = RegisterHelper.spell("malignity",  settings -> new SpellItem(settings, (world, player, hand, efficiencyMultiplier, cooldownMultiplier) -> {
+	public static final SpellItem FIRE_SPELL = RegisterHelper.spell("malignity",  settings -> new SpellItem(settings, (world, player, hand, efficiencyMultiplier, cooldownDivisor) -> {
 		world.spawnEntity(new MalignityEntity(world, player, player.getRotationVec(1).normalize().multiply(3), Math.min(Math.round(efficiencyMultiplier + 2), 100)));
 		return 300;
 	}));
-	public static final SpellItem DASH_SPELL = RegisterHelper.spell("purloining",  settings -> new SpellItem(settings, (world, player, hand, efficiencyMultiplier, cooldownMultiplier) -> {
+	public static final SpellItem DASH_SPELL = RegisterHelper.spell("purloining",  settings -> new SpellItem(settings, (world, player, hand, efficiencyMultiplier, cooldownDivisor) -> {
 		if (!player.hasStatusEffect(net.minecraft.entity.effect.StatusEffects.SLOWNESS)) {
 			Integer usages = player.getAttached(ModData.DASH_SPELL);
-			if (usages == null) usages = 5 * cooldownMultiplier;
+			if (usages == null) usages = 5 * cooldownDivisor;
 			player.setAttached(ModData.DASH_SPELL, (usages.equals(1) ?
-				5 * cooldownMultiplier :
-				Math.min(5 * cooldownMultiplier, usages) - 1)
+				5 * cooldownDivisor :
+				Math.min(5 * cooldownDivisor, usages) - 1)
 			);
 			boolean onGround = player.isOnGround();
 			player.addVelocity(player.getRotationVec(1).normalize().add(0, 0.25, 0));
@@ -64,7 +64,7 @@ public class ModSpells {
 		}
 		return 20;
 	}));
-	public static final SpellItem SMOKE_SPELL = RegisterHelper.spell("guile",  settings -> new SpellItem(settings, (world, player, hand, efficiencyMultiplier, cooldownMultiplier) -> {
+	public static final SpellItem SMOKE_SPELL = RegisterHelper.spell("guile",  settings -> new SpellItem(settings, (world, player, hand, efficiencyMultiplier, cooldownDivisor) -> {
 		if (!player.hasStatusEffect(ModStatusEffects.CUSHIONED) && !player.hasStatusEffect(net.minecraft.entity.effect.StatusEffects.INVISIBILITY)) {
 			world.playSound(null, player.getBlockPos(), ENTITY_SPLASH_POTION_BREAK, SoundCategory.PLAYERS);
 			world.spawnParticles(ParticleTypes.CAMPFIRE_SIGNAL_SMOKE, player.getPos().x, player.getPos().y + 1.0d, player.getPos().z, 269, 1.2d, 1.2d, 1.2d, 0d);
@@ -73,18 +73,18 @@ public class ModSpells {
 		}
 		return 20;
 	}));
-	public static final SpellItem HEAL_SPELL = RegisterHelper.spell("appeasing",  settings -> new SpellItem(settings, (world, player, hand, efficiencyMultiplier, cooldownMultiplier) -> {
+	public static final SpellItem HEAL_SPELL = RegisterHelper.spell("appeasing",  settings -> new SpellItem(settings, (world, player, hand, efficiencyMultiplier, cooldownDivisor) -> {
 		player.setHealth(player.getMaxHealth());
 		player.getHungerManager().add(100, 0f);
 		return 300;
 	}));
 
 
-	public static final SpellItem HOME_SPELL = RegisterHelper.spell("wickedness", settings -> new SpellItem(settings, (world, player, hand, efficiencyMultiplier, cooldownMultiplier) -> {
+	public static final SpellItem HOME_SPELL = RegisterHelper.spell("wickedness", settings -> new SpellItem(settings, (world, player, hand, efficiencyMultiplier, cooldownDivisor) -> {
 		ModMethods.sendHome(player, player.getStackInHand(hand).getItem());
 		return 600;
 	}));
-	public static final SpellItem AMETHYST_SPELL = RegisterHelper.spell("envy", settings -> new SpellItem(settings, (world, player, hand, efficiencyMultiplier, cooldownMultiplier) -> {
+	public static final SpellItem AMETHYST_SPELL = RegisterHelper.spell("envy", settings -> new SpellItem(settings, (world, player, hand, efficiencyMultiplier, cooldownDivisor) -> {
 		AmethystShardEntity amethystShardEntity = new AmethystShardEntity(player, world);
 		amethystShardEntity.addVelocity(player.getRotationVec(1).normalize().multiply(5));
 		amethystShardEntity.setDamage(8);
@@ -92,7 +92,7 @@ public class ModSpells {
 		return 20;
 	}));
 
-    public static final ConjuringItem SLASH_CONJURING = RegisterHelper.spell("treachery_judecca",  settings -> new ConjuringItem(settings, (world, player, hand, efficiencyMultiplier, cooldownMultiplier) -> {
+    public static final ConjuringItem SLASH_CONJURING = RegisterHelper.spell("treachery_judecca",  settings -> new ConjuringItem(settings, (world, player, hand, efficiencyMultiplier, cooldownDivisor) -> {
         Vec3d pos = player.getRotationVec(1).normalize().multiply(2).add(player.getEyePos());
         for (Entity entity : world.getOtherEntities(player, new Box(pos.add(1d, 1d, 1d), pos.add(-1d, -1d, -1d)))) {
             if (entity instanceof LivingEntity livingEntity)
@@ -103,13 +103,13 @@ public class ModSpells {
         world.playSound(null, player.getBlockPos(), ENTITY_PLAYER_ATTACK_STRONG, SoundCategory.PLAYERS, 100.0f, 1f);
         return 3;
     }));
-    public static final ConjuringItem BLOOD_CONJURING = RegisterHelper.spell("emulations", settings -> new ConjuringItem(settings, (world, player, hand, efficiencyMultiplier, cooldownMultiplier) -> {
+    public static final ConjuringItem BLOOD_CONJURING = RegisterHelper.spell("emulations", settings -> new ConjuringItem(settings, (world, player, hand, efficiencyMultiplier, cooldownDivisor) -> {
         if (ModMethods.selectClosestEntity(player, 5d) instanceof LivingEntity victim)
             ModMethods.applyBleed(victim, (int) (1200 * efficiencyMultiplier) - 80);
         Impaled.impale(player, player.getStackInHand(hand), 20, 600, 6, 25, ModParticles.CURSED_BLOOD);
         return NO_COOLDOWN_RESULT;
     }));
-    public static final ConjuringItem POCKET_CONJURING = RegisterHelper.spell("heresies", settings -> new ConjuringItem(settings, (world, player, hand, efficiencyMultiplier, cooldownMultiplier) -> {
+    public static final ConjuringItem POCKET_CONJURING = RegisterHelper.spell("heresies", settings -> new ConjuringItem(settings, (world, player, hand, efficiencyMultiplier, cooldownDivisor) -> {
         List<Entity> entities = world.getOtherEntities(player, new Box(player.getPos().add(-5d, -5d, -5d), player.getPos().add(5d, 5d, 5d)));
         entities.removeIf(entity -> entity.getAttached(ModData.TIME_FORWARD_ANIMATION_FRAMES) != null);
         if (entities.isEmpty()) entities.add(player);
@@ -125,7 +125,7 @@ public class ModSpells {
 
 	public static final SorceryItem COMBUSTION_SORCERY = RegisterHelper.spell("combustion", settings -> new SorceryItem(settings, new SorceryItem.Sorcery() {
 		@Override
-		public int hitEntity(ServerWorld world, PlayerEntity player, Hand hand, LivingEntity target, Float efficiencyMultiplier, Integer cooldownMultiplier) {
+		public int hitEntity(ServerWorld world, PlayerEntity player, Hand hand, LivingEntity target, Float efficiencyMultiplier, Integer cooldownDivisor) {
 			if (!player.getItemCooldownManager().isCoolingDown(player.getStackInHand(hand))) {
 				player.getWorld().createExplosion(player, target.getX(), target.getY(), target.getZ(), player.distanceTo(target) / 4, World.ExplosionSourceType.NONE);
 				player.damage(world, world.getDamageSources().inFire(), 2);
@@ -137,7 +137,7 @@ public class ModSpells {
 		@Override public int useEntity(ServerWorld world, PlayerEntity player, Hand hand, LivingEntity target, Float efficiencyMultiplier, Integer cooldownMultiplier) {return FAIL_RESULT;}
 
 		@Override
-		public int cast(ServerWorld world, PlayerEntity player, Hand hand, Float efficiencyMultiplier, Integer cooldownMultiplier) {
+		public int cast(ServerWorld world, PlayerEntity player, Hand hand, Float efficiencyMultiplier, Integer cooldownDivisor) {
             Vec3d eyePos = player.getEyePos();
             Vec3d[] laser = new MultiVec3d(eyePos, eyePos.add(player.getRotationVec(1).normalize().multiply(25))).stream().toArray(Vec3d[]::new);
             for (int i = 1; i < laser.length; i++) {
@@ -165,7 +165,7 @@ public class ModSpells {
         }
 
         @Override
-        public int castTick(ServerWorld world, PlayerEntity player, Hand hand, int remainingUseTicks, Float efficiencyMultiplier, Integer cooldownMultiplier) {
+        public int castTick(ServerWorld world, PlayerEntity player, Hand hand, int remainingUseTicks, Float efficiencyMultiplier, Integer cooldownDivisor) {
 			MultiVec3d lastLink = lastLinks.get(player);
 			int maxDistance = 100;
 			Vec3d raycast = player.raycast(maxDistance, 1, false).getPos();
@@ -185,7 +185,7 @@ public class ModSpells {
 		}
 
         @Override
-        public int castStop(ServerWorld world, PlayerEntity player, Hand hand, int remainingUseTicks, Float efficiencyMultiplier, Integer cooldownMultiplier) {
+        public int castStop(ServerWorld world, PlayerEntity player, Hand hand, int remainingUseTicks, Float efficiencyMultiplier, Integer cooldownDivisor) {
 			lastLinks.remove(player);
 			return 100;
         }
@@ -194,7 +194,7 @@ public class ModSpells {
         private static final HashMap<Entity, List<Entity>> selectedEntities = new HashMap<>();
 
         @Override
-        public int hitEntity(ServerWorld world, PlayerEntity player, Hand hand, LivingEntity target, Float efficiencyMultiplier, Integer cooldownMultiplier) {
+        public int hitEntity(ServerWorld world, PlayerEntity player, Hand hand, LivingEntity target, Float efficiencyMultiplier, Integer cooldownDivisor) {
             Vec3d vec3d = player.getPos().subtract(target.getPos()).normalize().multiply(2);
             if (player.isOnGround()) target.addVelocity(vec3d.multiply(-1).add(0, 0.25, 0));
             else player.addVelocity(vec3d);
