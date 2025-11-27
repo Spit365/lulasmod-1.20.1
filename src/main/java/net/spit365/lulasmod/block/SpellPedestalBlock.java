@@ -28,23 +28,22 @@ public class SpellPedestalBlock extends Block {
 
     @Override
     protected ActionResult onUse(BlockState state, World world, BlockPos blockPos, PlayerEntity player, BlockHitResult hit) {
-        if (!world.isClient()){
-			List<ModData.WorldBlockPos> mutable = ModMethods.makeMutable(player.getAttached(ModData.ABSORBED_PEDESTALS));
-			ModData.WorldBlockPos worldBlockPos = new ModData.WorldBlockPos(world.getRegistryKey(), blockPos);
-			if (!mutable.contains(worldBlockPos)) {
-				mutable.add(worldBlockPos);
-				List<Identifier> spells = ModSpells.SpellTabItems;
-				Identifier highlighterId = Registries.ITEM.getId(ModSpells.HIGHLIGHTER_SPELL);
-				spells.removeIf(id -> Registries.ITEM.get(id) instanceof ConjuringItem || highlighterId.equals(id));
-				if (mutable.size() <= spells.size()) {
-					player.setAttached(ModData.ABSORBED_PEDESTALS,  mutable);
-					((ServerWorld) world).spawnParticles(ParticleTypes.CRIMSON_SPORE, blockPos.getX(), blockPos.getY(), blockPos.getZ(), 500, 1.5, 1.5, 1.5, 0);
-					player.giveItemStack(new ItemStack(Registries.ITEM.get(spells.get(mutable.size() - 1))));
-				} else player.sendMessage(Text.translatable("notify.lulasmod.pedestal.all_spells"), true);
-				return ActionResult.SUCCESS;
-			} else player.sendMessage(Text.translatable("notify.lulasmod.already_absorbed_pedestal"), true);
-        }
-        return ActionResult.PASS;
+		if (world.isClient()) return ActionResult.PASS;
+		List<ModData.WorldBlockPos> mutable = ModMethods.makeMutable(player.getAttached(ModData.ABSORBED_PEDESTALS));
+		ModData.WorldBlockPos worldBlockPos = new ModData.WorldBlockPos(world.getRegistryKey(), blockPos);
+		if (!mutable.contains(worldBlockPos)) {
+			mutable.add(worldBlockPos);
+			List<Identifier> spells = ModSpells.SpellTabItems;
+			Identifier highlighterId = Registries.ITEM.getId(ModSpells.HIGHLIGHTER_SPELL);
+			spells.removeIf(id -> Registries.ITEM.get(id) instanceof ConjuringItem || highlighterId.equals(id));
+			if (mutable.size() <= spells.size()) {
+				player.setAttached(ModData.ABSORBED_PEDESTALS,  mutable);
+				((ServerWorld) world).spawnParticles(ParticleTypes.CRIMSON_SPORE, blockPos.getX(), blockPos.getY(), blockPos.getZ(), 500, 1.5, 1.5, 1.5, 0);
+				player.giveItemStack(new ItemStack(Registries.ITEM.get(spells.get(mutable.size() - 1))));
+			} else player.sendMessage(Text.translatable("notify.lulasmod.pedestal.all_spells"), true);
+			return ActionResult.SUCCESS;
+		} else player.sendMessage(Text.translatable("notify.lulasmod.already_absorbed_pedestal"), true);
+		return ActionResult.PASS;
     }
     @Override public VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context){return SHAPE;}
 }
