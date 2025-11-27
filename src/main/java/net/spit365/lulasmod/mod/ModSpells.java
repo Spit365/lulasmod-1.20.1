@@ -213,8 +213,7 @@ public class ModSpells {
             List<Entity> selectedEntities = this.selectedEntities.remove(player);
             if (selectedEntities != null && !selectedEntities.isEmpty()) {
                 for (Entity selectedEntity : selectedEntities) {
-                    Vec3d relativeEntityCoordinates = selectedEntity.getPos().subtract(player.getPos());
-                    selectedEntity.addVelocity(player.getRotationVec(1).normalize().multiply(relativeEntityCoordinates.length()).subtract(relativeEntityCoordinates).multiply(0.25));
+					selectedEntity.setVelocity(player.getRotationVec(1).normalize().subtract(selectedEntity.getPos().subtract(player.getPos()).normalize()).normalize().multiply(2));
                     selectedEntity.velocityModified = true;
                 }
                 return NO_COOLDOWN_RESULT;
