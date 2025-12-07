@@ -1,4 +1,4 @@
-package net.spit365.lulasmod.structures;
+package net.spit365.lulasmod.structure;
 
 import net.minecraft.block.Block;
 import net.minecraft.server.world.ServerWorld;
