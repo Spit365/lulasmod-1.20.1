@@ -3,6 +3,8 @@ package net.spit365.lulasmod.mod;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.option.KeyBinding;
+import net.spit365.lulasmod.packet.CycleSpellHotbarC2SPacket;
+import net.spit365.lulasmod.packet.TailedContractC2SPacket;
 import net.spit365.lulasmod.util.RegisterHelper;
 import org.lwjgl.glfw.GLFW;
 
@@ -12,8 +14,8 @@ public class ModKeybinds {
 
 	public static void init(){
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
-            if (ModKeybinds.CYCLE_SPELL_KEY.wasPressed()) ClientPlayNetworking.send(new ModPackets.CycleSpellHotbarC2SPacket());
-            if (ModKeybinds.TAILED_CONTRACT_KEY.wasPressed()) ClientPlayNetworking.send(new ModPackets.TailedContractC2SPacket());
+            if (ModKeybinds.CYCLE_SPELL_KEY.wasPressed()) ClientPlayNetworking.send(new CycleSpellHotbarC2SPacket());
+            if (ModKeybinds.TAILED_CONTRACT_KEY.wasPressed()) ClientPlayNetworking.send(new TailedContractC2SPacket());
         });
     }
 }

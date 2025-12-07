@@ -16,7 +16,7 @@ import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
-import net.spit365.lulasmod.mod.ModPackets;
+import net.spit365.lulasmod.packet.LightningLinkS2CPacket;
 import net.spit365.lulasmod.state.LinkedLightningPersistentState;
 import net.spit365.lulasmod.util.MultiVec3d;
 import org.joml.Matrix4f;
@@ -45,7 +45,7 @@ public class LinkedLightning {
 
     private static void sendRenderPacket(ServerWorld serverWorld, Set<MultiVec3d> links) {
         serverWorld.getPlayers().forEach(serverPlayer ->
-            ServerPlayNetworking.send(serverPlayer, new ModPackets.LightningLinkS2CPacket(
+            ServerPlayNetworking.send(serverPlayer, new LightningLinkS2CPacket(
                 links.stream().filter(multiVec3d ->
                     Arrays.stream(multiVec3d.vec3ds()).anyMatch(vec3d -> serverPlayer.getPos().isInRange(vec3d, CURRENT_UPDATE_RANGE))
                 ).collect(Collectors.toSet())

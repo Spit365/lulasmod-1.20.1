@@ -26,6 +26,7 @@ import net.spit365.lulasmod.entity.SmokeProjectileEntity;
 import net.spit365.lulasmod.item.spell.ConjuringItem;
 import net.spit365.lulasmod.item.spell.SorceryItem;
 import net.spit365.lulasmod.item.spell.SpellItem;
+import net.spit365.lulasmod.packet.TimeForwardAnimationS2CPacket;
 import net.spit365.lulasmod.state.LinkedLightningPersistentState;
 import net.spit365.lulasmod.util.MultiVec3d;
 import net.spit365.lulasmod.util.RegisterHelper;
@@ -53,7 +54,7 @@ public class ModSpells {
 		return 300;
 	}));
 	public static final SpellItem DASH_SPELL = RegisterHelper.spell("purloining",  settings -> new SpellItem(settings, (world, player, hand, efficiencyMultiplier, cooldownDivisor) -> {
-		if (!player.hasStatusEffect(net.minecraft.entity.effect.StatusEffects.SLOWNESS)) {
+		if (!player.hasStatusEffect(StatusEffects.SLOWNESS)) {
 			Integer usages = player.getAttached(ModData.DASH_SPELL);
 			if (usages == null) usages = 5 * cooldownDivisor;
 			player.setAttached(ModData.DASH_SPELL, (usages.equals(1) ?
@@ -128,7 +129,7 @@ public class ModSpells {
         for (Entity victim : entities) {
             world.spawnParticles(ParticleTypes.PORTAL, victim.getX(), victim.getY() + 0.5, victim.getZ(), 50, 0, 0, 0, 1);
             if (world.getRegistryKey().equals(World.OVERWORLD) && victim instanceof ServerPlayerEntity serverPlayer) {
-                ServerPlayNetworking.send(serverPlayer, new ModPackets.TimeForwardAnimationS2CPacket());
+                ServerPlayNetworking.send(serverPlayer, new TimeForwardAnimationS2CPacket());
                 victim.setAttached(ModData.TIME_FORWARD_ANIMATION_FRAMES, 450);
             } else ModMethods.pocketTeleport(victim);
         }
