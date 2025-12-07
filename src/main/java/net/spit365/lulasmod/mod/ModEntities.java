@@ -3,9 +3,7 @@ package net.spit365.lulasmod.mod;
 import net.minecraft.client.render.entity.FlyingItemEntityRenderer;
 import net.minecraft.entity.EntityType;
 import net.spit365.lulasmod.entity.*;
-import net.spit365.lulasmod.renderer.AmethystShardEntityRenderer;
-import net.spit365.lulasmod.renderer.ParticleProjectileEntityRenderer;
-import net.spit365.lulasmod.renderer.NeedleSwordEntityRenderer;
+import net.spit365.lulasmod.renderer.*;
 import net.spit365.lulasmod.util.RegisterHelper;
 
 public class ModEntities {
@@ -13,6 +11,11 @@ public class ModEntities {
 		"smoke_bomb",
 		SmokeBombEntity::new,
 		FlyingItemEntityRenderer::new,
+		0.25F, 0.25F, 4, 10);
+    public static final EntityType<SmokeProjectileEntity> SMOKE_PROJECTILE = RegisterHelper.entity(
+		"smoke_projectile",
+		SmokeProjectileEntity::new,
+        EmptyRenderer::new,
 		0.25F, 0.25F, 4, 10);
 	public static final EntityType<MalignityEntity> MALIGNITY = RegisterHelper.entity(
 		"malignity",
@@ -22,7 +25,7 @@ public class ModEntities {
 	public static final EntityType<ParticleProjectileEntity> PARTICLE_PROJECTILE = RegisterHelper.entity(
 		"particle_projectile",
 		ParticleProjectileEntity::new,
-		ParticleProjectileEntityRenderer::new,
+		EmptyRenderer::new,
 		0.5F, 0.5F, 4, 20);
 	public static final EntityType<AmethystShardEntity> AMETHYST_SHARD = RegisterHelper.entity(
 		"amethyst_shard",

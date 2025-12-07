@@ -22,6 +22,7 @@ public class ModData {
 	public static final AttachmentType<List<WorldBlockPos>> ABSORBED_PEDESTALS = RegisterHelper.attachmentType("absorbed_pedestals", WorldBlockPos.CODEC.listOf());
 	public static final AttachmentType<Integer> TIME_FORWARD_ANIMATION_FRAMES = RegisterHelper.attachmentType("absorbed_pedestals", Codec.INT);
 	public static final AttachmentType<Integer> BLEED_VALUE = RegisterHelper.attachmentType("bleed_value", Codec.INT);
+    public static final AttachmentType<Integer> SMOKE_SPELL_COOLDOWN = RegisterHelper.attachmentType("smoke_spell_cooldown", Codec.INT);
 
 	public record WorldBlockPos(RegistryKey<World> world, BlockPos blockPos){
 		public static final Codec<WorldBlockPos> CODEC = RecordCodecBuilder.create(instance -> instance.group(

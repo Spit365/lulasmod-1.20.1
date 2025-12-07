@@ -20,6 +20,7 @@ public class ModServerTick {
 				GazeboOfSins.tick(serverWorld);
                 LinkedLightning.tick(serverWorld);
                 Bleed.tick(serverWorld);
+                SmokeSpellCooldown.tick(serverWorld);
             }
 		});
     }

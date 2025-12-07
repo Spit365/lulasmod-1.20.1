@@ -69,5 +69,6 @@
   "notify.lulasmod.command.tag_manager_remove_all": "All tags in category %1$s have been removed",
   "notify.lulasmod.command.tag_manager_remove_specific": "Tag %1$s in category %2$s has been removed",
   "notify.lulasmod.command.tag_manager_check_success": "Category %1$s contains tag %2$s",
-  "notify.lulasmod.command.tag_manager_check_fail": "Categoty %1$s does not contain %2$s"
+  "notify.lulasmod.command.tag_manager_check_fail": "Categoty %1$s does not contain %2$s",
+  "notify.lulasmod.smoke_cooling_down": "Smoke is still assimilating"
 }

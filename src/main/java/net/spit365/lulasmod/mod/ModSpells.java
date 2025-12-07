@@ -4,11 +4,14 @@ import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.StatusEffectInstance;
+import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
+import net.minecraft.text.Text;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Box;
@@ -16,8 +19,10 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.spit365.lulasmod.custom.Impaled;
 import net.spit365.lulasmod.custom.Kinesis;
+import net.spit365.lulasmod.custom.SmokeSpellCooldown;
 import net.spit365.lulasmod.entity.AmethystShardEntity;
 import net.spit365.lulasmod.entity.MalignityEntity;
+import net.spit365.lulasmod.entity.SmokeProjectileEntity;
 import net.spit365.lulasmod.item.spell.ConjuringItem;
 import net.spit365.lulasmod.item.spell.SorceryItem;
 import net.spit365.lulasmod.item.spell.SpellItem;
@@ -65,13 +70,19 @@ public class ModSpells {
 		return 20;
 	}));
 	public static final SpellItem SMOKE_SPELL = RegisterHelper.spell("guile",  settings -> new SpellItem(settings, (world, player, hand, efficiencyMultiplier, cooldownDivisor) -> {
-		if (!player.hasStatusEffect(ModStatusEffects.CUSHIONED) && !player.hasStatusEffect(net.minecraft.entity.effect.StatusEffects.INVISIBILITY)) {
-			world.playSound(null, player.getBlockPos(), ENTITY_SPLASH_POTION_BREAK, SoundCategory.PLAYERS);
-			world.spawnParticles(ParticleTypes.CAMPFIRE_SIGNAL_SMOKE, player.getPos().x, player.getPos().y + 1.0d, player.getPos().z, 269, 1.2d, 1.2d, 1.2d, 0d);
-			player.addStatusEffect(new StatusEffectInstance(net.minecraft.entity.effect.StatusEffects.INVISIBILITY, Math.round(efficiencyMultiplier - 1) * 400, 0, false, false));
-			player.addStatusEffect(new StatusEffectInstance(ModStatusEffects.CUSHIONED, Math.round(efficiencyMultiplier - 1) * 1200, 0, false, false));
-		}
-		return 20;
+		if (!SmokeSpellCooldown.isCoolingDown(player)) {
+            world.spawnEntity(new SmokeProjectileEntity(world, player, ItemStack.EMPTY));
+            if (efficiencyMultiplier > 1) {
+                int duration = Math.round(efficiencyMultiplier - 1) * 400;
+                for (var effect : Set.of(net.minecraft.entity.effect.StatusEffects.INVISIBILITY, ModStatusEffects.CUSHIONED))
+                    player.addStatusEffect(new StatusEffectInstance(effect, duration, 0, false, false));
+            }
+            SmokeSpellCooldown.apply(player, cooldownDivisor);
+            return 20;
+		} else {
+            player.sendMessage(Text.translatable("notify.lulasmod.smoke_cooling_down").append(Text.literal(": " + SmokeSpellCooldown.getPercent(player) + "%")), true);
+            return FAIL_RESULT;
+        }
 	}));
 	public static final SpellItem HEAL_SPELL = RegisterHelper.spell("appeasing",  settings -> new SpellItem(settings, (world, player, hand, efficiencyMultiplier, cooldownDivisor) -> {
 		player.setHealth(player.getMaxHealth());
