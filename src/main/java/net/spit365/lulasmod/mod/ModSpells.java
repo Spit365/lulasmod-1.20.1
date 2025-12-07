@@ -138,7 +138,7 @@ public class ModSpells {
 
 	public static final SorceryItem COMBUSTION_SORCERY = RegisterHelper.spell("combustion", settings -> new SorceryItem(settings, new SorceryItem.Sorcery() {
 		@Override
-		public int hitEntity(ServerWorld world, PlayerEntity player, Hand hand, LivingEntity target, Float efficiencyMultiplier, Integer cooldownDivisor) {
+		public int hitEntity(ServerWorld world, PlayerEntity player, Hand hand, LivingEntity target, float efficiencyMultiplier, int cooldownDivisor) {
 			if (!player.getItemCooldownManager().isCoolingDown(player.getStackInHand(hand))) {
 				player.getWorld().createExplosion(player, target.getX(), target.getY(), target.getZ(), player.distanceTo(target) / 4, World.ExplosionSourceType.NONE);
 				player.damage(world, world.getDamageSources().inFire(), 2);
@@ -148,7 +148,7 @@ public class ModSpells {
 		}
 
 		@Override
-		public int cast(ServerWorld world, PlayerEntity player, Hand hand, Float efficiencyMultiplier, Integer cooldownDivisor) {
+		public int cast(ServerWorld world, PlayerEntity player, Hand hand, float efficiencyMultiplier, int cooldownDivisor) {
             Vec3d eyePos = player.getEyePos();
             Vec3d[] laser = new MultiVec3d(eyePos, eyePos.add(player.getRotationVec(1).normalize().multiply(25))).stream().toArray(Vec3d[]::new);
             for (int i = 1; i < laser.length; i++) {
@@ -165,13 +165,13 @@ public class ModSpells {
 	}));
     public static final SorceryItem CURRENT_SORCERY = RegisterHelper.spell("current", settings -> new SorceryItem(settings, new SorceryItem.Sorcery() {
 		@Override
-        public int cast(ServerWorld world, PlayerEntity player, Hand hand, Float efficiencyMultiplier, Integer cooldownDivisor) {
+        public int cast(ServerWorld world, PlayerEntity player, Hand hand, float efficiencyMultiplier, int cooldownDivisor) {
             player.setCurrentHand(hand);
 			return NO_COOLDOWN_RESULT;
         }
 
         @Override
-        public int castTick(ServerWorld world, PlayerEntity player, Hand hand, int remainingUseTicks, Float efficiencyMultiplier, Integer cooldownDivisor) {
+        public int castTick(ServerWorld world, PlayerEntity player, Hand hand, int remainingUseTicks, float efficiencyMultiplier, int cooldownDivisor) {
 			MultiVec3d lastLink = lastLinks.get(player);
 			int maxDistance = 100;
 			Vec3d raycast = player.raycast(maxDistance, 1, false).getPos();
@@ -191,7 +191,7 @@ public class ModSpells {
 		}
 
         @Override
-        public int castStop(ServerWorld world, PlayerEntity player, Hand hand, int remainingUseTicks, Float efficiencyMultiplier, Integer cooldownDivisor) {
+        public int castStop(ServerWorld world, PlayerEntity player, Hand hand, int remainingUseTicks, float efficiencyMultiplier, int cooldownDivisor) {
 			lastLinks.remove(player);
 			return 100;
         }
@@ -200,7 +200,7 @@ public class ModSpells {
         private static final HashMap<Entity, List<Entity>> selectedEntities = new HashMap<>();
 
         @Override
-        public int hitEntity(ServerWorld world, PlayerEntity player, Hand hand, LivingEntity target, Float efficiencyMultiplier, Integer cooldownDivisor) {
+        public int hitEntity(ServerWorld world, PlayerEntity player, Hand hand, LivingEntity target, float efficiencyMultiplier, int cooldownDivisor) {
             Vec3d vec3d = player.getPos().subtract(target.getPos()).normalize().multiply(2);
             if (player.isOnGround()) target.addVelocity(vec3d.multiply(-1).add(0, 0.25, 0));
             else player.addVelocity(vec3d);
@@ -210,7 +210,7 @@ public class ModSpells {
         }
 
 		@Override
-        public int cast(ServerWorld world, PlayerEntity player, Hand hand, Float efficiencyMultiplier, Integer cooldownDivisor) {
+        public int cast(ServerWorld world, PlayerEntity player, Hand hand, float efficiencyMultiplier, int cooldownDivisor) {
             player.setCurrentHand(hand);
             if (selectedEntities.get(player) == null){
                 selectedEntities.put(player, StreamSupport.stream(world.iterateEntities().spliterator(), false)
@@ -222,7 +222,7 @@ public class ModSpells {
         }
 
 		@Override
-        public int castStop(ServerWorld world, PlayerEntity player, Hand hand, int remainingUseTicks, Float efficiencyMultiplier, Integer cooldownDivisor) {
+        public int castStop(ServerWorld world, PlayerEntity player, Hand hand, int remainingUseTicks, float efficiencyMultiplier, int cooldownDivisor) {
             List<Entity> selectedEntities = this.selectedEntities.remove(player);
             if (selectedEntities != null && !selectedEntities.isEmpty()) {
                 for (Entity selectedEntity : selectedEntities) {

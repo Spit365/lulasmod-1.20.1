@@ -33,7 +33,7 @@ public class ModMethods {
         return selectedEntity;
     }
 
-    public static void applyBleed(LivingEntity entity, Integer duration){
+    public static void applyBleed(LivingEntity entity, int duration){
 		Integer bleed = entity.getAttached(ModData.BLEED_VALUE);
 		entity.setAttached(ModData.BLEED_VALUE, duration + (bleed != null? bleed : 0));
     }

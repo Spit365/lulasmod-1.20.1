@@ -18,11 +18,11 @@ public class SorceryItem extends SpellItem{
 	}
 
 	public interface Sorcery extends Spell{
-		default int hitEntity(ServerWorld world, PlayerEntity player, Hand hand, LivingEntity target, Float efficiencyMultiplier, Integer cooldownDivisor) {return SealItem.FAIL_RESULT;}
+		default int hitEntity(ServerWorld world, PlayerEntity player, Hand hand, LivingEntity target, float efficiencyMultiplier, int cooldownDivisor) {return SealItem.FAIL_RESULT;}
 		@Override
-		default int cast(ServerWorld world, PlayerEntity player, Hand hand, Float efficiencyMultiplier, Integer cooldownDivisor) {return SealItem.FAIL_RESULT;}
-		default int castTick(ServerWorld world, PlayerEntity player, Hand hand, int remainingUseTicks, Float efficiencyMultiplier, Integer cooldownDivisor) {return SealItem.FAIL_RESULT;}
-		default int castStop(ServerWorld world, PlayerEntity player, Hand hand, int remainingUseTicks, Float efficiencyMultiplier, Integer cooldownDivisor) {return SealItem.FAIL_RESULT;}
+		default int cast(ServerWorld world, PlayerEntity player, Hand hand, float efficiencyMultiplier, int cooldownDivisor) {return SealItem.FAIL_RESULT;}
+		default int castTick(ServerWorld world, PlayerEntity player, Hand hand, int remainingUseTicks, float efficiencyMultiplier, int cooldownDivisor) {return SealItem.FAIL_RESULT;}
+		default int castStop(ServerWorld world, PlayerEntity player, Hand hand, int remainingUseTicks, float efficiencyMultiplier, int cooldownDivisor) {return SealItem.FAIL_RESULT;}
 	}
 
 	@Override

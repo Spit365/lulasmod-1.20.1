@@ -22,7 +22,7 @@ public class Impaled {
     public static void tick() {
         for (Map.Entry<ImpaledContext, Integer> impaledEntry : impaled.entrySet()) {
             ImpaledContext context = impaledEntry.getKey();
-            Integer counter = impaledEntry.getValue();
+            int counter = impaledEntry.getValue();
             LivingEntity victim = context.livingEntity();
             if (context.iterations() > 0 && victim.isAlive()) {
                 if (victim instanceof EndermanEntity) victim.kill((ServerWorld) victim.getWorld());
@@ -44,7 +44,7 @@ public class Impaled {
         }
     }
 
-    public static Boolean impale(PlayerEntity player, ItemStack item, Integer baseCooldown, Integer maxCooldown, Integer iterations, Integer intervalls, ParticleEffect particle) {
+    public static Boolean impale(PlayerEntity player, ItemStack item, int baseCooldown, int maxCooldown, int iterations, int intervalls, ParticleEffect particle) {
         player.getItemCooldownManager().set(item, 2);
         if (ModMethods.selectClosestEntity(player, 5d) instanceof LivingEntity selectedEntity && impaled.keySet().stream().noneMatch(impaledContext -> impaledContext.livingEntity().equals(selectedEntity))) {
             player.getItemCooldownManager().set(item, maxCooldown);
@@ -55,8 +55,8 @@ public class Impaled {
         return false;
     }
 
-    public record ImpaledContext(PlayerEntity player, LivingEntity livingEntity, ParticleEffect particle, Integer iterations, Integer intervalDuration) {
-        public ImpaledContext(ImpaledContext context, Integer iterations, Integer intervals) {
+    public record ImpaledContext(PlayerEntity player, LivingEntity livingEntity, ParticleEffect particle, int iterations, int intervalDuration) {
+        public ImpaledContext(ImpaledContext context, int iterations, int intervals) {
             this(context.player(), context.livingEntity(), context.particle(), iterations, intervals);
         }
     }
