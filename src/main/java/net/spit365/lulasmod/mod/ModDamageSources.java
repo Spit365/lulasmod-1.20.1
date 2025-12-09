@@ -5,10 +5,11 @@ import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.damage.DamageType;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
+import net.minecraft.world.World;
 import net.spit365.lulasmod.util.RegisterHelper;
 
 public class ModDamageSources {
-	public static DamageSource bloodsucking(Entity attacker) {return getDamageSource(attacker, BLOODSUCKING);}
+	public static DamageSource bloodsucking(World world) {return getDamageSource(world, BLOODSUCKING);}
 	public static DamageSource amethystShard(Entity attacker) {return getDamageSource(attacker, AMETHYST_SHARD);}
 	public static DamageSource needleSword(Entity attacker) {return getDamageSource(attacker, NEEDLE_SWORD);}
 
@@ -21,6 +22,12 @@ public class ModDamageSources {
 			.getOrThrow(RegistryKeys.DAMAGE_TYPE)
 			.getEntry(damageType.getValue())
 			.orElseThrow(), attacker);
+	}
+	private static DamageSource getDamageSource(World world, RegistryKey<DamageType> damageType) {
+		return new DamageSource(world.getRegistryManager()
+			.getOrThrow(RegistryKeys.DAMAGE_TYPE)
+			.getEntry(damageType.getValue())
+			.orElseThrow());
 	}
 
 	public static void init() {}

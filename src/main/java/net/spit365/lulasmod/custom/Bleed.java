@@ -16,10 +16,10 @@ public class Bleed {
             int threshold = Math.min((int) (Math.min(entity.getHealth(), entity.getMaxHealth()) * 60), 1200);
             if (duration > threshold) {
                 duration -= threshold;
-                entity.damage(world, ModDamageSources.bloodsucking(entity), entity.getMaxHealth() * 0.15f + 10f);
-                StreamSupport.stream(world.iterateEntities().spliterator(), true).filter(target -> target.squaredDistanceTo(entity) < 1000000 && target instanceof ServerPlayerEntity).forEach(player -> {
-                    //ServerPlayNetworking.send((ServerPlayerEntity) player, (CustomPayload) (Object) new SummonBleedS2CPacket(entity.getX(), entity.getY(), entity.getZ()));
-                });
+                entity.damage(world, ModDamageSources.bloodsucking(world), entity.getMaxHealth() * 0.15f + 10f);
+                StreamSupport.stream(world.iterateEntities().spliterator(), true)
+					.filter(target -> target.squaredDistanceTo(entity) < 1000000 && target instanceof ServerPlayerEntity)
+					.forEach(player -> ServerPlayNetworking.send((ServerPlayerEntity) player, new SummonBleedS2CPacket(entity.getX(), entity.getY(), entity.getZ())));
             }
             duration--;
             entity.setAttached(ModData.BLEED_VALUE, duration);
