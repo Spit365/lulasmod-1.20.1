@@ -10,7 +10,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
 import net.spit365.lulasmod.Lulasmod;
-import net.spit365.lulasmod.custom.Kinesis;
+import net.spit365.lulasmod.renderer.DashSpellUsagesRenderer;
+import net.spit365.lulasmod.renderer.KinesisInteractionRenderer;
 import net.spit365.lulasmod.util.SpellHotbar;
 
 import java.util.Arrays;
@@ -34,6 +35,7 @@ public class ModGui {
 				for (int i = 0; i < Math.min(SPELL_HOTBAR_LIST.size(), 3); i++) context.drawItem(SPELL_HOTBAR_LIST.get(i), x + 4, y + (i * -20));
 			}
 		});
-        HudElementRegistry.addLast(Identifier.of(Lulasmod.MOD_ID, "kinesis_interaction_range"), Kinesis::render);
+        HudElementRegistry.addLast(Identifier.of(Lulasmod.MOD_ID, "kinesis_interaction_range"), KinesisInteractionRenderer::render);
+        HudElementRegistry.addLast(Identifier.of(Lulasmod.MOD_ID, "purloining_usages"), (context, renderTickCounter) -> DashSpellUsagesRenderer.render(context));
 	}
 }

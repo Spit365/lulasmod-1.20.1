@@ -17,8 +17,9 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import net.spit365.lulasmod.custom.Bleed;
 import net.spit365.lulasmod.custom.Impaled;
-import net.spit365.lulasmod.custom.Kinesis;
+import net.spit365.lulasmod.renderer.KinesisInteractionRenderer;
 import net.spit365.lulasmod.custom.SmokeSpellCooldown;
 import net.spit365.lulasmod.entity.AmethystShardEntity;
 import net.spit365.lulasmod.entity.MalignityEntity;
@@ -55,18 +56,19 @@ public class ModSpells {
 	}));
 	public static final SpellItem DASH_SPELL = RegisterHelper.spell("purloining",  settings -> new SpellItem(settings, (world, player, hand, efficiencyMultiplier, cooldownDivisor) -> {
 		if (!player.hasStatusEffect(StatusEffects.SLOWNESS)) {
+			int maxUsages = 5 * cooldownDivisor;
 			Integer usages = player.getAttached(ModData.DASH_SPELL);
-			if (usages == null) usages = 5 * cooldownDivisor;
-			player.setAttached(ModData.DASH_SPELL, (usages.equals(1) ?
-				5 * cooldownDivisor :
-				Math.min(5 * cooldownDivisor, usages) - 1)
-			);
-			boolean onGround = player.isOnGround();
+			if (usages == null) usages = maxUsages;
+			usages--;
+			boolean depleted = usages <= 0;
+			usages = depleted ? maxUsages : Math.min(maxUsages, usages);
+			int cooldown = depleted ? (player.isOnGround() ? 20 : 40) : 5;
+			player.setAttached(ModData.DASH_SPELL, usages);
 			player.addVelocity(player.getRotationVec(1).normalize().add(0, 0.25, 0));
 			player.velocityModified = true;
 			player.fallDistance = 0;
 			world.spawnParticles(ParticleTypes.CLOUD, player.getX(), player.getY(), player.getZ(), 25, 0.75, 0.2, 0.75, 0);
-			return usages.equals(1) ? (onGround ? 20 : 40) : 5;
+			return cooldown;
 		}
 		return 20;
 	}));
@@ -109,7 +111,7 @@ public class ModSpells {
         Vec3d pos = player.getRotationVec(1).normalize().multiply(2).add(player.getEyePos());
         for (Entity entity : world.getOtherEntities(player, new Box(pos.add(1d, 1d, 1d), pos.add(-1d, -1d, -1d)))) {
             if (entity instanceof LivingEntity livingEntity)
-                ModMethods.applyBleed(livingEntity, (int) (120 * efficiencyMultiplier));
+                Bleed.apply(livingEntity, (int) (120 * efficiencyMultiplier));
             else entity.discard();
         }
         world.spawnParticles(ModParticles.SCRATCH, pos.getX(), pos.getY(), pos.getZ(), 0, 0, 0, 0, 0);
@@ -118,7 +120,7 @@ public class ModSpells {
     }));
     public static final ConjuringItem BLOOD_CONJURING = RegisterHelper.spell("emulations", settings -> new ConjuringItem(settings, (world, player, hand, efficiencyMultiplier, cooldownDivisor) -> {
         if (ModMethods.selectClosestEntity(player, 5d) instanceof LivingEntity victim)
-            ModMethods.applyBleed(victim, (int) (1200 * efficiencyMultiplier) - 80);
+            Bleed.apply(victim, (int) (1200 * efficiencyMultiplier) - 80);
         Impaled.impale(player, player.getStackInHand(hand), 20, 600, 6, 25, ModParticles.CURSED_BLOOD);
         return NO_COOLDOWN_RESULT;
     }));
@@ -214,7 +216,7 @@ public class ModSpells {
             player.setCurrentHand(hand);
             if (selectedEntities.get(player) == null){
                 selectedEntities.put(player, StreamSupport.stream(world.iterateEntities().spliterator(), false)
-                    .filter(entity -> player.getRotationVec(1).normalize().dotProduct(entity.getEyePos().subtract(player.getEyePos()).normalize()) >= Math.cos(Kinesis.INTERACTION_RANGE_RADIANS)).toList()
+                    .filter(entity -> player.getRotationVec(1).normalize().dotProduct(entity.getEyePos().subtract(player.getEyePos()).normalize()) >= Math.cos(KinesisInteractionRenderer.INTERACTION_RANGE_RADIANS)).toList()
                 );
                 return NO_COOLDOWN_RESULT;
             }
@@ -228,12 +230,18 @@ public class ModSpells {
                 for (Entity selectedEntity : selectedEntities) {
 					selectedEntity.setVelocity(player.getRotationVec(1).normalize().subtract(selectedEntity.getPos().subtract(player.getPos()).normalize()).normalize().multiply(2));
                     selectedEntity.velocityModified = true;
+					selectedEntity.fallDistance += 10;
                 }
                 return NO_COOLDOWN_RESULT;
             }
             return FAIL_RESULT;
         }
 
+		@Override
+		public int castTick(ServerWorld world, PlayerEntity player, Hand hand, int remainingUseTicks, float efficiencyMultiplier, int cooldownDivisor) {
+			if (world instanceof ServerWorld serverWorld) player.damage(serverWorld, ModDamageSources.kineticBacklash(world), 1);
+			return NO_COOLDOWN_RESULT;
+		}
     }));
 
 

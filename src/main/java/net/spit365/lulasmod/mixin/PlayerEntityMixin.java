@@ -6,6 +6,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
+import net.spit365.lulasmod.custom.Demon;
 import net.spit365.lulasmod.mod.ModParticles;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -19,7 +20,7 @@ public abstract class PlayerEntityMixin extends LivingEntity {
     @Inject(method = "spawnSweepAttackParticles", at = @At("HEAD"), cancellable = true)
     private void spawnSweepAttackParticles(CallbackInfo ci) {
         PlayerEntity player = (PlayerEntity) (Object) this;
-        if (player.getCommandTags().contains("tailed") && player.getWorld() instanceof ServerWorld serverWorld) {
+        if (Demon.isDemon(player) && player.getWorld() instanceof ServerWorld serverWorld) {
             double x = -MathHelper.sin(this.getYaw() * (float) (Math.PI / 180.0));
             double y = MathHelper.cos(this.getYaw() * (float) (Math.PI / 180.0));
             serverWorld.spawnParticles(ModParticles.SCRATCH, player.getX() + x, player.getBodyY(0.5), player.getZ() + y, 0, x, 0.0, y, 0.0);

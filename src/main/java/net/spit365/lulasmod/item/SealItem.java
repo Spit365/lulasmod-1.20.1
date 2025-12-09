@@ -23,18 +23,23 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Predicate;
 
 public class SealItem extends Item  implements SpellHotbar {
-    public SealItem(Settings settings, Usable canUse, float efficiencyMultiplier, int cooldownDivisor) {
+    public SealItem(Settings settings, Predicate<LivingEntity> canUse, Consequences consequences, float efficiencyMultiplier, int cooldownDivisor) {
 		super(settings);
 		this.canUse = canUse;
+		this.consequences = consequences;
 		this.efficiencyMultiplier = efficiencyMultiplier;
 		this.cooldownDivisor = cooldownDivisor;
 	}
+	public SealItem(Settings settings, Predicate<LivingEntity> canUse, float efficiencyMultiplier, int cooldownDivisor) {
+		this(settings, canUse, (entity, cooldown) -> {}, efficiencyMultiplier, cooldownDivisor);
+	}
 	public static final int NO_COOLDOWN_RESULT = 0;
 	public static final int FAIL_RESULT = -1;
-	public interface Usable{boolean accept(LivingEntity entity);}
-    public final Usable canUse;
+    public final Predicate<LivingEntity> canUse;
+    public final Consequences consequences;
     public final float efficiencyMultiplier;
     public final int cooldownDivisor;
 
@@ -70,10 +75,11 @@ public class SealItem extends Item  implements SpellHotbar {
 	}
 
 	private <T> T sealLogic(T resultSuccess, T resultFail, LivingEntity user, Hand hand, SpellAction spellAction){
-		if (user instanceof PlayerEntity player && player.getWorld() instanceof ServerWorld serverWorld && canUse.accept(player)) {
+		if (user instanceof PlayerEntity player && player.getWorld() instanceof ServerWorld serverWorld && canUse.test(player)) {
 			List<Identifier> spellList = player.getAttached(ModData.EQUIPPED_SPELLS);
 			if(spellList != null && !spellList.isEmpty() && Registries.ITEM.get(spellList.getFirst()) instanceof SpellItem spellItem){
 				int result = spellAction.accept(serverWorld, player, hand, spellItem);
+				if (result >= 0) consequences.accept(player, result);
 				return handleResult(resultSuccess, resultFail, hand, player, result);
 			}
 		}
@@ -95,6 +101,7 @@ public class SealItem extends Item  implements SpellHotbar {
 	}
 
 	@FunctionalInterface private interface SpellAction{int accept(ServerWorld serverWorld, PlayerEntity player, Hand hand, SpellItem spellItem);}
+	@FunctionalInterface public interface Consequences {void accept(LivingEntity entity, int cooldown);}
 
 	@Override
     public void inventoryTick(ItemStack stack, ServerWorld world, Entity entity, @Nullable EquipmentSlot slot) {

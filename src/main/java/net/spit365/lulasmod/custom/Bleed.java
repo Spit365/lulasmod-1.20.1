@@ -1,10 +1,15 @@
 package net.spit365.lulasmod.custom;
 
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.util.math.Vec3d;
 import net.spit365.lulasmod.mod.ModDamageSources;
 import net.spit365.lulasmod.mod.ModData;
+import net.spit365.lulasmod.mod.ModParticles;
+import net.spit365.lulasmod.packet.SummonBleedS2CPacket;
 
 import java.util.stream.StreamSupport;
 
@@ -25,4 +30,14 @@ public class Bleed {
             entity.setAttached(ModData.BLEED_VALUE, duration);
         });
     }
+
+	public static void apply(LivingEntity entity, int duration){
+		Integer bleed = entity.getAttached(ModData.BLEED_VALUE);
+		entity.setAttached(ModData.BLEED_VALUE, duration + (bleed != null? bleed : 0));
+	}
+
+	public static void summonParticles(Vec3d pos, ClientWorld world) {
+		if (world != null) for (int i = 0; i < world.random.nextInt(4) + 6; i++)
+			world.addParticleClient(ModParticles.BLOOD, pos.getX(), pos.getY() + 1, pos.getZ(), 1, 0, 1);
+	}
 }

@@ -12,9 +12,12 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
+import net.spit365.lulasmod.custom.Bleed;
+import net.spit365.lulasmod.custom.Demon;
 import net.spit365.lulasmod.custom.LinkedLightning;
 import net.spit365.lulasmod.custom.TimeForward;
 import net.spit365.lulasmod.packet.*;
+import net.spit365.lulasmod.renderer.DashSpellUsagesRenderer;
 import net.spit365.lulasmod.util.SpellHotbar;
 import net.spit365.lulasmod.item.spell.ConjuringItem;
 import org.jetbrains.annotations.NotNull;
@@ -24,13 +27,14 @@ import java.util.function.Supplier;
 public class ModPackets {
 
     public static void init(){
-        //if (EnvType.SERVER.equals(FabricLoader.getInstance().getEnvironmentType())) PayloadTypeRegistry.playS2C().register(SummonBleedS2CPacket.ID, SummonBleedS2CPacket.CODEC);
+        PayloadTypeRegistry.playS2C().register(SummonBleedS2CPacket.ID, SummonBleedS2CPacket.CODEC);
 		PayloadTypeRegistry.playS2C().register(SpellHotbarListS2CPacket.ID, SpellHotbarListS2CPacket.CODEC);
 		PayloadTypeRegistry.playS2C().register(TimeForwardAnimationS2CPacket.ID, TimeForwardAnimationS2CPacket.CODEC);
         PayloadTypeRegistry.playS2C().register(LightningLinkS2CPacket.ID, LightningLinkS2CPacket.CODEC);
+        PayloadTypeRegistry.playS2C().register(DashSpellUsagesS2CPacket.ID, DashSpellUsagesS2CPacket.CODEC);
 
 		PayloadTypeRegistry.playC2S().register(CycleSpellHotbarC2SPacket.ID, CycleSpellHotbarC2SPacket.CODEC);
-		PayloadTypeRegistry.playC2S().register(TailedContractC2SPacket.ID, TailedContractC2SPacket.CODEC);
+		PayloadTypeRegistry.playC2S().register(DemonContractC2SPacket.ID, DemonContractC2SPacket.CODEC);
 
 
 		ServerPlayNetworking.registerGlobalReceiver(CycleSpellHotbarC2SPacket.ID, (cycleSpellHotbarC2SPacket, context) -> {
@@ -40,23 +44,24 @@ public class ModPackets {
 				break;
 			}
 		});
-		ServerPlayNetworking.registerGlobalReceiver(TailedContractC2SPacket.ID, (tailedContractC2SPacket, context) -> {
+		ServerPlayNetworking.registerGlobalReceiver(DemonContractC2SPacket.ID, (demonContractC2SPacket, context) -> {
 			ServerPlayerEntity player = context.player();
-			if (player != null) {
-				if (player.getCommandTags().contains("tailed")){
-					boolean shouldDisplayMessage = true;
-					for (Identifier id : ModSpells.SpellTabItems) {
-						Item item = Registries.ITEM.get(id);
-						if (!(item instanceof ConjuringItem)) continue;
-						boolean notInInventory = ModMethods.getInventoryStack(player, item) == null;
-						if (notInInventory) player.giveItemStack(new ItemStack(item));
-						else if (shouldDisplayMessage) shouldDisplayMessage = false;
-					}
-					if (shouldDisplayMessage) player.sendMessage(Text.translatable("notify.lulasmod.command.contract_success"), false);
-				} else player.sendMessage(Text.translatable("notify.lulasmod.command.contract_fail"), false);
-			}
+			if (player == null) return;
+			if (Demon.isDemon(player)){
+				boolean shouldDisplayMessage = true;
+				if (ModMethods.getInventoryStack(player, ModItems.HELLISH_SEAL) == null) player.giveItemStack(new ItemStack(ModItems.HELLISH_SEAL));
+				else shouldDisplayMessage = false;
+				for (Identifier id : ModSpells.SpellTabItems) {
+					Item item = Registries.ITEM.get(id);
+					if (!(item instanceof ConjuringItem)) continue;
+					if (ModMethods.getInventoryStack(player, item) == null) player.giveItemStack(new ItemStack(item));
+					else if (shouldDisplayMessage) shouldDisplayMessage = false;
+				}
+				if (shouldDisplayMessage) player.sendMessage(Text.translatable("notify.lulasmod.command.contract_success"), false);
+			} else player.sendMessage(Text.translatable("notify.lulasmod.command.contract_fail"), false);
 		});
 
+		ClientPlayNetworking.registerGlobalReceiver(DashSpellUsagesS2CPacket.ID, (dashSpellUsagesS2CPacket, context) -> DashSpellUsagesRenderer.usages = dashSpellUsagesS2CPacket.usages());
 		ClientPlayNetworking.registerGlobalReceiver(SummonBleedS2CPacket.ID, (summonBleedS2CPacket, context) -> Bleed.summonParticles(summonBleedS2CPacket.getPos(), context.client().world));
 		ClientPlayNetworking.registerGlobalReceiver(SpellHotbarListS2CPacket.ID, (spellHotbarListS2CPacket, context) -> ModGui.SPELL_HOTBAR_LIST = spellHotbarListS2CPacket.list());
 		ClientPlayNetworking.registerGlobalReceiver(TimeForwardAnimationS2CPacket.ID, (cycleSpellHotbarC2SPacket, context) -> TimeForward.Animator.start(context.client().world));

@@ -6,12 +6,12 @@ import net.minecraft.util.Identifier;
 import net.spit365.lulasmod.Lulasmod;
 import net.spit365.lulasmod.mod.ModPackets;
 
-public record TailedContractC2SPacket() implements CustomPayload {
+public record DemonContractC2SPacket() implements CustomPayload {
     @Override
     public Id<? extends CustomPayload> getId() {
         return ID;
     }
 
-    public static final Id<TailedContractC2SPacket> ID = new Id<>(Identifier.of(Lulasmod.MOD_ID, "tailed_contract"));
-    public static final PacketCodec<Object, TailedContractC2SPacket> CODEC = ModPackets.getEmptyPacketCodec(TailedContractC2SPacket::new);
+    public static final Id<DemonContractC2SPacket> ID = new Id<>(Identifier.of(Lulasmod.MOD_ID, "demon_contract"));
+    public static final PacketCodec<Object, DemonContractC2SPacket> CODEC = ModPackets.getEmptyPacketCodec(DemonContractC2SPacket::new);
 }

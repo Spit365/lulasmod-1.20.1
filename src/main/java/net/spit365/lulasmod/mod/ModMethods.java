@@ -6,7 +6,6 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.packet.s2c.play.PositionFlag;
-import net.minecraft.particle.SimpleParticleType;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
@@ -33,11 +32,7 @@ public class ModMethods {
         return selectedEntity;
     }
 
-    public static void applyBleed(LivingEntity entity, int duration){
-		Integer bleed = entity.getAttached(ModData.BLEED_VALUE);
-		entity.setAttached(ModData.BLEED_VALUE, duration + (bleed != null? bleed : 0));
-    }
-    public static void sendHome(PlayerEntity player, Item item){
+	public static void sendHome(PlayerEntity player, Item item){
 		try {
 			if (player instanceof ServerPlayerEntity serverPlayer) {
 				MinecraftServer server = Objects.requireNonNull(player.getServer());
@@ -69,27 +64,7 @@ public class ModMethods {
         return null;
     }
 
-    public static void outlineBox(Box box, ServerWorld world, SimpleParticleType particle){
-        final Vec3d start = box.getCenter().add(box.getLengthX() / -2, box.getLengthY() / -2, box.getLengthZ() / -2);
-        final Vec3d end = box.getCenter().add(box.getLengthX() / 2, box.getLengthY() / 2, box.getLengthZ() / 2);
-
-        for (double i = 0; i < box.getLengthX(); i += 0.625) world.spawnParticles(particle, start.getX() + i, start.getY(), start.getZ(), 0, 0, 0, 0, 0);
-        for (double i = 0; i < box.getLengthX(); i += 0.625) world.spawnParticles(particle, start.getX() + i, start.getY(), end.getZ(), 0, 0, 0, 0, 0);
-        for (double i = 0; i < box.getLengthX(); i += 0.625) world.spawnParticles(particle, start.getX() + i, end.getY(), start.getZ(), 0, 0, 0, 0, 0);
-        for (double i = 0; i < box.getLengthX(); i += 0.625) world.spawnParticles(particle, start.getX() + i, end.getY(), end.getZ(), 0, 0, 0, 0, 0);
-
-        for (double i = 0; i < box.getLengthY(); i += 0.625) world.spawnParticles(particle, start.getX(), start.getY() + i, start.getZ(), 0, 0, 0, 0, 0);
-        for (double i = 0; i < box.getLengthY(); i += 0.625) world.spawnParticles(particle, start.getX(), start.getY() + i, end.getZ(), 0, 0, 0, 0, 0);
-        for (double i = 0; i < box.getLengthY(); i += 0.625) world.spawnParticles(particle, end.getX(), start.getY() + i, start.getZ(), 0, 0, 0, 0, 0);
-        for (double i = 0; i < box.getLengthY(); i += 0.625) world.spawnParticles(particle, end.getX(), start.getY() + i, end.getZ(), 0, 0, 0, 0, 0);
-
-        for (double i = 0; i < box.getLengthZ(); i += 0.625) world.spawnParticles(particle, start.getX(), start.getY(), start.getZ() + i, 0, 0, 0, 0, 0);
-        for (double i = 0; i < box.getLengthZ(); i += 0.625) world.spawnParticles(particle, start.getX(), end.getY(), start.getZ() + i, 0, 0, 0, 0, 0);
-        for (double i = 0; i < box.getLengthZ(); i += 0.625) world.spawnParticles(particle, end.getX(), start.getY(), start.getZ() + i, 0, 0, 0, 0, 0);
-        for (double i = 0; i < box.getLengthZ(); i += 0.625) world.spawnParticles(particle, end.getX(), end.getY(), start.getZ() + i, 0, 0, 0, 0, 0);
-    }
-
-    public static void pocketTeleport(Entity victim) {
+	public static void pocketTeleport(Entity victim) {
         if (!victim.teleport(
 		   Objects.requireNonNull(victim.getServer()).getWorld((
 			   victim.getWorld().getRegistryKey().equals(ModDimensions.POCKET_DIMENSION)?

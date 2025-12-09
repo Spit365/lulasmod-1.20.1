@@ -1,11 +1,15 @@
 package net.spit365.lulasmod.mod;
 
+import com.mojang.brigadier.arguments.BoolArgumentType;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.minecraft.command.argument.EntityArgumentType;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.spit365.lulasmod.custom.Bleed;
+import net.spit365.lulasmod.custom.Demon;
+
 import static net.minecraft.server.command.CommandManager.*;
 
 public class ModCommands {
@@ -17,7 +21,7 @@ public class ModCommands {
 					.then(argument("seconds", IntegerArgumentType.integer())
 						.executes(context ->  {
                 			for (Entity e : EntityArgumentType.getEntities(context, "targets")) if (e instanceof LivingEntity)
-                   				ModMethods.applyBleed((LivingEntity) e, IntegerArgumentType.getInteger(context, "seconds") * 20);
+                   				Bleed.apply((LivingEntity) e, IntegerArgumentType.getInteger(context, "seconds") * 20);
                 			return r;
             }))));
             dispatcher.register(literal("removeCooldown")
@@ -26,6 +30,30 @@ public class ModCommands {
                     	player.getItemCooldownManager().set(player.getInventory().getStack(i), 0);
                 	return r;
             }));
+			dispatcher.register(literal("demon")
+				.then(argument("value", BoolArgumentType.bool())
+					.executes(commandContext -> {
+						Entity entity = commandContext.getSource().getEntity();
+						if (entity != null) {
+							boolean value = BoolArgumentType.getBool(commandContext, "value");
+							Demon.setDemon(entity, value);
+						}
+						return r;
+					})
+					.then(argument("targets", EntityArgumentType.entities())
+						.executes(commandContext -> {
+							for (Entity entity : EntityArgumentType.getEntities(commandContext, "targets")) {
+								if (entity != null) {
+									boolean value = BoolArgumentType.getBool(commandContext, "value");
+									Demon.setDemon(entity, value);
+								}
+							}
+							return r;
+						})
+					)
+				)
+		    );
         });
     }
+
 }

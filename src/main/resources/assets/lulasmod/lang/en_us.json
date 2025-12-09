@@ -49,19 +49,21 @@
   "death.attack.amethyst_shard": "%1$s was shanked by an amethyst shard",
   "death.attack.bloodsucking": "%1$s's blood was sucked dry",
   "death.attack.bloodsucking.player": "%1$s's blood was sucked dry by %2$s",
+  "death.attack.kinetic_backlash": "%1$s didn't survive the kinetic backlash",
 
   "item_group.lulasmod.lulasmod_group": "Lulasmod",
   "item_group.lulasmod.lulasmod_spells": "Lulasmod Spells",
 
-  "key.lulasmod.cycle_spell": "Cycle Spell",
   "key.categories.lulasmod": "Lulasmod",
+  "key.lulasmod.cycle_spell": "Cycle Spell",
+  "key.lulasmod.demon_contract": "Contract with a demon",
 
   "gamerule.newDeathSystem": "Use new death system (beta)",
 
   "notify.lulasmod.duplicate_seal": "You can only hold one seal at a time.",
   "notify.lulasmod.already_absorbed_pedestal": "You have already absorbed this pedestal",
   "notify.lulasmod.pedestal.all_spells": "You already have every Spell",
-  "notify.lulasmod.command.contract_success": "You obtained the powers of §kthe ancient tailed",
+  "notify.lulasmod.command.contract_success": "You obtained the powers of §kthe ancient demon",
   "notify.lulasmod.command.contract_fail": "You cannot use this action",
   "notify.lulasmod.command.tag_manager_add": "Added tag to you in category %1$s with value %2$s",
   "notify.lulasmod.command.tag_manager_put": "You have been tagged in category %1$s with value %2$s",
