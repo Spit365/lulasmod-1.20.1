@@ -102,7 +102,6 @@ public class ModSpells {
 	public static final SpellItem AMETHYST_SPELL = RegisterHelper.spell("envy", settings -> new SpellItem(settings, (world, player, hand, efficiencyMultiplier, cooldownDivisor) -> {
 		AmethystShardEntity amethystShardEntity = new AmethystShardEntity(player, world);
 		amethystShardEntity.addVelocity(player.getRotationVec(1).normalize().multiply(5));
-		amethystShardEntity.setDamage(8);
 		world.spawnEntity(amethystShardEntity);
 		return 20;
 	}));

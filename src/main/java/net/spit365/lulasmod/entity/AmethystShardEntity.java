@@ -22,6 +22,7 @@ import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.spit365.lulasmod.Lulasmod;
 import net.spit365.lulasmod.mod.ModDamageSources;
 import net.spit365.lulasmod.mod.ModEntities;
 
@@ -29,13 +30,11 @@ public class AmethystShardEntity extends PersistentProjectileEntity {
     public AmethystShardEntity(EntityType<? extends AmethystShardEntity> entityType, World world) {
         super(entityType, world);
         this.setSound(this.getHitSound());
-        this.setDamage(8);
         this.pickupType = PickupPermission.DISALLOWED;
     }
     public AmethystShardEntity(LivingEntity owner, World world) {
         super(ModEntities.AMETHYST_SHARD, owner, world, ItemStack.EMPTY, null);
         this.setSound(this.getHitSound());
-        this.setDamage(8);
         this.pickupType = PickupPermission.DISALLOWED;
     }
 
@@ -73,8 +72,8 @@ public class AmethystShardEntity extends PersistentProjectileEntity {
              damageSource = ModDamageSources.amethystShard(owner);
              if (owner instanceof LivingEntity livingEntity) livingEntity.onAttacking(target);
          } else damageSource = ModDamageSources.amethystShard(this);
-        Integer amount = this.get(DataComponentTypes.DAMAGE);
-        if (getWorld() instanceof ServerWorld serverWorld && amount != null && target.damage(serverWorld, damageSource, amount)) {
+        int amount = 8;
+        if (getWorld() instanceof ServerWorld serverWorld && target.damage(serverWorld, damageSource, amount)) {
             if (target.getType().equals(EntityType.ENDERMAN)) return;
             if (target instanceof LivingEntity livingEntity) {
                 if (!this.getWorld().isClient && owner instanceof LivingEntity) EnchantmentHelper.onTargetDamaged(serverWorld, livingEntity, damageSource);
