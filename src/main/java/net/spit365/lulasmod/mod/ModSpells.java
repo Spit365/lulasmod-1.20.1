@@ -230,7 +230,6 @@ public class ModSpells {
                 for (Entity selectedEntity : selectedEntities) {
 					selectedEntity.setVelocity(player.getRotationVec(1).normalize().subtract(selectedEntity.getPos().subtract(player.getPos()).normalize()).normalize().multiply(2));
                     selectedEntity.velocityModified = true;
-					selectedEntity.fallDistance += 10;
                 }
                 return NO_COOLDOWN_RESULT;
             }

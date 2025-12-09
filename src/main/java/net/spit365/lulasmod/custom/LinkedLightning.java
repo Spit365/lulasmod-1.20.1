@@ -60,7 +60,7 @@ public class LinkedLightning {
             if (!otherEntities.isEmpty()) {
                 otherEntities.forEach(entity -> {
                     serverWorld.playSound(entity, entity.getX(), entity.getY(), entity.getZ(), SoundEvents.ENTITY_LIGHTNING_BOLT_THUNDER, SoundCategory.PLAYERS);
-                    entity.damage(serverWorld, serverWorld.getDamageSources().lightningBolt(), 10);
+                    entity.damage(serverWorld, serverWorld.getDamageSources().lightningBolt(), 15);
                 });
                 links.remove(multiVec3d);
                 Set<LivingEntity> livingEntitySet = new HashSet<>();
