@@ -1,7 +1,7 @@
 #version 150
 
-uniform sampler2D DiffuseSampler;
-uniform float Time;
+uniform sampler2D InSampler;
+float Time = 1;
 
 in vec2 texCoord;
 out vec4 fragColor;

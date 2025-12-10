@@ -1,0 +1,16 @@
+#version 150
+
+uniform sampler2D InSampler;
+in vec2 texCoord;
+out vec4 fragColor;
+
+layout(std140) uniform BwConfig {
+    float Strength;   // 0.0 = aus, 1.0 = voll
+};
+
+void main() {
+    vec3 color = texture(InSampler, texCoord).rgb;
+    float gray = dot(color, vec3(0.299, 0.587, 0.114)); // Luma
+    vec3 finalColor = mix(color, gray, clamp(Strength, 0.0, 1.0));
+    fragColor = vec4(finalColor, 1.0);
+}

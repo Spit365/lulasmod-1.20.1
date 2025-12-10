@@ -1,22 +1,31 @@
 package net.spit365.lulasmod.mod;
 
-import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.minecraft.client.gl.ShaderLoader;
-import net.minecraft.client.render.DefaultFramebufferSet;
-import net.minecraft.client.util.Pool;
+import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gl.Framebuffer;
+import net.minecraft.client.gl.PostEffectProcessor;
+import net.minecraft.client.render.*;
 import net.minecraft.util.Identifier;
-
-import java.util.Objects;
-
-import static net.spit365.lulasmod.Lulasmod.MOD_ID;
+import net.spit365.lulasmod.Lulasmod;
+import net.spit365.lulasmod.mixin.GameRendererAccessor;
 
 public class ModShader {
+
+    public static final Identifier BLACK_HOLE = Identifier.of(Lulasmod.MOD_ID, "bw");
+
     public static void init(){
-        ClientTickEvents.END_CLIENT_TICK.register(client -> {
-            ShaderLoader shaderLoader = client.getShaderLoader();
-            Objects.requireNonNull(shaderLoader
-                .loadPostEffect(Identifier.of(MOD_ID, "black_hole"),
-                    DefaultFramebufferSet.MAIN_ONLY)).render(client.getFramebuffer(), new Pool(-1));
+        WorldRenderEvents.END.register(worldRenderContext -> {
+            MinecraftClient client = MinecraftClient.getInstance();
+            PostEffectProcessor blackHole = client.getShaderLoader().loadPostEffect(BLACK_HOLE, DefaultFramebufferSet.MAIN_ONLY);
+            if (blackHole != null) {
+                Framebuffer framebuffer = client.getFramebuffer();
+                FrameGraphBuilder builder = new FrameGraphBuilder();
+                blackHole.render(builder, framebuffer.textureWidth, framebuffer.textureHeight, PostEffectProcessor.FramebufferSet.singleton(
+                    PostEffectProcessor.MAIN,
+                    builder.createObjectNode("main", framebuffer)
+                ));
+                builder.run(((GameRendererAccessor) client.gameRenderer).pool());
+            }
         });
     }
 }
