@@ -15,13 +15,7 @@
       ],
       "output": "minecraft:main",
       "uniforms": {
-        "BwConfig": [
-          {
-            "name": "Strength",
-            "type": "float",
-            "value": 1.0
-          }
-        ]
+        "BwConfig": []
       }
     }
   ]

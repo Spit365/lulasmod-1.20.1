@@ -10,7 +10,8 @@ layout(std140) uniform BwConfig {
 
 void main() {
     vec3 color = texture(InSampler, texCoord).rgb;
-    float gray = dot(color, vec3(0.299, 0.587, 0.114)); // Luma
-    vec3 finalColor = mix(color, gray, clamp(Strength, 0.0, 1.0));
+    float gray = dot(color, vec3(0.299, 0.587, 0.114));
+    vec3 no_color = vec3(gray, gray, gray);
+    vec3 finalColor = mix(color, no_color, clamp(Strength, 0.0, 1.0));
     fragColor = vec4(finalColor, 1.0);
 }
