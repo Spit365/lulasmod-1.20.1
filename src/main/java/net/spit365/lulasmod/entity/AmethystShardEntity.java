@@ -1,6 +1,5 @@
 package net.spit365.lulasmod.entity;
 
-import net.minecraft.component.DataComponentTypes;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
@@ -22,7 +21,6 @@ import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.spit365.lulasmod.Lulasmod;
 import net.spit365.lulasmod.mod.ModDamageSources;
 import net.spit365.lulasmod.mod.ModEntities;
 

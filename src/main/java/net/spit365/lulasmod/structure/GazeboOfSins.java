@@ -9,7 +9,8 @@ import net.minecraft.util.math.ChunkPos;
 import net.spit365.lulasmod.Lulasmod;
 import net.spit365.lulasmod.state.GazeboGenerationPersistentState;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.Map;
 
 public final class GazeboOfSins {
     public static final Identifier GAZEBO_OF_SINS_ID = Identifier.of(Lulasmod.MOD_ID, "gazebo_of_sins");

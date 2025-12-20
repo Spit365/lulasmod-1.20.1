@@ -3,7 +3,6 @@ package net.spit365.lulasmod.renderer;
 import net.minecraft.client.render.entity.EntityRendererFactory;
 import net.minecraft.client.render.entity.ProjectileEntityRenderer;
 import net.minecraft.client.render.entity.state.ProjectileEntityRenderState;
-import net.minecraft.entity.projectile.PersistentProjectileEntity;
 import net.minecraft.util.Identifier;
 import net.spit365.lulasmod.Lulasmod;
 import net.spit365.lulasmod.entity.AmethystShardEntity;

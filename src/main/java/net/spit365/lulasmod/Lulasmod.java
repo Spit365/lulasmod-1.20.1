@@ -2,10 +2,6 @@ package net.spit365.lulasmod;
 
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.ModInitializer;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gl.ShaderLoader;
-import net.minecraft.client.render.DefaultFramebufferSet;
-import net.minecraft.util.Identifier;
 import net.spit365.lulasmod.custom.LinkedLightning;
 import net.spit365.lulasmod.custom.NetherDeathSystem;
 import net.spit365.lulasmod.custom.TimeForward;
@@ -23,6 +19,8 @@ public class Lulasmod implements ModInitializer, ClientModInitializer {
 		ModSpells.init();
 		ModItems.init();
 		ModBlocks.init();
+		ModEntities.init();
+		ModParticles.init();
 		ModStatusEffects.init();
 		ModGamerules.init();
 		ModData.init();
@@ -36,13 +34,14 @@ public class Lulasmod implements ModInitializer, ClientModInitializer {
 
 	@Override
 	public void onInitializeClient() {
+		ClientPackets.init();
 		ModGui.init();
+		ClientEntities.init();
+		ClientParticles.init();
 		ModKeybinds.init();
-		ModEntities.init();
-		ModParticles.init();
         TimeForward.Animator.init();
         LinkedLightning.Render.init();
-        ModShader.init();
+        //ModShader.init();
 
 		LOGGER.info("Initializing Client for {}", MOD_ID);
 	}

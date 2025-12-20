@@ -1,6 +1,5 @@
 package net.spit365.lulasmod.mod;
 
-import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.item.Item;
@@ -12,14 +11,10 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
-import net.spit365.lulasmod.custom.Bleed;
 import net.spit365.lulasmod.custom.Demon;
-import net.spit365.lulasmod.custom.LinkedLightning;
-import net.spit365.lulasmod.custom.TimeForward;
-import net.spit365.lulasmod.packet.*;
-import net.spit365.lulasmod.renderer.DashSpellUsagesRenderer;
-import net.spit365.lulasmod.util.SpellHotbar;
 import net.spit365.lulasmod.item.spell.ConjuringItem;
+import net.spit365.lulasmod.packet.*;
+import net.spit365.lulasmod.util.SpellHotbar;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Supplier;
@@ -60,15 +55,6 @@ public class ModPackets {
 				if (shouldDisplayMessage) player.sendMessage(Text.translatable("notify.lulasmod.command.contract_success"), false);
 			} else player.sendMessage(Text.translatable("notify.lulasmod.command.contract_fail"), false);
 		});
-
-		ClientPlayNetworking.registerGlobalReceiver(DashSpellUsagesS2CPacket.ID, (dashSpellUsagesS2CPacket, context) -> DashSpellUsagesRenderer.usages = dashSpellUsagesS2CPacket.usages());
-		ClientPlayNetworking.registerGlobalReceiver(SummonBleedS2CPacket.ID, (summonBleedS2CPacket, context) -> Bleed.summonParticles(summonBleedS2CPacket.getPos(), context.client().world));
-		ClientPlayNetworking.registerGlobalReceiver(SpellHotbarListS2CPacket.ID, (spellHotbarListS2CPacket, context) -> ModGui.SPELL_HOTBAR_LIST = spellHotbarListS2CPacket.list());
-		ClientPlayNetworking.registerGlobalReceiver(TimeForwardAnimationS2CPacket.ID, (cycleSpellHotbarC2SPacket, context) -> TimeForward.Animator.start(context.client().world));
-        ClientPlayNetworking.registerGlobalReceiver(LightningLinkS2CPacket.ID, (payload, context) -> {
-            LinkedLightning.Render.linkedLightnings.clear();
-            LinkedLightning.Render.linkedLightnings.addAll(payload.linkedLightning());
-        });
 	}
 
 	public static @NotNull <T extends CustomPayload> PacketCodec<Object, T> getEmptyPacketCodec(Supplier<T> packet) {

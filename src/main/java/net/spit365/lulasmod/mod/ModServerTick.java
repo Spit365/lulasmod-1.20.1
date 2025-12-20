@@ -5,8 +5,8 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.spit365.lulasmod.custom.*;
 import net.spit365.lulasmod.renderer.DashSpellUsagesRenderer;
-import net.spit365.lulasmod.util.SpellHotbar;
 import net.spit365.lulasmod.structure.GazeboOfSins;
+import net.spit365.lulasmod.util.SpellHotbar;
 
 public class ModServerTick {
     public static void init(){

@@ -6,7 +6,6 @@ import net.minecraft.network.codec.PacketCodec;
 import net.minecraft.network.packet.CustomPayload;
 import net.minecraft.util.Identifier;
 import net.spit365.lulasmod.Lulasmod;
-import net.spit365.lulasmod.mod.ModPackets;
 import net.spit365.lulasmod.util.MultiVec3d;
 
 import java.util.ArrayList;

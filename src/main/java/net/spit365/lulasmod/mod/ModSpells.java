@@ -19,7 +19,6 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.spit365.lulasmod.custom.Bleed;
 import net.spit365.lulasmod.custom.Impaled;
-import net.spit365.lulasmod.renderer.KinesisInteractionRenderer;
 import net.spit365.lulasmod.custom.SmokeSpellCooldown;
 import net.spit365.lulasmod.entity.AmethystShardEntity;
 import net.spit365.lulasmod.entity.MalignityEntity;
@@ -28,11 +27,15 @@ import net.spit365.lulasmod.item.spell.ConjuringItem;
 import net.spit365.lulasmod.item.spell.SorceryItem;
 import net.spit365.lulasmod.item.spell.SpellItem;
 import net.spit365.lulasmod.packet.TimeForwardAnimationS2CPacket;
+import net.spit365.lulasmod.renderer.KinesisInteractionRenderer;
 import net.spit365.lulasmod.state.LinkedLightningPersistentState;
 import net.spit365.lulasmod.util.MultiVec3d;
 import net.spit365.lulasmod.util.RegisterHelper;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.StreamSupport;
 
 import static net.minecraft.sound.SoundEvents.*;

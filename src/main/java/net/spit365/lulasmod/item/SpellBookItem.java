@@ -13,10 +13,10 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
 import net.minecraft.world.World;
-import net.spit365.lulasmod.util.SpellHotbar;
 import net.spit365.lulasmod.item.spell.SpellItem;
 import net.spit365.lulasmod.mod.ModData;
 import net.spit365.lulasmod.mod.ModMethods;
+import net.spit365.lulasmod.util.SpellHotbar;
 
 import java.util.Collections;
 import java.util.List;
