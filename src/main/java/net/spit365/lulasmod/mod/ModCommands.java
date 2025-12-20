@@ -7,10 +7,12 @@ import net.minecraft.command.argument.EntityArgumentType;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.text.Text;
 import net.spit365.lulasmod.custom.Bleed;
 import net.spit365.lulasmod.custom.Demon;
 
-import static net.minecraft.server.command.CommandManager.*;
+import static net.minecraft.server.command.CommandManager.argument;
+import static net.minecraft.server.command.CommandManager.literal;
 
 public class ModCommands {
     public static void init(){
@@ -37,6 +39,7 @@ public class ModCommands {
 						if (entity != null) {
 							boolean value = BoolArgumentType.getBool(commandContext, "value");
 							Demon.setDemon(entity, value);
+							commandContext.getSource().sendFeedback(() -> Text.translatable("notify.lulasmod.demon." + value), true);
 						}
 						return r;
 					})
