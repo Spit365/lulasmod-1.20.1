@@ -10,6 +10,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
 import net.spit365.lulasmod.Lulasmod;
+import net.spit365.lulasmod.custom.Bleed;
 import net.spit365.lulasmod.renderer.DashSpellUsagesRenderer;
 import net.spit365.lulasmod.renderer.KinesisInteractionRenderer;
 import net.spit365.lulasmod.util.SpellHotbar;
@@ -37,5 +38,6 @@ public class ModGui {
 		});
         HudElementRegistry.addLast(Identifier.of(Lulasmod.MOD_ID, "kinesis_interaction_range"), KinesisInteractionRenderer::render);
         HudElementRegistry.addLast(Identifier.of(Lulasmod.MOD_ID, "purloining_usages"), (context, renderTickCounter) -> DashSpellUsagesRenderer.render(context));
+        HudElementRegistry.addLast(Identifier.of(Lulasmod.MOD_ID, "bleed_progress"), Bleed::render);
 	}
 }
