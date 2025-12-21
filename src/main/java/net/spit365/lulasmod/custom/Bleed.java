@@ -16,6 +16,7 @@ import net.spit365.lulasmod.mod.ModData;
 import net.spit365.lulasmod.mod.ModParticles;
 import net.spit365.lulasmod.packet.BleedProgressS2CPacket;
 import net.spit365.lulasmod.packet.SummonBleedS2CPacket;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.stream.StreamSupport;
 
@@ -26,9 +27,9 @@ public class Bleed {
 
     public static void tick(ServerWorld world){
         StreamSupport.stream(world.iterateEntities().spliterator(), true).filter(entity -> entity instanceof LivingEntity && entity.getAttached(ModData.BLEED_VALUE) != null).map(LivingEntity.class::cast).forEach(entity -> {
-            Integer duration = entity.getAttached(ModData.BLEED_VALUE);
+            Integer duration = getDuration(entity);
             assert duration != null;
-            int threshold = Math.min((int) (Math.min(entity.getHealth(), entity.getMaxHealth()) * 60), 1200);
+            int threshold = getThreshold(entity);
             if (duration > threshold) {
                 duration -= threshold;
                 entity.damage(world, ModDamageSources.bloodsucking(world), entity.getMaxHealth() * 0.15f + 10f);
@@ -37,13 +38,26 @@ public class Bleed {
 					.forEach(player -> ServerPlayNetworking.send((ServerPlayerEntity) player, new SummonBleedS2CPacket(entity.getX(), entity.getY(), entity.getZ())));
             }
             duration--;
-            if (entity instanceof ServerPlayerEntity player) ServerPlayNetworking.send(player, new BleedProgressS2CPacket(duration * 100 / Math.max(threshold, 1)));
             entity.setAttached(ModData.BLEED_VALUE, duration);
         });
     }
 
+    private static int getThreshold(LivingEntity entity) {
+        return Math.min((int) (Math.min(entity.getHealth(), entity.getMaxHealth()) * 60), 1200);
+    }
+
+    private static @Nullable Integer getDuration(LivingEntity entity) {
+        return entity.getAttached(ModData.BLEED_VALUE);
+    }
+
+    public static void tick(ServerPlayerEntity player){
+        Integer duration = getDuration(player);
+        if (duration != null)
+            ServerPlayNetworking.send(player, new BleedProgressS2CPacket(duration * 100 / Math.max(getThreshold(player), 1)));
+    }
+
     public static void apply(LivingEntity entity, int duration){
-        Integer bleed = entity.getAttached(ModData.BLEED_VALUE);
+        Integer bleed = getDuration(entity);
         entity.setAttached(ModData.BLEED_VALUE, duration + (bleed != null? bleed : 0));
 	}
 
@@ -60,6 +74,7 @@ public class Bleed {
         int x = (drawContext.getScaledWindowWidth() - textWidth) / 2;
         int y = drawContext.getScaledWindowHeight() * 3 / 4;
         if (progress > 0) {
+            progress = Math.min(progress, 100);
             int l = (int) (progress * 1.83F);
             drawContext.drawTexture(RenderPipelines.GUI_TEXTURED, BACKGROUND, x, y, 0, 0, textWidth, textHeight, textWidth, textHeight);
             if (l > 0) {
