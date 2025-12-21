@@ -30,11 +30,11 @@ public class SpellBookItem extends Item implements SpellHotbar {
      }
 
      @Override
-     public void onCycle(PlayerEntity player) {
+     public void onCycle(PlayerEntity player, boolean reversed) {
           ItemStack stack = (player.getMainHandStack().getItem().equals(this)? player.getMainHandStack() : player.getOffHandStack());
 		 List<Identifier> mutable = ModMethods.makeMutable(stack.get(ModData.SPELL_BOOK_SPELLS));
           if (mutable.isEmpty()) {
-              Collections.rotate(mutable, -1);
+              Collections.rotate(mutable, reversed ? 1 : -1);
               stack.set(ModData.SPELL_BOOK_SPELLS, mutable);
           }
      }
