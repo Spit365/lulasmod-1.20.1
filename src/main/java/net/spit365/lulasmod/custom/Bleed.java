@@ -16,7 +16,6 @@ import net.spit365.lulasmod.mod.ModData;
 import net.spit365.lulasmod.mod.ModParticles;
 import net.spit365.lulasmod.packet.BleedProgressS2CPacket;
 import net.spit365.lulasmod.packet.SummonBleedS2CPacket;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.stream.StreamSupport;
 
@@ -26,45 +25,43 @@ public class Bleed {
     public static int progress = 0;
 
     public static void tick(ServerWorld world){
-        StreamSupport.stream(world.iterateEntities().spliterator(), true).filter(entity -> entity instanceof LivingEntity && entity.getAttached(ModData.BLEED_VALUE) != null).map(LivingEntity.class::cast).forEach(entity -> {
-            Integer duration = getDuration(entity);
-            assert duration != null;
-            int threshold = getThreshold(entity);
-            if (duration > threshold) {
-                duration -= threshold;
-                entity.damage(world, ModDamageSources.bloodsucking(world), entity.getMaxHealth() * 0.15f + 10f);
-                StreamSupport.stream(world.iterateEntities().spliterator(), true)
-				    .filter(target -> target.squaredDistanceTo(entity) < 1000000 /*1000²*/ && target instanceof ServerPlayerEntity)
-					.forEach(player -> ServerPlayNetworking.send((ServerPlayerEntity) player, new SummonBleedS2CPacket(entity.getX(), entity.getY(), entity.getZ())));
+        StreamSupport.stream(world.iterateEntities().spliterator(), false).<LivingEntity>mapMulti((target, result) -> {
+            if (target instanceof LivingEntity livingEntity) result.accept(livingEntity);
+        }).forEach(target -> {
+            Integer duration = target.getAttached(ModData.BLEED_VALUE);
+            if (duration == null) return;
+            int threshold = getThreshold(target);
+            if (threshold <= 0) return;
+            if (duration >= threshold) {
+                target.damage(world, ModDamageSources.bloodsucking(world), (target.getMaxHealth() * 0.15f + 10f) * duration / threshold);
+                world.getPlayers().stream()
+				    .filter(player -> player.squaredDistanceTo(target) < 1000000 /*1000²*/)
+					.forEach(player -> ServerPlayNetworking.send(player, new SummonBleedS2CPacket(target.getX(), target.getY(), target.getZ())));
             }
-            duration--;
-            entity.setAttached(ModData.BLEED_VALUE, duration);
+            duration = duration % threshold - 1;
+            if (duration > 0) target.setAttached(ModData.BLEED_VALUE, duration);
+            else target.removeAttached(ModData.BLEED_VALUE);
         });
     }
 
-    private static int getThreshold(LivingEntity entity) {
-        return Math.min((int) (Math.min(entity.getHealth(), entity.getMaxHealth()) * 60), 1200);
-    }
-
-    private static @Nullable Integer getDuration(LivingEntity entity) {
-        return entity.getAttached(ModData.BLEED_VALUE);
-    }
-
     public static void tick(ServerPlayerEntity player){
-        Integer duration = getDuration(player);
+        Integer duration = player.getAttached(ModData.BLEED_VALUE);
         if (duration != null)
             ServerPlayNetworking.send(player, new BleedProgressS2CPacket(duration * 100 / Math.max(getThreshold(player), 1)));
     }
 
+    private static int getThreshold(LivingEntity entity) {
+        return Math.min((int) entity.getHealth(), 20) * 60;
+    }
+
     public static void apply(LivingEntity entity, int duration){
-        Integer bleed = getDuration(entity);
+        Integer bleed = entity.getAttached(ModData.BLEED_VALUE);
         entity.setAttached(ModData.BLEED_VALUE, duration + (bleed != null? bleed : 0));
 	}
 
 	public static void summonParticles(Vec3d pos, ClientWorld world) {
 		if (world != null) for (int i = 0; i < world.random.nextInt(4) + 6; i++) {
-             assert ModParticles.BLOOD != null;
-            world.addParticleClient(ModParticles.BLOOD, pos.getX(), pos.getY() + 1, pos.getZ(), 1, 0, 1);
+            world.addParticleClient(ModParticles.getBlood(), pos.getX(), pos.getY() + 1, pos.getZ(), 1, 0, 1);
         }
 	}
 
