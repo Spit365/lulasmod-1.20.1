@@ -37,10 +37,11 @@ public class DashSpellUsagesRenderer {
 		int x = context.getScaledWindowWidth() / 2 - 5;
 		int y = context.getScaledWindowHeight() / 2 - 3;
 
-		int maxUsages = sealItem.cooldownDivisor * 5;
-
-		context.drawText(client.textRenderer, String.valueOf(usages < 0 ? maxUsages : Math.min(usages, maxUsages)), x - 11, y, Colors.WHITE, true);
-		context.drawText(client.textRenderer, String.valueOf(maxUsages), x + 15, y, Colors.WHITE, true);
+		int maxUsages = Math.max(sealItem.cooldownDivisor * 5, 0);
+		if (usages < 0)  usages = maxUsages;
+		int color = usages != 1 ? Colors.WHITE : (player.isOnGround() ? Colors.YELLOW : Colors.RED);
+		context.drawText(client.textRenderer, String.valueOf(usages), x - 11, y, color, true);
+		context.drawText(client.textRenderer, String.valueOf(maxUsages), x + 15, y, color, true);
 	}
 }
 
