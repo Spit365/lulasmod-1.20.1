@@ -73,6 +73,6 @@
   "notify.lulasmod.command.tag_manager_check_success": "Category %1$s contains tag %2$s",
   "notify.lulasmod.command.tag_manager_check_fail": "Categoty %1$s does not contain %2$s",
   "notify.lulasmod.smoke_cooling_down": "Smoke is still assimilating",
-  "notify.lulasmod.demon.true": "%1s is now a demon",
-  "notify.lulasmod.demon.false": "%1s is no longer a demon"
+  "notify.lulasmod.demon.true": "%1$s is now a demon",
+  "notify.lulasmod.demon.false": "%1$s is no longer a demon"
 }

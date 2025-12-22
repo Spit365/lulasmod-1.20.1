@@ -39,7 +39,7 @@ public class ModCommands {
 						if (entity != null) {
 							boolean value = BoolArgumentType.getBool(commandContext, "value");
 							Demon.setDemon(entity, value);
-							commandContext.getSource().sendFeedback(() -> Text.translatable("notify.lulasmod.demon." + value), true);
+							commandContext.getSource().sendFeedback(() -> Text.translatable("notify.lulasmod.demon." + value, entity.getName()), true);
 						}
 						return r;
 					})
