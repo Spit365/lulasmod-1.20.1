@@ -24,7 +24,7 @@ public class ModPackets {
     public static void init(){
         PayloadTypeRegistry.playS2C().register(SummonBleedS2CPacket.ID, SummonBleedS2CPacket.CODEC);
 		PayloadTypeRegistry.playS2C().register(SpellHotbarListS2CPacket.ID, SpellHotbarListS2CPacket.CODEC);
-		PayloadTypeRegistry.playS2C().register(TimeForwardAnimationS2CPacket.ID, TimeForwardAnimationS2CPacket.CODEC);
+		PayloadTypeRegistry.playS2C().register(SetTimeForwardAnimationStateS2CPacket.ID, SetTimeForwardAnimationStateS2CPacket.CODEC);
         PayloadTypeRegistry.playS2C().register(LightningLinkS2CPacket.ID, LightningLinkS2CPacket.CODEC);
         PayloadTypeRegistry.playS2C().register(DashSpellUsagesS2CPacket.ID, DashSpellUsagesS2CPacket.CODEC);
         PayloadTypeRegistry.playS2C().register(BleedProgressS2CPacket.ID, BleedProgressS2CPacket.CODEC);

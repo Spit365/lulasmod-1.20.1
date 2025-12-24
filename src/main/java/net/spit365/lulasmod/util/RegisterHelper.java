@@ -41,8 +41,8 @@ import java.util.function.Function;
 import java.util.function.UnaryOperator;
 
 public final class RegisterHelper {
-	public static <T> AttachmentType<T>	attachmentType(String name, Codec<T> codec, boolean deathPersistent){
-		AttachmentType<T> attachmentType = AttachmentRegistry.createPersistent(Identifier.of(name, Lulasmod.MOD_ID), codec);
+	public static <T> AttachmentType<T> attachmentType(String name, boolean deathPersistent){
+		AttachmentType<T> attachmentType = AttachmentRegistry.create(Identifier.of(Lulasmod.MOD_ID, name));
 		if (deathPersistent) ModData.deathPersistent.add((AttachmentType<Object>) attachmentType);
 		return attachmentType;
 	}
@@ -109,6 +109,12 @@ public final class RegisterHelper {
 		 SimpleParticleType particle = FabricParticleTypes.simple(alwaysShow);
 		 Registry.register(Registries.PARTICLE_TYPE, Identifier.of(Lulasmod.MOD_ID, name), particle);
 		 return particle;
+	}
+
+	public static <T> AttachmentType<T> persistentAttachmentType(String name, Codec<T> codec, boolean deathPersistent){
+		AttachmentType<T> attachmentType = AttachmentRegistry.createPersistent(Identifier.of(Lulasmod.MOD_ID, name), codec);
+		if (deathPersistent) ModData.deathPersistent.add((AttachmentType<Object>) attachmentType);
+		return attachmentType;
 	}
 
 	public static <T extends SpellItem> T spell(String name, Function<Item.Settings, T> factory) {

@@ -5,13 +5,19 @@ import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
+import net.fabricmc.loader.impl.lib.sat4j.core.Vec;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.util.math.Box;
+import net.minecraft.util.math.Vec3d;
 import net.spit365.lulasmod.mod.ModData;
 import net.spit365.lulasmod.mod.ModMethods;
+import net.spit365.lulasmod.mod.ModParticles;
 
 public class TimeForward {
+    public static final int ANIMATION_DURATION = 450;
+
     @Environment(EnvType.CLIENT)
     public static final class Animator {
         private static long displayTime;
@@ -42,7 +48,7 @@ public class TimeForward {
             if (!running || world == null) return;
             MinecraftServer server = world.getServer();
             if (server != null && server.isPaused()) return;
-            if (animationDuration <= 450)
+            if (animationDuration <= ANIMATION_DURATION)
                 displayTime += animationDuration;
              else stop();
             animationDuration += 1;
@@ -66,14 +72,24 @@ public class TimeForward {
         }
     }
     public static class ServerLogic {
+        public record VisualContext(int frames, Vec3d pos){}
+
         public static void tick(ServerPlayerEntity player){
-            Integer i = player.getAttached(ModData.TIME_FORWARD_ANIMATION_FRAMES);
-            if (i != null) {
-                if (i > 0) player.setAttached(ModData.TIME_FORWARD_ANIMATION_FRAMES, i -1);
-                else {
-                    player.removeAttached(ModData.TIME_FORWARD_ANIMATION_FRAMES);
-                    ModMethods.pocketTeleport(player);
-                }
+            VisualContext context = player.getAttached(ModData.TIME_FORWARD_ANIMATION_FRAMES);
+            if (context == null) return;
+            Vec3d pos = context.pos();
+            Box box = new Box(pos.add(-2, -2, -2), pos.add(2, 2, 2));
+            if (!box.contains(pos)){
+                player.removeAttached(ModData.TIME_FORWARD_ANIMATION_FRAMES);
+                return;
+            }
+            int frames = context.frames();
+            if (frames > 0) {
+                player.setAttached(ModData.TIME_FORWARD_ANIMATION_FRAMES, new VisualContext(frames -1, pos));
+                ModMethods.outlineBox(box, player.getWorld(), ModParticles.CURSED_BLOOD);
+            } else {
+                player.removeAttached(ModData.TIME_FORWARD_ANIMATION_FRAMES);
+                ModMethods.pocketTeleport(player);
             }
         }
     }

@@ -10,6 +10,7 @@ import net.minecraft.registry.RegistryKeys;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.spit365.lulasmod.custom.TimeForward;
 import net.spit365.lulasmod.util.RegisterHelper;
 
 import java.util.HashSet;
@@ -21,14 +22,14 @@ public class ModData {
 
     public static final ComponentType<List<Identifier>> SPELL_BOOK_SPELLS = RegisterHelper.componentType("spell_book_spells", builder -> builder.codec(Identifier.CODEC.listOf()));
 
-	public static final AttachmentType<Integer> DAMAGE_DELAY = RegisterHelper.attachmentType("damage_delay", Codec.INT, false);
-	public static final AttachmentType<List<Identifier>> EQUIPPED_SPELLS = RegisterHelper.attachmentType("equipped_spells", Identifier.CODEC.listOf(), true);
-	public static final AttachmentType<Integer> DASH_SPELL = RegisterHelper.attachmentType("purloining_spell", Codec.INT, false);
-	public static final AttachmentType<List<WorldBlockPos>> ABSORBED_PEDESTALS = RegisterHelper.attachmentType("absorbed_pedestals", WorldBlockPos.CODEC.listOf(), false);
-	public static final AttachmentType<Integer> TIME_FORWARD_ANIMATION_FRAMES = RegisterHelper.attachmentType("absorbed_pedestals", Codec.INT, false);
-	public static final AttachmentType<Integer> BLEED_VALUE = RegisterHelper.attachmentType("bleed_value", Codec.INT, false);
-    public static final AttachmentType<Integer> SMOKE_SPELL_COOLDOWN = RegisterHelper.attachmentType("smoke_spell_cooldown", Codec.INT, false);
-    public static final AttachmentType<Boolean> DEMON = RegisterHelper.attachmentType("demon", Codec.BOOL, true);
+	public static final AttachmentType<Integer> DAMAGE_DELAY = RegisterHelper.persistentAttachmentType("damage_delay", Codec.INT, false);
+	public static final AttachmentType<List<Identifier>> EQUIPPED_SPELLS = RegisterHelper.persistentAttachmentType("equipped_spells", Identifier.CODEC.listOf(), true);
+	public static final AttachmentType<Integer> DASH_SPELL = RegisterHelper.persistentAttachmentType("purloining_spell", Codec.INT, false);
+	public static final AttachmentType<List<WorldBlockPos>> ABSORBED_PEDESTALS = RegisterHelper.persistentAttachmentType("absorbed_pedestals", WorldBlockPos.CODEC.listOf(), false);
+	public static final AttachmentType<TimeForward.ServerLogic.VisualContext> TIME_FORWARD_ANIMATION_FRAMES = RegisterHelper.attachmentType("time_forward_animation_frames", false);
+	public static final AttachmentType<Integer> BLEED_VALUE = RegisterHelper.persistentAttachmentType("bleed_value", Codec.INT, false);
+    public static final AttachmentType<Integer> SMOKE_SPELL_COOLDOWN = RegisterHelper.attachmentType("smoke_spell_cooldown", false);
+    public static final AttachmentType<Boolean> DEMON = RegisterHelper.persistentAttachmentType("demon", Codec.BOOL, true);
 
 	public record WorldBlockPos(RegistryKey<World> world, BlockPos blockPos){
 		public static final Codec<WorldBlockPos> CODEC = RecordCodecBuilder.create(instance -> instance.group(
