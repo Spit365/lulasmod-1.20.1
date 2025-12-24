@@ -4,6 +4,7 @@ import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.client.gl.RenderPipelines;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.world.ClientWorld;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
@@ -17,7 +18,7 @@ import net.spit365.lulasmod.mod.ModParticles;
 import net.spit365.lulasmod.packet.BleedProgressS2CPacket;
 import net.spit365.lulasmod.packet.SummonBleedS2CPacket;
 
-import java.util.stream.StreamSupport;
+import java.util.List;
 
 public class Bleed {
     public static final Identifier BACKGROUND = Identifier.of(Lulasmod.MOD_ID, "textures/gui/bleed_progress/background.png");
@@ -25,29 +26,29 @@ public class Bleed {
     public static int progress = 0;
 
     public static void tick(ServerWorld world){
-        StreamSupport.stream(world.iterateEntities().spliterator(), false).<LivingEntity>mapMulti((target, result) -> {
-            if (target instanceof LivingEntity livingEntity && target.isAlive()) result.accept(livingEntity);
-        }).forEach(target -> {
-            Integer duration = target.getAttached(ModData.BLEED_VALUE);
-            if (duration == null) return;
+        List<ServerPlayerEntity> players = world.getPlayers();
+        for (Entity entity : world.iterateEntities()) {
+            Integer duration = entity.getAttached(ModData.BLEED_VALUE);
+            if (duration == null) continue;
+            if (!(entity instanceof LivingEntity target) || !target.isAlive() || duration <= 0){
+                entity.removeAttached(ModData.BLEED_VALUE);
+                continue;
+            }
             int threshold = getThreshold(target);
-            if (threshold <= 0) return;
             if (duration >= threshold) {
                 target.damage(world, ModDamageSources.bloodsucking(world), (target.getMaxHealth() * 0.15f + 10f) * duration / threshold);
-                for (ServerPlayerEntity player : world.getPlayers()) {
-                    if (player.squaredDistanceTo(target) > 1000000) continue;
+                duration %= threshold;
+                for (ServerPlayerEntity player : players) if (player.squaredDistanceTo(target) <= 1_000_000)
                     ServerPlayNetworking.send(player, new SummonBleedS2CPacket(target.getX(), target.getY(), target.getZ()));
-                }
             }
-            duration = duration % threshold - 1;
+            duration--;
             if (duration > 0) target.setAttached(ModData.BLEED_VALUE, duration);
             else target.removeAttached(ModData.BLEED_VALUE);
-        });
-    }
-
-    public static void tick(ServerPlayerEntity player){
-        Integer duration = player.getAttached(ModData.BLEED_VALUE);
-        ServerPlayNetworking.send(player, new BleedProgressS2CPacket(duration != null ? duration * 100 / getThreshold(player) : 0));
+        }
+        for (ServerPlayerEntity player : players) {
+            Integer duration = player.getAttached(ModData.BLEED_VALUE);
+            ServerPlayNetworking.send(player, new BleedProgressS2CPacket(duration != null ? duration * 100 / getThreshold(player) : 0));
+        }
     }
 
     private static int getThreshold(LivingEntity entity) {
