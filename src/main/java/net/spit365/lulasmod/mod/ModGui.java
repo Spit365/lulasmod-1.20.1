@@ -38,6 +38,6 @@ public class ModGui {
 		});
         HudElementRegistry.addLast(Identifier.of(Lulasmod.MOD_ID, "kinesis_interaction_range"), KinesisInteractionRenderer::render);
         HudElementRegistry.addLast(Identifier.of(Lulasmod.MOD_ID, "purloining_usages"), (context, renderTickCounter) -> DashSpellUsagesRenderer.render(context));
-        HudElementRegistry.addLast(Identifier.of(Lulasmod.MOD_ID, "bleed_progress"), Bleed::render);
+        HudElementRegistry.addLast(Identifier.of(Lulasmod.MOD_ID, "bleed_progress"), (drawContext, renderTickCounter) -> Bleed.render(drawContext));
 	}
 }
