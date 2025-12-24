@@ -20,13 +20,14 @@ import net.minecraft.world.World;
 import net.spit365.lulasmod.custom.Bleed;
 import net.spit365.lulasmod.custom.Impaled;
 import net.spit365.lulasmod.custom.SmokeSpellCooldown;
+import net.spit365.lulasmod.custom.TimeForward;
 import net.spit365.lulasmod.entity.AmethystShardEntity;
 import net.spit365.lulasmod.entity.MalignityEntity;
 import net.spit365.lulasmod.entity.SmokeProjectileEntity;
 import net.spit365.lulasmod.item.spell.ConjuringItem;
 import net.spit365.lulasmod.item.spell.SorceryItem;
 import net.spit365.lulasmod.item.spell.SpellItem;
-import net.spit365.lulasmod.packet.TimeForwardAnimationS2CPacket;
+import net.spit365.lulasmod.packet.SetTimeForwardAnimationStateS2CPacket;
 import net.spit365.lulasmod.renderer.KinesisInteractionRenderer;
 import net.spit365.lulasmod.state.LinkedLightningPersistentState;
 import net.spit365.lulasmod.util.MultiVec3d;
@@ -133,8 +134,8 @@ public class ModSpells {
         for (Entity victim : entities) {
             world.spawnParticles(ParticleTypes.PORTAL, victim.getX(), victim.getY() + 0.5, victim.getZ(), 50, 0, 0, 0, 1);
             if (world.getRegistryKey().equals(World.OVERWORLD) && victim instanceof ServerPlayerEntity serverPlayer) {
-                ServerPlayNetworking.send(serverPlayer, new TimeForwardAnimationS2CPacket());
-                victim.setAttached(ModData.TIME_FORWARD_ANIMATION_FRAMES, 450);
+                ServerPlayNetworking.send(serverPlayer, new SetTimeForwardAnimationStateS2CPacket(true));
+                victim.setAttached(ModData.TIME_FORWARD_ANIMATION_FRAMES, new TimeForward.ServerLogic.VisualContext(TimeForward.ANIMATION_DURATION, player.getPos()));
             } else ModMethods.pocketTeleport(victim);
         }
         return NO_COOLDOWN_RESULT;
