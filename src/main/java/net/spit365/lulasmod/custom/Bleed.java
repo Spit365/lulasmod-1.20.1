@@ -3,12 +3,13 @@ package net.spit365.lulasmod.custom;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.client.gl.RenderPipelines;
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.render.RenderTickCounter;
 import net.minecraft.client.world.ClientWorld;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.spit365.lulasmod.Lulasmod;
 import net.spit365.lulasmod.mod.ModDamageSources;
@@ -17,7 +18,7 @@ import net.spit365.lulasmod.mod.ModParticles;
 import net.spit365.lulasmod.packet.BleedProgressS2CPacket;
 import net.spit365.lulasmod.packet.SummonBleedS2CPacket;
 
-import java.util.stream.StreamSupport;
+import java.util.List;
 
 public class Bleed {
     public static final Identifier BACKGROUND = Identifier.of(Lulasmod.MOD_ID, "textures/gui/bleed_progress/background.png");
@@ -25,33 +26,33 @@ public class Bleed {
     public static int progress = 0;
 
     public static void tick(ServerWorld world){
-        StreamSupport.stream(world.iterateEntities().spliterator(), false).<LivingEntity>mapMulti((target, result) -> {
-            if (target instanceof LivingEntity livingEntity) result.accept(livingEntity);
-        }).forEach(target -> {
-            Integer duration = target.getAttached(ModData.BLEED_VALUE);
-            if (duration == null) return;
+        List<ServerPlayerEntity> players = world.getPlayers();
+        for (Entity entity : world.iterateEntities()) {
+            Integer duration = entity.getAttached(ModData.BLEED_VALUE);
+            if (duration == null) continue;
+            if (!(entity instanceof LivingEntity target) || !target.isAlive() || duration <= 0){
+                entity.removeAttached(ModData.BLEED_VALUE);
+                continue;
+            }
             int threshold = getThreshold(target);
-            if (threshold <= 0) return;
             if (duration >= threshold) {
                 target.damage(world, ModDamageSources.bloodsucking(world), (target.getMaxHealth() * 0.15f + 10f) * duration / threshold);
-                world.getPlayers().stream()
-				    .filter(player -> player.squaredDistanceTo(target) < 1000000 /*1000²*/)
-					.forEach(player -> ServerPlayNetworking.send(player, new SummonBleedS2CPacket(target.getX(), target.getY(), target.getZ())));
+                duration %= threshold;
+                for (ServerPlayerEntity player : players) if (player.squaredDistanceTo(target) <= 1_000_000)
+                    ServerPlayNetworking.send(player, new SummonBleedS2CPacket(target.getX(), target.getY(), target.getZ()));
             }
-            duration = duration % threshold - 1;
+            duration--;
             if (duration > 0) target.setAttached(ModData.BLEED_VALUE, duration);
             else target.removeAttached(ModData.BLEED_VALUE);
-        });
-    }
-
-    public static void tick(ServerPlayerEntity player){
-        Integer duration = player.getAttached(ModData.BLEED_VALUE);
-        if (duration != null)
-            ServerPlayNetworking.send(player, new BleedProgressS2CPacket(duration * 100 / Math.max(getThreshold(player), 1)));
+        }
+        for (ServerPlayerEntity player : players) {
+            Integer duration = player.getAttached(ModData.BLEED_VALUE);
+            ServerPlayNetworking.send(player, new BleedProgressS2CPacket(duration != null ? duration * 100 / getThreshold(player) : 0));
+        }
     }
 
     private static int getThreshold(LivingEntity entity) {
-        return Math.min((int) entity.getHealth(), 20) * 60;
+        return MathHelper.clamp((int) entity.getHealth() * 60, 1, 1200) ;
     }
 
     public static void apply(LivingEntity entity, int duration){
@@ -65,7 +66,7 @@ public class Bleed {
         }
 	}
 
-    public static void render(DrawContext drawContext, RenderTickCounter renderTickCounter) {
+    public static void render(DrawContext drawContext) {
         int textWidth = 182;
         int textHeight = 5;
         int x = (drawContext.getScaledWindowWidth() - textWidth) / 2;

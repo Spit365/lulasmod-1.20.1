@@ -66,6 +66,6 @@
   "notify.lulasmod.command.contract_success": "You obtained the powers of §kthe ancient demon",
   "notify.lulasmod.command.contract_fail": "You cannot use this action",
   "notify.lulasmod.smoke_cooling_down": "Smoke is still assimilating",
-  "notify.lulasmod.demon.true": "%1s is now a demon",
-  "notify.lulasmod.demon.false": "%1s is no longer a demon"
+  "notify.lulasmod.demon.true": "%1$s is now a demon",
+  "notify.lulasmod.demon.false": "%1$s is no longer a demon"
 }
