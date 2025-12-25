@@ -1,0 +1,20 @@
+{
+  "targets": {
+    "swap": {}
+  },
+  "passes": [
+    {
+      "vertex_shader": "lulasmod:post/black_hole",
+      "fragment_shader": "lulasmod:post/black_hole",
+      "inputs": [
+        {
+          "sampler_name": "In",
+          "target": "minecraft:main",
+          "bilinear": true
+        }
+      ],
+      "output": "minecraft:main",
+      "uniforms": {}
+    }
+  ]
+}

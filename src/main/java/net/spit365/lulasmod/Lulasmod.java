@@ -41,6 +41,7 @@ public class Lulasmod implements ModInitializer, ClientModInitializer {
 		ModKeybinds.init();
         TimeForward.Animator.init();
         LinkedLightning.Render.init();
+		ModShader.init();
 
 		LOGGER.info("Initializing Client for {}", MOD_ID);
 	}
