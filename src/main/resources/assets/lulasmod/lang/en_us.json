@@ -65,13 +65,6 @@
   "notify.lulasmod.pedestal.all_spells": "You already have every Spell",
   "notify.lulasmod.command.contract_success": "You obtained the powers of §kthe ancient demon",
   "notify.lulasmod.command.contract_fail": "You cannot use this action",
-  "notify.lulasmod.command.tag_manager_add": "Added tag to you in category %1$s with value %2$s",
-  "notify.lulasmod.command.tag_manager_put": "You have been tagged in category %1$s with value %2$s",
-  "notify.lulasmod.command.tag_manager_read": "Category %1$s contains value %2$s",
-  "notify.lulasmod.command.tag_manager_remove_all": "All tags in category %1$s have been removed",
-  "notify.lulasmod.command.tag_manager_remove_specific": "Tag %1$s in category %2$s has been removed",
-  "notify.lulasmod.command.tag_manager_check_success": "Category %1$s contains tag %2$s",
-  "notify.lulasmod.command.tag_manager_check_fail": "Categoty %1$s does not contain %2$s",
   "notify.lulasmod.smoke_cooling_down": "Smoke is still assimilating",
   "notify.lulasmod.demon.true": "%1s is now a demon",
   "notify.lulasmod.demon.false": "%1s is no longer a demon"
