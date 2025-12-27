@@ -9,7 +9,6 @@ import net.minecraft.util.Colors;
 import net.minecraft.util.Hand;
 import net.spit365.lulasmod.item.SealItem;
 import net.spit365.lulasmod.mod.ModData;
-import net.spit365.lulasmod.mod.ModGui;
 import net.spit365.lulasmod.mod.ModSpells;
 import net.spit365.lulasmod.packet.DashSpellUsagesS2CPacket;
 
@@ -32,7 +31,7 @@ public class DashSpellUsagesRenderer {
 				break;
 			}
 		}
-		if (sealItem == null || ModGui.SPELL_HOTBAR_LIST.isEmpty() || !ModGui.SPELL_HOTBAR_LIST.getFirst().isOf(ModSpells.DASH_SPELL)) return;
+		if (sealItem == null || SpellHotbarRenderer.SPELL_HOTBAR_LIST.isEmpty() || !SpellHotbarRenderer.SPELL_HOTBAR_LIST.getFirst().isOf(ModSpells.DASH_SPELL)) return;
 
 		int x = context.getScaledWindowWidth() / 2 - 5;
 		int y = context.getScaledWindowHeight() / 2 - 3;

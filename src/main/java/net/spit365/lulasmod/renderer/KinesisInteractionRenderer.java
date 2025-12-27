@@ -10,7 +10,6 @@ import net.minecraft.client.util.Window;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.MathHelper;
 import net.spit365.lulasmod.item.SealItem;
-import net.spit365.lulasmod.mod.ModGui;
 import net.spit365.lulasmod.mod.ModSpells;
 
 import java.util.Arrays;
@@ -24,7 +23,7 @@ public class KinesisInteractionRenderer {
 	public static void render(DrawContext context, RenderTickCounter renderTickCounter) {
 		MinecraftClient mc = MinecraftClient.getInstance();
 		ClientPlayerEntity player = mc.player;
-		if (player == null || Arrays.stream(Hand.values()).noneMatch(hand -> player.getStackInHand(hand).getItem() instanceof SealItem) || ModGui.SPELL_HOTBAR_LIST.isEmpty() || !ModGui.SPELL_HOTBAR_LIST.getFirst().isOf(ModSpells.KINESIS_SORCERY)) return;
+		if (player == null || Arrays.stream(Hand.values()).noneMatch(hand -> player.getStackInHand(hand).getItem() instanceof SealItem) || SpellHotbarRenderer.SPELL_HOTBAR_LIST.isEmpty() || !SpellHotbarRenderer.SPELL_HOTBAR_LIST.getFirst().isOf(ModSpells.KINESIS_SORCERY)) return;
 		Window win = mc.getWindow();
 		int w = win.getScaledWidth();
 		int h = win.getScaledHeight();
