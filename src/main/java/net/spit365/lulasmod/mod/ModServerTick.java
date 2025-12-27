@@ -4,7 +4,6 @@ import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.spit365.lulasmod.custom.*;
-import net.spit365.lulasmod.renderer.DashSpellUsagesRenderer;
 import net.spit365.lulasmod.structure.GazeboOfSins;
 import net.spit365.lulasmod.util.SpellHotbar;
 
@@ -15,7 +14,7 @@ public class ModServerTick {
                 MinerRepel.tick(player);
 				SpellHotbar.tick(player);
                 TimeForward.ServerLogic.tick(player);
-				DashSpellUsagesRenderer.tick(player);
+				DashSpell.tick(player);
 			}
             Impaled.tick();
             for (ServerWorld serverWorld : server.getWorlds()){
