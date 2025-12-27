@@ -78,8 +78,8 @@ public class LinkedLightning {
 
     @Environment(EnvType.CLIENT)
     public static class Render {
-        public static final Set<MultiVec3d> linkedLightnings = new HashSet<>();
         private static final Identifier TEXTURE = Identifier.ofVanilla("textures/entity/creeper/creeper_armor.png");
+        public static Set<MultiVec3d> linkedLightnings = new HashSet<>();
 
         public static void init() {
             WorldRenderEvents.AFTER_ENTITIES.register(Render::render);

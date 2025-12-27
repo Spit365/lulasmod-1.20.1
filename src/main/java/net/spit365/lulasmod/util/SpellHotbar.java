@@ -12,7 +12,7 @@ import java.util.List;
 
 public interface SpellHotbar {
     List<Identifier> getHotbarList(PlayerEntity player);
-    void onCycle(PlayerEntity player, boolean reversed);
+    void onCycle(PlayerEntity player, int value);
 
     static void tick(ServerPlayerEntity player) {
         if (player.getMainHandStack().getItem() instanceof SpellHotbar item)

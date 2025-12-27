@@ -44,9 +44,9 @@ public class SealItem extends Item  implements SpellHotbar {
     public final int cooldownDivisor;
 
     @Override public List<Identifier> getHotbarList(PlayerEntity player){return player.getAttached(ModData.EQUIPPED_SPELLS);}
-    @Override public void onCycle(PlayerEntity player, boolean reversed){
+    @Override public void onCycle(PlayerEntity player, int value){
 		List<Identifier> mutable = ModMethods.makeMutable(player.getAttached(ModData.EQUIPPED_SPELLS));
-		Collections.rotate(mutable, reversed ? 1 : -1);
+		Collections.rotate(mutable, value);
 		player.setAttached(ModData.EQUIPPED_SPELLS, mutable);
 	}
 

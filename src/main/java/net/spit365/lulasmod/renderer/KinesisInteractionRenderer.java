@@ -23,7 +23,7 @@ public class KinesisInteractionRenderer {
 	public static void render(DrawContext context, RenderTickCounter renderTickCounter) {
 		MinecraftClient mc = MinecraftClient.getInstance();
 		ClientPlayerEntity player = mc.player;
-		if (player == null || Arrays.stream(Hand.values()).noneMatch(hand -> player.getStackInHand(hand).getItem() instanceof SealItem) || SpellHotbarRenderer.SPELL_HOTBAR_LIST.isEmpty() || !SpellHotbarRenderer.SPELL_HOTBAR_LIST.getFirst().isOf(ModSpells.KINESIS_SORCERY)) return;
+		if (player == null || Arrays.stream(Hand.values()).noneMatch(hand -> player.getStackInHand(hand).getItem() instanceof SealItem) || SpellHotbarRenderer.spellHotbarList.isEmpty() || !SpellHotbarRenderer.spellHotbarList.getFirst().isOf(ModSpells.KINESIS_SORCERY)) return;
 		Window win = mc.getWindow();
 		int w = win.getScaledWidth();
 		int h = win.getScaledHeight();

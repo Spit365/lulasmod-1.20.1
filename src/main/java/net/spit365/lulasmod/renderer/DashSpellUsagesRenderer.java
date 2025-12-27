@@ -31,7 +31,7 @@ public class DashSpellUsagesRenderer {
 				break;
 			}
 		}
-		if (sealItem == null || SpellHotbarRenderer.SPELL_HOTBAR_LIST.isEmpty() || !SpellHotbarRenderer.SPELL_HOTBAR_LIST.getFirst().isOf(ModSpells.DASH_SPELL)) return;
+		if (sealItem == null || SpellHotbarRenderer.spellHotbarList.isEmpty() || !SpellHotbarRenderer.spellHotbarList.getFirst().isOf(ModSpells.DASH_SPELL)) return;
 
 		int x = context.getScaledWindowWidth() / 2 - 5;
 		int y = context.getScaledWindowHeight() / 2 - 3;
