@@ -6,7 +6,6 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
-import net.fabricmc.loader.impl.lib.sat4j.core.Vec;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -80,7 +79,7 @@ public class TimeForward {
             VisualContext context = player.getAttached(ModData.TIME_FORWARD_ANIMATION_FRAMES);
             if (context == null) return;
             Vec3d pos = context.pos();
-            Box box = new Box(pos.add(-2, -2, -2), pos.add(2, 2, 2));
+            Box box = new Box(pos.add(-2), pos.add(2));
             boolean b1 = box.contains(pos);
             boolean b2 = !b1;
             if (b2){

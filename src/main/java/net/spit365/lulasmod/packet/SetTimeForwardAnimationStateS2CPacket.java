@@ -7,7 +7,6 @@ import net.minecraft.network.codec.PacketCodecs;
 import net.minecraft.network.packet.CustomPayload;
 import net.minecraft.util.Identifier;
 import net.spit365.lulasmod.Lulasmod;
-import net.spit365.lulasmod.mod.ModPackets;
 
 public record SetTimeForwardAnimationStateS2CPacket(boolean state) implements CustomPayload {
     @Override

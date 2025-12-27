@@ -30,8 +30,8 @@ public class ModItems {
 
 	public static final SealItem SEAL = RegisterHelper.item("seal", settings -> new SealItem(settings, entity -> true, 1, 1), new Item.Settings().maxCount(1));
 	public static final SealItem HELLISH_SEAL = RegisterHelper.item("hellish_seal", settings -> new SealItem(settings, Demon::isDemon, 2, 1), new Item.Settings().maxCount(1).fireproof());
-	public static final SealItem GOLDEN_SEAL = RegisterHelper.item("golden_seal", settings -> new SealItem(settings, entity -> entity instanceof ServerPlayerEntity player && (player.isCreative() || player.experienceLevel > 0 || player.experienceProgress > 0f), (entity, cooldown) -> {if (entity instanceof ServerPlayerEntity player && !player.isCreative()) player.addExperience((int) Math.ceil(cooldown / -20d));}, 1, 2), new Item.Settings().maxCount(1));
-	public static final SealItem BLOODSUCKING_SEAL = RegisterHelper.item("bloodsucking_seal", settings -> new SealItem(settings, entity -> true, (entity, cooldown) -> Bleed.apply(entity, cooldown * 5), 2, 1), new Item.Settings().maxCount(1));
+	public static final SealItem GOLDEN_SEAL = RegisterHelper.item("golden_seal", settings -> new SealItem(settings, entity -> entity instanceof ServerPlayerEntity player && (player.isCreative() || player.totalExperience > 0), (entity, cooldown) -> {if (entity instanceof ServerPlayerEntity player && !player.isCreative()) player.addExperience((int) Math.ceil(cooldown / -20d));}, 1, 2), new Item.Settings().maxCount(1));
+	public static final SealItem BLOODSUCKING_SEAL = RegisterHelper.item("bloodsucking_seal", settings -> new SealItem(settings, entity -> true, (entity, cooldown) -> {if (!Demon.isDemon(entity)) Bleed.apply(entity, cooldown * 5);}, 2, 1), new Item.Settings().maxCount(1));
 
 	public static final ItemGroup LULAS_GROUP = RegisterHelper.itemGroup("lulasmod_group", ModItems.SMOKE_BOMB, ModItems.CreativeTabItems);
 	public static final ItemGroup SPELLS_GROUP = RegisterHelper.itemGroup("lulasmod_spells", ModSpells.HOME_SPELL, ModSpells.SpellTabItems);
