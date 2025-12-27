@@ -5,6 +5,7 @@ import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.loader.impl.lib.sat4j.core.Vec;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.server.MinecraftServer;
@@ -14,6 +15,7 @@ import net.minecraft.util.math.Vec3d;
 import net.spit365.lulasmod.mod.ModData;
 import net.spit365.lulasmod.mod.ModMethods;
 import net.spit365.lulasmod.mod.ModParticles;
+import net.spit365.lulasmod.packet.SetTimeForwardAnimationStateS2CPacket;
 
 public class TimeForward {
     public static final int ANIMATION_DURATION = 450;
@@ -79,8 +81,11 @@ public class TimeForward {
             if (context == null) return;
             Vec3d pos = context.pos();
             Box box = new Box(pos.add(-2, -2, -2), pos.add(2, 2, 2));
-            if (!box.contains(pos)){
+            boolean b1 = box.contains(pos);
+            boolean b2 = !b1;
+            if (b2){
                 player.removeAttached(ModData.TIME_FORWARD_ANIMATION_FRAMES);
+                ServerPlayNetworking.send(player, new SetTimeForwardAnimationStateS2CPacket(false));
                 return;
             }
             int frames = context.frames();
