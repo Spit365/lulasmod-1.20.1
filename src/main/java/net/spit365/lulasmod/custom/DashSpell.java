@@ -59,7 +59,7 @@ public class DashSpell {
 			mapMovement(input.jump(), input.sneak()),
 			mapMovement(input.forward(), input.backward())
 		).rotateY((float) -Math.toRadians(player.getYaw()));
-		if (movementDirection.squaredDistanceTo(Vec3d.ZERO) < 1E-10F) return SealItem.FAIL_RESULT;
+		if (movementDirection.lengthSquared() < 1E-10F) return SealItem.FAIL_RESULT;
 
         player.setAttached(ModData.DASH_SPELL, usages <= 0 ? maxUsages : Math.min(maxUsages, usages));
         if (efficiencyMultiplier > 1) DASH_IMPACT_SET.add(player);
