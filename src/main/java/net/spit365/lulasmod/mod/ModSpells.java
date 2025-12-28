@@ -4,6 +4,7 @@ import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.StatusEffectInstance;
+import net.minecraft.entity.player.HungerManager;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.particle.ParticleTypes;
@@ -71,9 +72,10 @@ public class ModSpells {
         }
 	}));
 	public static final SpellItem HEAL_SPELL = RegisterHelper.spell("appeasing",  settings -> new SpellItem(settings, (world, player, hand, efficiencyMultiplier, cooldownDivisor) -> {
-		player.setHealth(player.getMaxHealth());
-		player.getHungerManager().setFoodLevel(1);
-		player.getHungerManager().setSaturationLevel(0);
+        HungerManager hungerManager = player.getHungerManager();
+		player.setHealth(hungerManager.getFoodLevel() + hungerManager.getSaturationLevel() - 1);
+        hungerManager.setFoodLevel(1);
+		hungerManager.setSaturationLevel(0);
 		return 300;
 	}));
 
@@ -83,31 +85,30 @@ public class ModSpells {
 		return 600;
 	}));
 	public static final SpellItem AMETHYST_SPELL = RegisterHelper.spell("envy", settings -> new SpellItem(settings, (world, player, hand, efficiencyMultiplier, cooldownDivisor) -> {
-		AmethystShardEntity amethystShardEntity = new AmethystShardEntity(player, world);
-		amethystShardEntity.addVelocity(player.getRotationVec(1).normalize().multiply(5));
-		world.spawnEntity(amethystShardEntity);
+        world.spawnEntity(new AmethystShardEntity(player, world));
 		return 20;
 	}));
 
     public static final ConjuringItem SLASH_CONJURING = RegisterHelper.spell("treachery_judecca",  settings -> new ConjuringItem(settings, (world, player, hand, efficiencyMultiplier, cooldownDivisor) -> {
         Vec3d pos = player.getRotationVec(1).normalize().multiply(2).add(player.getEyePos());
-        for (Entity entity : world.getOtherEntities(player, new Box(pos.add(1d, 1d, 1d), pos.add(-1d, -1d, -1d)))) {
+        for (Entity entity : world.getOtherEntities(player, new Box(pos.add(1), pos.add(-1)))) {
             if (entity instanceof LivingEntity livingEntity)
                 Bleed.apply(livingEntity, (int) (120 * efficiencyMultiplier));
             else entity.discard();
         }
         world.spawnParticles(ModParticles.SCRATCH, pos.getX(), pos.getY(), pos.getZ(), 0, 0, 0, 0, 0);
-        world.playSound(null, player.getBlockPos(), ENTITY_PLAYER_ATTACK_STRONG, SoundCategory.PLAYERS, 100.0f, 1f);
+        world.playSound(null, player.getBlockPos(), ENTITY_PLAYER_ATTACK_STRONG, SoundCategory.PLAYERS, 1, 1);
         return 3;
     }));
     public static final ConjuringItem BLOOD_CONJURING = RegisterHelper.spell("emulations", settings -> new ConjuringItem(settings, (world, player, hand, efficiencyMultiplier, cooldownDivisor) -> {
-        if (ModMethods.selectClosestEntity(player, 5d) instanceof LivingEntity victim)
-            Bleed.apply(victim, (int) (1200 * efficiencyMultiplier) - 80);
-        Impaled.impale(player, player.getStackInHand(hand), 20, 600, 6, 25, ModParticles.CURSED_BLOOD);
+        Entity target = ModMethods.selectClosestEntity(player, 5);
+        if (target instanceof LivingEntity livingEntity)
+            Bleed.apply(livingEntity, (int) (1200 * efficiencyMultiplier) - 80);
+        Impaled.impale(player, target, player.getStackInHand(hand), 20, 600, 6, 25, ModParticles.CURSED_BLOOD);
         return NO_COOLDOWN_RESULT;
     }));
     public static final ConjuringItem POCKET_CONJURING = RegisterHelper.spell("heresies", settings -> new ConjuringItem(settings, (world, player, hand, efficiencyMultiplier, cooldownDivisor) -> {
-        List<Entity> entities = world.getOtherEntities(player, new Box(player.getPos().add(-5d, -5d, -5d), player.getPos().add(5d, 5d, 5d)));
+        List<Entity> entities = world.getOtherEntities(player, new Box(player.getPos().add(5), player.getPos().add(-5)));
         entities.removeIf(entity -> entity.getAttached(ModData.TIME_FORWARD_ANIMATION_FRAMES) != null);
         if (entities.isEmpty()) entities.add(player);
         for (Entity victim : entities) {

@@ -23,7 +23,7 @@ import java.util.*;
 
 public class ModMethods {
 
-    public static @Nullable Entity selectClosestEntity(Entity selector, Double radius) {
+    public static @Nullable Entity selectClosestEntity(Entity selector, double radius) {
         Vec3d selectionCenter = selector.getRotationVec(1).normalize().multiply(radius).add(selector.getPos());
         Entity selectedEntity = null;
         for (Entity entityInRange : selector.getWorld().getOtherEntities(selector, new Box(selectionCenter.add(-radius, -radius, -radius), selectionCenter.add(radius, radius, radius)))){

@@ -1,5 +1,6 @@
 package net.spit365.lulasmod.custom;
 
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
@@ -11,7 +12,6 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.Vec3d;
 import net.spit365.lulasmod.entity.ParticleProjectileEntity;
 import net.spit365.lulasmod.mod.ModData;
-import net.spit365.lulasmod.mod.ModMethods;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -44,9 +44,9 @@ public class Impaled {
         }
     }
 
-    public static Boolean impale(PlayerEntity player, ItemStack item, int baseCooldown, int maxCooldown, int iterations, int intervalls, ParticleEffect particle) {
+    public static Boolean impale(PlayerEntity player, Entity target, ItemStack item, int baseCooldown, int maxCooldown, int iterations, int intervalls, ParticleEffect particle) {
         player.getItemCooldownManager().set(item, 2);
-        if (ModMethods.selectClosestEntity(player, 5d) instanceof LivingEntity selectedEntity && impaled.keySet().stream().noneMatch(impaledContext -> impaledContext.livingEntity().equals(selectedEntity))) {
+        if (target instanceof LivingEntity selectedEntity && impaled.keySet().stream().noneMatch(impaledContext -> impaledContext.livingEntity().equals(selectedEntity))) {
             player.getItemCooldownManager().set(item, maxCooldown);
             selectedEntity.requestTeleport(selectedEntity.getX(), selectedEntity.getY() + 5, selectedEntity.getZ());
             impaled.put(new ImpaledContext(player, selectedEntity, particle, iterations, intervalls), 0);

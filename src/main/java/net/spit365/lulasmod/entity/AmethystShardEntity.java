@@ -32,6 +32,7 @@ public class AmethystShardEntity extends PersistentProjectileEntity {
     }
     public AmethystShardEntity(LivingEntity owner, World world) {
         super(ModEntities.AMETHYST_SHARD, owner, world, ItemStack.EMPTY, null);
+        this.setVelocity(owner.getRotationVec(1).normalize().multiply(5));
         this.setSound(this.getHitSound());
         this.pickupType = PickupPermission.DISALLOWED;
     }

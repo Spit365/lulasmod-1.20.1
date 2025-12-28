@@ -91,7 +91,7 @@ public class DashSpell {
 		int y = context.getScaledWindowHeight() / 2 - 3;
 
 		int maxUsages = Math.max(sealItem.cooldownDivisor * 5, 0);
-		if (usages < 0)  usages = maxUsages;
+		if (usages <= 0)  usages = maxUsages;
 		int color = usages != 1 ? Colors.WHITE : (player.isOnGround() ? Colors.YELLOW : Colors.RED);
 		context.drawText(client.textRenderer, String.valueOf(usages), x - 11, y, color, true);
 		context.drawText(client.textRenderer, String.valueOf(maxUsages), x + 15, y, color, true);
