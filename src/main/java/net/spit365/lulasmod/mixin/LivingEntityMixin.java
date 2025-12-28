@@ -12,6 +12,7 @@ import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Hand;
 import net.minecraft.world.World;
+import net.spit365.lulasmod.custom.Demon;
 import net.spit365.lulasmod.mod.ModDamageSources;
 import net.spit365.lulasmod.mod.ModData;
 import net.spit365.lulasmod.mod.ModItems;
@@ -38,12 +39,7 @@ public abstract class LivingEntityMixin extends Entity implements Attackable {
 		if (attacker != null) {
             Integer i = attacker.getAttached(ModData.DAMAGE_DELAY);
             if (i != null) timeUntilRegen = i;
-
-            if (attacker instanceof LivingEntity livingEntity) for (Hand hand : Hand.values())
-                if (livingEntity.getStackInHand(hand).isOf(ModItems.BLOODSUCKING_SEAL) && livingEntity.isInRange(this, 5)) {
-                    livingEntity.heal(amount / 4);
-                    break;
-                }
+            if (Demon.isDemon(attacker) && attacker instanceof LivingEntity demon) demon.heal(amount);
         }
     }
     @ModifyVariable(method = "travelMidAir", at = @At("STORE"), ordinal = 0)
