@@ -5,13 +5,16 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.Colors;
 import net.minecraft.util.Hand;
+import net.minecraft.util.PlayerInput;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
 import net.spit365.lulasmod.item.SealItem;
@@ -29,7 +32,7 @@ public class DashSpell {
 	public static final Set<PlayerEntity> DASH_IMPACT_SET = new HashSet<>();
 
 	public static void tick(ServerPlayerEntity player) {
-		if (DASH_IMPACT_SET.contains(player) && player.getWorld() instanceof ServerWorld world && (player.verticalCollision || player.horizontalCollision)){
+		if (DASH_IMPACT_SET.contains(player) && player.getWorld() instanceof ServerWorld world && (player.verticalCollision || player.horizontalCollision) && player.getVelocity().lengthSquared() >= 1){
 			DASH_IMPACT_SET.remove(player);
 			Vec3d pos = player.getPos();
 			world.playSound(null, pos.getX(), pos.getY(), pos.getZ(), SoundEvents.ENTITY_GENERIC_EXPLODE, SoundCategory.PLAYERS, 1, 1);
@@ -39,6 +42,36 @@ public class DashSpell {
 		}
 		Integer i = player.getAttached(ModData.DASH_SPELL);
 		ServerPlayNetworking.send(player, new DashSpellUsagesS2CPacket(i == null ? -1 : i));
+	}
+
+	public static int onUse(ServerWorld world, PlayerEntity player, float efficiencyMultiplier, int cooldownDivisor) {
+        if (player.hasStatusEffect(StatusEffects.SLOWNESS)) return SealItem.FAIL_RESULT;
+
+        int maxUsages = 5 * cooldownDivisor;
+        Integer usages = player.getAttached(ModData.DASH_SPELL);
+        if (usages == null) usages = maxUsages;
+        usages--;
+        int cooldown = usages <= 0 ? (player.isOnGround() ? 20 : 40) : 5;
+
+		PlayerInput input = ((ServerPlayerEntity) player).getPlayerInput();
+		Vec3d movementDirection = new Vec3d(
+			mapMovement(input.left(), input.right()),
+			mapMovement(input.jump(), input.sneak()),
+			mapMovement(input.forward(), input.backward())
+		).rotateY((float) -Math.toRadians(player.getYaw()));
+		if (movementDirection.squaredDistanceTo(Vec3d.ZERO) < 1E-10F) return SealItem.FAIL_RESULT;
+
+        player.setAttached(ModData.DASH_SPELL, usages <= 0 ? maxUsages : Math.min(maxUsages, usages));
+        if (efficiencyMultiplier > 1) DASH_IMPACT_SET.add(player);
+		player.addVelocity(movementDirection.normalize().add(0, 0.25, 0));
+        player.velocityModified = true;
+        player.fallDistance = 0;
+        world.spawnParticles(ParticleTypes.CLOUD, player.getX(), player.getY(), player.getZ(), 25, 0.75, 0.2, 0.75, 0);
+        return cooldown;
+    }
+
+	private static int mapMovement(boolean direction1, boolean direction2){
+		return direction1 == direction2 ? 0 : (direction1 ? 1 : -1);
 	}
 
 	public static void render(DrawContext context){

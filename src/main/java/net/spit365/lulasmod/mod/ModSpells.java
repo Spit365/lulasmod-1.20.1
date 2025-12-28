@@ -4,7 +4,6 @@ import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.StatusEffectInstance;
-import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.particle.ParticleTypes;
@@ -55,25 +54,7 @@ public class ModSpells {
 		world.spawnEntity(new MalignityEntity(world, player, player.getRotationVec(1).normalize().multiply(3), Math.min(Math.round(efficiencyMultiplier + 2), 100)));
 		return 300;
 	}));
-	public static final SpellItem DASH_SPELL = RegisterHelper.spell("purloining",  settings -> new SpellItem(settings, (world, player, hand, efficiencyMultiplier, cooldownDivisor) -> {
-		if (!player.hasStatusEffect(StatusEffects.SLOWNESS)) {
-			int maxUsages = 5 * cooldownDivisor;
-			Integer usages = player.getAttached(ModData.DASH_SPELL);
-			if (usages == null) usages = maxUsages;
-			usages--;
-			boolean depleted = usages <= 0;
-			usages = depleted ? maxUsages : Math.min(maxUsages, usages);
-			int cooldown = depleted ? (player.isOnGround() ? 20 : 40) : 5;
-			player.setAttached(ModData.DASH_SPELL, usages);
-			player.addVelocity(player.getRotationVec(1).normalize().add(0, 0.25, 0));
-            if (efficiencyMultiplier > 1) DashSpell.DASH_IMPACT_SET.add(player);
-			player.velocityModified = true;
-			player.fallDistance = 0;
-			world.spawnParticles(ParticleTypes.CLOUD, player.getX(), player.getY(), player.getZ(), 25, 0.75, 0.2, 0.75, 0);
-			return cooldown;
-		}
-		return 20;
-	}));
+	public static final SpellItem DASH_SPELL = RegisterHelper.spell("purloining",  settings -> new SpellItem(settings, (world, player, hand, efficiencyMultiplier, cooldownDivisor) -> DashSpell.onUse(world, player, efficiencyMultiplier, cooldownDivisor)));
 	public static final SpellItem SMOKE_SPELL = RegisterHelper.spell("guile",  settings -> new SpellItem(settings, (world, player, hand, efficiencyMultiplier, cooldownDivisor) -> {
 		if (!SmokeSpellCooldown.isCoolingDown(player)) {
             world.spawnEntity(new SmokeProjectileEntity(world, player, ItemStack.EMPTY));
