@@ -24,7 +24,7 @@ public class Lulasmod implements ModInitializer, ClientModInitializer {
 		ModStatusEffects.init();
 		ModGamerules.init();
 		ModData.init();
-		ModDamageSources.init();
+		ModDamageTypes.init();
 		ModCommands.init();
 		ModServerTick.init();
         NetherDeathSystem.init();

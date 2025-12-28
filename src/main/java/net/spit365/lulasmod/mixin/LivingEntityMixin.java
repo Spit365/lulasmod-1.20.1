@@ -10,12 +10,10 @@ import net.minecraft.item.BowItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.Hand;
 import net.minecraft.world.World;
 import net.spit365.lulasmod.custom.Demon;
-import net.spit365.lulasmod.mod.ModDamageSources;
+import net.spit365.lulasmod.mod.ModDamageTypes;
 import net.spit365.lulasmod.mod.ModData;
-import net.spit365.lulasmod.mod.ModItems;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -35,7 +33,7 @@ public abstract class LivingEntityMixin extends Entity implements Attackable {
     private void damage(ServerWorld world, DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
 		Entity attacker = source.getAttacker();
 		RegistryEntry<DamageType> typeRegistryEntry = source.getTypeRegistryEntry();
-		if (typeRegistryEntry.matchesKey(ModDamageSources.BLOODSUCKING) || typeRegistryEntry.matchesKey(ModDamageSources.KINETIC_BACKLASH)) timeUntilRegen = 0;
+		if (typeRegistryEntry.matchesKey(ModDamageTypes.BLOODSUCKING) || typeRegistryEntry.matchesKey(ModDamageTypes.KINETIC_BACKLASH)) timeUntilRegen = 0;
 		if (attacker != null) {
             Integer i = attacker.getAttached(ModData.DAMAGE_DELAY);
             if (i != null) timeUntilRegen = i;
@@ -55,6 +53,6 @@ public abstract class LivingEntityMixin extends Entity implements Attackable {
 	@Inject(method = "takeKnockback", at = @At("HEAD"), cancellable = true)
 	private void takeKnockback(double strength, double x, double z, CallbackInfo ci) {
 		DamageSource recent = ((LivingEntity) (Object) this).getRecentDamageSource();
-		if (recent != null && recent.getTypeRegistryEntry().matchesKey(ModDamageSources.KINETIC_BACKLASH)) ci.cancel();
+		if (recent != null && recent.getTypeRegistryEntry().matchesKey(ModDamageTypes.KINETIC_BACKLASH)) ci.cancel();
 	}
 }

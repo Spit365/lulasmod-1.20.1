@@ -21,7 +21,7 @@ import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.spit365.lulasmod.mod.ModDamageSources;
+import net.spit365.lulasmod.mod.ModDamageTypes;
 import net.spit365.lulasmod.mod.ModEntities;
 
 public class AmethystShardEntity extends PersistentProjectileEntity {
@@ -67,9 +67,9 @@ public class AmethystShardEntity extends PersistentProjectileEntity {
         DamageSource damageSource;
          if (owner != null) {
              if (owner.equals(target)) return;
-             damageSource = ModDamageSources.amethystShard(owner);
+             damageSource = ModDamageTypes.createDamageSource(owner, ModDamageTypes.AMETHYST_SHARD);
              if (owner instanceof LivingEntity livingEntity) livingEntity.onAttacking(target);
-         } else damageSource = ModDamageSources.amethystShard(this);
+         } else damageSource = ModDamageTypes.createDamageSource(this, ModDamageTypes.AMETHYST_SHARD);
         int amount = 8;
         if (getWorld() instanceof ServerWorld serverWorld && target.damage(serverWorld, damageSource, amount)) {
             if (target.getType().equals(EntityType.ENDERMAN)) return;

@@ -14,7 +14,7 @@ import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.world.World;
-import net.spit365.lulasmod.mod.ModDamageSources;
+import net.spit365.lulasmod.mod.ModDamageTypes;
 
 public class VialItem extends PotionItem {
     public VialItem(Settings settings) {
@@ -27,7 +27,7 @@ public class VialItem extends PotionItem {
         PotionContentsComponent effects = stack.get(DataComponentTypes.POTION_CONTENTS);
         stack.decrementUnlessCreative(1, user);
         world.playSound(null, user.getBlockPos(), SoundEvents.BLOCK_GLASS_BREAK, SoundCategory.PLAYERS);
-        if (world instanceof ServerWorld serverWorld) user.damage(serverWorld, ModDamageSources.bloodsucking(world), user.getMaxHealth() / 2);
+        if (world instanceof ServerWorld serverWorld) user.damage(serverWorld, ModDamageTypes.createDamageSource(world, ModDamageTypes.BLOODSUCKING), user.getMaxHealth() / 2);
         if (effects == null) return ActionResult.PASS;
         effects.potion().ifPresent(potionRegistryEntry -> potionRegistryEntry.value().getEffects().forEach(statusEffectInstance ->
             user.addStatusEffect(new StatusEffectInstance(statusEffectInstance.getEffectType(), -1))));

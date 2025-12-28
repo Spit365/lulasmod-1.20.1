@@ -220,7 +220,7 @@ public class ModSpells {
 
 		@Override
 		public int castTick(ServerWorld world, PlayerEntity player, Hand hand, int remainingUseTicks, float efficiencyMultiplier, int cooldownDivisor) {
-			if (world instanceof ServerWorld serverWorld) player.damage(serverWorld, ModDamageSources.kineticBacklash(world), 1);
+			if (world instanceof ServerWorld serverWorld) player.damage(serverWorld, ModDamageTypes.createDamageSource(world, ModDamageTypes.KINETIC_BACKLASH), 1);
 			return NO_COOLDOWN_RESULT;
 		}
     }));

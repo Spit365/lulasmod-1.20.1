@@ -11,7 +11,7 @@ import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
-import net.spit365.lulasmod.mod.ModDamageSources;
+import net.spit365.lulasmod.mod.ModDamageTypes;
 import net.spit365.lulasmod.mod.ModItems;
 
 public class NeedleSwordEntity extends PersistentProjectileEntity {
@@ -45,7 +45,7 @@ public class NeedleSwordEntity extends PersistentProjectileEntity {
     protected void onEntityHit(EntityHitResult entityHitResult) {
         Entity entity = entityHitResult.getEntity();
         if (takeDamage(entity) && entity.getWorld() instanceof ServerWorld serverWorld)
-            entity.damage(serverWorld, ModDamageSources.needleSword(entity), 8f);
+            entity.damage(serverWorld, ModDamageTypes.createDamageSource(entity, ModDamageTypes.NEEDLE_SWORD), 8f);
     }
 
     @Override protected void onBlockHit(BlockHitResult blockHitResult) {

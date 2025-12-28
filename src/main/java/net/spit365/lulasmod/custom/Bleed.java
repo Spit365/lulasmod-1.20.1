@@ -12,7 +12,7 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.spit365.lulasmod.Lulasmod;
-import net.spit365.lulasmod.mod.ModDamageSources;
+import net.spit365.lulasmod.mod.ModDamageTypes;
 import net.spit365.lulasmod.mod.ModData;
 import net.spit365.lulasmod.mod.ModParticles;
 import net.spit365.lulasmod.packet.BleedProgressS2CPacket;
@@ -36,7 +36,7 @@ public class Bleed {
             }
             int threshold = getThreshold(target);
             if (duration >= threshold) {
-                target.damage(world, ModDamageSources.bloodsucking(world), (target.getMaxHealth() * 0.15f + 10f) * duration / threshold);
+                target.damage(world, ModDamageTypes.createDamageSource(world, ModDamageTypes.BLOODSUCKING), (target.getMaxHealth() * 0.15f + 10f) * duration / threshold);
                 duration %= threshold;
                 for (ServerPlayerEntity player : players) if (player.squaredDistanceTo(target) <= 1_000_000)
                     ServerPlayNetworking.send(player, new SummonBleedS2CPacket(target.getX(), target.getY(), target.getZ()));
