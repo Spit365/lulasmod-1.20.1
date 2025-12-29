@@ -6,11 +6,9 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.codec.PacketCodec;
 import net.minecraft.network.packet.CustomPayload;
-import net.minecraft.registry.Registries;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.Hand;
-import net.minecraft.util.Identifier;
 import net.spit365.lulasmod.custom.Demon;
 import net.spit365.lulasmod.item.spell.ConjuringItem;
 import net.spit365.lulasmod.packet.*;
@@ -49,8 +47,8 @@ public class ModPackets {
 			boolean shouldDisplayMessage = true;
 			if (ModMethods.getInventoryStack(player, ModItems.HELLISH_SEAL) == null) player.giveItemStack(new ItemStack(ModItems.HELLISH_SEAL));
 			else shouldDisplayMessage = false;
-			for (Identifier id : ModSpells.SpellTabItems) {
-				Item item = Registries.ITEM.get(id);
+			for (ItemStack stack : ModSpells.SpellTabItems) {
+				Item item = stack.getItem();
 				if (!(item instanceof ConjuringItem)) continue;
 				if (ModMethods.getInventoryStack(player, item) == null) player.giveItemStack(new ItemStack(item));
 				else shouldDisplayMessage = false;

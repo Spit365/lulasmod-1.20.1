@@ -1,16 +1,12 @@
 package net.spit365.lulasmod.item.spell;
 
-import net.minecraft.component.type.TooltipDisplayComponent;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.tooltip.TooltipType;
 import net.minecraft.registry.Registries;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
-import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
@@ -20,7 +16,6 @@ import net.spit365.lulasmod.mod.ModData;
 import net.spit365.lulasmod.mod.ModMethods;
 
 import java.util.List;
-import java.util.function.Consumer;
 
 public class SpellItem extends Item {
 	public final Spell spell;

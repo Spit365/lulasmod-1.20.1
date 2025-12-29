@@ -36,7 +36,9 @@ import net.spit365.lulasmod.mod.ModData;
 import net.spit365.lulasmod.mod.ModItems;
 import net.spit365.lulasmod.mod.ModSpells;
 
+import java.util.LinkedList;
 import java.util.List;
+import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.function.UnaryOperator;
 
@@ -49,13 +51,14 @@ public final class RegisterHelper {
 
 	public static <T extends Block> ModBlocks.BlockAndItem<T> block(String name, Function<AbstractBlock.Settings, T> factory, AbstractBlock.Settings settings) {
 		Identifier id = Identifier.of(Lulasmod.MOD_ID, name);
-		ModItems.CreativeTabItems.add(id);
 		RegistryKey<Block> blockRegistryKey = RegistryKey.of(RegistryKeys.BLOCK, id);
 		RegistryKey<Item> itemRegistryKey = RegistryKey.of(RegistryKeys.ITEM, id);
 		T block = factory.apply(settings.registryKey(blockRegistryKey));
+		BlockItem item = Registry.register(Registries.ITEM, itemRegistryKey, new BlockItem(block, new Item.Settings().registryKey(itemRegistryKey)));
+		ModItems.MainTabItems.add(new ItemStack(item));
 		return new ModBlocks.BlockAndItem<>(
 			Registry.register(Registries.BLOCK, blockRegistryKey, block),
-			Registry.register(Registries.ITEM, itemRegistryKey, new BlockItem(block, new Item.Settings().registryKey(itemRegistryKey)))
+			item
 		);
 	}
 
@@ -87,21 +90,27 @@ public final class RegisterHelper {
 	}
 
 	public static <T extends Item> T item(String name, Function<Item.Settings, T> factory, Item.Settings settings) {
-		ModItems.CreativeTabItems.add(Identifier.of(Lulasmod.MOD_ID, name));
-		return itemInternal(name, factory, settings);
+		T item = itemInternal(name, factory, settings);
+		ModItems.MainTabItems.add(new ItemStack(item));
+		return item;
+	}
+	public static <T extends Item> T item(String name, Function<Item.Settings, T> factory, Item.Settings settings, BiConsumer<Item, List<ItemStack>> creativeInventoryStacks) {
+		T item = itemInternal(name, factory, settings);
+		List<ItemStack> list = new LinkedList<>();
+		creativeInventoryStacks.accept(item, list);
+		ModItems.MainTabItems.addAll(list);
+		return item;
 	}
 	private static <T extends Item> T itemInternal(String name, Function<Item.Settings, T> factory, Item.Settings settings) {
 		RegistryKey<Item> key = RegistryKey.of(RegistryKeys.ITEM, Identifier.of(Lulasmod.MOD_ID, name));
 		return Registry.register(Registries.ITEM, key, factory.apply(settings.registryKey(key)));
 	}
 
-	public static ItemGroup itemGroup(String name, Item item, List<Identifier> list) {
+	public static ItemGroup itemGroup(String name, Item item, List<ItemStack> list) {
 		return Registry.register(Registries.ITEM_GROUP, Identifier.of(Lulasmod.MOD_ID, name), FabricItemGroup.builder()
 			.displayName(Text.translatable("item_group." + Lulasmod.MOD_ID + "." + name))
 			.icon(() -> new ItemStack(item))
-			.entries((displayContext, entries) -> {
-				for (Identifier id : list) entries.add(Registries.ITEM.get(id));
-			})
+			.entries((displayContext, entries) -> entries.addAll(list))
 			.build());
 	}
 
@@ -118,8 +127,9 @@ public final class RegisterHelper {
 	}
 
 	public static <T extends SpellItem> T spell(String name, Function<Item.Settings, T> factory) {
-		ModSpells.SpellTabItems.add(Identifier.of(Lulasmod.MOD_ID, name));
-		return itemInternal(name, factory, new Item.Settings().maxCount(1));
+		T spell = itemInternal(name, factory, new Item.Settings().maxCount(1));
+		ModSpells.SpellTabItems.add(new ItemStack(spell));
+		return spell;
 	}
 
 	public static RegistryEntry<StatusEffect> statusEffect(String id, StatusEffect effect) {

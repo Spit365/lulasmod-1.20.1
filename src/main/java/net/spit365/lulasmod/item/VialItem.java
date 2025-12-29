@@ -37,13 +37,16 @@ public class VialItem extends PotionItem {
     @Override
     public Text getName(ItemStack stack) {
         PotionContentsComponent potionContentsComponent = stack.get(DataComponentTypes.POTION_CONTENTS);
-        if (potionContentsComponent == null) return super.getName();
+        MutableText name = Text.translatable(this.translationKey);
+        if (potionContentsComponent == null) return name;
         MutableText base = Text.empty();
         potionContentsComponent.getEffects().forEach(statusEffectInstance -> {
             if (!base.equals(Text.empty())) base.append(Text.literal(", "));
-            base.append(Text.translatable(statusEffectInstance.getEffectType().value().getTranslationKey()));
+            MutableText translated = Text.translatable(statusEffectInstance.getEffectType().value().getTranslationKey());
+            if (!translated.equals(Text.empty())) base.append(translated);
         });
-        base.append(Text.literal(" - ")).append(Text.translatable(this.translationKey));
+        if (base.equals(Text.empty())) return name;
+        base.append(Text.literal(" - ")).append(name);
         return base;
     }
 }

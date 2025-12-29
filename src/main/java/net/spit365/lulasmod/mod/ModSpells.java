@@ -13,7 +13,6 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.text.Text;
 import net.minecraft.util.Hand;
-import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
@@ -42,7 +41,7 @@ import static net.spit365.lulasmod.item.SealItem.NO_COOLDOWN_RESULT;
 import static net.spit365.lulasmod.state.LinkedLightningPersistentState.lastLinks;
 
 public class ModSpells {
-	public static final List<Identifier> SpellTabItems = new LinkedList<>();
+	public static final List<ItemStack> SpellTabItems = new LinkedList<>();
 
     public static final SpellItem HIGHLIGHTER_SPELL = RegisterHelper.spell("highlighter_spell",  settings -> new SpellItem(settings, (world, player, hand, efficiencyMultiplier, cooldownDivisor) -> {
         boolean playerGlowing = !player.isGlowing();

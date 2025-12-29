@@ -59,7 +59,7 @@
   "death.attack.bloodsucking.player": "%1$s's blood was sucked dry by %2$s",
   "death.attack.kinetic_backlash": "%1$s didn't survive the kinetic backlash",
 
-  "item_group.lulasmod.lulasmod_group": "Lulasmod",
+  "item_group.lulasmod.lulasmod_main": "Lulasmod",
   "item_group.lulasmod.lulasmod_spells": "Lulasmod Spells",
 
   "key.categories.lulasmod": "Lulasmod",

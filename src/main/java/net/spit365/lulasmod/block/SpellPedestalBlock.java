@@ -6,11 +6,9 @@ import net.minecraft.block.ShapeContext;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.particle.ParticleTypes;
-import net.minecraft.registry.Registries;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
-import net.minecraft.util.Identifier;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.shape.VoxelShape;
@@ -35,13 +33,12 @@ public class SpellPedestalBlock extends Block {
 		ModData.WorldBlockPos worldBlockPos = new ModData.WorldBlockPos(world.getRegistryKey(), blockPos);
 		if (!mutable.contains(worldBlockPos)) {
 			mutable.add(worldBlockPos);
-			List<Identifier> spells = ModSpells.SpellTabItems;
-			Identifier highlighterId = Registries.ITEM.getId(ModSpells.HIGHLIGHTER_SPELL);
-			spells.removeIf(id -> Registries.ITEM.get(id) instanceof ConjuringItem || highlighterId.equals(id));
+			List<ItemStack> spells = ModSpells.SpellTabItems;
+			spells.removeIf(spell -> spell.getItem() instanceof ConjuringItem || spell.isOf(ModSpells.HIGHLIGHTER_SPELL));
 			if (mutable.size() <= spells.size()) {
 				player.setAttached(ModData.ABSORBED_PEDESTALS,  mutable);
 				((ServerWorld) world).spawnParticles(ParticleTypes.CRIMSON_SPORE, blockPos.getX(), blockPos.getY(), blockPos.getZ(), 500, 1.5, 1.5, 1.5, 0);
-				player.giveItemStack(new ItemStack(Registries.ITEM.get(spells.get(mutable.size() - 1))));
+				player.giveItemStack(spells.get(mutable.size() - 1));
 			} else player.sendMessage(Text.translatable("notify.lulasmod.pedestal.all_spells"), true);
 			return ActionResult.SUCCESS;
 		} else player.sendMessage(Text.translatable("notify.lulasmod.already_absorbed_pedestal"), true);

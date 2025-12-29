@@ -3,7 +3,6 @@ package net.spit365.lulasmod.state;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.datafixer.DataFixTypes;
-import net.minecraft.registry.Registries;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkSectionPos;
@@ -22,7 +21,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class GazeboGenerationPersistentState extends PersistentState {
-	private static final int count = (int) ModSpells.SpellTabItems.stream().filter(identifier -> !(Registries.ITEM.get(identifier) instanceof ConjuringItem)).count();
+	private static final int count = (int) ModSpells.SpellTabItems.stream().filter(stack -> !(stack.getItem() instanceof ConjuringItem)).count();
 	private Map<BlockPos, Boolean> pendingPos;
 	public static final int RADIUS_BLOCKS = 1000;
 
