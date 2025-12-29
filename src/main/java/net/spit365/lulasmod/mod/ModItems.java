@@ -1,13 +1,17 @@
 package net.spit365.lulasmod.mod;
 
+import net.fabricmc.fabric.api.client.item.v1.ItemTooltipCallback;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ToolMaterial;
+import net.minecraft.registry.Registries;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.spit365.lulasmod.custom.Bleed;
 import net.spit365.lulasmod.custom.Demon;
 import net.spit365.lulasmod.item.*;
+import net.spit365.lulasmod.item.spell.SpellItem;
 import net.spit365.lulasmod.util.RegisterHelper;
 
 import java.util.LinkedList;
@@ -36,5 +40,17 @@ public class ModItems {
 	public static final ItemGroup LULAS_GROUP = RegisterHelper.itemGroup("lulasmod_group", ModItems.SMOKE_BOMB, ModItems.CreativeTabItems);
 	public static final ItemGroup SPELLS_GROUP = RegisterHelper.itemGroup("lulasmod_spells", ModSpells.HOME_SPELL, ModSpells.SpellTabItems);
 
-	public static void init() {}
+	public static void init() {
+		ItemTooltipCallback.EVENT.register((stack, tooltipContext, tooltipType, list) -> {
+			switch (stack.getItem()){
+				case SpellBookItem ignored -> {
+					List<Identifier> spells = stack.get(ModData.SPELL_BOOK_SPELLS);
+					if (spells != null && !spells.isEmpty()) spells.forEach(id ->
+						list.add(Registries.ITEM.get(id).getName()));
+				}
+				case SpellItem item -> list.add(Text.translatable("spell." + Registries.ITEM.getId(item).getNamespace() + ".tooltip." + Registries.ITEM.getId(item).getPath()));
+                default -> {}
+            }
+		});
+	}
 }

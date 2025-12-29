@@ -61,11 +61,4 @@ public class SpellBookItem extends Item implements SpellHotbar {
           }
           return ActionResult.PASS;
      }
-
-    @Override
-    public void appendTooltip(ItemStack stack, TooltipContext context, TooltipDisplayComponent displayComponent, Consumer<Text> textConsumer, TooltipType type) {
-		List<Identifier> spells = stack.get(ModData.SPELL_BOOK_SPELLS);
-		if (spells != null && !spells.isEmpty()) spells.forEach(id ->
-                textConsumer.accept(Registries.ITEM.get(id).getName()));
-    }
 }
