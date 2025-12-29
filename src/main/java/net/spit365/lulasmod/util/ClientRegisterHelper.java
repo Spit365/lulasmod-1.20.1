@@ -15,9 +15,8 @@ import net.minecraft.util.Identifier;
 import net.spit365.lulasmod.Lulasmod;
 
 public final class ClientRegisterHelper {
-	public static <T extends Entity> EntityType<T> entity(EntityType<T> entityType, EntityRendererFactory<T> entityRendererFactory) {
+	public static <T extends Entity> void entity(EntityType<T> entityType, EntityRendererFactory<T> entityRendererFactory) {
 		EntityRendererRegistry.register(entityType, entityRendererFactory);
-		return entityType;
 	}
 
 	public static KeyBinding keyBinding(String name, int key){
@@ -29,9 +28,8 @@ public final class ClientRegisterHelper {
 		));
 	}
 
-	public static SimpleParticleType particle(SimpleParticleType particle, ParticleFactoryRegistry.PendingParticleFactory<SimpleParticleType> render){
+	public static void particle(SimpleParticleType particle, ParticleFactoryRegistry.PendingParticleFactory<SimpleParticleType> render){
 		 ParticleFactoryRegistry.getInstance().register(particle, render);
-		 return particle;
 	}
 
     public static void hudElement(String name, HudElement hudElement) {

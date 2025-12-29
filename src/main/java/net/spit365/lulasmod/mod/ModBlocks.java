@@ -2,6 +2,7 @@ package net.spit365.lulasmod.mod;
 
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
+import net.minecraft.block.Blocks;
 import net.minecraft.block.MapColor;
 import net.minecraft.item.BlockItem;
 import net.spit365.lulasmod.block.SpellPedestalBlock;
@@ -16,7 +17,7 @@ public class ModBlocks {
 			.mapColor(MapColor.STONE_GRAY)
 			.strength(-1.0F, Float.MAX_VALUE)
 			.dropsNothing()
-			.allowsSpawning(net.minecraft.block.Blocks::never));
+			.allowsSpawning(Blocks::never));
 
 	public static void init() {}
 }

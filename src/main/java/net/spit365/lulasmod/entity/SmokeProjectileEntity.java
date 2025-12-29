@@ -16,7 +16,7 @@ public class SmokeProjectileEntity extends SmokeBombEntity{
     }
 
     public SmokeProjectileEntity(EntityType<? extends SmokeBombEntity> entityType, World world) {
-        super(ModEntities.SMOKE_PROJECTILE, world);
+        super(entityType, world);
     }
 
     @Override
