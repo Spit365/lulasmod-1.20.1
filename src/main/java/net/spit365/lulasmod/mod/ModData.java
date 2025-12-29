@@ -1,15 +1,11 @@
 package net.spit365.lulasmod.mod;
 
 import com.mojang.serialization.Codec;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentType;
 import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
 import net.minecraft.component.ComponentType;
-import net.minecraft.registry.RegistryKey;
-import net.minecraft.registry.RegistryKeys;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.spit365.lulasmod.block.SpellPedestalBlock;
 import net.spit365.lulasmod.custom.TimeForward;
 import net.spit365.lulasmod.util.RegisterHelper;
 
@@ -25,20 +21,11 @@ public class ModData {
 	public static final AttachmentType<Integer> DAMAGE_DELAY = RegisterHelper.persistentAttachmentType("damage_delay", Codec.INT, false);
 	public static final AttachmentType<List<Identifier>> EQUIPPED_SPELLS = RegisterHelper.persistentAttachmentType("equipped_spells", Identifier.CODEC.listOf(), true);
 	public static final AttachmentType<Integer> DASH_SPELL = RegisterHelper.persistentAttachmentType("purloining_spell", Codec.INT, false);
-	public static final AttachmentType<List<WorldBlockPos>> ABSORBED_PEDESTALS = RegisterHelper.persistentAttachmentType("absorbed_pedestals", WorldBlockPos.CODEC.listOf(), false);
+	public static final AttachmentType<List<SpellPedestalBlock.WorldBlockPos>> ABSORBED_PEDESTALS = RegisterHelper.persistentAttachmentType("absorbed_pedestals", SpellPedestalBlock.WorldBlockPos.CODEC.listOf(), false);
 	public static final AttachmentType<TimeForward.ServerLogic.VisualContext> TIME_FORWARD_ANIMATION_FRAMES = RegisterHelper.attachmentType("time_forward_animation_frames", false);
 	public static final AttachmentType<Integer> BLEED_VALUE = RegisterHelper.persistentAttachmentType("bleed_value", Codec.INT, false);
     public static final AttachmentType<Integer> SMOKE_SPELL_COOLDOWN = RegisterHelper.attachmentType("smoke_spell_cooldown", false);
     public static final AttachmentType<Boolean> DEMON = RegisterHelper.persistentAttachmentType("demon", Codec.BOOL, true);
-
-	public record WorldBlockPos(RegistryKey<World> world, BlockPos blockPos){
-		public static final Codec<WorldBlockPos> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-			Identifier.CODEC.fieldOf("world").xmap(id -> RegistryKey.of(RegistryKeys.WORLD, id), RegistryKey::getValue)
-				.forGetter(WorldBlockPos::world),
-			BlockPos.CODEC.fieldOf("blockPos")
-				.forGetter(WorldBlockPos::blockPos)
-		).apply(instance, WorldBlockPos::new));
-	}
 
 	public static void init() {
 		ServerPlayerEvents.AFTER_RESPAWN.register((oldPlayer, newPlayer, alive) -> deathPersistent.forEach(attachmentType -> newPlayer.setAttached(attachmentType, oldPlayer.getAttached(attachmentType))));

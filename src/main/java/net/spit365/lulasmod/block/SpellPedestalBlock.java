@@ -1,14 +1,19 @@
 package net.spit365.lulasmod.block;
 
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.ShapeContext;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.particle.ParticleTypes;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.RegistryKeys;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.shape.VoxelShape;
@@ -29,8 +34,8 @@ public class SpellPedestalBlock extends Block {
     @Override
     protected ActionResult onUse(BlockState state, World world, BlockPos blockPos, PlayerEntity player, BlockHitResult hit) {
 		if (world.isClient()) return ActionResult.PASS;
-		List<ModData.WorldBlockPos> mutable = ModMethods.makeMutable(player.getAttached(ModData.ABSORBED_PEDESTALS));
-		ModData.WorldBlockPos worldBlockPos = new ModData.WorldBlockPos(world.getRegistryKey(), blockPos);
+		List<WorldBlockPos> mutable = ModMethods.makeMutable(player.getAttached(ModData.ABSORBED_PEDESTALS));
+		WorldBlockPos worldBlockPos = new WorldBlockPos(world.getRegistryKey(), blockPos);
 		if (!mutable.contains(worldBlockPos)) {
 			mutable.add(worldBlockPos);
 			List<ItemStack> spells = ModSpells.SpellTabItems;
@@ -45,4 +50,13 @@ public class SpellPedestalBlock extends Block {
 		return ActionResult.PASS;
     }
     @Override public VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context){return SHAPE;}
+
+	public record WorldBlockPos(RegistryKey<World> world, BlockPos blockPos){
+		public static final Codec<WorldBlockPos> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+			Identifier.CODEC.fieldOf("world").xmap(id -> RegistryKey.of(RegistryKeys.WORLD, id), RegistryKey::getValue)
+				.forGetter(WorldBlockPos::world),
+			BlockPos.CODEC.fieldOf("blockPos")
+				.forGetter(WorldBlockPos::blockPos)
+		).apply(instance, WorldBlockPos::new));
+	}
 }
