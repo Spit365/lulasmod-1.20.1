@@ -25,7 +25,7 @@ public class SorceryItem extends SpellItem{
 	}
 
 	@Override
-	protected SoundEvent getSound() {
-		return SoundEvents.BLOCK_BEACON_ACTIVATE;
+	protected SoundEvent getSound(boolean add) {
+		return add ? SoundEvents.BLOCK_BEACON_ACTIVATE : SoundEvents.BLOCK_BEACON_DEACTIVATE;
 	}
 }

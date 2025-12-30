@@ -31,15 +31,22 @@ public class SpellItem extends Item {
     public ActionResult use(World world, PlayerEntity player, Hand hand){
         if (!world.isClient() && !(player.getOffHandStack().getItem() instanceof SpellBookItem)){
             player.getItemCooldownManager().set(player.getStackInHand(hand), 5);
-            world.playSound(null, player.getBlockPos(), getSound(), SoundCategory.PLAYERS);
 			List<Identifier> mutable = ModMethods.makeMutable(player.getAttached(ModData.EQUIPPED_SPELLS));
-			if (player.isSneaking()) mutable.remove(getSpellName());
-			else if (!mutable.contains(getSpellName())) mutable.add(getSpellName());
+            SoundEvent sound = null;
+            if (player.isSneaking()) {
+                if (mutable.remove(getSpellName()))
+                    sound = getSound(false);
+            }
+			else if (!mutable.contains(getSpellName())) {
+                mutable.add(getSpellName());
+                sound = getSound(true);
+            }
+            if (sound != null) world.playSound(null, player.getBlockPos(), sound, SoundCategory.PLAYERS);
 			player.setAttached(ModData.EQUIPPED_SPELLS, mutable);
 			return ActionResult.SUCCESS;
         }
         return ActionResult.PASS;
     }
     private Identifier getSpellName() {return Registries.ITEM.getId(this);}
-	protected SoundEvent getSound(){return SoundEvents.BLOCK_RESPAWN_ANCHOR_CHARGE;}
+	protected SoundEvent getSound(boolean add){return add ? SoundEvents.BLOCK_RESPAWN_ANCHOR_CHARGE : SoundEvents.BLOCK_RESPAWN_ANCHOR_DEPLETE.value();}
 }

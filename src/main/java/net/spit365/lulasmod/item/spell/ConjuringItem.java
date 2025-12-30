@@ -10,7 +10,7 @@ public class ConjuringItem extends SpellItem{
 	}
 
 	@Override
-	protected SoundEvent getSound() {
+	protected SoundEvent getSound(boolean add) {
 		return ENTITY_ZOMBIE_VILLAGER_CURE;
 	}
 }
