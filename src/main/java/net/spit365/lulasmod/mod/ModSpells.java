@@ -72,7 +72,7 @@ public class ModSpells {
 	}));
 	public static final SpellItem HEAL_SPELL = RegisterHelper.spell("appeasing",  settings -> new SpellItem(settings, (world, player, hand, efficiencyMultiplier, cooldownDivisor) -> {
         HungerManager hungerManager = player.getHungerManager();
-		player.setHealth(hungerManager.getFoodLevel() + hungerManager.getSaturationLevel() - 1);
+		player.heal(hungerManager.getFoodLevel() - 1);
         hungerManager.setFoodLevel(1);
 		hungerManager.setSaturationLevel(0);
 		return 300;
