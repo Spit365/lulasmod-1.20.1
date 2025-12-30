@@ -27,7 +27,7 @@ public class ModItems {
 	public static final SealItem SEAL = RegisterHelper.item("seal", settings -> new SealItem(settings, entity -> true, 1, 1), new Item.Settings().maxCount(1));
 	public static final SealItem HELLISH_SEAL = RegisterHelper.item("hellish_seal", settings -> new SealItem(settings, Demon::isDemon, 2, 1), new Item.Settings().maxCount(1).fireproof());
 	public static final SealItem GOLDEN_SEAL = RegisterHelper.item("golden_seal", settings -> new SealItem(settings, entity -> entity instanceof ServerPlayerEntity player && (player.isCreative() || player.experienceLevel > 0 || player.experienceProgress > 0f), (entity, cooldown) -> {if (entity instanceof ServerPlayerEntity player && !player.isCreative()) player.addExperience((int) Math.ceil(cooldown / -20d));}, 1, 2), new Item.Settings().maxCount(1));
-	public static final SealItem BLOODSUCKING_SEAL = RegisterHelper.item("bloodsucking_seal", settings -> new SealItem(settings, entity -> true, (entity, cooldown) -> {if (!Demon.isDemon(entity)) Bleed.apply(entity, cooldown * 5);}, 2, 1), new Item.Settings().maxCount(1));
+	public static final SealItem BLOODSUCKING_SEAL = RegisterHelper.item("bloodsucking_seal", settings -> new SealItem(settings, entity -> true, (entity, cooldown) -> Bleed.apply(entity, cooldown * 5), 2, 1), new Item.Settings().maxCount(1));
 
 	public static final ModifiedTntItem MODIFIED_TNT = RegisterHelper.item("modified_tnt", ModifiedTntItem::new, new Item.Settings().maxCount(16));
 	public static final SmokeBombItem SMOKE_BOMB = RegisterHelper.item("smoke_bomb", SmokeBombItem::new, new Item.Settings().maxCount(16));
