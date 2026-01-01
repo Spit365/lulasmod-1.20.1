@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "#": "minecraft:iron_nugget",
+    "g": "minecraft:iron_ingot",
+    "Q": "minecraft:quartz"
+  },
+  "pattern": [
+    "#g#",
+    "gQg",
+    "#g#"
+  ],
+  "result": {
+    "count": 1,
+    "id": "lulasmod:seal"
+  }
+}

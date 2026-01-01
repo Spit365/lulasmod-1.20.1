@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "#": "minecraft:crimson_roots",
+    "N": "minecraft:nether_brick",
+    "Q": "minecraft:quartz"
+  },
+  "pattern": [
+    "#N#",
+    "NQN",
+    "#N#"
+  ],
+  "result": {
+    "count": 1,
+    "id": "lulasmod:bloodsucking_seal"
+  }
+}

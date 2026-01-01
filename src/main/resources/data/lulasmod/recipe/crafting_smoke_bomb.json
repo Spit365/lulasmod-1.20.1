@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "equipment",
+  "ingredients": [
+    "minecraft:gunpowder",
+    "minecraft:string",
+    "minecraft:iron_nugget"
+  ],
+  "result": {
+    "count": 2,
+    "id": "lulasmod:smoke_bomb"
+  }
+}

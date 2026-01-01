@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    "minecraft:ender_eye",
+    "minecraft:tnt"
+  ],
+  "result": {
+    "count": 1,
+    "id": "lulasmod:modified_tnt"
+  }
+}

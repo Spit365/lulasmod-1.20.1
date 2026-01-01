@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "equipment",
+  "ingredients": [
+    "minecraft:book"
+  ],
+  "result": {
+    "count": 1,
+    "id": "lulasmod:spell_book"
+  }
+}

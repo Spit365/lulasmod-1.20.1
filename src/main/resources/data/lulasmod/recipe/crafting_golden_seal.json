@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "#": "minecraft:gold_nugget",
+    "g": "minecraft:gold_ingot",
+    "Q": "minecraft:quartz"
+  },
+  "pattern": [
+    "#g#",
+    "gQg",
+    "#g#"
+  ],
+  "result": {
+    "count": 1,
+    "id": "lulasmod:golden_seal"
+  }
+}

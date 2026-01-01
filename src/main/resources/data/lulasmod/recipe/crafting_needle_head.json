@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "n": "minecraft:netherite_ingot",
+    "i": "minecraft:iron_ingot"
+  },
+  "pattern": [
+    "  n",
+    " n ",
+    "i  "
+  ],
+  "result": {
+    "count": 1,
+    "id": "lulasmod:needle_head"
+  }
+}
