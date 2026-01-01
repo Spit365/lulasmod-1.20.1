@@ -83,23 +83,24 @@ public class ModMethods {
 		return immutable == null? new LinkedList<>() : new LinkedList<>(immutable);
 	}
 
-    public static void outlineBox(Box box, ServerWorld world, SimpleParticleType particle){
-        final Vec3d start = box.getCenter().add(box.getLengthX() / -2, box.getLengthY() / -2, box.getLengthZ() / -2);
-        final Vec3d end = box.getCenter().add(box.getLengthX() / 2, box.getLengthY() / 2, box.getLengthZ() / 2);
+    public static void outlineBox(Box box, ServerWorld world, SimpleParticleType particle, double step){
+        double lengthX = box.getLengthX();
+        double lengthY = box.getLengthY();
+        double lengthZ = box.getLengthZ();
 
-        for (double i = 0; i < box.getLengthX(); i += 0.625) world.spawnParticles(particle, start.getX() + i, start.getY(), start.getZ(), 0, 0, 0, 0, 0);
-        for (double i = 0; i < box.getLengthX(); i += 0.625) world.spawnParticles(particle, start.getX() + i, start.getY(), end.getZ(), 0, 0, 0, 0, 0);
-        for (double i = 0; i < box.getLengthX(); i += 0.625) world.spawnParticles(particle, start.getX() + i, end.getY(), start.getZ(), 0, 0, 0, 0, 0);
-        for (double i = 0; i < box.getLengthX(); i += 0.625) world.spawnParticles(particle, start.getX() + i, end.getY(), end.getZ(), 0, 0, 0, 0, 0);
+        for (double i = 0; i < lengthX; i += step) world.spawnParticles(particle, box.minX + i, box.minY, box.minZ, 0, 0, 0, 0, 0);
+        for (double i = 0; i < lengthX; i += step) world.spawnParticles(particle, box.minX + i, box.minY, box.maxZ, 0, 0, 0, 0, 0);
+        for (double i = 0; i < lengthX; i += step) world.spawnParticles(particle, box.minX + i, box.maxY, box.minZ, 0, 0, 0, 0, 0);
+        for (double i = 0; i < lengthX; i += step) world.spawnParticles(particle, box.minX + i, box.maxY, box.maxZ, 0, 0, 0, 0, 0);
 
-        for (double i = 0; i < box.getLengthY(); i += 0.625) world.spawnParticles(particle, start.getX(), start.getY() + i, start.getZ(), 0, 0, 0, 0, 0);
-        for (double i = 0; i < box.getLengthY(); i += 0.625) world.spawnParticles(particle, start.getX(), start.getY() + i, end.getZ(), 0, 0, 0, 0, 0);
-        for (double i = 0; i < box.getLengthY(); i += 0.625) world.spawnParticles(particle, end.getX(), start.getY() + i, start.getZ(), 0, 0, 0, 0, 0);
-        for (double i = 0; i < box.getLengthY(); i += 0.625) world.spawnParticles(particle, end.getX(), start.getY() + i, end.getZ(), 0, 0, 0, 0, 0);
+        for (double i = 0; i < lengthY; i += step) world.spawnParticles(particle, box.minX, box.minY + i, box.minZ, 0, 0, 0, 0, 0);
+        for (double i = 0; i < lengthY; i += step) world.spawnParticles(particle, box.minX, box.minY + i, box.maxZ, 0, 0, 0, 0, 0);
+        for (double i = 0; i < lengthY; i += step) world.spawnParticles(particle, box.maxX, box.minY + i, box.minZ, 0, 0, 0, 0, 0);
+        for (double i = 0; i < lengthY; i += step) world.spawnParticles(particle, box.maxX, box.minY + i, box.maxZ, 0, 0, 0, 0, 0);
 
-        for (double i = 0; i < box.getLengthZ(); i += 0.625) world.spawnParticles(particle, start.getX(), start.getY(), start.getZ() + i, 0, 0, 0, 0, 0);
-        for (double i = 0; i < box.getLengthZ(); i += 0.625) world.spawnParticles(particle, start.getX(), end.getY(), start.getZ() + i, 0, 0, 0, 0, 0);
-        for (double i = 0; i < box.getLengthZ(); i += 0.625) world.spawnParticles(particle, end.getX(), start.getY(), start.getZ() + i, 0, 0, 0, 0, 0);
-        for (double i = 0; i < box.getLengthZ(); i += 0.625) world.spawnParticles(particle, end.getX(), end.getY(), start.getZ() + i, 0, 0, 0, 0, 0);
+        for (double i = 0; i < lengthZ; i += step) world.spawnParticles(particle, box.minX, box.minY, box.minZ + i, 0, 0, 0, 0, 0);
+        for (double i = 0; i < lengthZ; i += step) world.spawnParticles(particle, box.minX, box.maxY, box.minZ + i, 0, 0, 0, 0, 0);
+        for (double i = 0; i < lengthZ; i += step) world.spawnParticles(particle, box.maxX, box.minY, box.minZ + i, 0, 0, 0, 0, 0);
+        for (double i = 0; i < lengthZ; i += step) world.spawnParticles(particle, box.maxX, box.maxY, box.minZ + i, 0, 0, 0, 0, 0);
     }
 }

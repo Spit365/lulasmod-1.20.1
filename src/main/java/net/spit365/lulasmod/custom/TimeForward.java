@@ -88,7 +88,7 @@ public class TimeForward {
             int frames = context.frames();
             if (frames > 0) {
                 player.setAttached(ModData.TIME_FORWARD_ANIMATION_FRAMES, new VisualContext(frames -1, pos));
-                ModMethods.outlineBox(box, player.getWorld(), ModParticles.CURSED_BLOOD);
+                ModMethods.outlineBox(box, player.getWorld(), ModParticles.CURSED_BLOOD, 0.0625);
             } else {
                 player.removeAttached(ModData.TIME_FORWARD_ANIMATION_FRAMES);
                 ModMethods.pocketTeleport(player);

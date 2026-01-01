@@ -25,7 +25,7 @@ public class MinerRepel {
             ) closestPortal = pos;
         }
         if (closestPortal == null) return;
-        ModMethods.outlineBox(Box.enclosing(closestPortal.add(-5, -5, -5), closestPortal.add(5, 5, 5)), player.getWorld(), ModParticles.GOLDEN_SHIMMER);
+        ModMethods.outlineBox(Box.enclosing(closestPortal.add(-5, -5, -5), closestPortal.add(5, 5, 5)), player.getWorld(), ModParticles.GOLDEN_SHIMMER, 0.625);
         player.setVelocity(player.getPos().subtract(Vec3d.ofCenter(closestPortal)).normalize());
         player.velocityModified = true;
     }
