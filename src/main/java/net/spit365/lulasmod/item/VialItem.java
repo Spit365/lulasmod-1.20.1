@@ -2,10 +2,12 @@ package net.spit365.lulasmod.item;
 
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.PotionContentsComponent;
+import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.PotionItem;
+import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
@@ -29,8 +31,16 @@ public class VialItem extends PotionItem {
         world.playSound(null, user.getBlockPos(), SoundEvents.BLOCK_GLASS_BREAK, SoundCategory.PLAYERS);
         if (world instanceof ServerWorld serverWorld) user.damage(serverWorld, ModDamageTypes.createDamageSource(world, ModDamageTypes.BLOODSUCKING), user.getMaxHealth() / 2);
         if (effects == null) return ActionResult.PASS;
-        effects.potion().ifPresent(potionRegistryEntry -> potionRegistryEntry.value().getEffects().forEach(statusEffectInstance ->
-            user.addStatusEffect(new StatusEffectInstance(statusEffectInstance.getEffectType(), -1))));
+        effects.potion().ifPresent(potionRegistryEntry -> potionRegistryEntry.value().getEffects().forEach(statusEffectInstance -> {
+            RegistryEntry<StatusEffect> effectType = statusEffectInstance.getEffectType();
+            user.addStatusEffect(new StatusEffectInstance(
+                effectType,
+                !effectType.value().isInstant() ? -1 : 1,
+                statusEffectInstance.getAmplifier(),
+                false,
+                false)
+            );
+        }));
         return ActionResult.SUCCESS;
     }
 
