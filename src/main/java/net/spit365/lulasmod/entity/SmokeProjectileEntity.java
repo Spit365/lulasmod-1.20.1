@@ -8,7 +8,6 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.world.World;
-import net.spit365.lulasmod.mod.ModEntities;
 
 public class SmokeProjectileEntity extends SmokeBombEntity{
     public SmokeProjectileEntity(World world, LivingEntity owner, ItemStack stack) {

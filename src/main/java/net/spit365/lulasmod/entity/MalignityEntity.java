@@ -10,7 +10,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraft.world.event.GameEvent;
-import net.spit365.lulasmod.mod.ModEntities;
 
 public class MalignityEntity extends FireballEntity {
     private int explosionPower = 1;
