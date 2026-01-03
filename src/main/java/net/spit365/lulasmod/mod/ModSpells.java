@@ -54,7 +54,7 @@ public class ModSpells {
 		world.spawnEntity(new MalignityEntity(world, player, player.getRotationVec(1).normalize().multiply(3), Math.min(Math.round(efficiencyMultiplier + 2), 100)));
 		return 300;
 	}));
-	public static final SpellItem DASH_SPELL = RegisterHelper.spell("purloining",  settings -> new SpellItem(settings, (world, player, hand, efficiencyMultiplier, cooldownDivisor) -> DashSpell.onUse(world, player, efficiencyMultiplier, cooldownDivisor)));
+	public static final SpellItem DASH_SPELL = RegisterHelper.spell("purloining",  settings -> new SpellItem(settings, (world, player, hand, efficiencyMultiplier, cooldownDivisor) -> DashSpell.onUse(world, player, cooldownDivisor)));
 	public static final SpellItem SMOKE_SPELL = RegisterHelper.spell("guile",  settings -> new SpellItem(settings, (world, player, hand, efficiencyMultiplier, cooldownDivisor) -> {
 		if (!SmokeSpellCooldown.isCoolingDown(player)) {
             world.spawnEntity(new SmokeProjectileEntity(world, player, ItemStack.EMPTY));

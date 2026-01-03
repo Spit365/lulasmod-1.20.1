@@ -4,28 +4,20 @@ import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.Colors;
 import net.minecraft.util.Hand;
 import net.minecraft.util.PlayerInput;
-import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
 import net.spit365.lulasmod.item.SealItem;
 import net.spit365.lulasmod.mod.ModData;
-import net.spit365.lulasmod.mod.ModParticles;
 import net.spit365.lulasmod.mod.ModSpells;
 import net.spit365.lulasmod.packet.DashSpellUsagesS2CPacket;
 import net.spit365.lulasmod.renderer.SpellHotbarRenderer;
-
-import java.util.HashSet;
-import java.util.Set;
 
 public class DashSpell {
 	public static int usages;
@@ -35,14 +27,14 @@ public class DashSpell {
 		ServerPlayNetworking.send(player, new DashSpellUsagesS2CPacket(i == null ? -1 : i));
 	}
 
-	public static int onUse(ServerWorld world, PlayerEntity player, float efficiencyMultiplier, int cooldownDivisor) {
+	public static int onUse(ServerWorld world, PlayerEntity player, int cooldownDivisor) {
         if (player.hasStatusEffect(StatusEffects.SLOWNESS)) return SealItem.FAIL_RESULT;
 
         int maxUsages = 5 * cooldownDivisor;
         Integer usages = player.getAttached(ModData.DASH_SPELL);
         if (usages == null) usages = maxUsages;
         usages--;
-        int cooldown = usages <= 0 ? (player.isOnGround() ? 20 : 40) : 5;
+        int cooldown = usages > 0 ? 5 : (player.isOnGround() ? 20 : 40);
 
 		PlayerInput input = ((ServerPlayerEntity) player).getPlayerInput();
 		Vec3d movementDirection = new Vec3d(
