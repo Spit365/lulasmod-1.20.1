@@ -29,17 +29,8 @@ import java.util.Set;
 
 public class DashSpell {
 	public static int usages;
-	public static final Set<PlayerEntity> DASH_IMPACT_SET = new HashSet<>();
 
 	public static void tick(ServerPlayerEntity player) {
-		if (DASH_IMPACT_SET.contains(player) && player.getWorld() instanceof ServerWorld world && (player.verticalCollision || player.horizontalCollision) && player.getVelocity().lengthSquared() >= 1){
-			DASH_IMPACT_SET.remove(player);
-			Vec3d pos = player.getPos();
-			world.playSound(null, pos.getX(), pos.getY(), pos.getZ(), SoundEvents.ENTITY_GENERIC_EXPLODE, SoundCategory.PLAYERS, 1, 1);
-			world.spawnParticles(ModParticles.EXPLOSION, pos.getX(), pos.getY(), pos.getZ(), 0, 0, 0, 0, 0);
-			for (Entity target : world.getOtherEntities(player, new Box(pos.add(2), pos.add(-2))))
-				target.damage(world, world.getDamageSources().explosion(player, player), 2);
-		}
 		Integer i = player.getAttached(ModData.DASH_SPELL);
 		ServerPlayNetworking.send(player, new DashSpellUsagesS2CPacket(i == null ? -1 : i));
 	}
@@ -62,7 +53,6 @@ public class DashSpell {
 		if (movementDirection.lengthSquared() < 1E-10F) return SealItem.FAIL_RESULT;
 
         player.setAttached(ModData.DASH_SPELL, usages <= 0 ? maxUsages : Math.min(maxUsages, usages));
-        if (efficiencyMultiplier > 1) DASH_IMPACT_SET.add(player);
 		player.addVelocity(movementDirection.normalize().add(0, 0.25, 0));
         player.velocityModified = true;
         player.fallDistance = 0;
