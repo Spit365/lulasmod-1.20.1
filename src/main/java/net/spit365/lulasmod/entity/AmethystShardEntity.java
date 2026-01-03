@@ -19,11 +19,14 @@ import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.RaycastContext;
 import net.minecraft.world.World;
 import net.spit365.lulasmod.mod.ModDamageTypes;
 import net.spit365.lulasmod.mod.ModEntities;
+import net.spit365.lulasmod.mod.ModMethods;
+import net.spit365.lulasmod.mod.ModParticles;
 
 public class AmethystShardEntity extends ProjectileEntity {
     public AmethystShardEntity(EntityType<? extends ProjectileEntity> entityType, World world) {
@@ -59,22 +62,21 @@ public class AmethystShardEntity extends ProjectileEntity {
 
     @Override
     protected void onEntityHit(EntityHitResult entityHitResult) {
-        Entity target = entityHitResult.getEntity();
-        Entity owner = this.getOwner();
-        DamageSource damageSource;
-        if (owner != null) {
-            if (owner.equals(target)) return;
-            damageSource = ModDamageTypes.createDamageSource(owner, ModDamageTypes.AMETHYST_SHARD);
-            if (owner instanceof LivingEntity livingEntity) livingEntity.onAttacking(target);
-        } else damageSource = ModDamageTypes.createDamageSource(this, ModDamageTypes.AMETHYST_SHARD);
-        if (getWorld() instanceof ServerWorld serverWorld && target.damage(serverWorld, damageSource, 8)) {
-            if (!this.getWorld().isClient && target instanceof LivingEntity livingEntity && owner instanceof LivingEntity)
-                EnchantmentHelper.onTargetDamaged(serverWorld, livingEntity, damageSource);
-        } else {
-            this.setVelocity(this.getVelocity().multiply(-0.1d));
-            this.updateRotation();
+        if (getWorld() instanceof ServerWorld serverWorld) {
+            Entity target = entityHitResult.getEntity();
+            Entity owner = this.getOwner();
+            DamageSource damageSource;
+            if (owner != null) {
+                if (owner.equals(target)) return;
+                damageSource = ModDamageTypes.createDamageSource(owner, ModDamageTypes.AMETHYST_SHARD);
+                if (owner instanceof LivingEntity livingEntity) livingEntity.onAttacking(target);
+            } else damageSource = ModDamageTypes.createDamageSource(this, ModDamageTypes.AMETHYST_SHARD);
+            if (target.damage(serverWorld, damageSource, 8) &&
+                target instanceof LivingEntity livingEntity &&
+                owner instanceof LivingEntity
+            ) EnchantmentHelper.onTargetDamaged(serverWorld, livingEntity, damageSource);
+            serverWorld.playSound(null, BlockPos.ofFloored(entityHitResult.getPos()), SoundEvents.ENTITY_PLAYER_HURT_SWEET_BERRY_BUSH, SoundCategory.NEUTRAL, 1.0f, 1.5f);
         }
-        this.getWorld().playSound(null, BlockPos.ofFloored(entityHitResult.getPos()), SoundEvents.ENTITY_PLAYER_HURT_SWEET_BERRY_BUSH, SoundCategory.NEUTRAL, 1.0f, 1.5f);
     }
 
     @Override protected void initDataTracker(DataTracker.Builder builder) {}

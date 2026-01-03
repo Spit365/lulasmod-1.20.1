@@ -28,8 +28,6 @@ public class AmethystShardEntityRenderer extends EntityRenderer<AmethystShardEnt
         return new ProjectileEntityRenderState();
     }
 
-
-
     public void render(ProjectileEntityRenderState projectileEntityRenderState, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i) {
         matrixStack.push();
         matrixStack.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(projectileEntityRenderState.yaw - 90.0F));
