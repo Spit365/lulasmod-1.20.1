@@ -16,7 +16,7 @@ public class SinfulItem extends Item {
      public void postHit(ItemStack stack, LivingEntity target, LivingEntity attacker){
 		 int bleed = 1;
 		 if (attacker.getStackInHand(Hand.OFF_HAND).getItem() instanceof SealItem sealItem && sealItem.canUse.test(attacker)) {
-			 bleed = (int) sealItem.efficiencyMultiplier;
+			 bleed = (int) sealItem.potencyMultiplier;
 			 sealItem.consequences.accept(attacker, bleed * 20);
 		 }
 		 Bleed.apply(target, bleed * 100);

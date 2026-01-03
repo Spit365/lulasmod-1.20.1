@@ -25,7 +25,7 @@ public class SpellItem extends Item {
 		this.spell = spell;
     }
 
-	@FunctionalInterface public interface Spell {int cast(ServerWorld world, PlayerEntity player, Hand hand, float efficiencyMultiplier, int cooldownMultiplier);}
+	@FunctionalInterface public interface Spell {int cast(ServerWorld world, PlayerEntity player, Hand hand, float potencyMultiplier, int cooldownMultiplier);}
 
     @Override
     public ActionResult use(World world, PlayerEntity player, Hand hand){

@@ -26,23 +26,23 @@ import java.util.Objects;
 import java.util.function.Predicate;
 
 public class SealItem extends Item implements SpellHotbar {
-    public SealItem(Settings settings, Predicate<LivingEntity> canUse, Consequences consequences, float efficiencyMultiplier, int cooldownDivisor) {
+    public SealItem(Settings settings, Predicate<LivingEntity> canUse, Consequences consequences, float potencyMultiplier, int cooldownDivisor) {
         super(settings);
         this.canUse = canUse;
         this.consequences = consequences;
-        this.efficiencyMultiplier = efficiencyMultiplier;
+        this.potencyMultiplier = potencyMultiplier;
         this.cooldownDivisor = cooldownDivisor;
     }
 
-    public SealItem(Settings settings, Predicate<LivingEntity> canUse, float efficiencyMultiplier, int cooldownDivisor) {
-        this(settings, canUse, (entity, cooldown) -> {}, efficiencyMultiplier, cooldownDivisor);
+    public SealItem(Settings settings, Predicate<LivingEntity> canUse, float potencyMultiplier, int cooldownDivisor) {
+        this(settings, canUse, (entity, cooldown) -> {}, potencyMultiplier, cooldownDivisor);
     }
 
     public static final int NO_COOLDOWN_RESULT = 0;
     public static final int FAIL_RESULT = -1;
     public final Predicate<LivingEntity> canUse;
     public final Consequences consequences;
-    public final float efficiencyMultiplier;
+    public final float potencyMultiplier;
     public final int cooldownDivisor;
 
     @Override
@@ -60,25 +60,25 @@ public class SealItem extends Item implements SpellHotbar {
     @Override
     public void postHit(ItemStack stack, LivingEntity target, LivingEntity attacker) {
         sealLogic(null, null, attacker, ModMethods.getHandFromStack(attacker, stack), (serverWorld, player, hand, spellItem) ->
-            spellItem instanceof SorceryItem sorceryItem ? sorceryItem.sorcery.hitEntity(serverWorld, player, hand, target, efficiencyMultiplier, cooldownDivisor) : FAIL_RESULT);
+            spellItem instanceof SorceryItem sorceryItem ? sorceryItem.sorcery.hitEntity(serverWorld, player, hand, target, potencyMultiplier, cooldownDivisor) : FAIL_RESULT);
     }
 
     @Override
     public ActionResult use(World world, PlayerEntity player, Hand hand) {
         return sealLogic(ActionResult.SUCCESS, ActionResult.PASS, player, hand, (serverWorld, ignored1, ignored2, spellItem) ->
-            spellItem.spell.cast(serverWorld, player, hand, efficiencyMultiplier, cooldownDivisor));
+            spellItem.spell.cast(serverWorld, player, hand, potencyMultiplier, cooldownDivisor));
     }
 
     @Override
     public void usageTick(World world, LivingEntity user, ItemStack stack, int remainingUseTicks) {
         sealLogic(null, null, user, ModMethods.getHandFromStack(user, stack), (serverWorld, player, hand, spellItem) ->
-            spellItem instanceof SorceryItem sorceryItem ? sorceryItem.sorcery.castTick(serverWorld, player, hand, remainingUseTicks, efficiencyMultiplier, cooldownDivisor) : FAIL_RESULT);
+            spellItem instanceof SorceryItem sorceryItem ? sorceryItem.sorcery.castTick(serverWorld, player, hand, potencyMultiplier, cooldownDivisor) : FAIL_RESULT);
     }
 
     @Override
     public boolean onStoppedUsing(ItemStack stack, World world, LivingEntity user, int remainingUseTicks) {
         return sealLogic(true, false, user, ModMethods.getHandFromStack(user, stack), (serverWorld, player, hand, spellItem) ->
-            spellItem instanceof SorceryItem sorceryItem ? sorceryItem.sorcery.castStop(serverWorld, player, hand, remainingUseTicks, efficiencyMultiplier, cooldownDivisor) : FAIL_RESULT);
+            spellItem instanceof SorceryItem sorceryItem ? sorceryItem.sorcery.castStop(serverWorld, player, hand, potencyMultiplier, cooldownDivisor) : FAIL_RESULT);
     }
 
     private <T> T sealLogic(T resultSuccess, T resultFail, LivingEntity user, Hand hand, SpellAction spellAction) {
