@@ -107,11 +107,13 @@ public class ModSpells {
         return NO_COOLDOWN_RESULT;
     }));
     public static final ConjuringItem POCKET_CONJURING = RegisterHelper.spell("heresies", settings -> new ConjuringItem(settings, (world, player, hand, efficiencyMultiplier, cooldownDivisor) -> {
-        List<Entity> entities = world.getOtherEntities(player, new Box(player.getPos().add(5), player.getPos().add(-5)));
+        Box box = new Box(player.getPos().add(5), player.getPos().add(-5));
+        List<Entity> entities = world.getOtherEntities(player, box);
+        ModMethods.outlineBox(box, world, ModParticles.CURSED_BLOOD, 0.0625);
         entities.removeIf(entity -> entity.getAttached(ModData.TIME_FORWARD_ANIMATION_FRAMES) != null);
         if (entities.isEmpty()) entities.add(player);
         for (Entity victim : entities) {
-            world.spawnParticles(ParticleTypes.PORTAL, victim.getX(), victim.getY() + 0.5, victim.getZ(), 50, 0, 0, 0, 1);
+            ModMethods.outlineBox(victim.getBoundingBox(), world, ModParticles.CURSED_BLOOD, 0.0625);
             if (world.getRegistryKey().equals(World.OVERWORLD) && victim instanceof ServerPlayerEntity serverPlayer) {
                 ServerPlayNetworking.send(serverPlayer, new SetTimeForwardAnimationStateS2CPacket(true));
                 victim.setAttached(ModData.TIME_FORWARD_ANIMATION_FRAMES, new TimeForward.ServerLogic.VisualContext(TimeForward.ANIMATION_DURATION, player.getPos()));
