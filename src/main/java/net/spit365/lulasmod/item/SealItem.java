@@ -25,95 +25,105 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.Predicate;
 
-public class SealItem extends Item  implements SpellHotbar {
+public class SealItem extends Item implements SpellHotbar {
     public SealItem(Settings settings, Predicate<LivingEntity> canUse, Consequences consequences, float efficiencyMultiplier, int cooldownDivisor) {
-		super(settings);
-		this.canUse = canUse;
-		this.consequences = consequences;
-		this.efficiencyMultiplier = efficiencyMultiplier;
-		this.cooldownDivisor = cooldownDivisor;
-	}
-	public SealItem(Settings settings, Predicate<LivingEntity> canUse, float efficiencyMultiplier, int cooldownDivisor) {
-		this(settings, canUse, (entity, cooldown) -> {}, efficiencyMultiplier, cooldownDivisor);
-	}
-	public static final int NO_COOLDOWN_RESULT = 0;
-	public static final int FAIL_RESULT = -1;
+        super(settings);
+        this.canUse = canUse;
+        this.consequences = consequences;
+        this.efficiencyMultiplier = efficiencyMultiplier;
+        this.cooldownDivisor = cooldownDivisor;
+    }
+
+    public SealItem(Settings settings, Predicate<LivingEntity> canUse, float efficiencyMultiplier, int cooldownDivisor) {
+        this(settings, canUse, (entity, cooldown) -> {}, efficiencyMultiplier, cooldownDivisor);
+    }
+
+    public static final int NO_COOLDOWN_RESULT = 0;
+    public static final int FAIL_RESULT = -1;
     public final Predicate<LivingEntity> canUse;
     public final Consequences consequences;
     public final float efficiencyMultiplier;
     public final int cooldownDivisor;
 
-    @Override public List<Identifier> getHotbarList(PlayerEntity player){return player.getAttached(ModData.EQUIPPED_SPELLS);}
-    @Override public void onCycle(PlayerEntity player, int value){
-		List<Identifier> mutable = ModMethods.makeMutable(player.getAttached(ModData.EQUIPPED_SPELLS));
-		Collections.rotate(mutable, value);
-		player.setAttached(ModData.EQUIPPED_SPELLS, mutable);
-	}
-
-	@Override
-	public void postHit(ItemStack stack, LivingEntity target, LivingEntity attacker) {
-		sealLogic(null, null, attacker, ModMethods.getHandFromStack(attacker, stack), (serverWorld, player, hand, spellItem) ->
-			spellItem instanceof SorceryItem sorceryItem ? sorceryItem.sorcery.hitEntity(serverWorld, player, hand, target, efficiencyMultiplier, cooldownDivisor) : FAIL_RESULT);
-	}
-
-	@Override
-    public ActionResult use(World world, PlayerEntity player, Hand hand) {
-		return sealLogic(ActionResult.SUCCESS, ActionResult.PASS, player, hand, (serverWorld, player1, hand1, spellItem) ->
-			spellItem.spell.cast(serverWorld, player, hand, efficiencyMultiplier, cooldownDivisor));
+    @Override
+    public List<Identifier> getHotbarList(PlayerEntity player) {
+        return player.getAttached(ModData.EQUIPPED_SPELLS);
     }
 
-	@Override
-	public void usageTick(World world, LivingEntity user, ItemStack stack, int remainingUseTicks) {
-		sealLogic(null, null, user, ModMethods.getHandFromStack(user, stack), (serverWorld, player, hand, spellItem) ->
-			spellItem instanceof SorceryItem sorceryItem ? sorceryItem.sorcery.castTick(serverWorld, player, hand, remainingUseTicks, efficiencyMultiplier, cooldownDivisor) : FAIL_RESULT);
-	}
+    @Override
+    public void onCycle(PlayerEntity player, int value) {
+        List<Identifier> mutable = ModMethods.makeMutable(player.getAttached(ModData.EQUIPPED_SPELLS));
+        Collections.rotate(mutable, value);
+        player.setAttached(ModData.EQUIPPED_SPELLS, mutable);
+    }
 
-	@Override
-	public boolean onStoppedUsing(ItemStack stack, World world, LivingEntity user, int remainingUseTicks) {
-		return sealLogic(true, false, user, ModMethods.getHandFromStack(user, stack), (serverWorld, player, hand, spellItem) ->
-			spellItem instanceof SorceryItem sorceryItem ? sorceryItem.sorcery.castStop(serverWorld, player, hand, remainingUseTicks, efficiencyMultiplier, cooldownDivisor) : FAIL_RESULT);
-	}
+    @Override
+    public void postHit(ItemStack stack, LivingEntity target, LivingEntity attacker) {
+        sealLogic(null, null, attacker, ModMethods.getHandFromStack(attacker, stack), (serverWorld, player, hand, spellItem) ->
+            spellItem instanceof SorceryItem sorceryItem ? sorceryItem.sorcery.hitEntity(serverWorld, player, hand, target, efficiencyMultiplier, cooldownDivisor) : FAIL_RESULT);
+    }
 
-	private <T> T sealLogic(T resultSuccess, T resultFail, LivingEntity user, Hand hand, SpellAction spellAction){
-		if (user instanceof PlayerEntity player && player.getWorld() instanceof ServerWorld serverWorld && canUse.test(player)) {
-			List<Identifier> spellList = player.getAttached(ModData.EQUIPPED_SPELLS);
-			if(spellList != null && !spellList.isEmpty() && Registries.ITEM.get(spellList.getFirst()) instanceof SpellItem spellItem){
-				int result = spellAction.accept(serverWorld, player, hand, spellItem);
-				if (result >= 0) consequences.accept(player, result);
-				return handleResult(resultSuccess, resultFail, hand, player, result);
-			}
-		}
-		return resultFail;
-	}
+    @Override
+    public ActionResult use(World world, PlayerEntity player, Hand hand) {
+        return sealLogic(ActionResult.SUCCESS, ActionResult.PASS, player, hand, (serverWorld, ignored1, ignored2, spellItem) ->
+            spellItem.spell.cast(serverWorld, player, hand, efficiencyMultiplier, cooldownDivisor));
+    }
 
-	private static <T> T handleResult(T resultSuccess, T resultFail, Hand hand, PlayerEntity player, int result) {
-		return switch (result) {
-			case NO_COOLDOWN_RESULT -> resultSuccess;
-			case FAIL_RESULT -> resultFail;
-			default -> {
-				if (result > 0) {
-					player.getItemCooldownManager().set(player.getStackInHand(hand), Math.max(result, 2));
-					yield resultSuccess;
-				}
-				throw new IllegalArgumentException("Result integer from Spell must be >= -1, got " + result);
-			}
-		};
-	}
+    @Override
+    public void usageTick(World world, LivingEntity user, ItemStack stack, int remainingUseTicks) {
+        sealLogic(null, null, user, ModMethods.getHandFromStack(user, stack), (serverWorld, player, hand, spellItem) ->
+            spellItem instanceof SorceryItem sorceryItem ? sorceryItem.sorcery.castTick(serverWorld, player, hand, remainingUseTicks, efficiencyMultiplier, cooldownDivisor) : FAIL_RESULT);
+    }
 
-	@FunctionalInterface private interface SpellAction{int accept(ServerWorld serverWorld, PlayerEntity player, Hand hand, SpellItem spellItem);}
-	@FunctionalInterface public interface Consequences {void accept(LivingEntity entity, int cooldown);}
+    @Override
+    public boolean onStoppedUsing(ItemStack stack, World world, LivingEntity user, int remainingUseTicks) {
+        return sealLogic(true, false, user, ModMethods.getHandFromStack(user, stack), (serverWorld, player, hand, spellItem) ->
+            spellItem instanceof SorceryItem sorceryItem ? sorceryItem.sorcery.castStop(serverWorld, player, hand, remainingUseTicks, efficiencyMultiplier, cooldownDivisor) : FAIL_RESULT);
+    }
 
-	@Override
+    private <T> T sealLogic(T resultSuccess, T resultFail, LivingEntity user, Hand hand, SpellAction spellAction) {
+        if (!(user instanceof PlayerEntity player) || !(player.getWorld() instanceof ServerWorld serverWorld) || !canUse.test(player))
+            return resultFail;
+        List<Identifier> spellList = player.getAttached(ModData.EQUIPPED_SPELLS);
+        if (spellList == null || spellList.isEmpty() || !(Registries.ITEM.get(spellList.getFirst()) instanceof SpellItem spellItem))
+            return resultFail;
+
+        int result = spellAction.accept(serverWorld, player, hand, spellItem);
+        if (result >= 0) consequences.accept(player, result);
+        return switch (result) {
+            case NO_COOLDOWN_RESULT -> resultSuccess;
+            case FAIL_RESULT -> resultFail;
+            default -> {
+                if (result > 0) {
+                    player.getItemCooldownManager().set(player.getStackInHand(hand), Math.max(result, 2));
+                    yield resultSuccess;
+                }
+                throw new IllegalArgumentException("Result integer from Spell must be >= -1, got " + result);
+            }
+        };
+    }
+
+    @FunctionalInterface
+    private interface SpellAction {
+        int accept(ServerWorld serverWorld, PlayerEntity player, Hand hand, SpellItem spellItem);
+    }
+
+    @FunctionalInterface
+    public interface Consequences {
+        void accept(LivingEntity entity, int cooldown);
+    }
+
+    @Override
     public void inventoryTick(ItemStack stack, ServerWorld world, Entity entity, @Nullable EquipmentSlot slot) {
-        if(entity instanceof PlayerEntity player && !Objects.equals(ModMethods.getInventoryStack(player, stack.getItem()), stack)) {
+        if (entity instanceof PlayerEntity player && !Objects.equals(ModMethods.getInventoryStack(player, stack.getItem()), stack)) {
             player.sendMessage(Text.translatable("notify.lulasmod.duplicate_seal"), true);
             stack.decrement(stack.getCount());
         }
     }
 
-	@Override
-	public int getMaxUseTime(ItemStack stack, LivingEntity user) {
-		List<Identifier> spells = user.getAttached(ModData.EQUIPPED_SPELLS);
-		return spells != null && Registries.ITEM.get(spells.getFirst()) instanceof SorceryItem? 72000 : 0;
-	}
+    @Override
+    public int getMaxUseTime(ItemStack stack, LivingEntity user) {
+        List<Identifier> spells = user.getAttached(ModData.EQUIPPED_SPELLS);
+        return spells != null && Registries.ITEM.get(spells.getFirst()) instanceof SorceryItem ? 72000 : 0;
+    }
 }
