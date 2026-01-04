@@ -36,7 +36,8 @@ public class Bleed {
             }
             int threshold = getThreshold(target);
             if (duration >= threshold) {
-                target.damage(world, ModDamageTypes.createDamageSource(world, ModDamageTypes.BLOODSUCKING), (target.getMaxHealth() * 0.15f + 10f) * duration / threshold);
+                int times = duration / threshold;
+                target.damage(world, ModDamageTypes.createDamageSource(world, ModDamageTypes.BLOODSUCKING), (target.getMaxHealth() * 0.15f + 10f) * times);
                 duration %= threshold;
                 for (ServerPlayerEntity player : players) if (player.squaredDistanceTo(target) <= 1_000_000)
                     ServerPlayNetworking.send(player, new SummonBleedS2CPacket(target.getX(), target.getY(), target.getZ()));
