@@ -14,10 +14,7 @@ public class MinerRepel {
         if (!player.getCommandTags().contains("miner")) return;
         BlockPos playerPos = player.getBlockPos();
         BlockPos closestPortal = null;
-        for (BlockPos pos : BlockPos.stream(
-            playerPos.add(-5, -5, -5),
-            playerPos.add(5, 5, 5)
-        ).toList()) {
+        for (BlockPos pos : BlockPos.stream(new Box(playerPos).expand(4)).toList()) {
             BlockState blockState = player.getWorld().getBlockState(pos);
             if (
                 (blockState.isOf(Blocks.END_PORTAL) || blockState.isOf(Blocks.NETHER_PORTAL)) &&
@@ -25,7 +22,7 @@ public class MinerRepel {
             ) closestPortal = pos;
         }
         if (closestPortal == null) return;
-        ModMethods.outlineBox(Box.enclosing(closestPortal.add(-5, -5, -5), closestPortal.add(5, 5, 5)), player.getWorld(), ModParticles.GOLDEN_SHIMMER, 0.625);
+        ModMethods.outlineBox(new Box(closestPortal).expand(4), player.getWorld(), ModParticles.GOLDEN_SHIMMER, 0.625);
         player.setVelocity(player.getPos().subtract(Vec3d.ofCenter(closestPortal)).normalize());
         player.velocityModified = true;
     }
