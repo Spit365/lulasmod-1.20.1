@@ -13,51 +13,95 @@ import net.minecraft.util.math.Vec3d;
 import net.spit365.lulasmod.entity.ParticleProjectileEntity;
 import net.spit365.lulasmod.mod.ModData;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
-public class Impaled {
-    public static final HashMap<ImpaledContext, Integer> impaled = new HashMap<>();
+public final class Impaled {
+
+    private static final Set<ImpaledContext> IMPALED = new HashSet<>();
+    public static final int RADIUS = 5;
 
     public static void tick() {
-        for (Map.Entry<ImpaledContext, Integer> impaledEntry : impaled.entrySet()) {
-            ImpaledContext context = impaledEntry.getKey();
-            int counter = impaledEntry.getValue();
-            LivingEntity victim = context.livingEntity();
-            if (context.iterations() > 0 && victim.isAlive()) {
-                if (victim instanceof EndermanEntity) victim.kill((ServerWorld) victim.getWorld());
+        Iterator<ImpaledContext> it = IMPALED.iterator();
+        while (it.hasNext()) {
+            ImpaledContext ctx = it.next();
+            LivingEntity victim = ctx.target;
+            if (ctx.iterations > 0 && victim.isAlive()) {
+                if (victim instanceof EndermanEntity enderman) {
+                    enderman.kill((ServerWorld) victim.getWorld());
+                    cleanup(ctx, it);
+                    continue;
+                }
                 victim.setVelocity(0, 0, 0);
-                if (counter >= context.intervalDuration()) {
-                    double radius = 5;
-                    Vec3d pos = new Vec3d(Math.random() * radius - radius / 2, Math.random() * radius - radius / 2, Math.random() * radius - radius / 2).normalize().multiply(radius).add(victim.getPos());
-                    context.player().setAttached(ModData.DAMAGE_DELAY, 0);
-                    victim.getWorld().spawnEntity(new ParticleProjectileEntity(
-                        victim.getWorld(), context.player(), pos, pos.subtract(victim.getEyePos()).multiply(-0.5), context.particle()));
-                    impaled.remove(context);
-                    impaled.put(new ImpaledContext(context, context.iterations() - 1, context.intervalDuration()), 0);
-                } else impaled.put(context, counter + 1);
-            } else {
-                impaled.remove(context);
-                context.player().removeAttached(ModData.DAMAGE_DELAY);
-                victim.addStatusEffect(new StatusEffectInstance(StatusEffects.SLOW_FALLING, 50));
-            }
+                ctx.counter++;
+                if (ctx.counter >= ctx.intervalDuration) {
+                    ctx.counter = 0;
+                    ctx.iterations--;
+                    Vec3d pos = Vec3d.fromPolar(
+                        (float) (Math.random() * 360),
+                        (float) (Math.random() * 180 - 90)
+                    ).normalize().multiply(RADIUS).add(victim.getPos());
+                    ctx.attacker.setAttached(ModData.DAMAGE_DELAY, 0);
+                    victim.getWorld().spawnEntity(
+                        new ParticleProjectileEntity(
+                            victim.getWorld(),
+                            ctx.attacker,
+                            pos,
+                            pos.subtract(victim.getEyePos()).multiply(-0.5),
+                            ctx.particle
+                        )
+                    );
+                    if (ctx.iterations <= 0) cleanup(ctx, it);
+                }
+            } else cleanup(ctx, it);
         }
     }
 
-    public static Boolean impale(PlayerEntity player, Entity target, ItemStack item, int baseCooldown, int maxCooldown, int iterations, int intervalls, ParticleEffect particle) {
-        player.getItemCooldownManager().set(item, 2);
-        if (target instanceof LivingEntity selectedEntity && impaled.keySet().stream().noneMatch(impaledContext -> impaledContext.livingEntity().equals(selectedEntity))) {
-            player.getItemCooldownManager().set(item, maxCooldown);
-            selectedEntity.requestTeleport(selectedEntity.getX(), selectedEntity.getY() + 5, selectedEntity.getZ());
-            impaled.put(new ImpaledContext(player, selectedEntity, particle, iterations, intervalls), 0);
-            return true;
-        } else player.getItemCooldownManager().set(item, baseCooldown);
-        return false;
+    private static void cleanup(ImpaledContext ctx, Iterator<ImpaledContext> it) {
+        it.remove();
+        ctx.attacker.removeAttached(ModData.DAMAGE_DELAY);
+        ctx.target.addStatusEffect(
+            new StatusEffectInstance(StatusEffects.SLOW_FALLING, RADIUS * 10)
+        );
     }
 
-    public record ImpaledContext(PlayerEntity player, LivingEntity livingEntity, ParticleEffect particle, int iterations, int intervalDuration) {
-        public ImpaledContext(ImpaledContext context, int iterations, int intervals) {
-            this(context.player(), context.livingEntity(), context.particle(), iterations, intervals);
+    public static boolean impale(PlayerEntity attacker, Entity target, ItemStack item, int baseCooldown, int maxCooldown, int iterations, int intervalDuration, ParticleEffect particle) {
+        attacker.getItemCooldownManager().set(item, 2);
+        if (!(target instanceof LivingEntity living) || IMPALED.stream().anyMatch(ctx -> ctx.attacker == attacker || ctx.target == living)) {
+            attacker.getItemCooldownManager().set(item, baseCooldown);
+            return false;
+        }
+        attacker.getItemCooldownManager().set(item, maxCooldown);
+        living.requestTeleport(living.getX(), living.getY() + RADIUS, living.getZ());
+        IMPALED.add(new ImpaledContext(attacker, living, particle, iterations, intervalDuration));
+        return true;
+    }
+
+    public static final class ImpaledContext {
+        private final PlayerEntity attacker;
+        private final LivingEntity target;
+        private final ParticleEffect particle;
+        private final int intervalDuration;
+        private int iterations;
+        private int counter = 0;
+
+        public ImpaledContext(PlayerEntity attacker, LivingEntity target, ParticleEffect particle, int iterations, int intervalDuration) {
+            this.attacker = attacker;
+            this.target = target;
+            this.particle = particle;
+            this.iterations = iterations;
+            this.intervalDuration = intervalDuration;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (!(o instanceof ImpaledContext other)) return false;
+            return attacker == other.attacker || target == other.target;
+        }
+
+        @Override
+        public int hashCode() {
+            return System.identityHashCode(attacker) ^ System.identityHashCode(target);
         }
     }
 }
