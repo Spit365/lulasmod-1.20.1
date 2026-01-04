@@ -20,6 +20,5 @@ public class SinfulItem extends Item {
 			 sealItem.consequences.accept(attacker, bleed * 20);
 		 }
 		 Bleed.apply(target, bleed * 100);
-		 if (!Demon.isDemon(attacker)) stack.damage(1, attacker, Arrays.stream(Hand.values()).filter(hand -> attacker.getStackInHand(hand).equals(stack)).toArray(Hand[]::new)[0]);
      }
 }
