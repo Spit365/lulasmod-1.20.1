@@ -19,42 +19,47 @@ import java.util.Collections;
 import java.util.List;
 
 public class SpellBookItem extends Item implements SpellHotbar {
-     public SpellBookItem(Settings settings) {super(settings);}
-     @Override public List<Identifier> getHotbarList(PlayerEntity player){
-         ItemStack stack = (player.getMainHandStack().getItem().equals(this)? player.getMainHandStack() : player.getOffHandStack());
-         return stack.get(ModData.SPELL_BOOK_SPELLS);
-     }
+    public SpellBookItem(Settings settings) {
+        super(settings);
+    }
 
-     @Override
-     public void onCycle(PlayerEntity player, int value) {
-          ItemStack stack = (player.getMainHandStack().getItem().equals(this)? player.getMainHandStack() : player.getOffHandStack());
-		 List<Identifier> mutable = ModMethods.makeMutable(stack.get(ModData.SPELL_BOOK_SPELLS));
-          if (mutable.isEmpty()) {
-              Collections.rotate(mutable, value);
-              stack.set(ModData.SPELL_BOOK_SPELLS, mutable);
-          }
-     }
-     @Override
-     public ActionResult use(World world, PlayerEntity player, Hand hand){
-          if (world instanceof ServerWorld){
-               ItemStack spellbook = player.getStackInHand(hand);
-               ItemStack spell = (hand.equals(Hand.MAIN_HAND)? player.getOffHandStack() : player.getMainHandStack());
-			   List<Identifier> mutable = ModMethods.makeMutable(spellbook.get(ModData.SPELL_BOOK_SPELLS));
-			   if (spell.getItem() instanceof SpellItem) {
-				   Identifier id = Registries.ITEM.getId(spell.getItem());
-				   mutable.add(id);
-				   spellbook.set(ModData.SPELL_BOOK_SPELLS, mutable);
-				   spell.decrement(1);
-				   return ActionResult.SUCCESS;
-			   } else if (!mutable.isEmpty()) {
-				   Identifier id = mutable.getFirst();
-				   mutable.remove(id);
-				   spellbook.set(ModData.SPELL_BOOK_SPELLS, mutable);
-				   player.giveItemStack(new ItemStack(Registries.ITEM.get(id)));
-				   return ActionResult.SUCCESS;
-			   }
+    @Override
+    public List<Identifier> getHotbarList(PlayerEntity player) {
+        ItemStack stack = (player.getMainHandStack().isOf(this) ? player.getMainHandStack() : player.getOffHandStack());
+        return stack.get(ModData.SPELL_BOOK_SPELLS);
+    }
 
-          }
-          return ActionResult.PASS;
-     }
+    @Override
+    public void onCycle(PlayerEntity player, int value) {
+        ItemStack stack = (player.getMainHandStack().getItem().equals(this) ? player.getMainHandStack() : player.getOffHandStack());
+        List<Identifier> mutable = ModMethods.makeMutable(stack.get(ModData.SPELL_BOOK_SPELLS));
+        if (!mutable.isEmpty()) {
+            Collections.rotate(mutable, value);
+            stack.set(ModData.SPELL_BOOK_SPELLS, mutable);
+        }
+    }
+
+    @Override
+    public ActionResult use(World world, PlayerEntity player, Hand hand) {
+        if (world instanceof ServerWorld) {
+            ItemStack spellbook = player.getStackInHand(hand);
+            ItemStack spell = (hand.equals(Hand.MAIN_HAND) ? player.getOffHandStack() : player.getMainHandStack());
+            List<Identifier> mutable = ModMethods.makeMutable(spellbook.get(ModData.SPELL_BOOK_SPELLS));
+            if (spell.getItem() instanceof SpellItem) {
+                Identifier id = Registries.ITEM.getId(spell.getItem());
+                mutable.add(id);
+                spellbook.set(ModData.SPELL_BOOK_SPELLS, mutable);
+                spell.decrement(1);
+                return ActionResult.SUCCESS;
+            } else if (!mutable.isEmpty()) {
+                Identifier id = mutable.getFirst();
+                mutable.remove(id);
+                spellbook.set(ModData.SPELL_BOOK_SPELLS, mutable);
+                player.giveItemStack(new ItemStack(Registries.ITEM.get(id)));
+                return ActionResult.SUCCESS;
+            }
+
+        }
+        return ActionResult.PASS;
+    }
 }
