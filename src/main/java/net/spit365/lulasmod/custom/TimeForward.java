@@ -13,7 +13,6 @@ import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
 import net.spit365.lulasmod.mod.ModData;
 import net.spit365.lulasmod.mod.ModMethods;
-import net.spit365.lulasmod.mod.ModParticles;
 import net.spit365.lulasmod.packet.SetTimeForwardAnimationStateS2CPacket;
 
 public class TimeForward {
@@ -88,7 +87,7 @@ public class TimeForward {
             int frames = context.frames();
             if (frames > 0) {
                 player.setAttached(ModData.TIME_FORWARD_ANIMATION_FRAMES, new VisualContext(frames -1, pos));
-                ModMethods.outlineBox(box, player.getWorld(), ModParticles.CURSED_BLOOD, 0.0625);
+                BoxOutlineState.add(box, 0xFFAA0000);
             } else {
                 player.removeAttached(ModData.TIME_FORWARD_ANIMATION_FRAMES);
                 ModMethods.pocketTeleport(player);

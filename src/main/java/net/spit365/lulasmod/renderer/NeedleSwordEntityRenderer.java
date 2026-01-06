@@ -79,14 +79,14 @@ public class NeedleSwordEntityRenderer extends EntityRenderer<NeedleSwordEntity,
     private static void renderLeashSegment(VertexConsumer vertexConsumer, Matrix4f matrix, Vec3d interpolatedRelativePos, double XOffset, double YOffset, double ZOffset, int light) {
         vertexConsumer
             .vertex(matrix, (float) (interpolatedRelativePos.x - ZOffset), (float) (interpolatedRelativePos.y + YOffset), (float) (interpolatedRelativePos.z + XOffset))
-            .normal(0, 0,0)
+            .normal(0, 0, 0)
             .texture(4f, 0f)
             .overlay(OverlayTexture.DEFAULT_UV)
             .color(1, 1, 1, 1f)
             .light(light);
         vertexConsumer
             .vertex(matrix, (float) (interpolatedRelativePos.x + ZOffset), (float) (interpolatedRelativePos.y + 0.05f - YOffset), (float) (interpolatedRelativePos.z - XOffset))
-            .normal(0, 0,0)
+            .normal(0, 0, 0)
             .texture(0f, 0f)
             .overlay(OverlayTexture.DEFAULT_UV)
             .color(1, 1, 1, 1f)

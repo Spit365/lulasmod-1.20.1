@@ -6,6 +6,7 @@ import net.spit365.lulasmod.custom.DashSpell;
 import net.spit365.lulasmod.custom.LinkedLightning;
 import net.spit365.lulasmod.custom.TimeForward;
 import net.spit365.lulasmod.packet.*;
+import net.spit365.lulasmod.renderer.BoxOutlineRenderer;
 import net.spit365.lulasmod.renderer.SpellHotbarRenderer;
 
 public class ClientPackets {
@@ -19,5 +20,6 @@ public class ClientPackets {
 		});
 		ClientPlayNetworking.registerGlobalReceiver(SpellHotbarListS2CPacket.ID, (spellHotbarListS2CPacket, context) -> SpellHotbarRenderer.spellHotbarList = spellHotbarListS2CPacket.list());
 		ClientPlayNetworking.registerGlobalReceiver(SummonBleedS2CPacket.ID, (summonBleedS2CPacket, context) -> Bleed.summonParticles(summonBleedS2CPacket.getPos(), context.client().world));
+		ClientPlayNetworking.registerGlobalReceiver(BoxStateS2CPacket.ID, (boxRenderS2CPacket, context) -> BoxOutlineRenderer.setState(boxRenderS2CPacket.boxContexts()));
 	}
 }

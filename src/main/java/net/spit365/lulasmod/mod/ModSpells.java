@@ -111,11 +111,11 @@ public class ModSpells {
     public static final ConjuringItem POCKET_CONJURING = RegisterHelper.spell("heresies", settings -> new ConjuringItem(settings, (world, player, hand, potencyMultiplier, cooldownDivisor) -> {
         Box box = new Box(player.getPos().add(5), player.getPos().add(-5));
         List<Entity> entities = world.getOtherEntities(player, box);
-        ModMethods.outlineBox(box, world, ModParticles.CURSED_BLOOD, 0.0625);
+        BoxOutlineState.add(box, 0xFFFF0000);
         entities.removeIf(entity -> entity.getAttached(ModData.TIME_FORWARD_ANIMATION_FRAMES) != null);
         if (entities.isEmpty()) entities.add(player);
         for (Entity victim : entities) {
-            ModMethods.outlineBox(victim.getBoundingBox(), world, ModParticles.CURSED_BLOOD, 0.0625);
+            BoxOutlineState.add(victim.getBoundingBox(), 0xFFFE0000);
             if (world.getRegistryKey().equals(World.OVERWORLD) && victim instanceof ServerPlayerEntity serverPlayer) {
                 ServerPlayNetworking.send(serverPlayer, new SetTimeForwardAnimationStateS2CPacket(true));
                 victim.setAttached(ModData.TIME_FORWARD_ANIMATION_FRAMES, new TimeForward.ServerLogic.VisualContext(TimeForward.ANIMATION_DURATION, player.getPos()));

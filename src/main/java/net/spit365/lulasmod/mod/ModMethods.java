@@ -6,7 +6,6 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.packet.s2c.play.PositionFlag;
-import net.minecraft.particle.SimpleParticleType;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
@@ -82,25 +81,4 @@ public class ModMethods {
     public static <T> LinkedList<T> makeMutable(List<T> immutable){
 		return immutable == null? new LinkedList<>() : new LinkedList<>(immutable);
 	}
-
-    public static void outlineBox(Box box, ServerWorld world, SimpleParticleType particle, double step){
-        double lengthX = box.getLengthX();
-        double lengthY = box.getLengthY();
-        double lengthZ = box.getLengthZ();
-
-        for (double i = 0; i < lengthX; i += step) world.spawnParticles(particle, box.minX + i, box.minY, box.minZ, 0, 0, 0, 0, 0);
-        for (double i = 0; i < lengthX; i += step) world.spawnParticles(particle, box.minX + i, box.minY, box.maxZ, 0, 0, 0, 0, 0);
-        for (double i = 0; i < lengthX; i += step) world.spawnParticles(particle, box.minX + i, box.maxY, box.minZ, 0, 0, 0, 0, 0);
-        for (double i = 0; i < lengthX; i += step) world.spawnParticles(particle, box.minX + i, box.maxY, box.maxZ, 0, 0, 0, 0, 0);
-
-        for (double i = 0; i < lengthY; i += step) world.spawnParticles(particle, box.minX, box.minY + i, box.minZ, 0, 0, 0, 0, 0);
-        for (double i = 0; i < lengthY; i += step) world.spawnParticles(particle, box.minX, box.minY + i, box.maxZ, 0, 0, 0, 0, 0);
-        for (double i = 0; i < lengthY; i += step) world.spawnParticles(particle, box.maxX, box.minY + i, box.minZ, 0, 0, 0, 0, 0);
-        for (double i = 0; i < lengthY; i += step) world.spawnParticles(particle, box.maxX, box.minY + i, box.maxZ, 0, 0, 0, 0, 0);
-
-        for (double i = 0; i < lengthZ; i += step) world.spawnParticles(particle, box.minX, box.minY, box.minZ + i, 0, 0, 0, 0, 0);
-        for (double i = 0; i < lengthZ; i += step) world.spawnParticles(particle, box.minX, box.maxY, box.minZ + i, 0, 0, 0, 0, 0);
-        for (double i = 0; i < lengthZ; i += step) world.spawnParticles(particle, box.maxX, box.minY, box.minZ + i, 0, 0, 0, 0, 0);
-        for (double i = 0; i < lengthZ; i += step) world.spawnParticles(particle, box.maxX, box.maxY, box.minZ + i, 0, 0, 0, 0, 0);
-    }
 }

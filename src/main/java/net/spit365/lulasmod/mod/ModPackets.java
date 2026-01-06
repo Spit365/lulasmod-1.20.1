@@ -26,6 +26,7 @@ public class ModPackets {
 		PayloadTypeRegistry.playS2C().register(SetTimeForwardAnimationStateS2CPacket.ID, SetTimeForwardAnimationStateS2CPacket.CODEC);
 		PayloadTypeRegistry.playS2C().register(SpellHotbarListS2CPacket.ID, SpellHotbarListS2CPacket.CODEC);
         PayloadTypeRegistry.playS2C().register(SummonBleedS2CPacket.ID, SummonBleedS2CPacket.CODEC);
+        PayloadTypeRegistry.playS2C().register(BoxStateS2CPacket.ID, BoxStateS2CPacket.CODEC);
 
 		PayloadTypeRegistry.playC2S().register(CycleSpellHotbarC2SPacket.ID, CycleSpellHotbarC2SPacket.CODEC);
 		PayloadTypeRegistry.playC2S().register(DemonContractC2SPacket.ID, DemonContractC2SPacket.CODEC);
