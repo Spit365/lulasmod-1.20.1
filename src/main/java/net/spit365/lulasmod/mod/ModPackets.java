@@ -9,12 +9,15 @@ import net.minecraft.network.packet.CustomPayload;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.Hand;
+import net.minecraft.util.Identifier;
 import net.spit365.lulasmod.custom.Demon;
 import net.spit365.lulasmod.item.spell.ConjuringItem;
 import net.spit365.lulasmod.packet.*;
 import net.spit365.lulasmod.util.SpellHotbar;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.function.Supplier;
 
 public class ModPackets {
@@ -34,7 +37,11 @@ public class ModPackets {
 		ServerPlayNetworking.registerGlobalReceiver(CycleSpellHotbarC2SPacket.ID, (cycleSpellHotbarC2SPacket, context) -> {
 			ServerPlayerEntity player = context.player();
 			for (Hand hand : Hand.values()) if (player.getStackInHand(hand).getItem() instanceof SpellHotbar item){
-				item.onCycle(player, player.isSneaking() ? 1 : -1);
+				item.onCycle(player, identifiers -> {
+					List<Identifier> mutable = ModMethods.makeMutable(identifiers);
+					Collections.rotate(mutable, player.isSneaking() ? 1 : -1);
+					return mutable;
+				});
 				break;
 			}
 		});

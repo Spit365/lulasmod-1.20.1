@@ -10,10 +10,12 @@ import net.minecraft.util.Identifier;
 import net.spit365.lulasmod.packet.SpellHotbarListS2CPacket;
 
 import java.util.List;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 public interface SpellHotbar {
     List<Identifier> getHotbarList(PlayerEntity player);
-    void onCycle(PlayerEntity player, int value);
+    void onCycle(PlayerEntity player, Function<List<Identifier>, List<Identifier>> cycleFunction);
 
     static void tick(ServerPlayerEntity player) {
         for (Hand hand : Hand.values()) {

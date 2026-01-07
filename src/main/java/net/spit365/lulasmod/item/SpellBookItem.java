@@ -17,6 +17,8 @@ import net.spit365.lulasmod.util.SpellHotbar;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 public class SpellBookItem extends Item implements SpellHotbar {
     public SpellBookItem(Settings settings) {
@@ -30,13 +32,10 @@ public class SpellBookItem extends Item implements SpellHotbar {
     }
 
     @Override
-    public void onCycle(PlayerEntity player, int value) {
+    public void onCycle(PlayerEntity player,  Function<List<Identifier>, List<Identifier>> cycleFunction) {
         ItemStack stack = (player.getMainHandStack().getItem().equals(this) ? player.getMainHandStack() : player.getOffHandStack());
-        List<Identifier> mutable = ModMethods.makeMutable(stack.get(ModData.SPELL_BOOK_SPELLS));
-        if (!mutable.isEmpty()) {
-            Collections.rotate(mutable, value);
-            stack.set(ModData.SPELL_BOOK_SPELLS, mutable);
-        }
+        stack.set(ModData.SPELL_BOOK_SPELLS, cycleFunction.apply(stack.get(ModData.SPELL_BOOK_SPELLS)));
+
     }
 
     @Override

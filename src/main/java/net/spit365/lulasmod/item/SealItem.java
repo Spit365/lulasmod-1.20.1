@@ -18,11 +18,15 @@ import net.spit365.lulasmod.item.spell.SpellItem;
 import net.spit365.lulasmod.mod.ModData;
 import net.spit365.lulasmod.mod.ModMethods;
 import net.spit365.lulasmod.util.SpellHotbar;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Predicate;
 
 public class SealItem extends Item implements SpellHotbar {
@@ -45,21 +49,20 @@ public class SealItem extends Item implements SpellHotbar {
     public final float potencyMultiplier;
     public final int cooldownDivisor;
 
+
     @Override
     public List<Identifier> getHotbarList(PlayerEntity player) {
         return player.getAttached(ModData.EQUIPPED_SPELLS);
     }
 
     @Override
-    public void onCycle(PlayerEntity player, int value) {
-        List<Identifier> mutable = ModMethods.makeMutable(player.getAttached(ModData.EQUIPPED_SPELLS));
-        Collections.rotate(mutable, value);
-        player.setAttached(ModData.EQUIPPED_SPELLS, mutable);
+    public void onCycle(PlayerEntity player,  Function<List<Identifier>, List<Identifier>> cycleFunction) {
+        player.setAttached(ModData.EQUIPPED_SPELLS, cycleFunction.apply(player.getAttached(ModData.EQUIPPED_SPELLS)));
     }
 
     @Override
     public void postHit(ItemStack stack, LivingEntity target, LivingEntity attacker) {
-        sealLogic(null, null, attacker, ModMethods.getHandFromStack(attacker, stack), (serverWorld, player, hand, spellItem) ->
+        sealLogic(null, null, attacker, getHandFromStack(attacker, stack), (serverWorld, player, hand, spellItem) ->
             spellItem instanceof SorceryItem sorceryItem ? sorceryItem.sorcery.hitEntity(serverWorld, player, hand, target, potencyMultiplier, cooldownDivisor) : FAIL_RESULT);
     }
 
@@ -71,13 +74,13 @@ public class SealItem extends Item implements SpellHotbar {
 
     @Override
     public void usageTick(World world, LivingEntity user, ItemStack stack, int remainingUseTicks) {
-        sealLogic(null, null, user, ModMethods.getHandFromStack(user, stack), (serverWorld, player, hand, spellItem) ->
+        sealLogic(null, null, user, getHandFromStack(user, stack), (serverWorld, player, hand, spellItem) ->
             spellItem instanceof SorceryItem sorceryItem ? sorceryItem.sorcery.castTick(serverWorld, player, hand, potencyMultiplier, cooldownDivisor) : FAIL_RESULT);
     }
 
     @Override
     public boolean onStoppedUsing(ItemStack stack, World world, LivingEntity user, int remainingUseTicks) {
-        return sealLogic(true, false, user, ModMethods.getHandFromStack(user, stack), (serverWorld, player, hand, spellItem) ->
+        return sealLogic(true, false, user, getHandFromStack(user, stack), (serverWorld, player, hand, spellItem) ->
             spellItem instanceof SorceryItem sorceryItem ? sorceryItem.sorcery.castStop(serverWorld, player, hand, potencyMultiplier, cooldownDivisor) : FAIL_RESULT);
     }
 
@@ -101,6 +104,10 @@ public class SealItem extends Item implements SpellHotbar {
                 throw new IllegalArgumentException("Result integer from Spell must be >= -1, got " + result);
             }
         };
+    }
+
+    private static @NotNull Hand getHandFromStack(LivingEntity user, ItemStack stack) {
+        return Arrays.stream(Hand.values()).filter(hand -> user.getStackInHand(hand).equals(stack)).findFirst().orElse(Hand.MAIN_HAND);
     }
 
     @FunctionalInterface
