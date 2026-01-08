@@ -30,6 +30,7 @@ import net.spit365.lulasmod.renderer.KinesisInteractionRenderer;
 import net.spit365.lulasmod.state.LinkedLightningPersistentState;
 import net.spit365.lulasmod.util.MultiVec3d;
 import net.spit365.lulasmod.util.RegisterHelper;
+import net.spit365.lulasmod.util.Spell;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -124,7 +125,7 @@ public class ModSpells {
         return NO_COOLDOWN_RESULT;
     }));
 
-	public static final SorceryItem COMBUSTION_SORCERY = RegisterHelper.spell("combustion", settings -> new SorceryItem(settings, new SorceryItem.Sorcery() {
+	public static final SorceryItem COMBUSTION_SORCERY = RegisterHelper.spell("combustion", settings -> new SorceryItem(settings, new Spell() {
 		@Override
 		public int hitEntity(ServerWorld world, PlayerEntity player, Hand hand, LivingEntity target, float potencyMultiplier, int cooldownDivisor) {
 			if (!player.getItemCooldownManager().isCoolingDown(player.getStackInHand(hand))) {
@@ -151,7 +152,7 @@ public class ModSpells {
 		}
 
 	}));
-    public static final SorceryItem CURRENT_SORCERY = RegisterHelper.spell("current", settings -> new SorceryItem(settings, new SorceryItem.Sorcery() {
+    public static final SorceryItem CURRENT_SORCERY = RegisterHelper.spell("current", settings -> new SorceryItem(settings, new Spell() {
 		@Override
         public int cast(ServerWorld world, PlayerEntity player, Hand hand, float potencyMultiplier, int cooldownDivisor) {
             player.setCurrentHand(hand);
@@ -184,7 +185,7 @@ public class ModSpells {
 			return 100;
         }
     }));
-	public static final SorceryItem KINESIS_SORCERY = RegisterHelper.spell("kinesis", settings -> new SorceryItem(settings, new SorceryItem.Sorcery() {
+	public static final SorceryItem KINESIS_SORCERY = RegisterHelper.spell("kinesis", settings -> new SorceryItem(settings, new Spell() {
         private static final HashMap<Entity, List<Entity>> selectedEntities = new HashMap<>();
 
         @Override

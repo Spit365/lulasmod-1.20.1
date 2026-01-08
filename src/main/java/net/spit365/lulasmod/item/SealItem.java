@@ -22,10 +22,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
@@ -63,7 +61,7 @@ public class SealItem extends Item implements SpellHotbar {
     @Override
     public void postHit(ItemStack stack, LivingEntity target, LivingEntity attacker) {
         sealLogic(null, null, attacker, getHandFromStack(attacker, stack), (serverWorld, player, hand, spellItem) ->
-            spellItem instanceof SorceryItem sorceryItem ? sorceryItem.sorcery.hitEntity(serverWorld, player, hand, target, potencyMultiplier, cooldownDivisor) : FAIL_RESULT);
+            spellItem.spell.hitEntity(serverWorld, player, hand, target, potencyMultiplier, cooldownDivisor));
     }
 
     @Override
@@ -75,13 +73,13 @@ public class SealItem extends Item implements SpellHotbar {
     @Override
     public void usageTick(World world, LivingEntity user, ItemStack stack, int remainingUseTicks) {
         sealLogic(null, null, user, getHandFromStack(user, stack), (serverWorld, player, hand, spellItem) ->
-            spellItem instanceof SorceryItem sorceryItem ? sorceryItem.sorcery.castTick(serverWorld, player, hand, potencyMultiplier, cooldownDivisor) : FAIL_RESULT);
+            spellItem.spell.castTick(serverWorld, player, hand, potencyMultiplier, cooldownDivisor));
     }
 
     @Override
     public boolean onStoppedUsing(ItemStack stack, World world, LivingEntity user, int remainingUseTicks) {
         return sealLogic(true, false, user, getHandFromStack(user, stack), (serverWorld, player, hand, spellItem) ->
-            spellItem instanceof SorceryItem sorceryItem ? sorceryItem.sorcery.castStop(serverWorld, player, hand, potencyMultiplier, cooldownDivisor) : FAIL_RESULT);
+            spellItem.spell.castStop(serverWorld, player, hand, potencyMultiplier, cooldownDivisor));
     }
 
     private <T> T sealLogic(T resultSuccess, T resultFail, LivingEntity user, Hand hand, SpellAction spellAction) {

@@ -3,7 +3,6 @@ package net.spit365.lulasmod.item.spell;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.registry.Registries;
-import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
@@ -14,6 +13,7 @@ import net.minecraft.world.World;
 import net.spit365.lulasmod.item.SpellBookItem;
 import net.spit365.lulasmod.mod.ModData;
 import net.spit365.lulasmod.mod.ModMethods;
+import net.spit365.lulasmod.util.Spell;
 
 import java.util.List;
 
@@ -24,8 +24,6 @@ public class SpellItem extends Item {
         super(settings);
 		this.spell = spell;
     }
-
-	@FunctionalInterface public interface Spell {int cast(ServerWorld world, PlayerEntity player, Hand hand, float potencyMultiplier, int cooldownMultiplier);}
 
     @Override
     public ActionResult use(World world, PlayerEntity player, Hand hand){
