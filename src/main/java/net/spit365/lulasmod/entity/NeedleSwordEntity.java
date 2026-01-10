@@ -57,25 +57,23 @@ public class NeedleSwordEntity extends PersistentProjectileEntity {
 
     private boolean takeDamage(Entity entity){
         Entity thisOwner = this.getOwner();
-        if (entity.equals(thisOwner)) return true;
-        if (thisOwner instanceof LivingEntity livingEntity) return livingEntity.getMainHandStack().isOf(Items.AIR);
+        if (entity.equals(thisOwner) && thisOwner instanceof LivingEntity livingEntity) return !livingEntity.getMainHandStack().isOf(Items.AIR);
         return true;
     }
 
     @Override
     public void tick() {
         Entity entity = this.getOwner();
-        if (entity != null)
+        if (entity != null) {
             if (shouldReturn()) {
                 Vec3d relativePos = entity.getEyePos().subtract(this.getPos());
                 this.setVelocity(relativePos.normalize());
                 if (relativePos.length() < 0.5) {
                     ((LivingEntity) entity).giveOrDropStack(sword);
-                    if (this.getWorld() instanceof ServerWorld serverWorld)
-                        this.kill(serverWorld);
+                    if (this.getWorld() instanceof ServerWorld serverWorld) this.kill(serverWorld);
                 }
-            } else
-                this.setVelocity(entity.getRotationVec(1).normalize());
+            } else this.setVelocity(entity.getRotationVec(1).normalize());
+        }
         super.tick();
     }
 }
