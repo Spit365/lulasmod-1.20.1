@@ -19,7 +19,7 @@ public class ClientPackets {
 			else TimeForward.Animator.stop();
 		});
 		ClientPlayNetworking.registerGlobalReceiver(SpellHotbarListS2CPacket.ID, (spellHotbarListS2CPacket, context) -> SpellHotbarRenderer.spellHotbarList = spellHotbarListS2CPacket.list());
-		ClientPlayNetworking.registerGlobalReceiver(SummonBleedS2CPacket.ID, (summonBleedS2CPacket, context) -> Bleed.summonParticles(summonBleedS2CPacket.getPos(), context.client().world));
+		ClientPlayNetworking.registerGlobalReceiver(SummonBleedS2CPacket.ID, (summonBleedS2CPacket, context) -> Bleed.summonParticles(summonBleedS2CPacket.pos(), context.client().world));
 		ClientPlayNetworking.registerGlobalReceiver(BoxStateS2CPacket.ID, (boxRenderS2CPacket, context) -> BoxOutlineRenderer.setState(boxRenderS2CPacket.boxContexts()));
 	}
 }
