@@ -4,7 +4,9 @@ import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.MapColor;
+import net.minecraft.block.piston.PistonBehavior;
 import net.minecraft.item.BlockItem;
+import net.spit365.lulasmod.block.PentagrammBlock;
 import net.spit365.lulasmod.block.SpellPedestalBlock;
 import net.spit365.lulasmod.util.RegisterHelper;
 
@@ -17,6 +19,15 @@ public class ModBlocks {
 			.mapColor(MapColor.STONE_GRAY)
 			.strength(-1.0F, Float.MAX_VALUE)
 			.dropsNothing()
+			.allowsSpawning(Blocks::never));
+	public static final BlockAndItem<PentagrammBlock> PENTAGRAMM = RegisterHelper.block(
+		"pentagramm",
+		PentagrammBlock::new,
+		AbstractBlock.Settings.create()
+			.mapColor(MapColor.RED)
+			.noCollision()
+			.breakInstantly()
+			.pistonBehavior(PistonBehavior.DESTROY)
 			.allowsSpawning(Blocks::never));
 
 	public static void init() {}
