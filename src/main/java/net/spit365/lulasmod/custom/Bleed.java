@@ -18,7 +18,8 @@ import net.spit365.lulasmod.mod.ModParticles;
 import net.spit365.lulasmod.packet.BleedProgressS2CPacket;
 import net.spit365.lulasmod.packet.SummonBleedS2CPacket;
 
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 public class Bleed {
     public static final Identifier BACKGROUND = Identifier.of(Lulasmod.MOD_ID, "textures/gui/bleed_progress/background.png");
@@ -26,9 +27,11 @@ public class Bleed {
     public static int progress = 0;
 
     public static void tick(ServerWorld world){
-        List<ServerPlayerEntity> players = world.getPlayers();
+        Set<Vec3d> occurrences = new HashSet<>();
         for (Entity entity : world.iterateEntities()) {
             Integer duration = entity.getAttached(ModData.BLEED_VALUE);
+            if (entity instanceof ServerPlayerEntity player)
+                ServerPlayNetworking.send(player, new BleedProgressS2CPacket(duration != null ? duration * 100 / getThreshold(player) : 0));
             if (duration == null) continue;
             if (!(entity instanceof LivingEntity target) || !target.isAlive() || duration <= 0){
                 entity.removeAttached(ModData.BLEED_VALUE);
@@ -39,16 +42,15 @@ public class Bleed {
                 int times = duration / threshold;
                 target.damage(world, ModDamageTypes.createDamageSource(world, ModDamageTypes.BLOODSUCKING), (target.getMaxHealth() * 0.15f + 10f) * times);
                 duration %= threshold;
-                for (ServerPlayerEntity player : players) if (player.squaredDistanceTo(target) <= 1_000_000)
-                    ServerPlayNetworking.send(player, new SummonBleedS2CPacket(target.getX(), target.getY(), target.getZ()));
+                occurrences.add(target.getPos());
             }
             duration--;
             if (duration > 0) target.setAttached(ModData.BLEED_VALUE, duration);
             else target.removeAttached(ModData.BLEED_VALUE);
         }
-        for (ServerPlayerEntity player : players) {
-            Integer duration = player.getAttached(ModData.BLEED_VALUE);
-            ServerPlayNetworking.send(player, new BleedProgressS2CPacket(duration != null ? duration * 100 / getThreshold(player) : 0));
+        for (ServerPlayerEntity player : world.getPlayers()) for (Vec3d pos : occurrences) {
+            if (player.squaredDistanceTo(pos) <= 1_000_000)
+                ServerPlayNetworking.send(player, new SummonBleedS2CPacket(pos));
         }
     }
 
