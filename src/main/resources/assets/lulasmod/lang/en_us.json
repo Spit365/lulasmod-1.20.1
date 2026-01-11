@@ -69,6 +69,7 @@
   "gamerule.newDeathSystem": "Use new death system (beta)",
 
   "notify.lulasmod.duplicate_seal": "You can only hold one seal at a time.",
+  "notify.lulasmod.duplicate_spell": "You can only hold one instance of a spell at a time.",
   "notify.lulasmod.already_absorbed_pedestal": "You have already absorbed this pedestal",
   "notify.lulasmod.pedestal.all_spells": "You already have every Spell",
   "notify.lulasmod.command.contract_success": "You obtained the powers of §kthe ancient demon",

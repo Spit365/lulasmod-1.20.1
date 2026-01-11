@@ -122,6 +122,7 @@ public class SealItem extends Item implements SpellHotbar {
     public void inventoryTick(ItemStack stack, ServerWorld world, Entity entity, @Nullable EquipmentSlot slot) {
         if (entity instanceof PlayerEntity player && !Objects.equals(ModMethods.getInventoryStack(player, stack.getItem()), stack)) {
             player.sendMessage(Text.translatable("notify.lulasmod.duplicate_seal"), true);
+            entity.dropStack(world, stack.copy());
             stack.decrement(stack.getCount());
         }
     }
