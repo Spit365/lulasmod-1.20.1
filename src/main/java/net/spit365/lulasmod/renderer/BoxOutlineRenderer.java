@@ -1,9 +1,9 @@
 package net.spit365.lulasmod.renderer;
 
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
-import net.minecraft.client.gl.RenderPipelines;
 import net.minecraft.client.render.*;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.math.Box;
@@ -14,27 +14,27 @@ import org.joml.Matrix4f;
 
 import java.util.*;
 import java.util.stream.Collectors;
-
-import static net.minecraft.client.render.RenderPhase.ITEM_ENTITY_TARGET;
-import static net.minecraft.client.render.RenderPhase.VIEW_OFFSET_Z_LAYERING;
+import java.util.stream.DoubleStream;
 
 public final class BoxOutlineRenderer {
-    private static Set<BoxContext> state = new HashSet<>();
-
-    private static final RenderLayer THICK_LINES = RenderLayer.of(
-        "thick_lines",
-        1536,
-        RenderPipelines.RENDERTYPE_LIGHTNING,
-        RenderLayer.MultiPhaseParameters.builder()
-            .lineWidth(new RenderPhase.LineWidth(OptionalDouble.of(2)))
-            .layering(VIEW_OFFSET_Z_LAYERING)
-            .target(ITEM_ENTITY_TARGET)
-            .build(false)
-    );
-
+    private static Set<ColoredEdge> state = new HashSet<>();
 
     public static void setState(Set<BoxContext> newState) {
-        state = newState;
+        Int2ObjectOpenHashMap<List<Box>> byColor = new Int2ObjectOpenHashMap<>();
+        Set<ColoredEdge> result = new HashSet<>();
+        for (BoxContext bc : newState) byColor.computeIfAbsent(bc.color(), k -> new ArrayList<>()).add(bc.box());
+        for (Int2ObjectMap.Entry<List<Box>> entry : byColor.int2ObjectEntrySet()) {
+            int color = entry.getIntKey();
+            float r = ((color >> 16) & 0xFF) / 255f;
+            float g = ((color >> 8) & 0xFF) / 255f;
+            float b = (color & 0xFF) / 255f;
+            float a = (color >>> 24) != 0 ? ((color >>> 24) & 0xFF) / 255f : 1.0f;
+
+            for (Calculator.Edge visibleEdge : Calculator.getVisibleEdges(entry.getValue().toArray(Box[]::new))) {
+                result.add(new ColoredEdge(visibleEdge, r, g, b, a));
+            }
+        }
+        state = result;
     }
 
     public static void init() {
@@ -57,22 +57,8 @@ public final class BoxOutlineRenderer {
         VertexConsumer vc = vcp.getBuffer(RenderLayer.getLines());
         Matrix4f mat = matrices.peek().getPositionMatrix();
 
-        // Color-grouping reduziert state-scans beim Rendern minimal
-        Int2ObjectOpenHashMap<List<Box>> byColor = new Int2ObjectOpenHashMap<>();
-        for (BoxContext bc : state) {
-            byColor.computeIfAbsent(bc.color(), k -> new ArrayList<>()).add(bc.box());
-        }
-
-        for (var entry : byColor.int2ObjectEntrySet()) {
-            int color = entry.getIntKey();
-            float r = ((color >> 16) & 0xFF) / 255f;
-            float g = ((color >> 8) & 0xFF) / 255f;
-            float b = (color & 0xFF) / 255f;
-            float a = (color >>> 24) != 0 ? ((color >>> 24) & 0xFF) / 255f : 1.0f;
-
-            for (Calculator.Edge visibleEdge : Calculator.getVisibleEdges(entry.getValue().toArray(Box[]::new))) {
-                renderEdge(mat, vc, visibleEdge, r, g,  b, a);
-            }
+        for (ColoredEdge coloredEdge : state) {
+            renderEdge(mat, vc, coloredEdge.edge, coloredEdge.r, coloredEdge.g,  coloredEdge.b, coloredEdge.a);
         }
         matrices.pop();
         if (vcp instanceof VertexConsumerProvider.Immediate immediate) {
@@ -92,11 +78,10 @@ public final class BoxOutlineRenderer {
         }
     }
 
+    private record ColoredEdge(Calculator.Edge edge, float r, float g, float b, float a)  {}
 
     public static class Calculator {
-        /**
-         * basic helpers
-         **/
+        private static final int[][] DIRS = {{-1, 0, 0}, {1, 0, 0}, {0, -1, 0}, {0, 1, 0}, {0, 0, -1}, {0, 0, 1}};
 
         private static boolean boxContainsBox(Box box, double x0, double y0, double z0, double x1, double y1, double z1) {
             return box.minX <= x0 && box.maxX >= x1 && box.minY <= y0 && box.maxY >= y1 && box.minZ <= z0 && box.maxZ >= z1;
@@ -120,57 +105,51 @@ public final class BoxOutlineRenderer {
          **/
 
         public static Set<Edge> getVisibleEdges(Box... boxes) {
+            double[] X = Arrays.stream(boxes).flatMapToDouble(b -> DoubleStream.of(b.minX, b.maxX)).toArray();
+            double[] Y = Arrays.stream(boxes).flatMapToDouble(b -> DoubleStream.of(b.minY, b.maxY)).toArray();
+            double[] Z = Arrays.stream(boxes).flatMapToDouble(b -> DoubleStream.of(b.minZ, b.maxZ)).toArray();
 
-            /*1. coordinate grid*/
+            int nx = X.length - 1;
+            int ny = Y.length - 1;
+            int nz = Z.length - 1;
+            boolean[][][] solid = new boolean[nx][ny][nz];
 
-            TreeSet<Double> xs = new TreeSet<>();
-            TreeSet<Double> ys = new TreeSet<>();
-            TreeSet<Double> zs = new TreeSet<>();
-
-            for (Box b : boxes) {
-                xs.add(b.minX);
-                xs.add(b.maxX);
-                ys.add(b.minY);
-                ys.add(b.maxY);
-                zs.add(b.minZ);
-                zs.add(b.maxZ);
-            }
-
-            Double[] X = xs.toArray(Double[]::new);
-            Double[] Y = ys.toArray(Double[]::new);
-            Double[] Z = zs.toArray(Double[]::new);
-
-            boolean[][][] solid = new boolean[X.length - 1][Y.length - 1][Z.length - 1];
-
-            /*2. mark solid cells*/
-
-            for (int i = 0; i < X.length - 1; i++)
-                for (int j = 0; j < Y.length - 1; j++)
-                    for (int k = 0; k < Z.length - 1; k++)
+            for (int i = 0; i < nx; i++)
+                for (int j = 0; j < ny; j++)
+                    for (int k = 0; k < nz; k++)
                         for (Box b : boxes)
                             if (boxContainsBox(b, X[i], Y[j], Z[k], X[i + 1], Y[j + 1], Z[k + 1])) {
                                 solid[i][j][k] = true;
                                 break;
                             }
 
-            /*3. collect exposed faces*/
-
             Map<PlaneKey, List<Rect>> faces = new HashMap<>();
 
-            for (int i = 0; i < X.length - 1; i++)
-                for (int j = 0; j < Y.length - 1; j++)
-                    for (int k = 0; k < Z.length - 1; k++) {
-
+            for (int i = 0; i < nx; i++)
+                for (int j = 0; j < ny; j++)
+                    for (int k = 0; k < nz; k++) {
                         if (!solid[i][j][k]) continue;
+                        for (int[] d : DIRS) {
+                            int ni = i + d[0], nj = j + d[1], nk = k + d[2];
+                            if (
+                                ni >= 0 &&
+                                nj >= 0 &&
+                                nk >= 0 &&
+                                ni < nx &&
+                                nj < ny &&
+                                nk < nz &&
+                                solid[ni][nj][nk]
+                            ) continue;
+                            double x0 = X[i], x1 = X[i + 1];
+                            double y0 = Y[j], y1 = Y[j + 1];
+                            double z0 = Z[k], z1 = Z[k + 1];
 
-                        collectFace(faces, solid, X, Y, Z, i, j, k, -1, 0, 0);
-                        collectFace(faces, solid, X, Y, Z, i, j, k, +1, 0, 0);
-                        collectFace(faces, solid, X, Y, Z, i, j, k, 0, -1, 0);
-                        collectFace(faces, solid, X, Y, Z, i, j, k, 0, +1, 0);
-                        collectFace(faces, solid, X, Y, Z, i, j, k, 0, 0, -1);
-                        collectFace(faces, solid, X, Y, Z, i, j, k, 0, 0, +1);
+                            if (d[0] != 0) faces.computeIfAbsent(new PlaneKey(Direction.Axis.X, d[0] < 0 ? x0 : x1), k2 -> new ArrayList<>()).add(new Rect(y0, z0, y1, z1));
+                            else if (d[1] != 0) faces.computeIfAbsent(new PlaneKey(Direction.Axis.Y, d[1] < 0 ? y0 : y1), k2 -> new ArrayList<>()).add(new Rect(x0, z0, x1, z1));
+                            else faces.computeIfAbsent(new PlaneKey(Direction.Axis.Z, d[2] < 0 ? z0 : z1), k2 -> new ArrayList<>()).add(new Rect(x0, y0, x1, y1));
+
+                        }
                     }
-            /*4. union + contour*/
 
             Set<Edge> result = new HashSet<>();
 
@@ -193,57 +172,21 @@ public final class BoxOutlineRenderer {
         }
 
         /**
-         * face collection
-         **/
-
-        private static void collectFace(Map<PlaneKey, List<Rect>> out, boolean[][][] solid, Double[] X, Double[] Y, Double[] Z, int i, int j, int k, int dx, int dy, int dz) {
-
-            int ni = i + dx, nj = j + dy, nk = k + dz;
-            boolean exposed = ni < 0 || nj < 0 || nk < 0 || ni >= solid.length || nj >= solid[0].length || nk >= solid[0][0].length || !solid[ni][nj][nk];
-
-            if (!exposed) return;
-
-            double x0 = X[i], x1 = X[i + 1];
-            double y0 = Y[j], y1 = Y[j + 1];
-            double z0 = Z[k], z1 = Z[k + 1];
-
-            if (dx != 0) {
-                double x = dx < 0 ? x0 : x1;
-                out.computeIfAbsent(new PlaneKey(Direction.Axis.X, x), k2 -> new ArrayList<>()).add(new Rect(y0, z0, y1, z1));
-            } else if (dy != 0) {
-                double y = dy < 0 ? y0 : y1;
-                out.computeIfAbsent(new PlaneKey(Direction.Axis.Y, y), k2 -> new ArrayList<>()).add(new Rect(x0, z0, x1, z1));
-            } else {
-                double z = dz < 0 ? z0 : z1;
-                out.computeIfAbsent(new PlaneKey(Direction.Axis.Z, z), k2 -> new ArrayList<>()).add(new Rect(x0, y0, x1, y1));
-            }
-        }
-
-        /**
          * 2D rectangle union → outline
          **/
 
         private static Set<Segment> computeOutline(List<Rect> rects) {
-
             Map<Segment, Integer> edges = new HashMap<>();
 
             for (Rect r : rects) {
-                toggle(edges, new Segment(r.u0, r.v0, r.u1, r.v0));
-                toggle(edges, new Segment(r.u1, r.v0, r.u1, r.v1));
-                toggle(edges, new Segment(r.u1, r.v1, r.u0, r.v1));
-                toggle(edges, new Segment(r.u0, r.v1, r.u0, r.v0));
+                edges.merge(new Segment(r.u0, r.v0, r.u1, r.v0), 1, Integer::sum);
+                edges.merge(new Segment(r.u1, r.v0, r.u1, r.v1), 1, Integer::sum);
+                edges.merge(new Segment(r.u1, r.v1, r.u0, r.v1), 1, Integer::sum);
+                edges.merge(new Segment(r.u0, r.v1, r.u0, r.v0), 1, Integer::sum);
             }
 
             return edges.entrySet().stream().filter(e -> e.getValue() == 1).map(Map.Entry::getKey).collect(Collectors.toSet());
         }
-
-        private static void toggle(Map<Segment, Integer> map, Segment s) {
-            map.merge(s, 1, Integer::sum);
-        }
-
-        /**
-         * records
-         **/
 
         private record PlaneKey(Direction.Axis axis, double coord) { }
 

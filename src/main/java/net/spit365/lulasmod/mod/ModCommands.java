@@ -3,12 +3,15 @@ package net.spit365.lulasmod.mod;
 import com.mojang.brigadier.arguments.BoolArgumentType;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
-import net.minecraft.command.argument.EntityArgumentType;
+import net.minecraft.command.argument.*;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
+import net.minecraft.util.math.Box;
 import net.spit365.lulasmod.custom.Bleed;
+import net.spit365.lulasmod.custom.BoxOutlineState;
 import net.spit365.lulasmod.custom.Demon;
 
 import static net.minecraft.server.command.CommandManager.argument;
@@ -26,7 +29,18 @@ public class ModCommands {
                    				Bleed.apply((LivingEntity) e, IntegerArgumentType.getInteger(context, "seconds") * 20);
                 			return r;
             }))));
-            dispatcher.register(literal("removeCooldown")
+			dispatcher.register(literal("boxoutline")
+				.then(argument("start", Vec3ArgumentType.vec3())
+					.then(argument("end", Vec3ArgumentType.vec3())
+						.then(argument("color", ColorArgumentType.color())
+							.executes(context ->  {
+								Integer color = ColorArgumentType.getColor(context, "color").getColorValue();
+								if (color != null) BoxOutlineState.add(new Box(Vec3ArgumentType.getVec3(context, "start"), Vec3ArgumentType.getVec3(context, "end")), color);
+								else context.getSource().sendFeedback(() -> Text.literal("No color value"), false);
+
+                                return r;
+            })))));
+            dispatcher.register(literal("removecooldown")
 				.executes(context -> {
                 	if (context.getSource().getEntity() instanceof PlayerEntity player) for (int i = 0; i < player.getInventory().size(); i++)
                     	player.getItemCooldownManager().set(player.getInventory().getStack(i), 0);
