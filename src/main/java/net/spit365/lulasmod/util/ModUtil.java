@@ -18,7 +18,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
-public final class ModMethods {
+public final class ModUtil {
     public static @Nullable Entity selectClosestEntity(Entity selector, double radius) {
         Vec3d selectionCenter = selector.getRotationVec(1).normalize().multiply(radius).add(selector.getPos());
         Entity selectedEntity = null;
