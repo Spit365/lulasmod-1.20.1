@@ -119,7 +119,7 @@ public final class ModSpells {
             BoxOutlineState.add(victim.getBoundingBox(), 0xFFFE0000);
             if (world.getRegistryKey().equals(World.OVERWORLD) && victim instanceof ServerPlayerEntity serverPlayer) {
                 ServerPlayNetworking.send(serverPlayer, new SetTimeForwardAnimationStateS2CPacket(true));
-                victim.setAttached(ModData.TIME_FORWARD_ANIMATION_FRAMES, new TimeForward.ServerLogic.VisualContext(TimeForward.ANIMATION_DURATION, player.getPos()));
+                victim.setAttached(ModData.TIME_FORWARD_ANIMATION_FRAMES, new TimeForward.VisualContext(TimeForward.ANIMATION_DURATION, player.getPos()));
             } else ModMethods.pocketTeleport(victim);
         }
         return NO_COOLDOWN_RESULT;

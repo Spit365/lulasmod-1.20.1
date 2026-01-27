@@ -13,7 +13,7 @@ public final class ModServerTick {
 			for (ServerPlayerEntity player : server.getPlayerManager().getPlayerList()) {
                 MinerRepel.tick(player);
 				SpellHotbar.tick(player);
-                TimeForward.ServerLogic.tick(player);
+                TimeForward.tick(player);
 				DashSpell.tick(player);
                 BoxOutlineState.tick(player);
 			}

@@ -22,7 +22,7 @@ public final class ModData {
 	public static final AttachmentType<List<Identifier>> EQUIPPED_SPELLS = RegisterHelper.persistentAttachmentType("equipped_spells", Identifier.CODEC.listOf(), true);
 	public static final AttachmentType<Integer> DASH_SPELL = RegisterHelper.persistentAttachmentType("purloining_spell", Codec.INT, false);
 	public static final AttachmentType<List<SpellPedestalBlock.WorldBlockPos>> ABSORBED_PEDESTALS = RegisterHelper.persistentAttachmentType("absorbed_pedestals", SpellPedestalBlock.WorldBlockPos.CODEC.listOf(), false);
-	public static final AttachmentType<TimeForward.ServerLogic.VisualContext> TIME_FORWARD_ANIMATION_FRAMES = RegisterHelper.attachmentType("time_forward_animation_frames", false);
+	public static final AttachmentType<TimeForward.VisualContext> TIME_FORWARD_ANIMATION_FRAMES = RegisterHelper.attachmentType("time_forward_animation_frames", false);
 	public static final AttachmentType<Integer> BLEED_VALUE = RegisterHelper.persistentAttachmentType("bleed_value", Codec.INT, false);
     public static final AttachmentType<Integer> SMOKE_SPELL_COOLDOWN = RegisterHelper.attachmentType("smoke_spell_cooldown", false);
     public static final AttachmentType<Boolean> DEMON = RegisterHelper.persistentAttachmentType("demon", Codec.BOOL, true);
