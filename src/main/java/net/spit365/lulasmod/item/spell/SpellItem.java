@@ -17,7 +17,7 @@ import net.minecraft.util.Identifier;
 import net.minecraft.world.World;
 import net.spit365.lulasmod.item.SpellBookItem;
 import net.spit365.lulasmod.mod.ModData;
-import net.spit365.lulasmod.mod.ModMethods;
+import net.spit365.lulasmod.util.ModUtil;
 import net.spit365.lulasmod.util.Spell;
 import org.jetbrains.annotations.Nullable;
 
@@ -36,7 +36,7 @@ public class SpellItem extends Item {
     public ActionResult use(World world, PlayerEntity player, Hand hand){
         if (!world.isClient() && !(player.getOffHandStack().getItem() instanceof SpellBookItem)){
             player.getItemCooldownManager().set(player.getStackInHand(hand), 5);
-			List<Identifier> mutable = ModMethods.makeMutable(player.getAttached(ModData.EQUIPPED_SPELLS));
+			List<Identifier> mutable = ModUtil.makeMutable(player.getAttached(ModData.EQUIPPED_SPELLS));
             SoundEvent sound = null;
             Identifier spellName = Registries.ITEM.getId(this);
             if (player.isSneaking()) {
@@ -58,7 +58,7 @@ public class SpellItem extends Item {
 
     @Override
     public void inventoryTick(ItemStack stack, ServerWorld world, Entity entity, @Nullable EquipmentSlot slot) {
-        if (entity instanceof PlayerEntity player && !Objects.equals(ModMethods.getInventoryStack(player, stack.getItem()), stack)) {
+        if (entity instanceof PlayerEntity player && !Objects.equals(ModUtil.getInventoryStack(player, stack.getItem()), stack)) {
             player.sendMessage(Text.translatable("notify.lulasmod.duplicate_spell"), true);
             entity.dropStack(world, stack.copy());
             stack.decrement(stack.getCount());

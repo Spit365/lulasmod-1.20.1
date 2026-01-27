@@ -19,14 +19,11 @@ import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.RaycastContext;
 import net.minecraft.world.World;
 import net.spit365.lulasmod.mod.ModDamageTypes;
 import net.spit365.lulasmod.mod.ModEntities;
-import net.spit365.lulasmod.mod.ModMethods;
-import net.spit365.lulasmod.mod.ModParticles;
 
 public class AmethystShardEntity extends ProjectileEntity {
     public AmethystShardEntity(EntityType<? extends ProjectileEntity> entityType, World world) {

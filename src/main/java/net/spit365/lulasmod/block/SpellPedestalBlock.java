@@ -21,7 +21,7 @@ import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 import net.spit365.lulasmod.item.spell.ConjuringItem;
 import net.spit365.lulasmod.mod.ModData;
-import net.spit365.lulasmod.mod.ModMethods;
+import net.spit365.lulasmod.util.ModUtil;
 import net.spit365.lulasmod.mod.ModSpells;
 
 import java.util.List;
@@ -34,7 +34,7 @@ public class SpellPedestalBlock extends Block {
     @Override
     protected ActionResult onUse(BlockState state, World world, BlockPos blockPos, PlayerEntity player, BlockHitResult hit) {
 		if (world.isClient()) return ActionResult.PASS;
-		List<WorldBlockPos> mutable = ModMethods.makeMutable(player.getAttached(ModData.ABSORBED_PEDESTALS));
+		List<WorldBlockPos> mutable = ModUtil.makeMutable(player.getAttached(ModData.ABSORBED_PEDESTALS));
 		WorldBlockPos worldBlockPos = new WorldBlockPos(world.getRegistryKey(), blockPos);
 		if (!mutable.contains(worldBlockPos)) {
 			mutable.add(worldBlockPos);

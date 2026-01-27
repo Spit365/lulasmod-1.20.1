@@ -7,7 +7,7 @@ import net.minecraft.stat.Stats;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.world.World;
-import net.spit365.lulasmod.mod.ModMethods;
+import net.spit365.lulasmod.util.ModUtil;
 
 public class HomeButtonItem extends Item {
     public HomeButtonItem(Settings settings) {super(settings);}
@@ -16,7 +16,7 @@ public class HomeButtonItem extends Item {
         if (!world.isClient()) {
 			ItemStack stack = player.getStackInHand(hand);
             player.getItemCooldownManager().set(stack, 6000);
-            ModMethods.sendHome(player, this);
+            ModUtil.sendHome(player, this);
 			stack.damage(1, player, hand);
             player.incrementStat(Stats.USED.getOrCreateStat(this));
             return ActionResult.SUCCESS;
