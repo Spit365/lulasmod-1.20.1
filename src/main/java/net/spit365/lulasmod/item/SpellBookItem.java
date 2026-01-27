@@ -12,12 +12,10 @@ import net.minecraft.util.Identifier;
 import net.minecraft.world.World;
 import net.spit365.lulasmod.item.spell.SpellItem;
 import net.spit365.lulasmod.mod.ModData;
-import net.spit365.lulasmod.mod.ModMethods;
+import net.spit365.lulasmod.util.ModUtil;
 import net.spit365.lulasmod.util.SpellHotbar;
 
-import java.util.Collections;
 import java.util.List;
-import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class SpellBookItem extends Item implements SpellHotbar {
@@ -43,7 +41,7 @@ public class SpellBookItem extends Item implements SpellHotbar {
         if (world instanceof ServerWorld) {
             ItemStack spellbook = player.getStackInHand(hand);
             ItemStack spell = (hand.equals(Hand.MAIN_HAND) ? player.getOffHandStack() : player.getMainHandStack());
-            List<Identifier> mutable = ModMethods.makeMutable(spellbook.get(ModData.SPELL_BOOK_SPELLS));
+            List<Identifier> mutable = ModUtil.makeMutable(spellbook.get(ModData.SPELL_BOOK_SPELLS));
             if (spell.getItem() instanceof SpellItem) {
                 Identifier id = Registries.ITEM.getId(spell.getItem());
                 mutable.add(id);

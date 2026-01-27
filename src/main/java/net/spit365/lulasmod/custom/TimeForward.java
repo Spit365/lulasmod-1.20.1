@@ -5,10 +5,10 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
 import net.spit365.lulasmod.mod.ModData;
-import net.spit365.lulasmod.mod.ModMethods;
+import net.spit365.lulasmod.util.ModUtil;
 import net.spit365.lulasmod.packet.SetTimeForwardAnimationStateS2CPacket;
 
-public final class TimeForward {
+public class TimeForward {
     public static final int ANIMATION_DURATION = 450;
 
     public static void tick(ServerPlayerEntity player){
@@ -27,7 +27,7 @@ public final class TimeForward {
             BoxOutlineState.add(box, 0xFFAA0000);
         } else {
             player.removeAttached(ModData.TIME_FORWARD_ANIMATION_FRAMES);
-            ModMethods.pocketTeleport(player);
+            ModUtil.pocketTeleport(player);
         }
     }
 

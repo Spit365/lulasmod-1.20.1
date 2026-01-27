@@ -16,7 +16,7 @@ import net.minecraft.world.World;
 import net.spit365.lulasmod.item.spell.SorceryItem;
 import net.spit365.lulasmod.item.spell.SpellItem;
 import net.spit365.lulasmod.mod.ModData;
-import net.spit365.lulasmod.mod.ModMethods;
+import net.spit365.lulasmod.util.ModUtil;
 import net.spit365.lulasmod.util.SpellHotbar;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -120,7 +120,7 @@ public class SealItem extends Item implements SpellHotbar {
 
     @Override
     public void inventoryTick(ItemStack stack, ServerWorld world, Entity entity, @Nullable EquipmentSlot slot) {
-        if (entity instanceof PlayerEntity player && !Objects.equals(ModMethods.getInventoryStack(player, stack.getItem()), stack)) {
+        if (entity instanceof PlayerEntity player && !Objects.equals(ModUtil.getInventoryStack(player, stack.getItem()), stack)) {
             player.sendMessage(Text.translatable("notify.lulasmod.duplicate_seal"), true);
             entity.dropStack(world, stack.copy());
             stack.decrement(stack.getCount());

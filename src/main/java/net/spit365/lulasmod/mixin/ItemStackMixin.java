@@ -14,11 +14,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(ItemStack.class)
 public abstract class ItemStackMixin {
-    @Shadow
-    public abstract boolean isOf(Item item);
-
-    @Shadow
-    public abstract @Nullable Entity getHolder();
+    @Shadow public abstract boolean isOf(Item item);
+    @Shadow public abstract @Nullable Entity getHolder();
 
     @Inject(method = "isDamageable", at = @At("HEAD"), cancellable = true)
     private void isDamageable(CallbackInfoReturnable<Boolean> cir) {

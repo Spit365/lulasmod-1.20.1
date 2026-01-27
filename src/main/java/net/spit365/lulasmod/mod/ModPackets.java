@@ -13,6 +13,7 @@ import net.minecraft.util.Identifier;
 import net.spit365.lulasmod.custom.Demon;
 import net.spit365.lulasmod.item.spell.ConjuringItem;
 import net.spit365.lulasmod.packet.*;
+import net.spit365.lulasmod.util.ModUtil;
 import net.spit365.lulasmod.util.SpellHotbar;
 import org.jetbrains.annotations.NotNull;
 
@@ -38,7 +39,7 @@ public final class ModPackets {
 			ServerPlayerEntity player = context.player();
 			for (Hand hand : Hand.values()) if (player.getStackInHand(hand).getItem() instanceof SpellHotbar item){
 				item.onCycle(player, identifiers -> {
-					List<Identifier> mutable = ModMethods.makeMutable(identifiers);
+					List<Identifier> mutable = ModUtil.makeMutable(identifiers);
 					Collections.rotate(mutable, player.isSneaking() ? 1 : -1);
 					return mutable;
 				});
@@ -53,12 +54,12 @@ public final class ModPackets {
 				return;
             }
 			boolean shouldDisplayMessage = true;
-			if (ModMethods.getInventoryStack(player, ModItems.HELLISH_SEAL) == null) player.giveItemStack(new ItemStack(ModItems.HELLISH_SEAL));
+			if (ModUtil.getInventoryStack(player, ModItems.HELLISH_SEAL) == null) player.giveItemStack(new ItemStack(ModItems.HELLISH_SEAL));
 			else shouldDisplayMessage = false;
 			for (ItemStack stack : ModSpells.SpellTabItems) {
 				Item item = stack.getItem();
 				if (!(item instanceof ConjuringItem)) continue;
-				if (ModMethods.getInventoryStack(player, item) == null) player.giveItemStack(new ItemStack(item));
+				if (ModUtil.getInventoryStack(player, item) == null) player.giveItemStack(new ItemStack(item));
 				else shouldDisplayMessage = false;
 			}
 			if (shouldDisplayMessage) player.sendMessage(Text.translatable("notify.lulasmod.command.contract_success"), false);

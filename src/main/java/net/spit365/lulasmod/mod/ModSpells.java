@@ -28,6 +28,7 @@ import net.spit365.lulasmod.item.spell.SpellItem;
 import net.spit365.lulasmod.packet.SetTimeForwardAnimationStateS2CPacket;
 import net.spit365.lulasmod.renderer.KinesisInteractionRenderer;
 import net.spit365.lulasmod.state.LinkedLightningPersistentState;
+import net.spit365.lulasmod.util.ModUtil;
 import net.spit365.lulasmod.util.MultiVec3d;
 import net.spit365.lulasmod.util.RegisterHelper;
 import net.spit365.lulasmod.util.Spell;
@@ -83,7 +84,7 @@ public final class ModSpells {
 
 
 	public static final SpellItem HOME_SPELL = RegisterHelper.spell("wickedness", settings -> new SpellItem(settings, (world, player, hand, potencyMultiplier, cooldownDivisor) -> {
-		ModMethods.sendHome(player, player.getStackInHand(hand).getItem());
+		ModUtil.sendHome(player, player.getStackInHand(hand).getItem());
 		return 600;
 	}));
 	public static final SpellItem AMETHYST_SPELL = RegisterHelper.spell("envy", settings -> new SpellItem(settings, (world, player, hand, potencyMultiplier, cooldownDivisor) -> {
@@ -103,7 +104,7 @@ public final class ModSpells {
         return 3;
     }));
     public static final ConjuringItem BLOOD_CONJURING = RegisterHelper.spell("emulations", settings -> new ConjuringItem(settings, (world, player, hand, potencyMultiplier, cooldownDivisor) -> {
-        Entity target = ModMethods.selectClosestEntity(player, 5);
+        Entity target = ModUtil.selectClosestEntity(player, 5);
         if (target instanceof LivingEntity livingEntity)
             Bleed.apply(livingEntity, (int) (1200 * potencyMultiplier) - 80);
         Impaled.impale(player, target, player.getStackInHand(hand), 20, 600, 6, 25, ModParticles.CURSED_BLOOD);
@@ -120,7 +121,7 @@ public final class ModSpells {
             if (world.getRegistryKey().equals(World.OVERWORLD) && victim instanceof ServerPlayerEntity serverPlayer) {
                 ServerPlayNetworking.send(serverPlayer, new SetTimeForwardAnimationStateS2CPacket(true));
                 victim.setAttached(ModData.TIME_FORWARD_ANIMATION_FRAMES, new TimeForward.VisualContext(TimeForward.ANIMATION_DURATION, player.getPos()));
-            } else ModMethods.pocketTeleport(victim);
+            } else ModUtil.pocketTeleport(victim);
         }
         return NO_COOLDOWN_RESULT;
     }));

@@ -10,7 +10,7 @@ import net.minecraft.stat.Stats;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.world.World;
-import net.spit365.lulasmod.mod.ModMethods;
+import net.spit365.lulasmod.util.ModUtil;
 
 public class SharpTomeItem extends Item{
     public SharpTomeItem(Settings settings) {super(settings);}
@@ -18,7 +18,7 @@ public class SharpTomeItem extends Item{
     @Override
     public ActionResult use(World world, PlayerEntity player, Hand hand) {
         ItemStack stack = player.getStackInHand(hand);
-        ItemStack paper = ModMethods.getInventoryStack(player, Items.PAPER);
+        ItemStack paper = ModUtil.getInventoryStack(player, Items.PAPER);
         boolean requirePaper = player.isCreative(); // || EnchantmentHelper.getLevel(Enchantments.INFINITY, stack) > 0;
         if (!world.isClient() && (paper != null || requirePaper)){
             player.getItemCooldownManager().set(stack, 5);

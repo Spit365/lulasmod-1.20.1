@@ -1,4 +1,4 @@
-package net.spit365.lulasmod.mod;
+package net.spit365.lulasmod.util;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -13,6 +13,7 @@ import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.spit365.lulasmod.Lulasmod;
+import net.spit365.lulasmod.mod.ModDimensions;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
