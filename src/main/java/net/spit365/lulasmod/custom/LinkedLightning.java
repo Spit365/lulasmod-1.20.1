@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+@Environment(EnvType.CLIENT)
 public final class LinkedLightning {
     private static final int CURRENT_UPDATE_RANGE = 1000;
 

@@ -1,5 +1,7 @@
 package net.spit365.lulasmod.renderer;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.network.ClientPlayerEntity;
@@ -20,6 +22,7 @@ public final class KinesisInteractionRenderer {
 	private static final int COLOR = 0xFF50C8FF; //argb
 	private static double lastFOV;
 
+	@Environment(EnvType.CLIENT)
 	public static void render(DrawContext context, RenderTickCounter renderTickCounter) {
 		MinecraftClient mc = MinecraftClient.getInstance();
 		ClientPlayerEntity player = mc.player;

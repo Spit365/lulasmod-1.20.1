@@ -18,6 +18,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.DoubleStream;
 
+@Environment(EnvType.CLIENT)
 public final class BoxOutlineRenderer {
     private static Set<ColoredEdge> state = new HashSet<>();
 

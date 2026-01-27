@@ -1,5 +1,7 @@
 package net.spit365.lulasmod.renderer;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gl.RenderPipelines;
 import net.minecraft.client.gui.DrawContext;
@@ -14,7 +16,7 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
-
+@Environment(EnvType.CLIENT)
 public final class SpellHotbarRenderer {
     private static final Identifier SPELL_HOTBAR_TEXTURE = Identifier.of(Lulasmod.MOD_ID, "textures/gui/spell_hotbar.png");
     public static List<ItemStack> spellHotbarList = new LinkedList<>();

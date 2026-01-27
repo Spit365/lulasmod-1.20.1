@@ -1,5 +1,7 @@
 package net.spit365.lulasmod.renderer;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.OverlayTexture;
 import net.minecraft.client.render.RenderLayer;
@@ -22,6 +24,7 @@ import org.joml.Matrix4f;
 
 import java.util.Optional;
 
+@Environment(EnvType.CLIENT)
 public class NeedleSwordEntityRenderer extends EntityRenderer<NeedleSwordEntity, NeedleSwordEntityRenderer.NeedleSwordRenderState> {
 
     private final ItemRenderer itemRenderer;

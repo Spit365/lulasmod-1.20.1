@@ -1,5 +1,7 @@
 package net.spit365.lulasmod.mod;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.spit365.lulasmod.custom.Bleed;
 import net.spit365.lulasmod.custom.DashSpell;
@@ -9,6 +11,7 @@ import net.spit365.lulasmod.packet.*;
 import net.spit365.lulasmod.renderer.BoxOutlineRenderer;
 import net.spit365.lulasmod.renderer.SpellHotbarRenderer;
 
+@Environment(EnvType.CLIENT)
 public final class ClientPackets {
     public static void init(){
 		ClientPlayNetworking.registerGlobalReceiver(BleedProgressS2CPacket.ID, (bleedProgressS2CPacket, context) -> Bleed.progress = bleedProgressS2CPacket.progress());

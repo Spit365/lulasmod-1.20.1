@@ -1,5 +1,7 @@
 package net.spit365.lulasmod.renderer;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.render.OverlayTexture;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumerProvider;
@@ -14,6 +16,7 @@ import net.minecraft.util.math.RotationAxis;
 import net.spit365.lulasmod.Lulasmod;
 import net.spit365.lulasmod.entity.AmethystShardEntity;
 
+@Environment(EnvType.CLIENT)
 public class AmethystShardEntityRenderer extends EntityRenderer<AmethystShardEntity, ProjectileEntityRenderState> {
     public static final Identifier TEXTURE = Identifier.of(Lulasmod.MOD_ID, "textures/entity/amethyst_shard.png");
     private final ArrowEntityModel model;
