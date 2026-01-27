@@ -17,7 +17,7 @@ import net.spit365.lulasmod.custom.Demon;
 import static net.minecraft.server.command.CommandManager.argument;
 import static net.minecraft.server.command.CommandManager.literal;
 
-public class ModCommands {
+public final class ModCommands {
     public static void init(){
         CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
             int r = 0;

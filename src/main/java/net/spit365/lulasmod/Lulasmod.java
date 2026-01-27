@@ -10,7 +10,7 @@ import net.spit365.lulasmod.renderer.BoxOutlineRenderer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class Lulasmod implements ModInitializer, ClientModInitializer {
+public final class Lulasmod implements ModInitializer, ClientModInitializer {
 	public static final String MOD_ID = "lulasmod";
 	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 

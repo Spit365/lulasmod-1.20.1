@@ -14,7 +14,8 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
-public class SpellHotbarRenderer {
+
+public final class SpellHotbarRenderer {
     private static final Identifier SPELL_HOTBAR_TEXTURE = Identifier.of(Lulasmod.MOD_ID, "textures/gui/spell_hotbar.png");
     public static List<ItemStack> spellHotbarList = new LinkedList<>();
 

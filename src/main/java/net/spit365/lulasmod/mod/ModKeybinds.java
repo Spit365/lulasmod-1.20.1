@@ -8,7 +8,7 @@ import net.spit365.lulasmod.packet.DemonContractC2SPacket;
 import net.spit365.lulasmod.util.ClientRegisterHelper;
 import org.lwjgl.glfw.GLFW;
 
-public class ModKeybinds {
+public final class ModKeybinds {
 	static final KeyBinding CYCLE_SPELL_KEY = ClientRegisterHelper.keyBinding("cycle_spell", GLFW.GLFW_KEY_R);
 	static final KeyBinding DEMON_CONTRACT_KEY = ClientRegisterHelper.keyBinding("demon_contract", GLFW.GLFW_KEY_BACKSLASH);
 

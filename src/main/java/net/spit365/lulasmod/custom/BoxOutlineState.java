@@ -12,7 +12,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class BoxOutlineState {
+public final class BoxOutlineState {
     private static final double RANGE = 1000.0;
     private static final double RANGE_SQ = RANGE * RANGE;
 

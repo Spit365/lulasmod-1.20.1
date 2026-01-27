@@ -10,7 +10,7 @@ import net.minecraft.util.math.Vec3d;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class MinerRepel {
+public final class MinerRepel {
     public static void tick(ServerPlayerEntity player) {
         if (!player.getCommandTags().contains("miner")) return;
         BlockPos playerPos = player.getBlockPos();

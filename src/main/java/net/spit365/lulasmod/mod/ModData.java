@@ -13,7 +13,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class ModData {
+public final class ModData {
 	public static final Set<AttachmentType<Object>> deathPersistent = new HashSet<>();
 
     public static final ComponentType<List<Identifier>> SPELL_BOOK_SPELLS = RegisterHelper.componentType("spell_book_spells", builder -> builder.codec(Identifier.CODEC.listOf()));

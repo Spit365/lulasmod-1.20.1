@@ -43,7 +43,7 @@ import static net.spit365.lulasmod.item.SealItem.FAIL_RESULT;
 import static net.spit365.lulasmod.item.SealItem.NO_COOLDOWN_RESULT;
 import static net.spit365.lulasmod.state.LinkedLightningPersistentState.lastLinks;
 
-public class ModSpells {
+public final class ModSpells {
 	public static final List<ItemStack> SpellTabItems = new LinkedList<>();
 
     public static final SpellItem HIGHLIGHTER_SPELL = RegisterHelper.spell("highlighter_spell",  settings -> new SpellItem(settings, (world, player, hand, potencyMultiplier, cooldownDivisor) -> {

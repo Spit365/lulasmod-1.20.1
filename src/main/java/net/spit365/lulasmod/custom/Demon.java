@@ -4,7 +4,7 @@ import net.minecraft.entity.Entity;
 import net.spit365.lulasmod.mod.ModData;
 import org.jetbrains.annotations.Nullable;
 
-public class Demon {
+public final class Demon {
 	public static void setDemon(Entity entity, boolean value) {
 		entity.setAttached(ModData.DEMON, value);
 	}

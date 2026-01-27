@@ -20,7 +20,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.function.Supplier;
 
-public class ModPackets {
+public final class ModPackets {
 
     public static void init(){
         PayloadTypeRegistry.playS2C().register(BleedProgressS2CPacket.ID, BleedProgressS2CPacket.CODEC);

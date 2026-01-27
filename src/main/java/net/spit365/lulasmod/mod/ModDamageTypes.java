@@ -8,7 +8,7 @@ import net.minecraft.registry.RegistryKeys;
 import net.minecraft.world.World;
 import net.spit365.lulasmod.util.RegisterHelper;
 
-public class ModDamageTypes {
+public final class ModDamageTypes {
 	public static final RegistryKey<DamageType> BLOODSUCKING = RegisterHelper.damageType("bloodsucking");
 	public static final RegistryKey<DamageType> AMETHYST_SHARD = RegisterHelper.damageType("amethyst_shard");
 	public static final RegistryKey<DamageType> NEEDLE_SWORD = RegisterHelper.damageType("needle_sword");

@@ -9,7 +9,7 @@ import net.spit365.lulasmod.renderer.SpellHotbarRenderer;
 import net.spit365.lulasmod.util.ClientRegisterHelper;
 
 @Environment(EnvType.CLIENT)
-public class ModGui {
+public final class ModGui {
 	public static void init(){
         ClientRegisterHelper.hudElement("spell_hotbar", (context, renderTickCounter) -> SpellHotbarRenderer.render(context));
         ClientRegisterHelper.hudElement("kinesis_interaction_range", KinesisInteractionRenderer::render);

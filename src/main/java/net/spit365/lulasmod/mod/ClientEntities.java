@@ -8,7 +8,7 @@ import net.spit365.lulasmod.util.ClientRegisterHelper;
 
 import static net.spit365.lulasmod.mod.ModEntities.*;
 
-public class ClientEntities {
+public final class ClientEntities {
 
 	public static void init() {
 		ClientRegisterHelper.entity(SMOKE_BOMB, FlyingItemEntityRenderer::new);

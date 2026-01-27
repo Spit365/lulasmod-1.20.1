@@ -21,7 +21,7 @@ import net.spit365.lulasmod.util.RegisterHelper;
 import java.util.LinkedList;
 import java.util.List;
 
-public class ModItems {
+public final class ModItems {
 	public static final List<ItemStack> MainTabItems = new LinkedList<>();
 
 	public static final SealItem SEAL = RegisterHelper.item("seal", settings -> new SealItem(settings, entity -> true, 1, 1), new Item.Settings().maxCount(1));

@@ -15,7 +15,7 @@ import net.spit365.lulasmod.mod.ModData;
 import net.spit365.lulasmod.mod.ModMethods;
 import net.spit365.lulasmod.packet.SetTimeForwardAnimationStateS2CPacket;
 
-public class TimeForward {
+public final class TimeForward {
     public static final int ANIMATION_DURATION = 450;
 
     @Environment(EnvType.CLIENT)

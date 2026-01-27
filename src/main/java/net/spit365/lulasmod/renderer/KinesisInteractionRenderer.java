@@ -14,7 +14,7 @@ import net.spit365.lulasmod.mod.ModSpells;
 
 import java.util.Arrays;
 
-public class KinesisInteractionRenderer {
+public final class KinesisInteractionRenderer {
 	public static final double INTERACTION_RANGE_RADIANS = Math.toRadians(20);
 	private static final double tanTheta = Math.tan(INTERACTION_RANGE_RADIANS);
 	private static final int COLOR = 0xFF50C8FF; //argb

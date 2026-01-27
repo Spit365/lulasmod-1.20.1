@@ -7,7 +7,7 @@ import net.spit365.lulasmod.util.ClientRegisterHelper;
 
 import static net.spit365.lulasmod.mod.ModParticles.*;
 
-public class ClientParticles {
+public final class ClientParticles {
 	public static void init() {
 		ClientRegisterHelper.particle(SCRATCH, SweepAttackParticle.Factory::new);
 		ClientRegisterHelper.particle(GOLDEN_SHIMMER, FlameParticle.Factory::new);

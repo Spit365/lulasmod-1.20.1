@@ -10,7 +10,7 @@ import net.spit365.lulasmod.mod.ModGamerules;
 import java.util.Objects;
 import java.util.Set;
 
-public class NetherDeathSystem {
+public final class NetherDeathSystem {
     public static void init(){
         ServerPlayerEvents.AFTER_RESPAWN.register((oldPlayer, newPlayer, alive) -> {
             if (!Objects.requireNonNull(newPlayer.getServer()).getGameRules().getBoolean(ModGamerules.NEW_DEATH_SYSTEM)) return;

@@ -6,7 +6,7 @@ import net.spit365.lulasmod.mod.ModData;
 
 import java.util.stream.StreamSupport;
 
-public class SmokeSpellCooldown {
+public final class SmokeSpellCooldown {
     public static final int MAX_COOLDOWN = 800;
 
     public static boolean isCoolingDown(Entity entity){

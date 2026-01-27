@@ -21,7 +21,7 @@ import net.spit365.lulasmod.packet.SummonBleedS2CPacket;
 import java.util.HashSet;
 import java.util.Set;
 
-public class Bleed {
+public final class Bleed {
     public static final Identifier BACKGROUND = Identifier.of(Lulasmod.MOD_ID, "textures/gui/bleed_progress/background.png");
     public static final Identifier PROGRESS = Identifier.of(Lulasmod.MOD_ID, "textures/gui/bleed_progress/progress.png");
     public static int progress = 0;

@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class LinkedLightning {
+public final class LinkedLightning {
     private static final int CURRENT_UPDATE_RANGE = 1000;
 
     public static void tick(ServerWorld serverWorld) {

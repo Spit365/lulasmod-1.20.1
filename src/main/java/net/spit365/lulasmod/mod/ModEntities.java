@@ -4,7 +4,7 @@ import net.minecraft.entity.EntityType;
 import net.spit365.lulasmod.entity.*;
 import net.spit365.lulasmod.util.RegisterHelper;
 
-public class ModEntities {
+public final class ModEntities {
 	public static final EntityType<SmokeBombEntity> SMOKE_BOMB = RegisterHelper.entity(
 		"smoke_bomb",
 		SmokeBombEntity::new,

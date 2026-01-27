@@ -7,7 +7,7 @@ import net.spit365.lulasmod.custom.*;
 import net.spit365.lulasmod.structure.GazeboOfSins;
 import net.spit365.lulasmod.util.SpellHotbar;
 
-public class ModServerTick {
+public final class ModServerTick {
     public static void init(){
 		ServerTickEvents.END_SERVER_TICK.register(server -> {
 			for (ServerPlayerEntity player : server.getPlayerManager().getPlayerList()) {

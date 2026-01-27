@@ -6,7 +6,7 @@ import net.minecraft.util.Identifier;
 import net.spit365.lulasmod.util.RegisterHelper;
 import org.jetbrains.annotations.Nullable;
 
-public class ModParticles {
+public final class ModParticles {
 	public static final SimpleParticleType SCRATCH = RegisterHelper.particle("scratch", true);
 	public static final SimpleParticleType GOLDEN_SHIMMER = RegisterHelper.particle("golden_shimmer", false);
 	public static final SimpleParticleType CURSED_BLOOD = RegisterHelper.particle("cursed_blood", false);
