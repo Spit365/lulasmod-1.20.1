@@ -2,6 +2,8 @@ package net.spit365.lulasmod.renderer;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
 import net.minecraft.client.render.*;
@@ -30,7 +32,7 @@ public final class BoxOutlineRenderer {
             float b = (color & 0xFF) / 255f;
             float a = (color >>> 24) != 0 ? ((color >>> 24) & 0xFF) / 255f : 1.0f;
 
-            for (Calculator.Edge visibleEdge : Calculator.getVisibleEdges(entry.getValue().toArray(Box[]::new))) {
+            for (EdgeCalculator.Edge visibleEdge : EdgeCalculator.getVisibleEdges(entry.getValue().toArray(Box[]::new))) {
                 result.add(new ColoredEdge(visibleEdge, r, g, b, a));
             }
         }
@@ -66,7 +68,7 @@ public final class BoxOutlineRenderer {
         }
     }
 
-    private static void renderEdge(Matrix4f mat, VertexConsumer vc, Calculator.Edge edge, float r, float g, float b, float a) {
+    private static void renderEdge(Matrix4f mat, VertexConsumer vc, EdgeCalculator.Edge edge, float r, float g, float b, float a) {
         double len = edge.length();
         if (len <= 1e-12) return;
         double dt = 0.25 / len;
@@ -78,9 +80,9 @@ public final class BoxOutlineRenderer {
         }
     }
 
-    private record ColoredEdge(Calculator.Edge edge, float r, float g, float b, float a)  {}
+    private record ColoredEdge(EdgeCalculator.Edge edge, float r, float g, float b, float a)  {}
 
-    public static class Calculator {
+    public static final class EdgeCalculator {
         private static final int[][] DIRS = {{-1, 0, 0}, {1, 0, 0}, {0, -1, 0}, {0, 1, 0}, {0, 0, -1}, {0, 0, 1}};
 
         private static boolean boxContainsBox(Box box, double x0, double y0, double z0, double x1, double y1, double z1) {
