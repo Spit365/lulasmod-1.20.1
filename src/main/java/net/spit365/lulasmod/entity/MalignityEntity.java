@@ -17,6 +17,7 @@ public class MalignityEntity extends FireballEntity {
     public MalignityEntity(EntityType<? extends FireballEntity> entityType, World world) {super(entityType, world);}
     public MalignityEntity(World world, LivingEntity owner, Vec3d velocity, int explosionPower) {
         super(world, owner, velocity, explosionPower);
+        this.setPosition(owner.getEyePos());
         this.explosionPower = explosionPower;
     }
 
