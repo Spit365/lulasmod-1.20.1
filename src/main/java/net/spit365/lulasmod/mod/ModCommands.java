@@ -2,11 +2,13 @@ package net.spit365.lulasmod.mod;
 
 import com.mojang.brigadier.arguments.BoolArgumentType;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
+import com.mojang.brigadier.context.CommandContext;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.minecraft.command.argument.*;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.Box;
@@ -50,20 +52,13 @@ public final class ModCommands {
 				.then(argument("value", BoolArgumentType.bool())
 					.executes(commandContext -> {
 						Entity entity = commandContext.getSource().getEntity();
-						if (entity != null) {
-							boolean value = BoolArgumentType.getBool(commandContext, "value");
-							Demon.setDemon(entity, value);
-							commandContext.getSource().sendFeedback(() -> Text.translatable("notify.lulasmod.demon." + value, entity.getName()), true);
-						}
+						setDemon(commandContext, entity);
 						return r;
 					})
 					.then(argument("targets", EntityArgumentType.entities())
 						.executes(commandContext -> {
 							for (Entity entity : EntityArgumentType.getEntities(commandContext, "targets")) {
-								if (entity != null) {
-									boolean value = BoolArgumentType.getBool(commandContext, "value");
-									Demon.setDemon(entity, value);
-								}
+								setDemon(commandContext, entity);
 							}
 							return r;
 						})
@@ -72,5 +67,13 @@ public final class ModCommands {
 		    );
         });
     }
+
+	private static void setDemon(CommandContext<ServerCommandSource> commandContext, Entity entity) {
+		if (entity != null) {
+			boolean value = BoolArgumentType.getBool(commandContext, "value");
+			Demon.setDemon(entity, value);
+			commandContext.getSource().sendFeedback(() -> Text.translatable("notify.lulasmod.demon." + value, entity.getName()), true);
+		}
+	}
 
 }
