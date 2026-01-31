@@ -68,7 +68,7 @@
   "key.lulasmod.cycle_spell": "Cycle Spell",
   "key.lulasmod.demon_contract": "Contract with a demon",
 
-  "gamerule.newDeathSystem": "Use new death system (beta)",
+  "gamerule.lulasmod.newDeathSystem": "Use new death system (beta)",
 
   "notify.lulasmod.duplicate_seal": "You can only hold one seal at a time.",
   "notify.lulasmod.duplicate_spell": "You can only hold one instance of a spell at a time.",
