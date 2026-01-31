@@ -2,3 +2,4 @@ THINGS THAT NEED TO BE FIXED BUT I DON'T WANT TO
     Trident item model
     update select method
     fix sharp tome enchants
+    add pentagramm functionality
