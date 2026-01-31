@@ -56,7 +56,7 @@
   "effect.lulasmod.cushioned": "Cushioned",
   "effect.lulasmod.bleeding": "Bleeding",
 
-  "death.attack.amethyst_shard": "%1$s was shanked by an amethyst shard",
+  "death.attack.amethyst_shard": "%1$s was shot by an amethyst shard",
   "death.attack.bloodsucking": "%1$s's blood was sucked dry",
   "death.attack.bloodsucking.player": "%1$s's blood was sucked dry by %2$s",
   "death.attack.kinetic_backlash": "%1$s didn't survive the kinetic backlash",
