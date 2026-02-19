@@ -29,7 +29,6 @@ public final class BoxOutlineState {
         return state.addAll(box.stream().map(box1 ->  new BoxContext(box1, color)).collect(Collectors.toSet()));
     }
 
-    /** Call this once per tick (e.g. world tick) with any player reference, as you requested. */
     public static void tick(ServerPlayerEntity player) {
         Set<BoxContext> near = state.stream()
             .filter(ctx -> isNear(player.getPos(), ctx.box()))
