@@ -2,11 +2,8 @@ package net.spit365.lulasmod;
 
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.ModInitializer;
-import net.spit365.lulasmod.custom.LinkedLightning;
 import net.spit365.lulasmod.custom.NetherDeathSystem;
 import net.spit365.lulasmod.mod.*;
-import net.spit365.lulasmod.renderer.BoxOutlineRenderer;
-import net.spit365.lulasmod.renderer.TimeForwardRenderer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,9 +37,7 @@ public final class Lulasmod implements ModInitializer, ClientModInitializer {
 		ClientEntities.init();
 		ClientParticles.init();
 		ModKeybinds.init();
-        TimeForwardRenderer.init();
-        LinkedLightning.Render.init();
-		BoxOutlineRenderer.init();
+		ModRenderers.init();
 
 		LOGGER.info("Initializing Client for {}", MOD_ID);
 	}
