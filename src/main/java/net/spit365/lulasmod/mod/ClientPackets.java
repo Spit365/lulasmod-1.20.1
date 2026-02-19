@@ -3,6 +3,7 @@ package net.spit365.lulasmod.mod;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
+import net.spit365.clienttweaks.mod.ClientMethods;
 import net.spit365.lulasmod.custom.Bleed;
 import net.spit365.lulasmod.custom.DashSpell;
 import net.spit365.lulasmod.packet.*;
@@ -22,7 +23,7 @@ public final class ClientPackets {
 			else TimeForwardRenderer.stop();
 		});
 		ClientPlayNetworking.registerGlobalReceiver(SpellHotbarListS2CPacket.ID, (spellHotbarListS2CPacket, context) -> SpellHotbarRenderer.spellHotbarList = spellHotbarListS2CPacket.list());
-		ClientPlayNetworking.registerGlobalReceiver(SummonBleedS2CPacket.ID, (summonBleedS2CPacket, context) -> Bleed.summonParticles(summonBleedS2CPacket.pos(), context.client().world));
+		ClientPlayNetworking.registerGlobalReceiver(SummonBleedS2CPacket.ID, (summonBleedS2CPacket, context) -> ClientMethods.summonBleed(summonBleedS2CPacket.pos(), context.client().world));
 		ClientPlayNetworking.registerGlobalReceiver(BoxStateS2CPacket.ID, (boxRenderS2CPacket, context) -> BoxOutlineRenderer.setState(boxRenderS2CPacket.boxContexts()));
 	}
 }
