@@ -1,6 +1,8 @@
 package net.spit365.lulasmod.mod;
 
+import net.fabricmc.api.EnvType;
 import net.fabricmc.fabric.api.client.item.v1.ItemTooltipCallback;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.PotionContentsComponent;
 import net.minecraft.item.Item;
@@ -51,7 +53,7 @@ public final class ModItems {
 	public static final ItemGroup SPELLS_GROUP = RegisterHelper.itemGroup("lulasmod_spells", ModSpells.HOME_SPELL, ModSpells.SpellTabItems);
 
 	public static void init() {
-		ItemTooltipCallback.EVENT.register((stack, tooltipContext, tooltipType, list) -> {
+		if (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT) ItemTooltipCallback.EVENT.register((stack, tooltipContext, tooltipType, list) -> {
 			switch (stack.getItem()){
 				case SpellBookItem ignored -> {
 					List<Identifier> spells = stack.get(ModData.SPELL_BOOK_SPELLS);
