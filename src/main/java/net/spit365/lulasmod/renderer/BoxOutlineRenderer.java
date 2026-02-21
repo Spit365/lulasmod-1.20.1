@@ -108,9 +108,9 @@ public final class BoxOutlineRenderer {
          **/
 
         public static Set<Edge> getVisibleEdges(Box... boxes) {
-            double[] X = Arrays.stream(boxes).flatMapToDouble(b -> DoubleStream.of(b.minX, b.maxX)).toArray();
-            double[] Y = Arrays.stream(boxes).flatMapToDouble(b -> DoubleStream.of(b.minY, b.maxY)).toArray();
-            double[] Z = Arrays.stream(boxes).flatMapToDouble(b -> DoubleStream.of(b.minZ, b.maxZ)).toArray();
+            double[] X = Arrays.stream(boxes).flatMapToDouble(b -> DoubleStream.of(b.minX, b.maxX)).distinct().sorted().toArray();
+            double[] Y = Arrays.stream(boxes).flatMapToDouble(b -> DoubleStream.of(b.minY, b.maxY)).distinct().sorted().toArray();
+            double[] Z = Arrays.stream(boxes).flatMapToDouble(b -> DoubleStream.of(b.minZ, b.maxZ)).distinct().sorted().toArray();
 
             int nx = X.length - 1;
             int ny = Y.length - 1;
@@ -164,9 +164,9 @@ public final class BoxOutlineRenderer {
 
                 for (Segment s : outline) {
                     switch (key.axis) {
-                        case X -> addEdge(result, key.coord, s.a, s.b, key.coord, s.c, s.d);
-                        case Y -> addEdge(result, s.a, key.coord, s.b, s.c, key.coord, s.d);
-                        case Z -> addEdge(result, s.a, s.b, key.coord, s.c, s.d, key.coord);
+                        case X -> addEdge(result, key.coord, s.u0, s.v0, key.coord, s.u1, s.v1);
+                        case Y -> addEdge(result, s.u0, key.coord, s.v0, s.u1, key.coord, s.v1);
+                        case Z -> addEdge(result, s.u0, s.v0, key.coord, s.u1, s.v1, key.coord);
                     }
                 }
             }
@@ -195,16 +195,26 @@ public final class BoxOutlineRenderer {
 
         private record Rect(double u0, double v0, double u1, double v1) { }
 
-        private record Segment(double a, double b, double c, double d) {
+        private record Segment(double u0, double v0, double u1, double v1) {
+            public Segment {
+                if (u0 > u1 || (u0 == u1 && v0 > v1)) {
+                    double tempU = u0;
+                    double tempV = v0;
+                    u0 = u1;
+                    v0 = v1;
+                    u1 = tempU;
+                    v1 = tempV;
+                }
+            }
             @Override
             public boolean equals(Object o) {
                 if (!(o instanceof Segment(double a1, double b1, double c1, double d1))) return false;
-                return (a == a1 && b == b1 && c == c1 && d == d1) || (a == c1 && b == d1 && c == a1 && d == b1);
+                return (u0 == a1 && v0 == b1 && u1 == c1 && v1 == d1) || (u0 == c1 && v0 == d1 && u1 == a1 && v1 == b1);
             }
 
             @Override
             public int hashCode() {
-                return Double.hashCode(a + b + c + d);
+                return Double.hashCode(u0 + v0 + u1 + v1);
             }
         }
 
