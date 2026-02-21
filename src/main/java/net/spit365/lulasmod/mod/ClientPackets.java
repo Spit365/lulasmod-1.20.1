@@ -3,11 +3,10 @@ package net.spit365.lulasmod.mod;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
-import net.spit365.clienttweaks.mod.ClientMethods;
+import net.spit365.clienttweaks.util.ModUtil;
 import net.spit365.lulasmod.custom.Bleed;
 import net.spit365.lulasmod.custom.DashSpell;
 import net.spit365.lulasmod.packet.*;
-import net.spit365.lulasmod.renderer.BoxOutlineRenderer;
 import net.spit365.lulasmod.renderer.LinkedLightningRender;
 import net.spit365.lulasmod.renderer.SpellHotbarRenderer;
 import net.spit365.lulasmod.renderer.TimeForwardRenderer;
@@ -23,7 +22,6 @@ public final class ClientPackets {
 			else TimeForwardRenderer.stop();
 		});
 		ClientPlayNetworking.registerGlobalReceiver(SpellHotbarListS2CPacket.ID, (spellHotbarListS2CPacket, context) -> SpellHotbarRenderer.spellHotbarList = spellHotbarListS2CPacket.list());
-		ClientPlayNetworking.registerGlobalReceiver(SummonBleedS2CPacket.ID, (summonBleedS2CPacket, context) -> ClientMethods.summonBleed(summonBleedS2CPacket.pos(), context.client().world));
-		ClientPlayNetworking.registerGlobalReceiver(BoxStateS2CPacket.ID, (boxRenderS2CPacket, context) -> BoxOutlineRenderer.setState(boxRenderS2CPacket.boxContexts()));
+		ClientPlayNetworking.registerGlobalReceiver(SummonBleedS2CPacket.ID, (summonBleedS2CPacket, context) -> ModUtil.summonBleed(summonBleedS2CPacket.pos(), context.client().world));
 	}
 }

@@ -4,8 +4,8 @@ import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
-import net.spit365.lulasmod.packet.BoxStateS2CPacket;
-import net.spit365.lulasmod.util.BoxContext;
+import net.spit365.clienttweaks.packet.BoxStateS2CPacket;
+import net.spit365.clienttweaks.util.BoxContext;
 
 import java.util.Collection;
 import java.util.HashSet;
