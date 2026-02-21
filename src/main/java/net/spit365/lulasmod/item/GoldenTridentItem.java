@@ -7,8 +7,8 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.world.World;
 import net.spit365.lulasmod.custom.Impaled;
-import net.spit365.lulasmod.util.ModUtil;
 import net.spit365.lulasmod.mod.ModParticles;
+import net.spit365.lulasmod.util.ModUtil;
 
 public class GoldenTridentItem extends TridentItem {
     public GoldenTridentItem(Item.Settings settings) {super(settings);}

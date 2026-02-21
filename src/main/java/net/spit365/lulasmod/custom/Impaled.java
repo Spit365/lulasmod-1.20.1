@@ -13,7 +13,9 @@ import net.minecraft.util.math.Vec3d;
 import net.spit365.lulasmod.entity.ParticleProjectileEntity;
 import net.spit365.lulasmod.mod.ModData;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
 public final class Impaled {
 

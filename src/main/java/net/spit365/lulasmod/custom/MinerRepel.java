@@ -37,7 +37,7 @@ public final class MinerRepel {
             .collect(Collectors.toSet());
         BlockPos closestPortal = null;
         double closestDistance = Double.POSITIVE_INFINITY;
-        BoxOutlineState.addAll(portalAndAdjacent, 0xFFFFFF00);
+        BoxOutline.addAll(portalAndAdjacent, 0xFFFFFF00);
         for (Box box : portalAndAdjacent){
             for (BlockPos pos : BlockPos.stream(box).map(BlockPos::toImmutable).collect(Collectors.toSet())) {
                 double squaredDistance = pos.getSquaredDistance(playerPos);

@@ -116,7 +116,7 @@ public final class ModSpells {
         entities.removeIf(entity -> entity.getAttached(ModData.TIME_FORWARD_ANIMATION_FRAMES) != null);
         if (entities.isEmpty()) entities.add(player);
         for (Entity victim : entities) {
-            BoxOutlineState.add(victim.getBoundingBox(), 0xFFFF0000);
+            BoxOutline.add(victim.getBoundingBox(), 0xFFFF0000);
             if (world.getRegistryKey().equals(World.OVERWORLD) && victim instanceof ServerPlayerEntity serverPlayer) {
                 ServerPlayNetworking.send(serverPlayer, new SetTimeForwardAnimationStateS2CPacket(true));
                 victim.setAttached(ModData.TIME_FORWARD_ANIMATION_FRAMES, new TimeForward.VisualContext(TimeForward.ANIMATION_DURATION, player.getPos()));

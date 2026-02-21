@@ -5,9 +5,6 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Hand;
 import net.spit365.lulasmod.custom.Bleed;
-import net.spit365.lulasmod.custom.Demon;
-
-import java.util.Arrays;
 
 public class SinfulItem extends Item {
      public SinfulItem(Settings settings) {super(settings);}

@@ -8,10 +8,7 @@ import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.world.World;
 import net.spit365.lulasmod.custom.TimeForward;
-
-import java.util.Optional;
 
 @Environment(EnvType.CLIENT)
 public final class TimeForwardRenderer {

@@ -21,8 +21,8 @@ import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 import net.spit365.lulasmod.item.spell.ConjuringItem;
 import net.spit365.lulasmod.mod.ModData;
-import net.spit365.lulasmod.util.ModUtil;
 import net.spit365.lulasmod.mod.ModSpells;
+import net.spit365.lulasmod.util.ModUtil;
 
 import java.util.List;
 

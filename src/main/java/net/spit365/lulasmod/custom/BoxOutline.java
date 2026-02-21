@@ -12,15 +12,8 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public final class BoxOutlineState {
-    private static final double RANGE = 1000.0;
-    private static final double RANGE_SQ = RANGE * RANGE;
-
+public final class BoxOutline {
     private static final HashSet<BoxContext> state = new HashSet<>();
-
-    public static HashSet<BoxContext> getStateUnsafe() {
-        return state;
-    }
 
     public static boolean add(Box box, int color) {
         return state.add(new BoxContext(box, color));
@@ -38,6 +31,6 @@ public final class BoxOutlineState {
     }
 
     private static boolean isNear(Vec3d playerPos, Box box) {
-        return playerPos.squaredDistanceTo(box.getMinPos().add(box.getMaxPos()).multiply(0.5)) <= RANGE_SQ;
+        return playerPos.squaredDistanceTo(box.getMinPos().add(box.getMaxPos()).multiply(0.5)) <= 1_000_000;
     }
 }
