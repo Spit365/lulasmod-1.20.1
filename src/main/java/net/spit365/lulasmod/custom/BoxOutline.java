@@ -31,6 +31,6 @@ public final class BoxOutline {
     }
 
     private static boolean isNear(Vec3d playerPos, Box box) {
-        return playerPos.squaredDistanceTo(box.getMinPos().add(box.getMaxPos()).multiply(0.5)) <= 1_000_000;
+        return playerPos.squaredDistanceTo(box.getCenter()) <= 1_000_000;
     }
 }
