@@ -1,9 +1,12 @@
 package net.spit365.lulasmod.mixin;
 
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.spit365.lulasmod.custom.Demon;
+import net.spit365.lulasmod.item.ShimmerSyringeItem;
+import net.spit365.lulasmod.mod.ModData;
 import net.spit365.lulasmod.mod.ModItems;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;

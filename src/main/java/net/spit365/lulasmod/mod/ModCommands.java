@@ -39,7 +39,7 @@ public final class ModCommands {
 							.executes(context ->  {
 								Integer color = ColorArgumentType.getColor(context, "color").getColorValue();
 								if (color != null) BoxOutline.add(new Box(Vec3ArgumentType.getVec3(context, "start"), Vec3ArgumentType.getVec3(context, "end")), color);
-								else context.getSource().sendFeedback(() -> Text.literal("No color value"), false);
+								else context.getSource().sendFeedback(() -> Text.translatable("notify.lulasmod.boxoutline.nocolor"), false);
                                 return r;
             })))));
             dispatcher.register(literal("removecooldown")

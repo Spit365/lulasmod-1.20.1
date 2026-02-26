@@ -16,6 +16,7 @@ public final class ModServerTick {
                 TimeForward.tick(player);
 				DashSpell.tick(player);
                 BoxOutline.tick(player);
+                Shimmer.tick(player);
 			}
             Impaled.tick();
             for (ServerWorld serverWorld : server.getWorlds()){

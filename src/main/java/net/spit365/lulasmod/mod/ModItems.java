@@ -4,19 +4,16 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.fabric.api.client.item.v1.ItemTooltipCallback;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.component.DataComponentTypes;
-import net.minecraft.component.type.ConsumableComponent;
 import net.minecraft.component.type.PotionContentsComponent;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ToolMaterial;
-import net.minecraft.item.consume.UseAction;
 import net.minecraft.potion.Potion;
 import net.minecraft.registry.Registries;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
-import net.spit365.lulasmod.consumeeffect.ShimmerSyringeEffect;
 import net.spit365.lulasmod.custom.Bleed;
 import net.spit365.lulasmod.custom.Demon;
 import net.spit365.lulasmod.item.*;
@@ -42,7 +39,13 @@ public final class ModItems {
 	public static final SinfulItem SINFUL = RegisterHelper.item("sinful", SinfulItem::new, new Item.Settings().sword(ToolMaterial.NETHERITE, 3, -2.4F).fireproof().maxCount(1).maxDamage(2500));
 	public static final SpellBookItem SPELL_BOOK = RegisterHelper.item("spell_book", SpellBookItem::new, new Item.Settings().maxCount(1));
     public static final NeedleSwordItem NEEDLE_SWORD = RegisterHelper.item("needle_sword", NeedleSwordItem::new, new Item.Settings().sword(ToolMaterial.NETHERITE, 3, 0).maxCount(1).maxDamage(2500).fireproof());
-	public static final Item SHIMMER_SYRINGE = RegisterHelper.item("shimmer_syringe", Item::new, new Item.Settings().maxCount(16).component(DataComponentTypes.CONSUMABLE, ShimmerSyringeEffect.SHIMMER_SYRINGE_CONSUMABLE));
+	public static final ShimmerSyringeItem SHIMMER_SYRINGE = RegisterHelper.item("shimmer_syringe", ShimmerSyringeItem::new, new Item.Settings().maxCount(16), (item, itemStacks) -> {
+		for (ShimmerSyringeItem.Variant variant : ShimmerSyringeItem.Variant.values()) {
+			ItemStack stack = new ItemStack(item);
+			stack.set(ModData.SHIMMER_VARIANT, variant);
+			itemStacks.add(stack);
+		}
+	});
     public static final VialItem VIAL = RegisterHelper.item("vial", VialItem::new, new Item.Settings().maxCount(16), (item, itemStacks) -> {
 		for (Potion potion : Registries.POTION) {
 			ItemStack stack = new ItemStack(item);

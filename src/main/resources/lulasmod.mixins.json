@@ -12,6 +12,7 @@
   },
   "client": [
     "ClientPlayNetworkHandlerMixin",
-    "ItemModelGeneratorMixin"
+    "ItemModelGeneratorMixin",
+    "MinecraftClientMixin"
   ]
 }

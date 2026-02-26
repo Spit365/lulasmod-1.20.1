@@ -11,7 +11,9 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
 import net.spit365.clienttweaks.packet.BoxStateS2CPacket;
+import net.spit365.lulasmod.custom.DashSpell;
 import net.spit365.lulasmod.custom.Demon;
+import net.spit365.lulasmod.item.ShimmerSyringeItem;
 import net.spit365.lulasmod.item.spell.ConjuringItem;
 import net.spit365.lulasmod.packet.*;
 import net.spit365.lulasmod.util.ModUtil;
@@ -32,9 +34,11 @@ public final class ModPackets {
 		PayloadTypeRegistry.playS2C().register(SpellHotbarListS2CPacket.ID, SpellHotbarListS2CPacket.CODEC);
         PayloadTypeRegistry.playS2C().register(SummonBleedS2CPacket.ID, SummonBleedS2CPacket.CODEC);
         PayloadTypeRegistry.playS2C().register(BoxStateS2CPacket.ID, BoxStateS2CPacket.CODEC);
+        PayloadTypeRegistry.playS2C().register(MindShimmerS2CPacket.ID, MindShimmerS2CPacket.CODEC);
 
 		PayloadTypeRegistry.playC2S().register(CycleSpellHotbarC2SPacket.ID, CycleSpellHotbarC2SPacket.CODEC);
 		PayloadTypeRegistry.playC2S().register(DemonContractC2SPacket.ID, DemonContractC2SPacket.CODEC);
+		PayloadTypeRegistry.playC2S().register(DashC2SPacket.ID, DashC2SPacket.CODEC);
 
 		ServerPlayNetworking.registerGlobalReceiver(CycleSpellHotbarC2SPacket.ID, (cycleSpellHotbarC2SPacket, context) -> {
 			ServerPlayerEntity player = context.player();
@@ -65,6 +69,11 @@ public final class ModPackets {
 			}
 			if (shouldDisplayMessage) player.sendMessage(Text.translatable("notify.lulasmod.command.contract_success"), false);
         });
+		ServerPlayNetworking.registerGlobalReceiver(DashC2SPacket.ID, (dashC2SPacket, context) -> {
+			ServerPlayerEntity player = context.player();
+			if (player == null || player.getAttached(ModData.APPLIED_SHIMMER_VARIANT) != ShimmerSyringeItem.Variant.PACE) return;
+			DashSpell.dash(player.getWorld(), player);
+		});
 	}
 
 	public static @NotNull <T extends CustomPayload> PacketCodec<Object, T> getEmptyPacketCodec(Supplier<T> packet) {

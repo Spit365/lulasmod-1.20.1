@@ -6,6 +6,7 @@ import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.spit365.clienttweaks.util.ModUtil;
 import net.spit365.lulasmod.custom.Bleed;
 import net.spit365.lulasmod.custom.DashSpell;
+import net.spit365.lulasmod.custom.Shimmer;
 import net.spit365.lulasmod.packet.*;
 import net.spit365.lulasmod.renderer.LinkedLightningRender;
 import net.spit365.lulasmod.renderer.SpellHotbarRenderer;
@@ -23,5 +24,6 @@ public final class ClientPackets {
 		});
 		ClientPlayNetworking.registerGlobalReceiver(SpellHotbarListS2CPacket.ID, (spellHotbarListS2CPacket, context) -> SpellHotbarRenderer.spellHotbarList = spellHotbarListS2CPacket.list());
 		ClientPlayNetworking.registerGlobalReceiver(SummonBleedS2CPacket.ID, (summonBleedS2CPacket, context) -> ModUtil.summonBleed(summonBleedS2CPacket.pos(), context.client().world));
+		ClientPlayNetworking.registerGlobalReceiver(MindShimmerS2CPacket.ID, (mindShimmerS2CPacket, context) -> Shimmer.mindShimmerEnabled = mindShimmerS2CPacket.state());
 	}
 }

@@ -8,6 +8,11 @@
   "item.lulasmod.spell_book": "Spell Book",
   "item.lulasmod.needle_sword": "Needle Sword",
   "item.lulasmod.vial": "Vial",
+  "item.lulasmod.shimmer_syringe": "Syringe with Shimmer",
+  "item.lulasmod.shimmer_syringe.variant.fortitude": "Syringe with Shimmer: Fortitude",
+  "item.lulasmod.shimmer_syringe.variant.pace": "Syringe with Shimmer: Pace",
+  "item.lulasmod.shimmer_syringe.variant.mind": "Syringe with Shimmer: Mind",
+  "item.lulasmod.shimmer_syringe.variant.reformation": "Syringe with Shimmer: Reformation",
 
   "item.lulasmod.needle_head": "Needle Head",
 
@@ -78,5 +83,6 @@
   "notify.lulasmod.command.contract_fail": "You cannot use this action",
   "notify.lulasmod.smoke_cooling_down": "Smoke is still assimilating",
   "notify.lulasmod.demon.true": "%1$s is now a demon",
-  "notify.lulasmod.demon.false": "%1$s is no longer a demon"
+  "notify.lulasmod.demon.false": "%1$s is no longer a demon",
+  "notify.lulasmod.boxoutline.nocolor": "No color value"
 }
