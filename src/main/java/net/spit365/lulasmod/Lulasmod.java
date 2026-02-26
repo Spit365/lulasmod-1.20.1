@@ -15,8 +15,8 @@ public final class Lulasmod implements ModInitializer, ClientModInitializer {
 	public void onInitialize() {
 		ModPackets.init();
 		ModSpells.init();
-		ModItems.init();
 		ModBlocks.init();
+		ModItems.init();
 		ModEntities.init();
 		ModParticles.init();
 		ModStatusEffects.init();
