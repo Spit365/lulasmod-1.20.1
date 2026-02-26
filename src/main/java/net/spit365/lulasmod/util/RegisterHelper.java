@@ -1,6 +1,7 @@
 package net.spit365.lulasmod.util;
 
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentRegistry;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentType;
 import net.fabricmc.fabric.api.gamerule.v1.GameRuleRegistry;
@@ -18,6 +19,9 @@ import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.consume.ConsumeEffect;
+import net.minecraft.network.RegistryByteBuf;
+import net.minecraft.network.codec.PacketCodec;
 import net.minecraft.particle.SimpleParticleType;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
@@ -65,6 +69,10 @@ public final class RegisterHelper {
 	public static <T> ComponentType<T> componentType(String name, UnaryOperator<ComponentType.Builder<T>> builderOperator) {
 		return Registry.register(Registries.DATA_COMPONENT_TYPE, id(name),
 				builderOperator.apply(ComponentType.builder()).build());
+	}
+
+	public static <T extends ConsumeEffect> ConsumeEffect.Type<T> consumeEffect(String name, MapCodec<T> codec, PacketCodec<RegistryByteBuf, T> streamCode) {
+		return Registry.register(Registries.CONSUME_EFFECT_TYPE, id(name), new ConsumeEffect.Type<>(codec, streamCode));
 	}
 
 	public static RegistryKey<DamageType> damageType(String name) {
