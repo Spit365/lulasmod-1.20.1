@@ -29,21 +29,28 @@ public final class DashSpell {
         usages--;
         int cooldown = usages > 0 ? 5 : (player.isOnGround() ? 20 : 40);
 
+		if (dash(world, player)) return SealItem.FAIL_RESULT;
+
+		player.setAttached(ModData.DASH_SPELL, usages <= 0 ? maxUsages : Math.min(maxUsages, usages));
+        return cooldown;
+    }
+
+	public static boolean dash(ServerWorld world, PlayerEntity player) {
 		PlayerInput input = ((ServerPlayerEntity) player).getPlayerInput();
 		Vec3d movementDirection = new Vec3d(
 			mapMovement(input.left(), input.right()),
 			mapMovement(input.jump(), input.sneak()),
 			mapMovement(input.forward(), input.backward())
 		).rotateY((float) -Math.toRadians(player.getYaw()));
-		if (movementDirection.lengthSquared() < 1E-10F) return SealItem.FAIL_RESULT;
+		if (movementDirection.lengthSquared() < 1E-10F) return false;
 
-        player.setAttached(ModData.DASH_SPELL, usages <= 0 ? maxUsages : Math.min(maxUsages, usages));
 		player.addVelocity(movementDirection.normalize().add(0, 0.25, 0));
-        player.velocityModified = true;
-        player.fallDistance = 0;
-        world.spawnParticles(ParticleTypes.CLOUD, player.getX(), player.getY(), player.getZ(), 25, 0.75, 0.2, 0.75, 0);
-        return cooldown;
-    }
+		player.velocityModified = true;
+		player.fallDistance = 0;
+
+		world.spawnParticles(ParticleTypes.CLOUD, player.getX(), player.getY(), player.getZ(), 25, 0.75, 0.2, 0.75, 0);
+		return true;
+	}
 
 	private static int mapMovement(boolean direction1, boolean direction2){
 		return direction1 == direction2 ? 0 : (direction1 ? 1 : -1);
