@@ -118,7 +118,7 @@ public final class RegisterHelper {
 		return Registry.register(Registries.ITEM_GROUP, id(name), FabricItemGroup.builder()
 			.displayName(Text.translatable("item_group." + Lulasmod.MOD_ID + "." + name))
 			.icon(() -> new ItemStack(item))
-			.entries((displayContext, entries) -> entries.addAll(list))
+			.entries((displayContext, entries) -> entries.addAll(list.stream().peek(stack -> stack.setCount(1)).toList()))
 			.build());
 	}
 
