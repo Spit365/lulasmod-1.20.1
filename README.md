@@ -35,7 +35,7 @@ Creative only Spells: \
 obtained through the creative Menu
 
 Highlighter Spell
-  - toggles every Player's glowing
+  - makes every player (not) glow
 
 **Spells:**\
 Standard Spells\
@@ -106,3 +106,15 @@ Kinesis:
   - throws every entity in the range (even through walls!) in the rotation movement of the caster
   - deals low damage continuously while using
   - no cooldown
+
+### Gazebo
+
+On a circle with the radius of 1000 blocks, there is a gazebo for every spell that isn't creative only or a conjuring
+they come in the same order as in the creative inventory
+
+### Client Tweaks
+
+Client tweaks is integrated in this mod. There is an extra feature:\
+`/boxoutline <pos1> <pos2> <color>` 
+creates a box outline that lasts a single tick, visible for everyone in a 1000 blocks radius 
+
