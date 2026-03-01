@@ -33,6 +33,6 @@ public final class ClientRegisterHelper {
 	}
 
     public static void hudElement(String name, HudElement hudElement) {
-        HudElementRegistry.addFirst(Identifier.of(Lulasmod.MOD_ID, name), hudElement);
+        HudElementRegistry.addLast(Identifier.of(Lulasmod.MOD_ID, name), hudElement);
     }
 }
