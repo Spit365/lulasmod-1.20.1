@@ -16,6 +16,7 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.spit365.lulasmod.custom.Bleed;
 import net.spit365.lulasmod.custom.Demon;
+import net.spit365.lulasmod.custom.Shimmer;
 import net.spit365.lulasmod.item.*;
 import net.spit365.lulasmod.item.spell.SpellItem;
 import net.spit365.lulasmod.util.RegisterHelper;
@@ -40,7 +41,7 @@ public final class ModItems {
 	public static final SpellBookItem SPELL_BOOK = RegisterHelper.item("spell_book", SpellBookItem::new, new Item.Settings().maxCount(1));
     public static final NeedleSwordItem NEEDLE_SWORD = RegisterHelper.item("needle_sword", NeedleSwordItem::new, new Item.Settings().sword(ToolMaterial.NETHERITE, 3, 0).maxCount(1).maxDamage(2500).fireproof());
 	public static final ShimmerSyringeItem SHIMMER_SYRINGE = RegisterHelper.item("shimmer_syringe", ShimmerSyringeItem::new, new Item.Settings().maxCount(16), (item, itemStacks) -> {
-		for (ShimmerSyringeItem.Variant variant : ShimmerSyringeItem.Variant.values()) {
+		for (Shimmer.Variant variant : Shimmer.Variant.values()) {
 			ItemStack stack = new ItemStack(item);
 			stack.set(ModData.SHIMMER_VARIANT, variant);
 			itemStacks.add(stack);

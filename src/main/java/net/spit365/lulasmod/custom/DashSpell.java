@@ -13,7 +13,6 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.PlayerInput;
 import net.minecraft.util.math.Vec3d;
 import net.spit365.lulasmod.item.SealItem;
-import net.spit365.lulasmod.item.ShimmerSyringeItem;
 import net.spit365.lulasmod.mod.ModData;
 import net.spit365.lulasmod.mod.ModSpells;
 import net.spit365.lulasmod.packet.DashSpellUsagesS2CPacket;
@@ -92,7 +91,7 @@ public final class DashSpell {
 	public static Integer showUsages(ClientPlayerEntity player) {
 		if (player == null) return null;
 
-		if (player.getAttached(ModData.APPLIED_SHIMMER_VARIANT) == ShimmerSyringeItem.Variant.PACE) return 5;
+		if (player.getAttached(ModData.APPLIED_SHIMMER_VARIANT) == Shimmer.Variant.PACE) return 5;
 
 		SealItem sealItem = null;
 		for (Hand hand : Hand.values()) {

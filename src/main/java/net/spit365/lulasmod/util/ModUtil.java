@@ -4,7 +4,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.network.packet.s2c.play.PositionFlag;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
@@ -34,15 +33,8 @@ public final class ModUtil {
             if (!(player instanceof ServerPlayerEntity serverPlayer)) return;
 			MinecraftServer server = Objects.requireNonNull(player.getServer());
 			ServerPlayerEntity.Respawn respawn = serverPlayer.getRespawn();
-			BlockPos pos;
-			ServerWorld targetDimension;
-			if (respawn != null) {
-				targetDimension = Objects.requireNonNull(server.getWorld(respawn.dimension()));
-				pos = respawn.pos();
-			} else {
-				targetDimension = Objects.requireNonNull(server.getWorld(World.OVERWORLD));
-				pos = targetDimension.getSpawnPos();
-			}
+			ServerWorld targetDimension = Objects.requireNonNull(server.getWorld(respawn != null ? respawn.dimension() : World.OVERWORLD));
+			BlockPos pos = respawn != null ? respawn.pos() : targetDimension.getSpawnPos();
 			if (player.teleport(targetDimension, pos.getX(), pos.getY(), pos.getZ(), Set.of(), player.getYaw(), player.getPitch(), true))
 				Lulasmod.LOGGER.info("{} was sent home to {} {} {} in {} (with {})", player.getName(), pos.getX(), pos.getY(), pos.getZ(), targetDimension.getRegistryKey().getValue(), item);
         } catch (NullPointerException e) {
@@ -61,13 +53,12 @@ public final class ModUtil {
     }
 
 	public static void pocketTeleport(Entity victim) {
-        if (!victim.teleport(
-		   Objects.requireNonNull(victim.getServer()).getWorld((
-			   victim.getWorld().getRegistryKey().equals(ModDimensions.POCKET_DIMENSION)?
-                        World.OVERWORLD :
-                        ModDimensions.POCKET_DIMENSION))
-		   , victim.getX(), victim.getY(), victim.getZ(), EnumSet.noneOf(PositionFlag.class), victim.getYaw(), victim.getPitch(), false))
-            Lulasmod.LOGGER.error("Could not perform teleport. Registry key: {}, Entity: {}", ModDimensions.POCKET_DIMENSION, victim);
+        victim.teleport(
+            Objects.requireNonNull(victim.getServer()).getWorld((
+			    victim.getWorld().getRegistryKey().equals(ModDimensions.POCKET_DIMENSION)?
+                    World.OVERWORLD :
+                    ModDimensions.POCKET_DIMENSION)),
+            victim.getX(), victim.getY(), victim.getZ(), Set.of(), victim.getYaw(), victim.getPitch(), false);
     }
 
 	public static <T> LinkedList<T> makeMutable(List<T> immutable){

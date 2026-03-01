@@ -7,7 +7,7 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.spit365.lulasmod.custom.Demon;
-import net.spit365.lulasmod.item.ShimmerSyringeItem;
+import net.spit365.lulasmod.custom.Shimmer;
 import net.spit365.lulasmod.mod.ModData;
 import net.spit365.lulasmod.mod.ModParticles;
 import org.spongepowered.asm.mixin.Mixin;
@@ -38,7 +38,7 @@ public abstract class PlayerEntityMixin extends LivingEntity {
 
     @Inject(method = "canHarvest", at = @At("HEAD"), cancellable = true)
     private void canHarvest(CallbackInfoReturnable<Boolean> cir) {
-        ShimmerSyringeItem.Variant variant = this.getAttached(ModData.APPLIED_SHIMMER_VARIANT);
-        if (variant == ShimmerSyringeItem.Variant.FORTITUDE) cir.setReturnValue(true);
+        Shimmer.Variant variant = this.getAttached(ModData.APPLIED_SHIMMER_VARIANT);
+        if (variant == Shimmer.Variant.FORTITUDE) cir.setReturnValue(true);
     }
 }

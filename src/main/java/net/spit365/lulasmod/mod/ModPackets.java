@@ -13,7 +13,7 @@ import net.minecraft.util.Identifier;
 import net.spit365.clienttweaks.packet.BoxStateS2CPacket;
 import net.spit365.lulasmod.custom.DashSpell;
 import net.spit365.lulasmod.custom.Demon;
-import net.spit365.lulasmod.item.ShimmerSyringeItem;
+import net.spit365.lulasmod.custom.Shimmer;
 import net.spit365.lulasmod.item.spell.ConjuringItem;
 import net.spit365.lulasmod.packet.*;
 import net.spit365.lulasmod.util.ModUtil;
@@ -71,7 +71,7 @@ public final class ModPackets {
         });
 		ServerPlayNetworking.registerGlobalReceiver(DashC2SPacket.ID, (dashC2SPacket, context) -> {
 			ServerPlayerEntity player = context.player();
-			if (player == null || player.getAttached(ModData.APPLIED_SHIMMER_VARIANT) != ShimmerSyringeItem.Variant.PACE) return;
+			if (player == null || player.getAttached(ModData.APPLIED_SHIMMER_VARIANT) != Shimmer.Variant.PACE) return;
 			DashSpell.dash(player.getWorld(), player);
 		});
 	}
