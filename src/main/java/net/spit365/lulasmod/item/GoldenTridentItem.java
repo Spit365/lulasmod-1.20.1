@@ -2,6 +2,7 @@ package net.spit365.lulasmod.item;
 
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.item.TridentItem;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
@@ -15,10 +16,13 @@ public class GoldenTridentItem extends TridentItem {
 
     @Override
     public ActionResult use(World world, PlayerEntity player, Hand hand){
-        return  !world.isClient() &&
-                player.isCreative() &&
-                Impaled.impale(player, ModUtil.selectClosestEntity(player, 5), player.getStackInHand(hand), 20, 200, Integer.MAX_VALUE, 5, ModParticles.GOLDEN_SHIMMER)?
-                    ActionResult.SUCCESS:
-                    ActionResult.PASS;
+        if (world.isClient() || !player.isCreative()) return ActionResult.PASS;
+        ItemStack item = player.getStackInHand(hand);
+        if (Impaled.impale(player, ModUtil.selectClosestEntity(player, 5), item, Integer.MAX_VALUE, 5, ModParticles.GOLDEN_SHIMMER)) {
+            player.getItemCooldownManager().set(item, 200);
+            return ActionResult.SUCCESS;
+        }
+        player.getItemCooldownManager().set(item, 20);
+        return ActionResult.PASS;
     }
 }

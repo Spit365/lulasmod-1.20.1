@@ -9,6 +9,7 @@ import net.minecraft.util.math.ChunkSectionPos;
 import net.minecraft.world.Heightmap;
 import net.minecraft.world.PersistentState;
 import net.minecraft.world.PersistentStateType;
+import net.spit365.lulasmod.Lulasmod;
 import net.spit365.lulasmod.item.spell.ConjuringItem;
 import net.spit365.lulasmod.mod.ModSpells;
 
@@ -21,7 +22,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class GazeboGenerationPersistentState extends PersistentState {
-	private static final int count = (int) ModSpells.SpellTabItems.stream().filter(stack -> !(stack.getItem() instanceof ConjuringItem)).count();
+	private static final int count = (int) ModSpells.SpellTabItems.stream().filter(stack -> !(stack.getItem() instanceof ConjuringItem) && !stack.isOf(ModSpells.HIGHLIGHTER_SPELL)).count();
 	private Map<BlockPos, Boolean> pendingPos;
 	public static final int RADIUS_BLOCKS = 1000;
 
@@ -51,7 +52,7 @@ public class GazeboGenerationPersistentState extends PersistentState {
 
 	public Map<BlockPos, Boolean> getPending(ServerWorld world) {
         if (pendingPos == null) {
-            pendingPos = IntStream.range(1, count).mapToObj(value -> {
+            pendingPos = IntStream.range(0, count).mapToObj(value -> {
                 double angle = (Math.PI * 2) * ((double) value / count);
                 return new BlockPos(
                     (int) Math.round(Math.cos(angle) * RADIUS_BLOCKS),
@@ -59,6 +60,7 @@ public class GazeboGenerationPersistentState extends PersistentState {
                     (int) Math.round(Math.sin(angle) * RADIUS_BLOCKS)
                 );
             }).collect(Collectors.toMap(Function.identity(), o -> false));
+			Lulasmod.LOGGER.info(pendingPos.keySet().toString());
         }
         for (Map.Entry<BlockPos, Boolean> entry : new HashSet<>(pendingPos.entrySet())){
             if (entry.getValue()) continue;

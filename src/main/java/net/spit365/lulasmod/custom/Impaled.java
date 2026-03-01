@@ -66,13 +66,11 @@ public final class Impaled {
         );
     }
 
-    public static boolean impale(PlayerEntity attacker, Entity target, ItemStack item, int baseCooldown, int maxCooldown, int iterations, int intervalDuration, ParticleEffect particle) {
+    public static boolean impale(PlayerEntity attacker, Entity target, ItemStack item, int iterations, int intervalDuration, ParticleEffect particle) {
         attacker.getItemCooldownManager().set(item, 2);
         if (!(target instanceof LivingEntity living) || IMPALED.stream().anyMatch(ctx -> ctx.attacker == attacker || ctx.target == living)) {
-            attacker.getItemCooldownManager().set(item, baseCooldown);
             return false;
         }
-        attacker.getItemCooldownManager().set(item, maxCooldown);
         living.requestTeleport(living.getX(), living.getY() + RADIUS, living.getZ());
         IMPALED.add(new ImpaledContext(attacker, living, particle, iterations, intervalDuration));
         return true;

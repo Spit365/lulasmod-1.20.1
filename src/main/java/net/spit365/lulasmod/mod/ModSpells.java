@@ -107,8 +107,10 @@ public final class ModSpells {
         Entity target = ModUtil.selectClosestEntity(player, 5);
         if (target instanceof LivingEntity livingEntity)
             Bleed.apply(livingEntity, (int) (1200 * potencyMultiplier) - 80);
-        Impaled.impale(player, target, player.getStackInHand(hand), 20, 600, 6, 25, ModParticles.CURSED_BLOOD);
-        return NO_COOLDOWN_RESULT;
+        ItemStack item = player.getStackInHand(hand);
+        if (Impaled.impale(player, target, item, 6, 25, ModParticles.CURSED_BLOOD))
+            player.getItemCooldownManager().set(item, 600);
+        return 20;
     }));
     public static final ConjuringItem POCKET_CONJURING = RegisterHelper.spell("heresies", settings -> new ConjuringItem(settings, (world, player, hand, potencyMultiplier, cooldownDivisor) -> {
         Box box = new Box(player.getPos().add(5), player.getPos().add(-5));
