@@ -15,7 +15,6 @@ public final class ModServerTick {
 				SpellHotbar.tick(player);
                 TimeForward.tick(player);
 				DashSpell.tick(player);
-                BoxOutline.tick(player);
                 Shimmer.tick(player);
 			}
             Impaled.tick();

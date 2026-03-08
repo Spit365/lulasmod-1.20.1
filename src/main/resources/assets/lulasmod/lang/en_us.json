@@ -83,6 +83,5 @@
   "notify.lulasmod.command.contract_fail": "You cannot use this action",
   "notify.lulasmod.smoke_cooling_down": "Smoke is still assimilating",
   "notify.lulasmod.demon.true": "%1$s is now a demon",
-  "notify.lulasmod.demon.false": "%1$s is no longer a demon",
-  "notify.lulasmod.boxoutline.nocolor": "No color value"
+  "notify.lulasmod.demon.false": "%1$s is no longer a demon"
 }
