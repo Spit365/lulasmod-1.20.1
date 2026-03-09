@@ -5,3 +5,14 @@ THINGS THAT NEED TO BE FIXED BUT I DON'T WANT TO
     add pentagramm functionality
     test Amethyst Shard Entity
     test Needle Sword Entity
+    add back bullet time:
+        @ModifyVariable(method = "travelMidAir", at = @At("STORE"), ordinal = 0)
+        private double travelMidAir(double d){
+            LivingEntityMixin entity = this;
+            return (
+                entity.getMainHandStack().getItem() instanceof BowItem &&
+                entity.isUsingItem() &&
+                !entity.isOnGround() &&
+                entity.getVelocity().y <= 0.0
+            ) ? -0.07 : d;
+        }

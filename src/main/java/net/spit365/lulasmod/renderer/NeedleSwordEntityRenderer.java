@@ -16,6 +16,7 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.math.RotationAxis;
 import net.minecraft.util.math.Vec3d;
 import net.spit365.lulasmod.entity.NeedleSwordEntity;
+import net.spit365.lulasmod.mod.ModItems;
 import org.joml.Matrix4f;
 
 @Environment(EnvType.CLIENT)
@@ -30,24 +31,20 @@ public class NeedleSwordEntityRenderer extends EntityRenderer<NeedleSwordEntity>
 
     @Override
     public Identifier getTexture(NeedleSwordEntity entity) {
-        // Required in 1.21.1, though we are rendering an item/leash manually
         return Identifier.ofVanilla("textures/entity/beacon_beam.png");
     }
 
     @Override
     public void render(NeedleSwordEntity entity, float yaw, float tickDelta, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light) {
-        // 1. Calculate data directly from the entity (formerly updateRenderState)
-        ItemStack needleStack = entity.getSword().copy(); // Adjust logic if you need component copying specifically
         float pitch = entity.getLerpTargetPitch();
         float entityYaw = entity.getLerpTargetYaw();
 
         matrices.push();
-        // 1.21.1 uses degrees for these rotations usually
         matrices.multiply(RotationAxis.POSITIVE_X.rotationDegrees(-pitch + 75));
         matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(-entityYaw));
 
         itemRenderer.renderItem(
-            needleStack,
+            entity.getSword().copyComponentsToNewStack(ModItems.NEEDLE_HEAD, 1),
             ModelTransformationMode.FIRST_PERSON_LEFT_HAND,
             light,
             OverlayTexture.DEFAULT_UV,
@@ -58,10 +55,8 @@ public class NeedleSwordEntityRenderer extends EntityRenderer<NeedleSwordEntity>
         );
         matrices.pop();
 
-        // Leash logic
         if (entity.getOwner() != null && entity.shouldReturn()) {
             Vec3d ownerPos = entity.getOwner().getLeashPos(tickDelta);
-            Vec3d entityPos = entity.getLerpedPos(tickDelta);
             Vec3d relativePos = ownerPos.subtract(entity.getLerpedPos(tickDelta));
 
             matrices.push();
