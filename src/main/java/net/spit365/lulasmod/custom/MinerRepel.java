@@ -15,7 +15,7 @@ public final class MinerRepel {
     public static void tick(ServerPlayerEntity player) {
         if (!player.getCommandTags().contains("miner")) return;
         BlockPos playerPos = player.getBlockPos();
-        ServerWorld world = player.getWorld();
+        ServerWorld world = (ServerWorld) player.getWorld();
         Set<Box> portalAndAdjacent =
             BlockPos.stream(
                 playerPos.add(-5, -5, -5),

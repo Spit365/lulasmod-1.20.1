@@ -35,8 +35,6 @@ public class AmethystShardEntity extends ProjectileEntity {
         this.setOwner(owner);
         this.setVelocity(owner.getRotationVec(1).normalize().multiply(3));
         this.setRotation(owner.getYaw(), owner.getPitch());
-        this.lastYaw = owner.getYaw();
-        this.lastPitch = owner.getPitch();
     }
 
     @Override protected void onBlockHit(BlockHitResult hitResult) {
@@ -54,7 +52,7 @@ public class AmethystShardEntity extends ProjectileEntity {
         super.onBlockHit(hitResult);
         for (LivingEntity livingEntity : this.getWorld().getEntitiesByClass(LivingEntity.class, this.getBoundingBox().expand(1f), LivingEntity::isAlive))
             this.onEntityHit(new EntityHitResult(livingEntity));
-        this.getWorld().playSound(this, this.getX(), this.getY(), this.getZ(), SoundEvents.BLOCK_AMETHYST_CLUSTER_BREAK, SoundCategory.NEUTRAL);
+        this.getWorld().playSound(null, this.getX(), this.getY(), this.getZ(), SoundEvents.BLOCK_AMETHYST_CLUSTER_BREAK, SoundCategory.NEUTRAL);
     }
 
     @Override
@@ -68,7 +66,7 @@ public class AmethystShardEntity extends ProjectileEntity {
                 damageSource = ModDamageTypes.createDamageSource(owner, ModDamageTypes.AMETHYST_SHARD);
                 if (owner instanceof LivingEntity livingEntity) livingEntity.onAttacking(target);
             } else damageSource = ModDamageTypes.createDamageSource(this, ModDamageTypes.AMETHYST_SHARD);
-            if (target.damage(serverWorld, damageSource, 8) &&
+            if (target.damage(damageSource, 8) &&
                 target instanceof LivingEntity livingEntity &&
                 owner instanceof LivingEntity
             ) EnchantmentHelper.onTargetDamaged(serverWorld, livingEntity, damageSource);
@@ -84,7 +82,7 @@ public class AmethystShardEntity extends ProjectileEntity {
         Vec3d currentPos = this.getPos();
         Vec3d nextPos = currentPos.add(this.getVelocity());
         BlockHitResult blockHitResult = this.getWorld()
-            .getCollisionsIncludingWorldBorder(
+            .raycast(
                 new RaycastContext(currentPos, nextPos, RaycastContext.ShapeType.COLLIDER, RaycastContext.FluidHandling.NONE, this)
             );
         if (!blockHitResult.getType().equals(HitResult.Type.MISS)){

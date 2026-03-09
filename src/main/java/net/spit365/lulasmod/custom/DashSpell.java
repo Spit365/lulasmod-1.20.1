@@ -10,9 +10,9 @@ import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Hand;
-import net.minecraft.util.PlayerInput;
 import net.minecraft.util.math.Vec3d;
 import net.spit365.lulasmod.item.SealItem;
+import net.spit365.lulasmod.mixin.LivingEntityAccessor;
 import net.spit365.lulasmod.mod.ModData;
 import net.spit365.lulasmod.mod.ModSpells;
 import net.spit365.lulasmod.packet.DashSpellUsagesS2CPacket;
@@ -67,11 +67,11 @@ public final class DashSpell {
     }
 
 	private static boolean dashInternal(ServerWorld world, PlayerEntity player) {
-		PlayerInput input = ((ServerPlayerEntity) player).getPlayerInput();
-		Vec3d movementDirection = new Vec3d(
-			mapMovement(input.left(), input.right()),
-			mapMovement(input.jump(), input.sneak()),
-			mapMovement(input.forward(), input.backward())
+		boolean jumping = ((LivingEntityAccessor) player).isJumping();
+        Vec3d movementDirection = new Vec3d(
+			player.sidewaysSpeed,
+			player.forwardSpeed,
+			jumping == player.isSneaking() ? 0 : (jumping ? 1 : -1)
 		).rotateY((float) -Math.toRadians(player.getYaw()));
 		if (movementDirection.lengthSquared() < 1E-10F) return false;
 
@@ -81,10 +81,6 @@ public final class DashSpell {
 
 		world.spawnParticles(ParticleTypes.CLOUD, player.getX(), player.getY(), player.getZ(), 25, 0.75, 0.2, 0.75, 0);
 		return true;
-	}
-
-	private static int mapMovement(boolean direction1, boolean direction2){
-		return direction1 == direction2 ? 0 : (direction1 ? 1 : -1);
 	}
 
 	@Environment(EnvType.CLIENT)

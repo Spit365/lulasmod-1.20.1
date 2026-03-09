@@ -3,15 +3,13 @@ package net.spit365.lulasmod.util;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.particle.v1.ParticleFactoryRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
-import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElement;
-import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
+import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.render.entity.EntityRendererFactory;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.particle.SimpleParticleType;
-import net.minecraft.util.Identifier;
 import net.spit365.lulasmod.Lulasmod;
 
 public final class ClientRegisterHelper {
@@ -32,7 +30,7 @@ public final class ClientRegisterHelper {
 		 ParticleFactoryRegistry.getInstance().register(particle, render);
 	}
 
-    public static void hudElement(String name, HudElement hudElement) {
-        HudElementRegistry.addLast(Identifier.of(Lulasmod.MOD_ID, name), hudElement);
+    public static void hudElement(HudRenderCallback hudElement) {
+		HudRenderCallback.EVENT.register(hudElement);
     }
 }

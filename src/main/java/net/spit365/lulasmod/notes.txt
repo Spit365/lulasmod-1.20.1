@@ -3,3 +3,5 @@ THINGS THAT NEED TO BE FIXED BUT I DON'T WANT TO
     update select method
     fix sharp tome enchants
     add pentagramm functionality
+    test Amethyst Shard Entity
+    test Needle Sword Entity

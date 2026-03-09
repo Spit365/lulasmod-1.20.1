@@ -14,6 +14,7 @@ import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.TypedActionResult;
 import net.minecraft.world.World;
 import net.spit365.lulasmod.item.SpellBookItem;
 import net.spit365.lulasmod.mod.ModData;
@@ -33,9 +34,10 @@ public class SpellItem extends Item {
     }
 
     @Override
-    public ActionResult use(World world, PlayerEntity player, Hand hand){
+    public TypedActionResult<ItemStack> use(World world, PlayerEntity player, Hand hand){
+        ItemStack stack = player.getStackInHand(hand);
         if (!world.isClient() && !(player.getOffHandStack().getItem() instanceof SpellBookItem)){
-            player.getItemCooldownManager().set(player.getStackInHand(hand), 5);
+            player.getItemCooldownManager().set(stack.getItem(), 5);
 			List<Identifier> mutable = ModUtil.makeMutable(player.getAttached(ModData.EQUIPPED_SPELLS));
             SoundEvent sound = null;
             Identifier spellName = Registries.ITEM.getId(this);
@@ -49,18 +51,18 @@ public class SpellItem extends Item {
             }
             if (sound != null) world.playSound(null, player.getBlockPos(), sound, SoundCategory.PLAYERS);
 			player.setAttached(ModData.EQUIPPED_SPELLS, mutable);
-			return ActionResult.SUCCESS;
+			return TypedActionResult.success(stack);
         }
-        return ActionResult.PASS;
+        return TypedActionResult.pass(stack);
     }
 
     protected SoundEvent getSound(boolean add){return add ? SoundEvents.BLOCK_RESPAWN_ANCHOR_CHARGE : SoundEvents.BLOCK_RESPAWN_ANCHOR_DEPLETE.value();}
 
     @Override
-    public void inventoryTick(ItemStack stack, ServerWorld world, Entity entity, @Nullable EquipmentSlot slot) {
+    public void inventoryTick(ItemStack stack, World world, Entity entity, int slot, boolean selected) {
         if (entity instanceof PlayerEntity player && !Objects.equals(ModUtil.getInventoryStack(player, stack.getItem()), stack)) {
             player.sendMessage(Text.translatable("notify.lulasmod.duplicate_spell"), true);
-            entity.dropStack(world, stack.copy());
+            entity.dropStack(stack.copy());
             stack.decrement(stack.getCount());
         }
     }

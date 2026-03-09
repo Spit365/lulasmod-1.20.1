@@ -3,6 +3,7 @@ package net.spit365.lulasmod.entity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.PersistentProjectileEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -45,11 +46,11 @@ public class NeedleSwordEntity extends PersistentProjectileEntity {
     protected void onEntityHit(EntityHitResult entityHitResult) {
         Entity entity = entityHitResult.getEntity();
         if (takeDamage(entity) && entity.getWorld() instanceof ServerWorld serverWorld)
-            entity.damage(serverWorld, ModDamageTypes.createDamageSource(entity, ModDamageTypes.NEEDLE_SWORD), 8f);
+            entity.damage(ModDamageTypes.createDamageSource(entity, ModDamageTypes.NEEDLE_SWORD), 8f);
     }
 
     @Override protected void onBlockHit(BlockHitResult blockHitResult) {
-        Vec3d dir = this.getPos().add(blockHitResult.getSide().getDoubleVector().multiply(0.5));
+        Vec3d dir = this.getPos().add(Vec3d.of(blockHitResult.getSide().getVector()).multiply(0.5));
         this.setPos(dir.x, dir.y, dir.z);
         Entity entity = this.getOwner();
         if (entity != null) entity.addVelocity(dir.subtract(entity.getPos()).normalize().multiply(0.75));
@@ -69,8 +70,8 @@ public class NeedleSwordEntity extends PersistentProjectileEntity {
                 Vec3d relativePos = entity.getEyePos().subtract(this.getPos());
                 this.setVelocity(relativePos.normalize());
                 if (relativePos.length() < 0.5) {
-                    ((LivingEntity) entity).giveOrDropStack(sword);
-                    if (this.getWorld() instanceof ServerWorld serverWorld) this.kill(serverWorld);
+                    if (entity instanceof PlayerEntity player) player.getInventory().insertStack(sword);
+                    this.kill();
                 }
             } else this.setVelocity(entity.getRotationVec(1).normalize());
         }

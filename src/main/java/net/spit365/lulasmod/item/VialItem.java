@@ -15,6 +15,7 @@ import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
+import net.minecraft.util.TypedActionResult;
 import net.minecraft.world.World;
 import net.spit365.lulasmod.mod.ModDamageTypes;
 
@@ -24,13 +25,13 @@ public class VialItem extends PotionItem {
     }
 
     @Override
-    public ActionResult use(World world, PlayerEntity user, Hand hand) {
+    public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
         ItemStack stack = user.getStackInHand(hand);
         PotionContentsComponent effects = stack.get(DataComponentTypes.POTION_CONTENTS);
         stack.decrementUnlessCreative(1, user);
         world.playSound(null, user.getBlockPos(), SoundEvents.BLOCK_GLASS_BREAK, SoundCategory.PLAYERS);
-        if (world instanceof ServerWorld serverWorld) user.damage(serverWorld, ModDamageTypes.createDamageSource(world, ModDamageTypes.BLOODSUCKING), user.getMaxHealth() / 2);
-        if (effects == null) return ActionResult.PASS;
+        if (world instanceof ServerWorld) user.damage(ModDamageTypes.createDamageSource(world, ModDamageTypes.BLOODSUCKING), user.getMaxHealth() / 2);
+        if (effects == null) return TypedActionResult.pass(stack);
         effects.potion().ifPresent(potionRegistryEntry -> potionRegistryEntry.value().getEffects().forEach(statusEffectInstance -> {
             RegistryEntry<StatusEffect> effectType = statusEffectInstance.getEffectType();
             user.addStatusEffect(new StatusEffectInstance(
@@ -41,13 +42,13 @@ public class VialItem extends PotionItem {
                 false)
             );
         }));
-        return ActionResult.SUCCESS;
+        return TypedActionResult.success(stack);
     }
 
     @Override
     public Text getName(ItemStack stack) {
         PotionContentsComponent potionContentsComponent = stack.get(DataComponentTypes.POTION_CONTENTS);
-        MutableText name = Text.translatable(this.translationKey);
+        MutableText name = Text.translatable(this.getTranslationKey());
         if (potionContentsComponent == null) return name;
         MutableText base = Text.empty();
         potionContentsComponent.getEffects().forEach(statusEffectInstance -> {

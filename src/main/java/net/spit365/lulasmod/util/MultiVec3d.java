@@ -19,7 +19,7 @@ public record MultiVec3d(Vec3d... vec3ds) {
 	public Stream<Vec3d> stream(){
 		return this.pairwiseSegments().flatMap(twoVec3d -> {
 			int detail = Math.max(1, (int) (twoVec3d.start().distanceTo(twoVec3d.end()) * MULTI_VEC_DETAIL));
-			return IntStream.range(0, detail).mapToObj(j -> MathHelper.lerp((double) j / detail, twoVec3d.start(), twoVec3d.end()));
+			return IntStream.range(0, detail).mapToObj(j -> lerpVec3d((double) j / detail, twoVec3d.start(), twoVec3d.end()));
 		});
 	}
 
@@ -32,4 +32,8 @@ public record MultiVec3d(Vec3d... vec3ds) {
 		RecordCodecBuilder.create(instance -> instance.group(
 			Vec3d.CODEC.listOf().fieldOf("vec3ds").forGetter(multiVec3d -> List.of(multiVec3d.vec3ds))
 		).apply(instance, vec3dList -> new MultiVec3d(vec3dList.toArray(Vec3d[]::new))));
+
+	public static Vec3d lerpVec3d(double delta, Vec3d a, Vec3d b) {
+		return a.add(b.multiply(delta));
+	}
 }

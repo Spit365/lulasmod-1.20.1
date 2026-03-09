@@ -4,6 +4,7 @@
   "compatibilityLevel": "JAVA_17",
   "mixins": [
     "ItemStackMixin",
+    "LivingEntityAccessor",
     "LivingEntityMixin",
     "PlayerEntityMixin"
   ],
@@ -12,7 +13,6 @@
   },
   "client": [
     "ClientPlayNetworkHandlerMixin",
-    "ItemModelGeneratorMixin",
     "MinecraftClientMixin"
   ]
 }

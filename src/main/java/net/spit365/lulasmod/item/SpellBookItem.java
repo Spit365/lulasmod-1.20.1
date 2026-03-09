@@ -9,6 +9,7 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.TypedActionResult;
 import net.minecraft.world.World;
 import net.spit365.lulasmod.item.spell.SpellItem;
 import net.spit365.lulasmod.mod.ModData;
@@ -33,11 +34,10 @@ public class SpellBookItem extends Item implements SpellHotbar {
     public void onCycle(PlayerEntity player,  Function<List<Identifier>, List<Identifier>> cycleFunction) {
         ItemStack stack = (player.getMainHandStack().getItem().equals(this) ? player.getMainHandStack() : player.getOffHandStack());
         stack.set(ModData.SPELL_BOOK_SPELLS, cycleFunction.apply(stack.get(ModData.SPELL_BOOK_SPELLS)));
-
     }
 
     @Override
-    public ActionResult use(World world, PlayerEntity player, Hand hand) {
+    public TypedActionResult<ItemStack> use(World world, PlayerEntity player, Hand hand) {
         if (world instanceof ServerWorld) {
             ItemStack spellbook = player.getStackInHand(hand);
             ItemStack spell = (hand.equals(Hand.MAIN_HAND) ? player.getOffHandStack() : player.getMainHandStack());
@@ -47,16 +47,15 @@ public class SpellBookItem extends Item implements SpellHotbar {
                 mutable.add(id);
                 spellbook.set(ModData.SPELL_BOOK_SPELLS, mutable);
                 spell.decrement(1);
-                return ActionResult.SUCCESS;
+                return TypedActionResult.success(spellbook);
             } else if (!mutable.isEmpty()) {
                 Identifier id = mutable.getFirst();
                 mutable.remove(id);
                 spellbook.set(ModData.SPELL_BOOK_SPELLS, mutable);
                 player.giveItemStack(new ItemStack(Registries.ITEM.get(id)));
-                return ActionResult.SUCCESS;
+                return TypedActionResult.success(spellbook);
             }
-
         }
-        return ActionResult.PASS;
+        return TypedActionResult.pass(player.getStackInHand(hand));
     }
 }

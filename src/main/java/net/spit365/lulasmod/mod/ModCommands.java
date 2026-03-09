@@ -31,7 +31,7 @@ public final class ModCommands {
             dispatcher.register(literal("removecooldown")
 				.executes(context -> {
                 	if (context.getSource().getEntity() instanceof PlayerEntity player) for (int i = 0; i < player.getInventory().size(); i++)
-                    	player.getItemCooldownManager().set(player.getInventory().getStack(i), 0);
+                    	player.getItemCooldownManager().set(player.getInventory().getStack(i).getItem(), 0);
                 	return r;
             }));
 			dispatcher.register(literal("demon")

@@ -37,9 +37,9 @@ public final class ModItems {
 	public static final HomeButtonItem HOME_BUTTON = RegisterHelper.item("home_button", HomeButtonItem::new, new Item.Settings().maxCount(1).maxDamage(100));
 	public static final GoldenTridentItem GOLDEN_TRIDENT = RegisterHelper.item("golden_trident", GoldenTridentItem::new, new Item.Settings().maxCount(1).maxDamage(500));
 	public static final SharpTomeItem SHARP_TOME = RegisterHelper.item("sharp_tome", SharpTomeItem::new, new Item.Settings().maxCount(1).maxDamage(640));
-	public static final SinfulItem SINFUL = RegisterHelper.item("sinful", SinfulItem::new, new Item.Settings().sword(ToolMaterial.NETHERITE, 3, -2.4F).fireproof().maxCount(1).maxDamage(2500));
+	public static final SinfulItem SINFUL = RegisterHelper.item("sinful", SinfulItem::new, new Item.Settings().fireproof().maxCount(1).maxDamage(2500));
 	public static final SpellBookItem SPELL_BOOK = RegisterHelper.item("spell_book", SpellBookItem::new, new Item.Settings().maxCount(1));
-    public static final NeedleSwordItem NEEDLE_SWORD = RegisterHelper.item("needle_sword", NeedleSwordItem::new, new Item.Settings().sword(ToolMaterial.NETHERITE, 3, 0).maxCount(1).maxDamage(2500).fireproof());
+    public static final NeedleSwordItem NEEDLE_SWORD = RegisterHelper.item("needle_sword", NeedleSwordItem::new, new Item.Settings().maxCount(1).maxDamage(2500).fireproof());
 	public static final ShimmerSyringeItem SHIMMER_SYRINGE = RegisterHelper.item("shimmer_syringe", ShimmerSyringeItem::new, new Item.Settings().maxCount(16), (item, itemStacks) -> {
 		for (Shimmer.Variant variant : Shimmer.Variant.values()) {
 			ItemStack stack = new ItemStack(item);

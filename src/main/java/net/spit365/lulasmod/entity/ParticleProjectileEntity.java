@@ -8,10 +8,9 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.projectile.PersistentProjectileEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.particle.ParticleEffect;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.storage.ReadView;
-import net.minecraft.storage.WriteView;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.spit365.lulasmod.Lulasmod;
@@ -45,24 +44,24 @@ public class ParticleProjectileEntity extends PersistentProjectileEntity {
     }
 
     @Override
-    protected void readCustomData(ReadView view) {
-        super.readCustomData(view);
-        this.lifeTime = view.getInt("Lifetime", 0);
-        String particle = view.getString("Particle", "");
-        if (!particle.isEmpty()) {
-            try {
-                this.particleEffect = ParticleEffectArgumentType.readParameters(new StringReader(particle), this.getWorld().getRegistryManager());
-            } catch (CommandSyntaxException var5) {
-                Lulasmod.LOGGER.warn("Couldn't load custom particle {}: {}", particle, var5);
-            }
+    public void readCustomDataFromNbt(NbtCompound nbt) {
+        super.readCustomDataFromNbt(nbt);
+        this.lifeTime = nbt.getInt("lifeTime");
+        String particle = nbt.getString("particle");
+        if (particle == null || particle.isBlank()) return;
+        try {
+            this.particleEffect = ParticleEffectArgumentType.readParameters(new StringReader(particle), this.getWorld().getRegistryManager());
+        } catch (CommandSyntaxException cse) {
+            Lulasmod.LOGGER.warn("Couldn't load custom particle {}: {}", particle, cse);
         }
     }
 
     @Override
-    protected void writeCustomData(WriteView view) {
-        super.writeCustomData(view);
-        view.putInt("Lifetime", this.lifeTime);
-        if (this.particleEffect != null) view.putString("Particle", this.particleEffect.toString());
+    public NbtCompound writeNbt(NbtCompound nbt) {
+        super.writeNbt(nbt);
+        nbt.putInt("lifeTime", this.lifeTime);
+        if (this.particleEffect != null) nbt.putString("particle", this.particleEffect.toString());
+        return nbt;
     }
 
     @Override protected boolean canHit(Entity entity) {return true;}

@@ -11,7 +11,7 @@ import net.minecraft.world.World;
 
 public class SmokeProjectileEntity extends SmokeBombEntity{
     public SmokeProjectileEntity(World world, LivingEntity owner, ItemStack stack) {
-        super(world, owner, stack);
+        super(world, owner);
     }
 
     public SmokeProjectileEntity(EntityType<? extends SmokeBombEntity> entityType, World world) {

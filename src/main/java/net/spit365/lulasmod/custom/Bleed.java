@@ -1,7 +1,6 @@
 package net.spit365.lulasmod.custom;
 
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
-import net.minecraft.client.gl.RenderPipelines;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.Entity;
@@ -40,7 +39,7 @@ public final class Bleed {
             int threshold = getThreshold(target);
             if (duration >= threshold) {
                 int times = duration / threshold;
-                target.damage(world, ModDamageTypes.createDamageSource(world, ModDamageTypes.BLOODSUCKING), (target.getMaxHealth() * 0.15f + 10f) * times);
+                target.damage(ModDamageTypes.createDamageSource(world, ModDamageTypes.BLOODSUCKING), (target.getMaxHealth() * 0.15f + 10f) * times);
                 duration %= threshold;
                 occurrences.add(target.getPos());
             }
@@ -65,7 +64,7 @@ public final class Bleed {
 
 	public static void summonParticles(Vec3d pos, ClientWorld world) {
 		if (world != null) for (int i = 0; i < world.random.nextInt(4) + 6; i++) {
-            world.addParticleClient(ModParticles.getBlood(), pos.getX(), pos.getY() + 1, pos.getZ(), 1, 0, 1);
+            world.addParticle(ModParticles.getBlood(), pos.getX(), pos.getY() + 1, pos.getZ(), 1, 0, 1);
         }
 	}
 
@@ -77,9 +76,9 @@ public final class Bleed {
         if (progress > 0) {
             progress = Math.min(progress, 100);
             int l = (int) (progress * 1.83F);
-            drawContext.drawTexture(RenderPipelines.GUI_TEXTURED, BACKGROUND, x, y, 0, 0, textWidth, textHeight, textWidth, textHeight);
+            drawContext.drawTexture(BACKGROUND, x, y, 0, 0, textWidth, textHeight, textWidth, textHeight);
             if (l > 0) {
-                drawContext.drawTexture(RenderPipelines.GUI_TEXTURED, PROGRESS, x, y, 0, 0, l, textHeight, textWidth, textHeight);
+                drawContext.drawTexture(PROGRESS, x, y, 0, 0, l, textHeight, textWidth, textHeight);
             }
         }
     }

@@ -34,8 +34,8 @@ public final class KinesisInteractionRenderer {
 		float cy = h * 0.5f;
 
 		GameOptions options = mc.options;
-		double newFOV = Math.toRadians(options.getFov().getValue()) * player.getFovMultiplier(options.getPerspective().equals(Perspective.FIRST_PERSON), 1f);
-		double lerpedFOV = lastFOV == 0L ? newFOV : MathHelper.lerp(renderTickCounter.getTickProgress(true), lastFOV, newFOV);
+		double newFOV = Math.toRadians(options.getFov().getValue()) * player.getFovMultiplier();
+		double lerpedFOV = lastFOV == 0L ? newFOV : MathHelper.lerp(renderTickCounter.getTickDelta(true), lastFOV, newFOV);
 		lastFOV = lerpedFOV;
 
 		double tanLerpedFOV = Math.tan(lerpedFOV * 0.5d);

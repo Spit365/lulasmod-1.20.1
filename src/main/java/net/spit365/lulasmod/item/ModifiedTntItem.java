@@ -7,16 +7,17 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.stat.Stats;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
+import net.minecraft.util.TypedActionResult;
 import net.minecraft.world.World;
 
 public class ModifiedTntItem extends Item {
     public ModifiedTntItem(Settings settings) {super(settings);}
 
     @Override
-    public ActionResult use(World world, PlayerEntity player, Hand hand){
+    public TypedActionResult<ItemStack> use(World world, PlayerEntity player, Hand hand){
+        ItemStack stack = player.getStackInHand(hand);
         if (!world.isClient()  && (player.experienceLevel > 0 || player.isCreative())){
-			ItemStack stack = player.getStackInHand(hand);
-            player.getItemCooldownManager().set(stack, 20);
+            player.getItemCooldownManager().set(stack.getItem(), 20);
             TntEntity tnt = new TntEntity(world, player.getX(), player.getY() +1, player.getZ(), player);
             tnt.setFuse(20);
             tnt.setVelocity(player.getRotationVec(1).normalize().multiply(2.5));
@@ -26,8 +27,8 @@ public class ModifiedTntItem extends Item {
 				stack.decrement(1);
             }
             player.incrementStat(Stats.USED.getOrCreateStat(this));
-            return ActionResult.SUCCESS;
+            return TypedActionResult.success(stack);
         }
-        return ActionResult.PASS;
+        return TypedActionResult.pass(stack);
     }
 }

@@ -29,7 +29,7 @@ public final class Impaled {
             LivingEntity victim = ctx.target;
             if (ctx.iterations > 0 && victim.isAlive()) {
                 if (victim instanceof EndermanEntity enderman) {
-                    enderman.kill((ServerWorld) victim.getWorld());
+                    enderman.kill();
                     cleanup(ctx, it);
                     continue;
                 }
@@ -66,8 +66,8 @@ public final class Impaled {
         );
     }
 
-    public static boolean impale(PlayerEntity attacker, Entity target, ItemStack item, int iterations, int intervalDuration, ParticleEffect particle) {
-        attacker.getItemCooldownManager().set(item, 2);
+    public static boolean impale(PlayerEntity attacker, Entity target, ItemStack stack, int iterations, int intervalDuration, ParticleEffect particle) {
+        attacker.getItemCooldownManager().set(stack.getItem(), 2);
         if (!(target instanceof LivingEntity living) || IMPALED.stream().anyMatch(ctx -> ctx.attacker == attacker || ctx.target == living)) {
             return false;
         }

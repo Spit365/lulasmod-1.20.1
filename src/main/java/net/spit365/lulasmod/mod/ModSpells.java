@@ -95,7 +95,7 @@ public final class ModSpells {
 
     public static final ConjuringItem SLASH_CONJURING = RegisterHelper.spell("treachery_judecca",  settings -> new ConjuringItem(settings, (world, player, hand, potencyMultiplier, cooldownDivisor) -> {
         Vec3d pos = player.getRotationVec(1).normalize().multiply(2).add(player.getEyePos());
-        for (Entity entity : world.getOtherEntities(player, new Box(pos.add(1), pos.add(-1)))) {
+        for (Entity entity : world.getOtherEntities(player, new Box(pos.add(-1, -1, -1), pos.add(1, 1, 1)))) {
             if (entity instanceof LivingEntity livingEntity)
                 Bleed.apply(livingEntity, (int) (120 * potencyMultiplier));
             else entity.discard();
@@ -108,13 +108,13 @@ public final class ModSpells {
         Entity target = ModUtil.selectClosestEntity(player, 5);
         if (target instanceof LivingEntity livingEntity)
             Bleed.apply(livingEntity, (int) (1200 * potencyMultiplier) - 80);
-        ItemStack item = player.getStackInHand(hand);
-        if (Impaled.impale(player, target, item, 6, 25, ModParticles.CURSED_BLOOD))
-            player.getItemCooldownManager().set(item, 600);
+        ItemStack stack = player.getStackInHand(hand);
+        if (Impaled.impale(player, target, stack, 6, 25, ModParticles.CURSED_BLOOD))
+            player.getItemCooldownManager().set(stack.getItem(), 600);
         return 20;
     }));
     public static final ConjuringItem POCKET_CONJURING = RegisterHelper.spell("heresies", settings -> new ConjuringItem(settings, (world, player, hand, potencyMultiplier, cooldownDivisor) -> {
-        Box box = new Box(player.getPos().add(5), player.getPos().add(-5));
+        Box box = new Box(player.getPos().add(-5, -5, -5), player.getPos().add(5, 5, 5));
         List<Entity> entities = world.getOtherEntities(player, box);
         entities.removeIf(entity -> entity.getAttached(ModData.TIME_FORWARD_ANIMATION_FRAMES) != null);
         if (entities.isEmpty()) entities.add(player);
@@ -131,9 +131,9 @@ public final class ModSpells {
 	public static final SorceryItem COMBUSTION_SORCERY = RegisterHelper.spell("combustion", settings -> new SorceryItem(settings, new Spell() {
 		@Override
 		public int hitEntity(ServerWorld world, PlayerEntity player, Hand hand, LivingEntity target, float potencyMultiplier, int cooldownDivisor) {
-			if (!player.getItemCooldownManager().isCoolingDown(player.getStackInHand(hand))) {
+			if (!player.getItemCooldownManager().isCoolingDown(player.getStackInHand(hand).getItem())) {
 				player.getWorld().createExplosion(player, target.getX(), target.getY(), target.getZ(), player.distanceTo(target) / 4, World.ExplosionSourceType.NONE);
-				player.damage(world, world.getDamageSources().inFire(), 2);
+				player.damage(world.getDamageSources().inFire(), 2);
 				return 100;
 			}
 			return FAIL_RESULT;
@@ -147,7 +147,7 @@ public final class ModSpells {
                 Vec3d currentPos = laser[i];
                 world.spawnParticles(ParticleTypes.FLAME, currentPos.getX(), currentPos.getY(), currentPos.getZ(), 60 / MultiVec3d.MULTI_VEC_DETAIL, 0.25, 0.25, 0.25, 0);
                 world.getOtherEntities(player, new Box(laser[i -1], currentPos)).forEach(entity -> {
-                    entity.damage(world, world.getDamageSources().inFire(), 4);
+                    entity.damage(world.getDamageSources().inFire(), 4);
                     entity.setOnFireFor(entity.getFireTicks() / 20f + 3);
                 });
             }
@@ -228,7 +228,7 @@ public final class ModSpells {
 
 		@Override
 		public int castTick(ServerWorld world, PlayerEntity player, Hand hand, float potencyMultiplier, int cooldownDivisor) {
-			if (world instanceof ServerWorld serverWorld) player.damage(serverWorld, ModDamageTypes.createDamageSource(world, ModDamageTypes.KINETIC_BACKLASH), 1);
+			if (world instanceof ServerWorld) player.damage(ModDamageTypes.createDamageSource(world, ModDamageTypes.KINETIC_BACKLASH), 1);
 			return NO_COOLDOWN_RESULT;
 		}
     }));

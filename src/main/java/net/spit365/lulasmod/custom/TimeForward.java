@@ -16,7 +16,7 @@ public final class TimeForward {
         VisualContext context = player.getAttached(ModData.TIME_FORWARD_ANIMATION_FRAMES);
         if (context == null) return;
         Vec3d pos = context.pos();
-        Box box = new Box(pos.add(-5), pos.add(5));
+        Box box = new Box(pos.add(-5, -5, -5), pos.add(5, 5, 5));
         if (!box.contains(player.getPos())){
             player.removeAttached(ModData.TIME_FORWARD_ANIMATION_FRAMES);
             ServerPlayNetworking.send(player, new SetTimeForwardAnimationStateS2CPacket(false));

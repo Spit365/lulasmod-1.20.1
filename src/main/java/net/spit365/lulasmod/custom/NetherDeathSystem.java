@@ -16,11 +16,11 @@ public final class NetherDeathSystem {
             if (!Objects.requireNonNull(newPlayer.getServer()).getGameRules().getBoolean(ModGamerules.NEW_DEATH_SYSTEM)) return;
             ServerWorld nether = newPlayer.getServer().getWorld(World.NETHER);
             if (nether == null) return;
-            ServerPlayerEntity.Respawn respawn = newPlayer.getRespawn();
             BlockPos pos;
-            if (respawn == null) pos = newPlayer.getBlockPos();
-            else pos = respawn.pos();
-            newPlayer.teleport(nether, pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5, Set.of(), newPlayer.getYaw(), newPlayer.getPitch(), false);
+            BlockPos spawnPointPosition = newPlayer.getSpawnPointPosition();
+            if (spawnPointPosition == null) pos = newPlayer.getBlockPos();
+            else pos = spawnPointPosition;
+            newPlayer.teleport(nether, pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5, Set.of(), newPlayer.getYaw(), newPlayer.getPitch());
         });
     }
 }

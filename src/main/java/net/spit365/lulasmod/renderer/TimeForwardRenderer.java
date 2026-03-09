@@ -38,7 +38,7 @@ public final class TimeForwardRenderer {
         if (!running) return;
         ClientWorld world = context.world();
         if (world == null) return;
-        long m = (displayTime + (long) (animationDuration * context.tickCounter().getTickProgress(false))) % DAY_LENGTH;
+        long m = (displayTime + (long) (animationDuration * context.tickCounter().getTickDelta(false))) % DAY_LENGTH;
         world.getLevelProperties().setTimeOfDay(m < 0 ? m + DAY_LENGTH : m);
     }
 

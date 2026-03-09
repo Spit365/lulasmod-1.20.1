@@ -16,13 +16,13 @@ public final class ModDamageTypes {
 
 	public static DamageSource createDamageSource(Entity attacker, RegistryKey<DamageType> damageType) {
 		return new DamageSource(attacker.getWorld().getRegistryManager()
-			.getOrThrow(RegistryKeys.DAMAGE_TYPE)
+			.get(RegistryKeys.DAMAGE_TYPE)
 			.getEntry(damageType.getValue())
 			.orElseThrow(), attacker);
 	}
 	public static DamageSource createDamageSource(World world, RegistryKey<DamageType> damageType) {
 		return new DamageSource(world.getRegistryManager()
-			.getOrThrow(RegistryKeys.DAMAGE_TYPE)
+			.get(RegistryKeys.DAMAGE_TYPE)
 			.getEntry(damageType.getValue())
 			.orElseThrow());
 	}

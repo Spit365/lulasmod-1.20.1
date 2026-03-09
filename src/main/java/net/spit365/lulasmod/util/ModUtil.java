@@ -4,6 +4,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.registry.RegistryKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
@@ -32,10 +33,11 @@ public final class ModUtil {
 		try {
             if (!(player instanceof ServerPlayerEntity serverPlayer)) return;
 			MinecraftServer server = Objects.requireNonNull(player.getServer());
-			ServerPlayerEntity.Respawn respawn = serverPlayer.getRespawn();
-			ServerWorld targetDimension = Objects.requireNonNull(server.getWorld(respawn != null ? respawn.dimension() : World.OVERWORLD));
-			BlockPos pos = respawn != null ? respawn.pos() : targetDimension.getSpawnPos();
-			if (player.teleport(targetDimension, pos.getX(), pos.getY(), pos.getZ(), Set.of(), player.getYaw(), player.getPitch(), true))
+            RegistryKey<World> spawnPointDimension = serverPlayer.getSpawnPointDimension();
+            ServerWorld targetDimension = Objects.requireNonNull(server.getWorld(spawnPointDimension != null ? spawnPointDimension : World.OVERWORLD));
+            BlockPos spawnPointPosition = serverPlayer.getSpawnPointPosition();
+			BlockPos pos = spawnPointPosition != null ? spawnPointPosition : targetDimension.getSpawnPos();
+			if (player.teleport(targetDimension, pos.getX(), pos.getY(), pos.getZ(), Set.of(), player.getYaw(), player.getPitch()))
 				Lulasmod.LOGGER.info("{} was sent home to {} {} {} in {} (with {})", player.getName(), pos.getX(), pos.getY(), pos.getZ(), targetDimension.getRegistryKey().getValue(), item);
         } catch (NullPointerException e) {
 			Lulasmod.LOGGER.error("Couldn't find the specified dimension");
@@ -58,7 +60,7 @@ public final class ModUtil {
 			    victim.getWorld().getRegistryKey().equals(ModDimensions.POCKET_DIMENSION)?
                     World.OVERWORLD :
                     ModDimensions.POCKET_DIMENSION)),
-            victim.getX(), victim.getY(), victim.getZ(), Set.of(), victim.getYaw(), victim.getPitch(), false);
+            victim.getX(), victim.getY(), victim.getZ(), Set.of(), victim.getYaw(), victim.getPitch());
     }
 
 	public static <T> LinkedList<T> makeMutable(List<T> immutable){

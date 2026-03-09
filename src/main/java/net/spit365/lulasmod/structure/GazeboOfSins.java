@@ -29,7 +29,7 @@ public final class GazeboOfSins {
 
             StructureTemplate gazebo = structureTemplate.get();
             boolean loaded = ChunkPos.stream(new ChunkPos(pos), new ChunkPos(pos.add(gazebo.getSize())))
-                .allMatch(chunkPos -> world.isPosLoaded(chunkPos.getStartPos()));
+                .allMatch(chunkPos -> world.isChunkLoaded(chunkPos.toLong()));
             boolean placed = gazebo.place(
                 world,
                 pos,
