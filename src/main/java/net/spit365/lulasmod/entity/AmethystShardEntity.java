@@ -5,8 +5,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
-import net.minecraft.entity.data.DataTracker;
-import net.minecraft.entity.projectile.ProjectileEntity;
+import net.minecraft.entity.projectile.PersistentProjectileEntity;
 import net.minecraft.entity.projectile.ProjectileUtil;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -25,16 +24,15 @@ import net.minecraft.world.World;
 import net.spit365.lulasmod.mod.ModDamageTypes;
 import net.spit365.lulasmod.mod.ModEntities;
 
-public class AmethystShardEntity extends ProjectileEntity {
-    public AmethystShardEntity(EntityType<? extends ProjectileEntity> entityType, World world) {
+public class AmethystShardEntity extends PersistentProjectileEntity {
+    public AmethystShardEntity(EntityType<? extends PersistentProjectileEntity> entityType, World world) {
         super(entityType, world);
     }
+
     public AmethystShardEntity(LivingEntity owner, World world) {
-        super(ModEntities.AMETHYST_SHARD, world);
-        this.setPosition(owner.getEyePos());
-        this.setOwner(owner);
-        this.setVelocity(owner.getRotationVec(1).normalize().multiply(3));
-        this.setRotation(owner.getYaw(), owner.getPitch());
+        super(ModEntities.AMETHYST_SHARD, owner, world, ItemStack.EMPTY, null);
+        this.setNoGravity(true);
+        this.setVelocity(owner.getRotationVec(1).normalize().multiply(0.5));
     }
 
     @Override protected void onBlockHit(BlockHitResult hitResult) {
@@ -49,10 +47,15 @@ public class AmethystShardEntity extends ProjectileEntity {
             random.nextGaussian() / 20,
             0.1
         );
-        super.onBlockHit(hitResult);
         for (LivingEntity livingEntity : this.getWorld().getEntitiesByClass(LivingEntity.class, this.getBoundingBox().expand(1f), LivingEntity::isAlive))
             this.onEntityHit(new EntityHitResult(livingEntity));
         this.getWorld().playSound(null, this.getX(), this.getY(), this.getZ(), SoundEvents.BLOCK_AMETHYST_CLUSTER_BREAK, SoundCategory.NEUTRAL);
+        this.discard();
+    }
+
+    @Override
+    protected ItemStack getDefaultItemStack() {
+        return new ItemStack(Items.AIR);
     }
 
     @Override
@@ -71,29 +74,13 @@ public class AmethystShardEntity extends ProjectileEntity {
                 owner instanceof LivingEntity
             ) EnchantmentHelper.onTargetDamaged(serverWorld, livingEntity, damageSource);
             serverWorld.playSound(null, BlockPos.ofFloored(entityHitResult.getPos()), SoundEvents.ENTITY_PLAYER_HURT_SWEET_BERRY_BUSH, SoundCategory.NEUTRAL, 1.0f, 1.5f);
+            this.discard();
         }
     }
-
-    @Override protected void initDataTracker(DataTracker.Builder builder) {}
 
     @Override
     public void tick() {
         super.tick();
-        Vec3d currentPos = this.getPos();
-        Vec3d nextPos = currentPos.add(this.getVelocity());
-        BlockHitResult blockHitResult = this.getWorld()
-            .raycast(
-                new RaycastContext(currentPos, nextPos, RaycastContext.ShapeType.COLLIDER, RaycastContext.FluidHandling.NONE, this)
-            );
-        if (!blockHitResult.getType().equals(HitResult.Type.MISS)){
-            onBlockHit(blockHitResult);
-            this.remove(RemovalReason.DISCARDED);
-        }
-        else this.setPosition(nextPos);
-        EntityHitResult entityCollision = ProjectileUtil.getEntityCollision(this.getWorld(), this, currentPos, nextPos, this.getBoundingBox().stretch(this.getVelocity()).expand(1.0), this::canHit);
-        if (entityCollision != null) {
-            onEntityHit(entityCollision);
-            this.remove(RemovalReason.DISCARDED);
-        }
+        this.setVelocity(this.getVelocity().multiply(1.5d));
     }
 }
