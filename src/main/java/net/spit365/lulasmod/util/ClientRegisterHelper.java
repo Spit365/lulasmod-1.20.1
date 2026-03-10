@@ -1,5 +1,6 @@
 package net.spit365.lulasmod.util;
 
+import com.mojang.blaze3d.systems.RenderSystem;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.particle.v1.ParticleFactoryRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
@@ -31,6 +32,10 @@ public final class ClientRegisterHelper {
 	}
 
     public static void hudElement(HudRenderCallback hudElement) {
-		HudRenderCallback.EVENT.register(hudElement);
+		HudRenderCallback.EVENT.register((drawContext, renderTickCounter) -> {
+			RenderSystem.enableBlend();
+			hudElement.onHudRender(drawContext, renderTickCounter);
+			RenderSystem.disableBlend();
+		});
     }
 }
