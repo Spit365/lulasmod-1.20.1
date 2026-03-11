@@ -6,8 +6,7 @@ import net.minecraft.block.Blocks;
 import net.minecraft.block.MapColor;
 import net.minecraft.block.piston.PistonBehavior;
 import net.minecraft.item.BlockItem;
-import net.spit365.lulasmod.block.PentagrammBlock;
-import net.spit365.lulasmod.block.SpellPedestalBlock;
+import net.spit365.lulasmod.block.*;
 import net.spit365.lulasmod.util.RegisterHelper;
 
 public final class ModBlocks {
@@ -29,6 +28,14 @@ public final class ModBlocks {
 			.breakInstantly()
 			.pistonBehavior(PistonBehavior.DESTROY)
 			.allowsSpawning(Blocks::never));
+	public static final BlockAndItem<TitrationStandBlock> TITRATION_STAND = RegisterHelper.block(
+		"titration_stand",
+		TitrationStandBlock::new,
+		AbstractBlock.Settings.create()
+			.mapColor(MapColor.IRON_GRAY)
+			.strength(0.5F)
+			.luminance(state -> 1)
+			.nonOpaque());
 
 	public static void init() {}
 }

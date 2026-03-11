@@ -25,6 +25,7 @@ public final class Lulasmod implements ModInitializer, ClientModInitializer {
 		ModDamageTypes.init();
 		ModCommands.init();
 		ModServerTick.init();
+		ModScreenHandlers.init();
         NetherDeathSystem.init();
 
 		LOGGER.info("Initializing for {}", MOD_ID);

@@ -2,13 +2,18 @@ package net.spit365.lulasmod.util;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
+import io.netty.buffer.ByteBuf;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentRegistry;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentType;
 import net.fabricmc.fabric.api.gamerule.v1.GameRuleRegistry;
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
+import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
 import net.fabricmc.fabric.api.particle.v1.FabricParticleTypes;
+import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerType;
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
+import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.component.ComponentType;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
@@ -28,6 +33,7 @@ import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.entry.RegistryEntry;
+import net.minecraft.screen.ScreenHandler;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.world.GameRules;
@@ -64,6 +70,10 @@ public final class RegisterHelper {
 			Registry.register(Registries.BLOCK, blockRegistryKey, block),
 			item
 		);
+	}
+
+	public static <T extends BlockEntity> BlockEntityType<T> blockEntity(String id, FabricBlockEntityTypeBuilder.Factory<T> factory, Block... blocks) {
+		return Registry.register(Registries.BLOCK_ENTITY_TYPE, id, FabricBlockEntityTypeBuilder.<T>create(factory, blocks).build());
 	}
 
 	public static <T> ComponentType<T> componentType(String name, UnaryOperator<ComponentType.Builder<T>> builderOperator) {
@@ -132,6 +142,10 @@ public final class RegisterHelper {
 		AttachmentType<T> attachmentType = AttachmentRegistry.createPersistent(id(name), codec);
 		if (deathPersistent) ModData.deathPersistent.add((AttachmentType<Object>) attachmentType);
 		return attachmentType;
+	}
+
+	public static @NotNull <T extends ScreenHandler, D> ExtendedScreenHandlerType<T, D> screenHandler(String name, ExtendedScreenHandlerType.ExtendedFactory<T, D> screenHandlerFactory, PacketCodec<ByteBuf, D> packetCodec) {
+		return Registry.register(Registries.SCREEN_HANDLER, id(name), new ExtendedScreenHandlerType<>(screenHandlerFactory, packetCodec));
 	}
 
 	public static <T extends SpellItem> T spell(String name, Function<Item.Settings, T> factory) {

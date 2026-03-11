@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "lulasmod:block/spell_pedestal"
+    }
+  }
+}

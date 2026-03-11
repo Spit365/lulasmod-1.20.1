@@ -1,6 +1,9 @@
 package net.spit365.lulasmod.mod;
 
+import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.entity.EntityType;
+import net.minecraft.world.World;
+import net.spit365.lulasmod.blockentity.TitrationStandBlockEntity;
 import net.spit365.lulasmod.entity.*;
 import net.spit365.lulasmod.util.RegisterHelper;
 
@@ -29,6 +32,8 @@ public final class ModEntities {
 		"needle_sword",
         NeedleSwordEntity::new,
 		0.5f, 0.5f, 4, 20);
+	public static final BlockEntityType<TitrationStandBlockEntity> TITRATION_STAND = RegisterHelper.blockEntity(
+		"titration_stand", TitrationStandBlockEntity::new);
 
 	public static void init() {}
 }
