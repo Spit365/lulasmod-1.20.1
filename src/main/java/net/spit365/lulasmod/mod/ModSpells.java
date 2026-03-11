@@ -55,7 +55,7 @@ public final class ModSpells {
     }));
 
 	public static final SpellItem FIRE_SPELL = RegisterHelper.spell("malignity",  settings -> new SpellItem(settings, (world, player, hand, potencyMultiplier, cooldownDivisor) -> {
-		world.spawnEntity(new MalignityEntity(world, player, player.getRotationVec(1).normalize().multiply(3), Math.min(Math.round(potencyMultiplier + 2), 100)));
+		world.spawnEntity(new MalignityEntity(world, player, player.getRotationVec(1).normalize().multiply(0.5), Math.min(Math.round(potencyMultiplier + 2), 100)));
 		return 300;
 	}));
 	public static final SpellItem DASH_SPELL = RegisterHelper.spell("purloining",  settings -> new SpellItem(settings, (world, player, hand, potencyMultiplier, cooldownDivisor) -> DashSpell.onUse(world, player, cooldownDivisor)));

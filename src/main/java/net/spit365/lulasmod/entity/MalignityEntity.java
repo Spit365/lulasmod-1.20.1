@@ -22,6 +22,12 @@ public class MalignityEntity extends FireballEntity {
     }
 
     @Override
+    public void tick() {
+        this.setVelocity(this.getVelocity().multiply(1.125));
+        super.tick();
+    }
+
+    @Override
     protected void onCollision(HitResult hitResult) {
         HitResult.Type type = hitResult.getType();
         World world = this.getWorld();

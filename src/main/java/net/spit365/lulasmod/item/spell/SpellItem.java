@@ -42,8 +42,7 @@ public class SpellItem extends Item {
             if (player.isSneaking()) {
                 if (mutable.remove(spellName))
                     sound = getSound(false);
-            }
-			else if (!mutable.contains(spellName)) {
+            } else if (!mutable.contains(spellName)) {
                 mutable.add(spellName);
                 sound = getSound(true);
             }
@@ -54,7 +53,9 @@ public class SpellItem extends Item {
         return ActionResult.PASS;
     }
 
-    protected SoundEvent getSound(boolean add){return add ? SoundEvents.BLOCK_RESPAWN_ANCHOR_CHARGE : SoundEvents.BLOCK_RESPAWN_ANCHOR_DEPLETE.value();}
+    protected SoundEvent getSound(boolean add){
+        return add ? SoundEvents.BLOCK_RESPAWN_ANCHOR_CHARGE : SoundEvents.BLOCK_RESPAWN_ANCHOR_DEPLETE.value();
+    }
 
     @Override
     public void inventoryTick(ItemStack stack, ServerWorld world, Entity entity, @Nullable EquipmentSlot slot) {

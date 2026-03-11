@@ -33,7 +33,7 @@ public class AmethystShardEntity extends ProjectileEntity {
         super(ModEntities.AMETHYST_SHARD, world);
         this.setPosition(owner.getEyePos());
         this.setOwner(owner);
-        this.setVelocity(owner.getRotationVec(1).normalize().multiply(3));
+        this.setVelocity(owner.getRotationVec(1).normalize().multiply(0.5));
         this.setRotation(owner.getYaw(), owner.getPitch());
         this.lastYaw = owner.getYaw();
         this.lastPitch = owner.getPitch();
@@ -82,7 +82,8 @@ public class AmethystShardEntity extends ProjectileEntity {
     public void tick() {
         super.tick();
         Vec3d currentPos = this.getPos();
-        Vec3d nextPos = currentPos.add(this.getVelocity());
+        Vec3d velocity = this.getVelocity();
+        Vec3d nextPos = currentPos.add(velocity);
         BlockHitResult blockHitResult = this.getWorld()
             .getCollisionsIncludingWorldBorder(
                 new RaycastContext(currentPos, nextPos, RaycastContext.ShapeType.COLLIDER, RaycastContext.FluidHandling.NONE, this)
@@ -92,10 +93,11 @@ public class AmethystShardEntity extends ProjectileEntity {
             this.remove(RemovalReason.DISCARDED);
         }
         else this.setPosition(nextPos);
-        EntityHitResult entityCollision = ProjectileUtil.getEntityCollision(this.getWorld(), this, currentPos, nextPos, this.getBoundingBox().stretch(this.getVelocity()).expand(1.0), this::canHit);
+        EntityHitResult entityCollision = ProjectileUtil.getEntityCollision(this.getWorld(), this, currentPos, nextPos, this.getBoundingBox().stretch(velocity).expand(1.0), this::canHit);
         if (entityCollision != null) {
             onEntityHit(entityCollision);
             this.remove(RemovalReason.DISCARDED);
         }
+        this.setVelocity(velocity.multiply(1.5));
     }
 }
