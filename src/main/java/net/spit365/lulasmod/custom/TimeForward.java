@@ -4,6 +4,7 @@ import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
+import net.spit365.boa.BoxOutline;
 import net.spit365.lulasmod.mod.ModData;
 import net.spit365.lulasmod.packet.SetTimeForwardAnimationStateS2CPacket;
 import net.spit365.lulasmod.util.ModUtil;

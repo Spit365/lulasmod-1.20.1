@@ -10,7 +10,6 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
-import net.spit365.clienttweaks.packet.BoxStateS2CPacket;
 import net.spit365.lulasmod.custom.DashSpell;
 import net.spit365.lulasmod.custom.Demon;
 import net.spit365.lulasmod.custom.Shimmer;
@@ -33,7 +32,6 @@ public final class ModPackets {
 		PayloadTypeRegistry.playS2C().register(SetTimeForwardAnimationStateS2CPacket.ID, SetTimeForwardAnimationStateS2CPacket.CODEC);
 		PayloadTypeRegistry.playS2C().register(SpellHotbarListS2CPacket.ID, SpellHotbarListS2CPacket.CODEC);
         PayloadTypeRegistry.playS2C().register(SummonBleedS2CPacket.ID, SummonBleedS2CPacket.CODEC);
-        PayloadTypeRegistry.playS2C().register(BoxStateS2CPacket.ID, BoxStateS2CPacket.CODEC);
         PayloadTypeRegistry.playS2C().register(MindShimmerS2CPacket.ID, MindShimmerS2CPacket.CODEC);
 
 		PayloadTypeRegistry.playC2S().register(CycleSpellHotbarC2SPacket.ID, CycleSpellHotbarC2SPacket.CODEC);
