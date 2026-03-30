@@ -10,9 +10,7 @@ public final class SmokeSpellCooldown {
     public static final int MAX_COOLDOWN = 800;
 
     public static boolean isCoolingDown(Entity entity){
-        Integer cooldown = entity.getAttached(ModData.SMOKE_SPELL_COOLDOWN);
-        if (cooldown == null) return false;
-        return cooldown >= 0;
+        return entity.getAttachedOrElse(ModData.SMOKE_SPELL_COOLDOWN, -1) >= 0;
     }
 
     public static int getPercent(Entity entity){

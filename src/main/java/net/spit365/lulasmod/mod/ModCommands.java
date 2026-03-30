@@ -9,6 +9,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.command.ServerCommandSource;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.spit365.lulasmod.custom.Bleed;
 import net.spit365.lulasmod.custom.Demon;
@@ -51,6 +52,16 @@ public final class ModCommands {
 					)
 				)
 		    );
+			dispatcher.register(literal("presence")
+				.then(argument("value", IntegerArgumentType.integer(0))
+					.executes(context -> {
+						ServerPlayerEntity player = context.getSource().getPlayer();
+						if (player != null)
+                            player.setAttached(ModData.PRESENCE_LEVEL, IntegerArgumentType.getInteger(context, "value"));
+						return r;
+					})
+				)
+			);
         });
     }
 
@@ -61,5 +72,4 @@ public final class ModCommands {
 			commandContext.getSource().sendFeedback(() -> Text.translatable("notify.lulasmod.demon." + value, entity.getName()), true);
 		}
 	}
-
 }

@@ -22,8 +22,8 @@ public final class DashSpell {
 	public static int usages;
 
 	public static void tick(ServerPlayerEntity player) {
-		Integer timesLeft = player.getAttached(ModData.DASH_SPELL);
-		ServerPlayNetworking.send(player, new DashSpellUsagesS2CPacket(timesLeft == null ? -1 : timesLeft));
+        ServerPlayNetworking.send(player,
+			new DashSpellUsagesS2CPacket(player.getAttachedOrElse(ModData.DASH_SPELL, -1)));
 
 		Integer cooldown = player.getAttached(ModData.DASH_COOLDOWN);
 		if (cooldown != null) {
@@ -36,9 +36,7 @@ public final class DashSpell {
         if (player.hasStatusEffect(StatusEffects.SLOWNESS)) return SealItem.FAIL_RESULT;
 
         int maxUsages = 5 * cooldownDivisor;
-        Integer usages = player.getAttached(ModData.DASH_SPELL);
-        if (usages == null) usages = maxUsages;
-        usages--;
+        int usages = player.getAttachedOrElse(ModData.DASH_SPELL, maxUsages) - 1;
         int cooldown = usages > 0 ? 5 : (player.isOnGround() ? 20 : 40);
 
 		if (!dashInternal(world, player)) return SealItem.FAIL_RESULT;
@@ -48,16 +46,13 @@ public final class DashSpell {
     }
 
 	public static void dash(ServerWorld world, PlayerEntity player) {
-
 		Integer prevCooldown = player.getAttached(ModData.DASH_COOLDOWN);
 		if (prevCooldown != null && prevCooldown > 0) return;
 
 		if (player.hasStatusEffect(StatusEffects.SLOWNESS)) return;
 
 		int maxUsages = 5;
-        Integer usages = player.getAttached(ModData.DASH_SPELL);
-        if (usages == null) usages = maxUsages;
-        usages--;
+        int usages = player.getAttachedOrElse(ModData.DASH_SPELL, maxUsages) - 1;
         int cooldown = usages > 0 ? 10 : (player.isOnGround() ? 20 : 40);
 
 		if (!dashInternal(world, player)) return;

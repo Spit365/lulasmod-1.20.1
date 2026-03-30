@@ -39,6 +39,7 @@ import net.minecraft.util.Identifier;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
 import net.spit365.lulasmod.Lulasmod;
+import net.spit365.lulasmod.custom.Presence;
 import net.spit365.lulasmod.item.spell.SpellItem;
 import net.spit365.lulasmod.mod.ModBlocks;
 import net.spit365.lulasmod.mod.ModData;
@@ -142,6 +143,10 @@ public final class RegisterHelper {
 		AttachmentType<T> attachmentType = AttachmentRegistry.createPersistent(id(name), codec);
 		if (deathPersistent) ModData.deathPersistent.add((AttachmentType<Object>) attachmentType);
 		return attachmentType;
+	}
+
+	public static Presence presence(int levelRequirement) {
+		return Presence.register(levelRequirement);
 	}
 
 	public static @NotNull <T extends ScreenHandler, D> ExtendedScreenHandlerType<T, D> screenHandler(String name, ExtendedScreenHandlerType.ExtendedFactory<T, D> screenHandlerFactory, PacketCodec<ByteBuf, D> packetCodec) {

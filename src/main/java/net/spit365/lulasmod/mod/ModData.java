@@ -1,6 +1,7 @@
 package net.spit365.lulasmod.mod;
 
 import com.mojang.serialization.Codec;
+import net.fabricmc.fabric.api.attachment.v1.AttachmentRegistry;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentType;
 import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
 import net.minecraft.component.ComponentType;
@@ -16,13 +17,16 @@ import java.util.List;
 import java.util.Set;
 
 public final class ModData {
+	// Codecs
 	public static final Codec<Shimmer.Variant> SHIMMER_VARIANT_CODEC = Codecs.rangedInt(0, Shimmer.Variant.values().length - 1).xmap(Shimmer.Variant::byIndex, Shimmer.Variant::getIndex);
 
 	public static final Set<AttachmentType<Object>> deathPersistent = new HashSet<>();
 
+	// Component Types (Items)
     public static final ComponentType<List<Identifier>> SPELL_BOOK_SPELLS = RegisterHelper.componentType("spell_book_spells", builder -> builder.codec(Identifier.CODEC.listOf()));
 	public static final ComponentType<Shimmer.Variant> SHIMMER_VARIANT = RegisterHelper.componentType("shimmer_variant", builder -> builder.codec(SHIMMER_VARIANT_CODEC));
 
+	//Attachment Types (Entities)
 	public static final AttachmentType<Integer> DAMAGE_DELAY = RegisterHelper.persistentAttachmentType("damage_delay", Codec.INT, false);
 	public static final AttachmentType<List<Identifier>> EQUIPPED_SPELLS = RegisterHelper.persistentAttachmentType("equipped_spells", Identifier.CODEC.listOf(), true);
 	public static final AttachmentType<Integer> DASH_SPELL = RegisterHelper.persistentAttachmentType("purloining_spell", Codec.INT, false);
@@ -33,8 +37,12 @@ public final class ModData {
     public static final AttachmentType<Integer> SMOKE_SPELL_COOLDOWN = RegisterHelper.attachmentType("smoke_spell_cooldown", false);
     public static final AttachmentType<Boolean> DEMON = RegisterHelper.persistentAttachmentType("demon", Codec.BOOL, true);
 	public static final AttachmentType<Shimmer.Variant> APPLIED_SHIMMER_VARIANT = RegisterHelper.persistentAttachmentType("applied_shimmer_variant", SHIMMER_VARIANT_CODEC, false);
+	public static final AttachmentType<Integer> PRESENCE_LEVEL = RegisterHelper.persistentAttachmentType("presence_level", Codecs.NON_NEGATIVE_INT, /* Actually isn't, just needed for some Logic */ true);
 
 	public static void init() {
-		ServerPlayerEvents.AFTER_RESPAWN.register((oldPlayer, newPlayer, alive) -> deathPersistent.forEach(attachmentType -> newPlayer.setAttached(attachmentType, oldPlayer.getAttached(attachmentType))));
+		ServerPlayerEvents.AFTER_RESPAWN.register((oldPlayer, newPlayer, alive) ->
+			deathPersistent.forEach(attachmentType ->
+				newPlayer.setAttached(attachmentType, oldPlayer.getAttached(attachmentType)))
+		);
 	}
 }
