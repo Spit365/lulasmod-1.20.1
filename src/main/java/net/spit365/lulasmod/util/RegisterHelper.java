@@ -54,7 +54,7 @@ import java.util.function.Function;
 import java.util.function.UnaryOperator;
 
 public final class RegisterHelper {
-	public static <T> AttachmentType<T> attachmentType(String name, boolean deathPersistent){
+	public static <T> AttachmentType<T> attachmentType(String name, boolean deathPersistent) {
 		AttachmentType<T> attachmentType = AttachmentRegistry.create(id(name));
 		if (deathPersistent) ModData.deathPersistent.add((AttachmentType<Object>) attachmentType);
 		return attachmentType;
@@ -133,13 +133,13 @@ public final class RegisterHelper {
 			.build());
 	}
 
-	public static SimpleParticleType particle(String name, Boolean alwaysShow){
+	public static SimpleParticleType particle(String name, Boolean alwaysShow) {
 		 SimpleParticleType particle = FabricParticleTypes.simple(alwaysShow);
 		 Registry.register(Registries.PARTICLE_TYPE, id(name), particle);
 		 return particle;
 	}
 
-	public static <T> AttachmentType<T> persistentAttachmentType(String name, Codec<T> codec, boolean deathPersistent){
+	public static <T> AttachmentType<T> persistentAttachmentType(String name, Codec<T> codec, boolean deathPersistent) {
 		AttachmentType<T> attachmentType = AttachmentRegistry.createPersistent(id(name), codec);
 		if (deathPersistent) ModData.deathPersistent.add((AttachmentType<Object>) attachmentType);
 		return attachmentType;

@@ -33,8 +33,8 @@ public class SpellItem extends Item {
     }
 
     @Override
-    public ActionResult use(World world, PlayerEntity player, Hand hand){
-        if (!world.isClient() && !(player.getOffHandStack().getItem() instanceof SpellBookItem)){
+    public ActionResult use(World world, PlayerEntity player, Hand hand) {
+        if (!world.isClient() && !(player.getOffHandStack().getItem() instanceof SpellBookItem)) {
             player.getItemCooldownManager().set(player.getStackInHand(hand), 5);
 			List<Identifier> mutable = ModUtil.makeMutable(player.getAttached(ModData.EQUIPPED_SPELLS));
             SoundEvent sound = null;
@@ -53,7 +53,7 @@ public class SpellItem extends Item {
         return ActionResult.PASS;
     }
 
-    protected SoundEvent getSound(boolean add){
+    protected SoundEvent getSound(boolean add) {
         return add ? SoundEvents.BLOCK_RESPAWN_ANCHOR_CHARGE : SoundEvents.BLOCK_RESPAWN_ANCHOR_DEPLETE.value();
     }
 

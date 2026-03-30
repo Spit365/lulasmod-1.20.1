@@ -41,7 +41,7 @@ public abstract class LivingEntityMixin extends Entity implements Attackable {
         }
     }
     @ModifyVariable(method = "travelMidAir", at = @At("STORE"), ordinal = 0)
-    private double travelMidAir(double d){
+    private double travelMidAir(double d) {
         LivingEntityMixin entity = this;
         return (
             entity.getMainHandStack().getItem() instanceof BowItem &&

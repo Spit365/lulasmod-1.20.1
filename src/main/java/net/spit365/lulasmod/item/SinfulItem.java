@@ -10,7 +10,7 @@ public class SinfulItem extends Item {
      public SinfulItem(Settings settings) {super(settings);}
 
      @Override
-     public void postHit(ItemStack stack, LivingEntity target, LivingEntity attacker){
+     public void postHit(ItemStack stack, LivingEntity target, LivingEntity attacker) {
 		 int bleed = 1;
 		 if (attacker.getStackInHand(Hand.OFF_HAND).getItem() instanceof SealItem sealItem && sealItem.canUse.test(attacker)) {
 			 bleed = (int) sealItem.potencyMultiplier;

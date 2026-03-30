@@ -10,7 +10,7 @@ import net.spit365.lulasmod.custom.DashSpell;
 
 @Environment(EnvType.CLIENT)
 public final class DashSpellRenderer {
-    public static void render(DrawContext context){
+    public static void render(DrawContext context) {
         MinecraftClient client = MinecraftClient.getInstance();
         ClientPlayerEntity player = client.player;
         Integer maxUsages = DashSpell.showUsages(player);

@@ -12,7 +12,7 @@ import net.spit365.lulasmod.util.ModUtil;
 public class HomeButtonItem extends Item {
     public HomeButtonItem(Settings settings) {super(settings);}
     @Override
-    public ActionResult use(World world, PlayerEntity player, Hand hand){
+    public ActionResult use(World world, PlayerEntity player, Hand hand) {
         if (!world.isClient()) {
 			ItemStack stack = player.getStackInHand(hand);
             player.getItemCooldownManager().set(stack, 6000);

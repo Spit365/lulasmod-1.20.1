@@ -26,14 +26,14 @@ public final class Bleed {
     public static final Identifier PROGRESS = Identifier.of(Lulasmod.MOD_ID, "textures/gui/bleed_progress/progress.png");
     public static int progress = 0;
 
-    public static void tick(ServerWorld world){
+    public static void tick(ServerWorld world) {
         Set<Vec3d> occurrences = new HashSet<>();
         for (Entity entity : world.iterateEntities()) {
             Integer duration = entity.getAttached(ModData.BLEED_VALUE);
             if (entity instanceof ServerPlayerEntity player)
                 ServerPlayNetworking.send(player, new BleedProgressS2CPacket(duration != null ? duration * 100 / getThreshold(player) : 0));
             if (duration == null) continue;
-            if (!(entity instanceof LivingEntity target) || !target.isAlive() || duration <= 0){
+            if (!(entity instanceof LivingEntity target) || !target.isAlive() || duration <= 0) {
                 entity.removeAttached(ModData.BLEED_VALUE);
                 continue;
             }
@@ -58,7 +58,7 @@ public final class Bleed {
         return MathHelper.clamp((int) entity.getHealth() * 60, 1, 1200) ;
     }
 
-    public static void apply(LivingEntity entity, int duration){
+    public static void apply(LivingEntity entity, int duration) {
         Integer bleed = entity.getAttached(ModData.BLEED_VALUE);
         entity.setAttached(ModData.BLEED_VALUE, duration + (bleed != null? bleed : 0));
 	}

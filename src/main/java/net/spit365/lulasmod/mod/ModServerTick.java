@@ -8,7 +8,7 @@ import net.spit365.lulasmod.structure.GazeboOfSins;
 import net.spit365.lulasmod.util.SpellHotbar;
 
 public final class ModServerTick {
-    public static void init(){
+    public static void init() {
 		ServerTickEvents.END_SERVER_TICK.register(server -> {
 			for (ServerPlayerEntity player : server.getPlayerManager().getPlayerList()) {
                 MinerRepel.tick(player);
@@ -18,7 +18,7 @@ public final class ModServerTick {
                 Shimmer.tick(player);
 			}
             Impaled.tick();
-            for (ServerWorld serverWorld : server.getWorlds()){
+            for (ServerWorld serverWorld : server.getWorlds()) {
 				GazeboOfSins.tick(serverWorld);
                 LinkedLightning.tick(serverWorld);
                 Bleed.tick(serverWorld);

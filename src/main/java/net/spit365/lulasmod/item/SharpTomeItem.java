@@ -20,7 +20,7 @@ public class SharpTomeItem extends Item{
         ItemStack stack = player.getStackInHand(hand);
         ItemStack paper = ModUtil.getInventoryStack(player, Items.PAPER);
         boolean requirePaper = player.isCreative(); // || EnchantmentHelper.getLevel(Enchantments.INFINITY, stack) > 0;
-        if (!world.isClient() && (paper != null || requirePaper)){
+        if (!world.isClient() && (paper != null || requirePaper)) {
             player.getItemCooldownManager().set(stack, 5);
             if (!requirePaper) paper.decrement(1);
             ArrowEntity arrow = new ArrowEntity(world, player, stack, paper);

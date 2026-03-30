@@ -11,7 +11,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(ClientPlayNetworkHandler.class)
 public class ClientPlayNetworkHandlerMixin {
     @Inject(method = "onWorldTimeUpdate", at = @At("HEAD"), cancellable = true)
-    public void onWorldTimeUpdate(WorldTimeUpdateS2CPacket packet, CallbackInfo cir){
+    public void onWorldTimeUpdate(WorldTimeUpdateS2CPacket packet, CallbackInfo cir) {
         if (TimeForwardRenderer.isRunning()) cir.cancel();
     }
 }

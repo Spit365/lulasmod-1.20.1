@@ -17,9 +17,9 @@ public class SmokeBombItem extends Item {
     public SmokeBombItem(Settings settings) {super(settings);}
 
     @Override
-    public ActionResult use(World world, PlayerEntity player, Hand hand){
+    public ActionResult use(World world, PlayerEntity player, Hand hand) {
         ItemStack stack = player.getStackInHand(hand);
-        if (!world.isClient()){
+        if (!world.isClient()) {
             world.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.ENTITY_SNOWBALL_THROW, SoundCategory.NEUTRAL, 0.5F, 0.4F / (world.getRandom().nextFloat() * 0.4F + 0.8F));
             world.spawnEntity(new SmokeBombEntity(world, player, stack));
             player.addStatusEffect(new StatusEffectInstance(StatusEffects.INVISIBILITY, 400, 0, false, true));

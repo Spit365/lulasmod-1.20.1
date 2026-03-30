@@ -25,7 +25,7 @@ public final class LinkedLightning {
         LinkedLightningPersistentState linkedLightningPersistentState = LinkedLightningPersistentState.get(serverWorld);
         Set<MultiVec3d> links = linkedLightningPersistentState.getLinks();
         for (MultiVec3d multiVec3d : links) {
-            if(multiVec3d.pairwiseSegments().allMatch(twoVec3d -> twoVec3d.start().distanceTo(twoVec3d.end()) < 0.5d)){
+            if (multiVec3d.pairwiseSegments().allMatch(twoVec3d -> twoVec3d.start().distanceTo(twoVec3d.end()) < 0.5d)) {
                 linkedLightningPersistentState.remove(multiVec3d);
                 break;
             }

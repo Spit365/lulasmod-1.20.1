@@ -47,5 +47,5 @@ public class PentagrammBlock extends Block {
         return absoluteCandles * 25 / maxCandles.get();
     }
 
-    @Override public VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context){return SHAPE;}
+    @Override public VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {return SHAPE;}
 }

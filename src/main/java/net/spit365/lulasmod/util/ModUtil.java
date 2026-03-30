@@ -24,14 +24,14 @@ public final class ModUtil {
     public static @Nullable Entity selectClosestEntity(Entity selector, double radius) {
         Vec3d selectionCenter = selector.getRotationVec(1).normalize().multiply(radius).add(selector.getPos());
         Entity selectedEntity = null;
-        for (Entity entityInRange : selector.getWorld().getOtherEntities(selector, new Box(selectionCenter.add(-radius, -radius, -radius), selectionCenter.add(radius, radius, radius)))){
+        for (Entity entityInRange : selector.getWorld().getOtherEntities(selector, new Box(selectionCenter.add(-radius, -radius, -radius), selectionCenter.add(radius, radius, radius)))) {
             if (selectedEntity == null || selectedEntity.getPos().squaredDistanceTo(selector.getPos()) > entityInRange.getPos().squaredDistanceTo(selector.getPos()))
                 selectedEntity = entityInRange;
         }
         return selectedEntity;
     }
 
-	public static void sendHome(PlayerEntity player, Item item){
+	public static void sendHome(PlayerEntity player, Item item) {
 		try {
             if (!(player instanceof ServerPlayerEntity serverPlayer)) return;
 			MinecraftServer server = Objects.requireNonNull(player.getServer());
@@ -45,7 +45,7 @@ public final class ModUtil {
 		}
 	}
 
-    public static ItemStack getInventoryStack(PlayerEntity player, Item item){
+    public static ItemStack getInventoryStack(PlayerEntity player, Item item) {
         for (int i = 0; i < player.getInventory().size(); i++) {
             ItemStack itemStack = player.getInventory().getStack(i);
             if (itemStack.getItem().equals(item)) {
@@ -64,7 +64,7 @@ public final class ModUtil {
             victim.getX(), victim.getY(), victim.getZ(), Set.of(), victim.getYaw(), victim.getPitch(), false);
     }
 
-	public static <T> LinkedList<T> makeMutable(List<T> immutable){
+	public static <T> LinkedList<T> makeMutable(List<T> immutable) {
 		return immutable == null? new LinkedList<>() : new LinkedList<>(immutable);
 	}
 }

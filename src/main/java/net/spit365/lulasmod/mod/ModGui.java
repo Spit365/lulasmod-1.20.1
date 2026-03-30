@@ -10,7 +10,7 @@ import net.spit365.lulasmod.util.ClientRegisterHelper;
 
 @Environment(EnvType.CLIENT)
 public final class ModGui {
-	public static void init(){
+	public static void init() {
         ClientRegisterHelper.hudElement("spell_hotbar", (context, renderTickCounter) -> SpellHotbarRenderer.render(context));
         ClientRegisterHelper.hudElement("kinesis_interaction_range", KinesisInteractionRenderer::render);
         ClientRegisterHelper.hudElement("purloining_usages", (context, renderTickCounter) -> DashSpellRenderer.render(context));

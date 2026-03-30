@@ -78,7 +78,7 @@ public final class DashSpell {
 		return true;
 	}
 
-	private static int mapMovement(boolean direction1, boolean direction2){
+	private static int mapMovement(boolean direction1, boolean direction2) {
 		return direction1 == direction2 ? 0 : (direction1 ? 1 : -1);
 	}
 

@@ -4,7 +4,7 @@ import net.minecraft.client.gui.screen.ingame.HandledScreens;
 import net.spit365.lulasmod.screen.TitrationStandScreen;
 
 public final class ClientScreens {
-    public static void init(){
+    public static void init() {
         HandledScreens.register(ModScreenHandlers.TITRATION_STAND_SCREEN_HANDLER, TitrationStandScreen::new);
     }
 }

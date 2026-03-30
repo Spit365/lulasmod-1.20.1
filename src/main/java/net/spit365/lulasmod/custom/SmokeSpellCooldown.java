@@ -9,21 +9,21 @@ import java.util.stream.StreamSupport;
 public final class SmokeSpellCooldown {
     public static final int MAX_COOLDOWN = 800;
 
-    public static boolean isCoolingDown(Entity entity){
+    public static boolean isCoolingDown(Entity entity) {
         return entity.getAttachedOrElse(ModData.SMOKE_SPELL_COOLDOWN, -1) >= 0;
     }
 
-    public static int getPercent(Entity entity){
+    public static int getPercent(Entity entity) {
         Integer cooldown = entity.getAttached(ModData.SMOKE_SPELL_COOLDOWN);
         if (cooldown == null) return 100;
         return 100 - Math.clamp(cooldown * 100 / MAX_COOLDOWN, 0, 100);
     }
     
-    public static void apply(Entity entity, int cooldownDivisor){
+    public static void apply(Entity entity, int cooldownDivisor) {
         entity.setAttached(ModData.SMOKE_SPELL_COOLDOWN, MAX_COOLDOWN / cooldownDivisor);
     }
 
-    public static void tick(ServerWorld world){
+    public static void tick(ServerWorld world) {
         StreamSupport.stream(world.iterateEntities().spliterator(), true).forEach(entity -> {
             Integer cooldown = entity.getAttached(ModData.SMOKE_SPELL_COOLDOWN);
             if (cooldown == null) return;

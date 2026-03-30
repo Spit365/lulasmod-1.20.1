@@ -35,7 +35,7 @@ public class ParticleProjectileEntity extends PersistentProjectileEntity {
     }
 
     @Override
-    public void tick(){
+    public void tick() {
         super.tick();
         if (this.getWorld() instanceof ServerWorld serverWorld) {
             if (particleEffect != null) serverWorld.spawnParticles(particleEffect, this.getX(), this.getY(), this.getZ(), 2, 0.0625, 0.0625, 0.0625, 0);

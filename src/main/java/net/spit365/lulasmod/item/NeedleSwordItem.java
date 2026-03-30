@@ -18,7 +18,7 @@ public class NeedleSwordItem extends Item {
 
     @Override
     public ActionResult use(World world, PlayerEntity user, Hand hand) {
-        if (world instanceof ServerWorld){
+        if (world instanceof ServerWorld) {
             ItemStack sword = user.getStackInHand(hand);
             world.spawnEntity(new NeedleSwordEntity(ModEntities.NEEDLE_SWORD, user, world, sword.copy()));
             sword.decrementUnlessCreative(1, user);

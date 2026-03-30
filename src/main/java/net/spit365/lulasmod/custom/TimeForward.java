@@ -12,12 +12,12 @@ import net.spit365.lulasmod.util.ModUtil;
 public final class TimeForward {
     public static final int ANIMATION_DURATION = 450;
 
-    public static void tick(ServerPlayerEntity player){
+    public static void tick(ServerPlayerEntity player) {
         VisualContext context = player.getAttached(ModData.TIME_FORWARD_ANIMATION_FRAMES);
         if (context == null) return;
         Vec3d pos = context.pos();
         Box box = new Box(pos.add(-5), pos.add(5));
-        if (!box.contains(player.getPos())){
+        if (!box.contains(player.getPos())) {
             player.removeAttached(ModData.TIME_FORWARD_ANIMATION_FRAMES);
             ServerPlayNetworking.send(player, new SetTimeForwardAnimationStateS2CPacket(false));
             return;
@@ -32,5 +32,5 @@ public final class TimeForward {
         }
     }
 
-    public record VisualContext(int frames, Vec3d pos){}
+    public record VisualContext(int frames, Vec3d pos) {}
 }

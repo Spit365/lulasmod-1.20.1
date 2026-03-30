@@ -62,7 +62,7 @@ public final class ModItems {
 
 	public static void init() {
 		if (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT) ItemTooltipCallback.EVENT.register((stack, tooltipContext, tooltipType, list) -> {
-			switch (stack.getItem()){
+			switch (stack.getItem()) {
 				case SpellBookItem ignored -> {
 					List<Identifier> spells = stack.get(ModData.SPELL_BOOK_SPELLS);
 					if (spells != null && !spells.isEmpty()) spells.forEach(id ->

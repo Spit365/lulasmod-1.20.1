@@ -88,7 +88,7 @@ public class AmethystShardEntity extends ProjectileEntity {
             .getCollisionsIncludingWorldBorder(
                 new RaycastContext(currentPos, nextPos, RaycastContext.ShapeType.COLLIDER, RaycastContext.FluidHandling.NONE, this)
             );
-        if (!blockHitResult.getType().equals(HitResult.Type.MISS)){
+        if (!blockHitResult.getType().equals(HitResult.Type.MISS)) {
             onBlockHit(blockHitResult);
             this.remove(RemovalReason.DISCARDED);
         }

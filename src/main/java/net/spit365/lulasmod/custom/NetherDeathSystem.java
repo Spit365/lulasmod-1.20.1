@@ -11,7 +11,7 @@ import java.util.Objects;
 import java.util.Set;
 
 public final class NetherDeathSystem {
-    public static void init(){
+    public static void init() {
         ServerPlayerEvents.AFTER_RESPAWN.register((oldPlayer, newPlayer, alive) -> {
             if (!Objects.requireNonNull(newPlayer.getServer()).getGameRules().getBoolean(ModGamerules.NEW_DEATH_SYSTEM)) return;
             ServerWorld nether = newPlayer.getServer().getWorld(World.NETHER);

@@ -49,9 +49,9 @@ public class SpellPedestalBlock extends Block {
 		} else player.sendMessage(Text.translatable("notify.lulasmod.already_absorbed_pedestal"), true);
 		return ActionResult.PASS;
     }
-    @Override public VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context){return SHAPE;}
+    @Override public VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {return SHAPE;}
 
-	public record WorldBlockPos(RegistryKey<World> world, BlockPos blockPos){
+	public record WorldBlockPos(RegistryKey<World> world, BlockPos blockPos) {
 		public static final Codec<WorldBlockPos> CODEC = RecordCodecBuilder.create(instance -> instance.group(
 			Identifier.CODEC.fieldOf("world").xmap(id -> RegistryKey.of(RegistryKeys.WORLD, id), RegistryKey::getValue)
 				.forGetter(WorldBlockPos::world),

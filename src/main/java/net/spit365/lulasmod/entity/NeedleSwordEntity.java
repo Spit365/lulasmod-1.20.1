@@ -55,7 +55,7 @@ public class NeedleSwordEntity extends PersistentProjectileEntity {
         if (entity != null) entity.addVelocity(dir.subtract(entity.getPos()).normalize().multiply(0.75));
     }
 
-    private boolean takeDamage(Entity entity){
+    private boolean takeDamage(Entity entity) {
         Entity thisOwner = this.getOwner();
         if (entity.equals(thisOwner) && thisOwner instanceof LivingEntity livingEntity) return !livingEntity.getMainHandStack().isOf(Items.AIR);
         return true;

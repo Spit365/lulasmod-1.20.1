@@ -15,7 +15,7 @@ public class GoldenTridentItem extends TridentItem {
     public GoldenTridentItem(Item.Settings settings) {super(settings);}
 
     @Override
-    public ActionResult use(World world, PlayerEntity player, Hand hand){
+    public ActionResult use(World world, PlayerEntity player, Hand hand) {
         if (world.isClient() || !player.isCreative()) return ActionResult.PASS;
         ItemStack item = player.getStackInHand(hand);
         if (Impaled.impale(player, ModUtil.selectClosestEntity(player, 5), item, Integer.MAX_VALUE, 5, ModParticles.GOLDEN_SHIMMER)) {

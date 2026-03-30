@@ -12,7 +12,7 @@ import net.spit365.lulasmod.block.TitrationStandBlock;
 import net.spit365.lulasmod.util.RegisterHelper;
 
 public final class ModBlocks {
-	public record BlockAndItem<T extends Block>(T block, BlockItem item){}
+	public record BlockAndItem<T extends Block>(T block, BlockItem item) {}
 	public static final BlockAndItem<SpellPedestalBlock> SPELL_PEDESTAL = RegisterHelper.block(
 		"spell_pedestal",
 		SpellPedestalBlock::new,

@@ -13,8 +13,8 @@ public class ModifiedTntItem extends Item {
     public ModifiedTntItem(Settings settings) {super(settings);}
 
     @Override
-    public ActionResult use(World world, PlayerEntity player, Hand hand){
-        if (!world.isClient()  && (player.experienceLevel > 0 || player.isCreative())){
+    public ActionResult use(World world, PlayerEntity player, Hand hand) {
+        if (!world.isClient()  && (player.experienceLevel > 0 || player.isCreative())) {
 			ItemStack stack = player.getStackInHand(hand);
             player.getItemCooldownManager().set(stack, 20);
             TntEntity tnt = new TntEntity(world, player.getX(), player.getY() +1, player.getZ(), player);

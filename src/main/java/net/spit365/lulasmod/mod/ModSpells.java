@@ -204,7 +204,7 @@ public final class ModSpells {
 		@Override
         public int cast(ServerWorld world, PlayerEntity player, Hand hand, float potencyMultiplier, int cooldownDivisor) {
             player.setCurrentHand(hand);
-            if (selectedEntities.get(player) == null){
+            if (selectedEntities.get(player) == null) {
                 selectedEntities.put(player, StreamSupport.stream(world.iterateEntities().spliterator(), false)
                     .filter(entity -> player.getRotationVec(1).normalize().dotProduct(entity.getEyePos().subtract(player.getEyePos()).normalize()) >= Math.cos(KinesisInteractionRenderer.INTERACTION_RANGE_RADIANS)).toList()
                 );

@@ -62,7 +62,7 @@ public class GazeboGenerationPersistentState extends PersistentState {
             }).collect(Collectors.toMap(Function.identity(), o -> false));
 			Lulasmod.LOGGER.info(pendingPos.keySet().toString());
         }
-        for (Map.Entry<BlockPos, Boolean> entry : new HashSet<>(pendingPos.entrySet())){
+        for (Map.Entry<BlockPos, Boolean> entry : new HashSet<>(pendingPos.entrySet())) {
             if (entry.getValue()) continue;
             BlockPos pos = entry.getKey();
             if (world.getChunkManager().isChunkLoaded(ChunkSectionPos.getSectionCoord(pos.getX()), ChunkSectionPos.getSectionCoord(pos.getZ()))) {
@@ -73,7 +73,7 @@ public class GazeboGenerationPersistentState extends PersistentState {
 		return pendingPos;
 	}
 
-	public void markAsLoaded(BlockPos key){
+	public void markAsLoaded(BlockPos key) {
 		pendingPos.put(key, true);
         this.markDirty();
 	}

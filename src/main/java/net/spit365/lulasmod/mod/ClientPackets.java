@@ -14,7 +14,7 @@ import net.spit365.lulasmod.renderer.TimeForwardRenderer;
 
 @Environment(EnvType.CLIENT)
 public final class ClientPackets {
-    public static void init(){
+    public static void init() {
 		ClientPlayNetworking.registerGlobalReceiver(BleedProgressS2CPacket.ID, (bleedProgressS2CPacket, context) -> Bleed.progress = bleedProgressS2CPacket.progress());
 		ClientPlayNetworking.registerGlobalReceiver(DashSpellUsagesS2CPacket.ID, (dashSpellUsagesS2CPacket, context) -> DashSpell.usages = dashSpellUsagesS2CPacket.usages());
         ClientPlayNetworking.registerGlobalReceiver(LightningLinkS2CPacket.ID, (lightningLinkS2CPacket, context) -> LinkedLightningRender.linkedLightnings = lightningLinkS2CPacket.linkedLightning());

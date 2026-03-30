@@ -12,19 +12,19 @@ import java.util.stream.Stream;
 public record MultiVec3d(Vec3d... vec3ds) {
     public static final int MULTI_VEC_DETAIL = 16;
 
-	public Vec3d get(int index){
+	public Vec3d get(int index) {
 		return this.vec3ds[index];
 	}
 
-	public Stream<Vec3d> stream(){
+	public Stream<Vec3d> stream() {
 		return this.pairwiseSegments().flatMap(twoVec3d -> {
 			int detail = Math.max(1, (int) (twoVec3d.start().distanceTo(twoVec3d.end()) * MULTI_VEC_DETAIL));
 			return IntStream.range(0, detail).mapToObj(j -> MathHelper.lerp((double) j / detail, twoVec3d.start(), twoVec3d.end()));
 		});
 	}
 
-	public record TwoVec3d(Vec3d start, Vec3d end){}
-	public Stream<TwoVec3d> pairwiseSegments(){
+	public record TwoVec3d(Vec3d start, Vec3d end) {}
+	public Stream<TwoVec3d> pairwiseSegments() {
 		return IntStream.range(1, this.vec3ds.length).mapToObj(i -> new TwoVec3d(this.get(i -1), this.get(i)));
 	}
 

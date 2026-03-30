@@ -21,7 +21,7 @@ import java.util.function.Supplier;
 
 public final class ModPackets {
 
-    public static void init(){
+    public static void init() {
 		//S2C Packets
         PayloadTypeRegistry.playS2C().register(BleedProgressS2CPacket.ID, BleedProgressS2CPacket.CODEC);
         PayloadTypeRegistry.playS2C().register(DashSpellUsagesS2CPacket.ID, DashSpellUsagesS2CPacket.CODEC);
@@ -40,7 +40,7 @@ public final class ModPackets {
 		//Serverside Receivers
 		ServerPlayNetworking.registerGlobalReceiver(CycleSpellHotbarC2SPacket.ID, (cycleSpellHotbarC2SPacket, context) -> {
 			ServerPlayerEntity player = context.player();
-			for (Hand hand : Hand.values()) if (player.getStackInHand(hand).getItem() instanceof SpellHotbar item){
+			for (Hand hand : Hand.values()) if (player.getStackInHand(hand).getItem() instanceof SpellHotbar item) {
 				item.onCycle(player, identifiers -> {
 					List<Identifier> mutable = ModUtil.makeMutable(identifiers);
 					Collections.rotate(mutable, player.isSneaking() ? 1 : -1);
