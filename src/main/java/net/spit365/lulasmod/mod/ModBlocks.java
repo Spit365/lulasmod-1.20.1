@@ -6,7 +6,9 @@ import net.minecraft.block.Blocks;
 import net.minecraft.block.MapColor;
 import net.minecraft.block.piston.PistonBehavior;
 import net.minecraft.item.BlockItem;
-import net.spit365.lulasmod.block.*;
+import net.spit365.lulasmod.block.PentagrammBlock;
+import net.spit365.lulasmod.block.SpellPedestalBlock;
+import net.spit365.lulasmod.block.TitrationStandBlock;
 import net.spit365.lulasmod.util.RegisterHelper;
 
 public final class ModBlocks {

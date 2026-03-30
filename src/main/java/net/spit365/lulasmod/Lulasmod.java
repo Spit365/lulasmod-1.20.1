@@ -2,7 +2,6 @@ package net.spit365.lulasmod;
 
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.ModInitializer;
-import net.spit365.lulasmod.custom.NetherDeathSystem;
 import net.spit365.lulasmod.mod.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

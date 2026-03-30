@@ -6,12 +6,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.util.Colors;
-import net.minecraft.util.Hand;
 import net.spit365.lulasmod.custom.DashSpell;
-import net.spit365.lulasmod.item.SealItem;
-import net.spit365.lulasmod.mod.ModSpells;
-
-import java.util.Arrays;
 
 @Environment(EnvType.CLIENT)
 public final class DashSpellRenderer {
