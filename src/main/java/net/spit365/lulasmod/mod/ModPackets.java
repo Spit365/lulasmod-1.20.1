@@ -35,7 +35,7 @@ public final class ModPackets {
 		PayloadTypeRegistry.playC2S().register(CycleSpellHotbarC2SPacket.ID, CycleSpellHotbarC2SPacket.CODEC);
 		PayloadTypeRegistry.playC2S().register(DemonContractC2SPacket.ID, DemonContractC2SPacket.CODEC);
 		PayloadTypeRegistry.playC2S().register(DashC2SPacket.ID, DashC2SPacket.CODEC);
-		PayloadTypeRegistry.playS2C().register(BreakWithMindC2SPacket.ID, BreakWithMindC2SPacket.CODEC);
+		PayloadTypeRegistry.playC2S().register(BreakWithMindC2SPacket.ID, BreakWithMindC2SPacket.CODEC);
 
 		//Serverside Receivers
 		ServerPlayNetworking.registerGlobalReceiver(CycleSpellHotbarC2SPacket.ID, (cycleSpellHotbarC2SPacket, context) -> {
