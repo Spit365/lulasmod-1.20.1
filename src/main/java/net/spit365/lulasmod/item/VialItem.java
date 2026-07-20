@@ -1,62 +1,62 @@
 package net.spit365.lulasmod.item;
 
-import net.minecraft.component.DataComponentTypes;
-import net.minecraft.component.type.PotionContentsComponent;
-import net.minecraft.entity.effect.StatusEffect;
-import net.minecraft.entity.effect.StatusEffectInstance;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.PotionItem;
-import net.minecraft.registry.entry.RegistryEntry;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvents;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.Text;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.Hand;
-import net.minecraft.world.World;
+import net.minecraft.core.Holder;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.PotionItem;
+import net.minecraft.world.item.alchemy.PotionContents;
+import net.minecraft.world.level.Level;
 import net.spit365.lulasmod.mod.ModDamageTypes;
 
 public class VialItem extends PotionItem {
-    public VialItem(Settings settings) {
+    public VialItem(Properties settings) {
         super(settings);
     }
 
     @Override
-    public ActionResult use(World world, PlayerEntity user, Hand hand) {
-        ItemStack stack = user.getStackInHand(hand);
-        PotionContentsComponent effects = stack.get(DataComponentTypes.POTION_CONTENTS);
-        stack.decrementUnlessCreative(1, user);
-        world.playSound(null, user.getBlockPos(), SoundEvents.BLOCK_GLASS_BREAK, SoundCategory.PLAYERS);
-        if (world instanceof ServerWorld serverWorld) user.damage(serverWorld, ModDamageTypes.createDamageSource(world, ModDamageTypes.BLOODSUCKING), user.getMaxHealth() / 2);
-        if (effects == null) return ActionResult.PASS;
+    public InteractionResult use(Level world, Player user, InteractionHand hand) {
+        ItemStack stack = user.getItemInHand(hand);
+        PotionContents effects = stack.get(DataComponents.POTION_CONTENTS);
+        stack.consume(1, user);
+        world.playSound(null, user.blockPosition(), SoundEvents.GLASS_BREAK, SoundSource.PLAYERS);
+        if (world instanceof ServerLevel serverWorld) user.hurtServer(serverWorld, ModDamageTypes.createDamageSource(world, ModDamageTypes.BLOODSUCKING), user.getMaxHealth() / 2);
+        if (effects == null) return InteractionResult.PASS;
         effects.potion().ifPresent(potionRegistryEntry -> potionRegistryEntry.value().getEffects().forEach(statusEffectInstance -> {
-            RegistryEntry<StatusEffect> effectType = statusEffectInstance.getEffectType();
-            user.addStatusEffect(new StatusEffectInstance(
+            Holder<MobEffect> effectType = statusEffectInstance.getEffect();
+            user.addEffect(new MobEffectInstance(
                 effectType,
-                !effectType.value().isInstant() ? -1 : 1,
+                !effectType.value().isInstantenous() ? -1 : 1,
                 statusEffectInstance.getAmplifier(),
                 false,
                 false)
             );
         }));
-        return ActionResult.SUCCESS;
+        return InteractionResult.SUCCESS;
     }
 
     @Override
-    public Text getName(ItemStack stack) {
-        PotionContentsComponent potionContentsComponent = stack.get(DataComponentTypes.POTION_CONTENTS);
-        MutableText name = Text.translatable(this.translationKey);
+    public Component getName(ItemStack stack) {
+        PotionContents potionContentsComponent = stack.get(DataComponents.POTION_CONTENTS);
+        MutableComponent name = Component.translatable(this.descriptionId);
         if (potionContentsComponent == null) return name;
-        MutableText base = Text.empty();
-        potionContentsComponent.getEffects().forEach(statusEffectInstance -> {
-            if (!base.equals(Text.empty())) base.append(Text.literal(", "));
-            MutableText translated = Text.translatable(statusEffectInstance.getEffectType().value().getTranslationKey());
-            if (!translated.equals(Text.empty())) base.append(translated);
+        MutableComponent base = Component.empty();
+        potionContentsComponent.getAllEffects().forEach(statusEffectInstance -> {
+            if (!base.equals(Component.empty())) base.append(Component.literal(", "));
+            MutableComponent translated = Component.translatable(statusEffectInstance.getEffect().value().getDescriptionId());
+            if (!translated.equals(Component.empty())) base.append(translated);
         });
-        if (base.equals(Text.empty())) return name;
-        base.append(Text.literal(" - ")).append(name);
+        if (base.equals(Component.empty())) return name;
+        base.append(Component.literal(" - ")).append(name);
         return base;
     }
 }

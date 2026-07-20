@@ -1,18 +1,18 @@
 package net.spit365.lulasmod.item;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EquipmentSlot;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.registry.Registries;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.text.Text;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.Hand;
-import net.minecraft.util.Identifier;
-import net.minecraft.world.World;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import net.spit365.lulasmod.item.spell.SorceryItem;
 import net.spit365.lulasmod.item.spell.SpellItem;
 import net.spit365.lulasmod.mod.ModData;
@@ -28,7 +28,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 public class SealItem extends Item implements SpellHotbar {
-    public SealItem(Settings settings, Predicate<LivingEntity> canUse, Consequences consequences, float potencyMultiplier, int cooldownDivisor) {
+    public SealItem(Properties settings, Predicate<LivingEntity> canUse, Consequences consequences, float potencyMultiplier, int cooldownDivisor) {
         super(settings);
         this.canUse = canUse;
         this.consequences = consequences;
@@ -36,7 +36,7 @@ public class SealItem extends Item implements SpellHotbar {
         this.cooldownDivisor = cooldownDivisor;
     }
 
-    public SealItem(Settings settings, Predicate<LivingEntity> canUse, float potencyMultiplier, int cooldownDivisor) {
+    public SealItem(Properties settings, Predicate<LivingEntity> canUse, float potencyMultiplier, int cooldownDivisor) {
         this(settings, canUse, (entity, cooldown) -> {}, potencyMultiplier, cooldownDivisor);
     }
 
@@ -49,44 +49,44 @@ public class SealItem extends Item implements SpellHotbar {
 
 
     @Override
-    public List<Identifier> getHotbarList(PlayerEntity player) {
+    public List<ResourceLocation> getHotbarList(Player player) {
         return player.getAttached(ModData.EQUIPPED_SPELLS);
     }
 
     @Override
-    public void onCycle(PlayerEntity player,  Function<List<Identifier>, List<Identifier>> cycleFunction) {
+    public void onCycle(Player player,  Function<List<ResourceLocation>, List<ResourceLocation>> cycleFunction) {
         player.setAttached(ModData.EQUIPPED_SPELLS, cycleFunction.apply(player.getAttached(ModData.EQUIPPED_SPELLS)));
     }
 
     @Override
-    public void postHit(ItemStack stack, LivingEntity target, LivingEntity attacker) {
+    public void hurtEnemy(ItemStack stack, LivingEntity target, LivingEntity attacker) {
         sealLogic(null, null, attacker, getHandFromStack(attacker, stack), (serverWorld, player, hand, spellItem) ->
             spellItem.spell.hitEntity(serverWorld, player, hand, target, potencyMultiplier, cooldownDivisor));
     }
 
     @Override
-    public ActionResult use(World world, PlayerEntity player, Hand hand) {
-        return sealLogic(ActionResult.SUCCESS, ActionResult.PASS, player, hand, (serverWorld, ignored1, ignored2, spellItem) ->
+    public InteractionResult use(Level world, Player player, InteractionHand hand) {
+        return sealLogic(InteractionResult.SUCCESS, InteractionResult.PASS, player, hand, (serverWorld, ignored1, ignored2, spellItem) ->
             spellItem.spell.cast(serverWorld, player, hand, potencyMultiplier, cooldownDivisor));
     }
 
     @Override
-    public void usageTick(World world, LivingEntity user, ItemStack stack, int remainingUseTicks) {
+    public void onUseTick(Level world, LivingEntity user, ItemStack stack, int remainingUseTicks) {
         sealLogic(null, null, user, getHandFromStack(user, stack), (serverWorld, player, hand, spellItem) ->
             spellItem.spell.castTick(serverWorld, player, hand, potencyMultiplier, cooldownDivisor));
     }
 
     @Override
-    public boolean onStoppedUsing(ItemStack stack, World world, LivingEntity user, int remainingUseTicks) {
+    public boolean releaseUsing(ItemStack stack, Level world, LivingEntity user, int remainingUseTicks) {
         return sealLogic(true, false, user, getHandFromStack(user, stack), (serverWorld, player, hand, spellItem) ->
             spellItem.spell.castStop(serverWorld, player, hand, potencyMultiplier, cooldownDivisor));
     }
 
-    private <T> T sealLogic(T resultSuccess, T resultFail, LivingEntity user, Hand hand, SpellAction spellAction) {
-        if (!(user instanceof PlayerEntity player) || !(player.getWorld() instanceof ServerWorld serverWorld) || !canUse.test(player))
+    private <T> T sealLogic(T resultSuccess, T resultFail, LivingEntity user, InteractionHand hand, SpellAction spellAction) {
+        if (!(user instanceof Player player) || !(player.level() instanceof ServerLevel serverWorld) || !canUse.test(player))
             return resultFail;
-        List<Identifier> spellList = player.getAttached(ModData.EQUIPPED_SPELLS);
-        if (spellList == null || spellList.isEmpty() || !(Registries.ITEM.get(spellList.getFirst()) instanceof SpellItem spellItem))
+        List<ResourceLocation> spellList = player.getAttached(ModData.EQUIPPED_SPELLS);
+        if (spellList == null || spellList.isEmpty() || !(BuiltInRegistries.ITEM.getValue(spellList.getFirst()) instanceof SpellItem spellItem))
             return resultFail;
 
         int result = spellAction.accept(serverWorld, player, hand, spellItem);
@@ -96,7 +96,7 @@ public class SealItem extends Item implements SpellHotbar {
             case FAIL_RESULT -> resultFail;
             default -> {
                 if (result > 0) {
-                    player.getItemCooldownManager().set(player.getStackInHand(hand), Math.max(result, 2));
+                    player.getCooldowns().addCooldown(player.getItemInHand(hand), Math.max(result, 2));
                     yield resultSuccess;
                 }
                 throw new IllegalArgumentException("Result integer from Spell must be >= -1, got " + result);
@@ -104,13 +104,13 @@ public class SealItem extends Item implements SpellHotbar {
         };
     }
 
-    private static @NotNull Hand getHandFromStack(LivingEntity user, ItemStack stack) {
-        return Arrays.stream(Hand.values()).filter(hand -> user.getStackInHand(hand).equals(stack)).findFirst().orElse(Hand.MAIN_HAND);
+    private static @NotNull InteractionHand getHandFromStack(LivingEntity user, ItemStack stack) {
+        return Arrays.stream(InteractionHand.values()).filter(hand -> user.getItemInHand(hand).equals(stack)).findFirst().orElse(InteractionHand.MAIN_HAND);
     }
 
     @FunctionalInterface
     private interface SpellAction {
-        int accept(ServerWorld serverWorld, PlayerEntity player, Hand hand, SpellItem spellItem);
+        int accept(ServerLevel serverWorld, Player player, InteractionHand hand, SpellItem spellItem);
     }
 
     @FunctionalInterface
@@ -119,17 +119,17 @@ public class SealItem extends Item implements SpellHotbar {
     }
 
     @Override
-    public void inventoryTick(ItemStack stack, ServerWorld world, Entity entity, @Nullable EquipmentSlot slot) {
-        if (entity instanceof PlayerEntity player && !Objects.equals(ModUtil.getInventoryStack(player, stack.getItem()), stack)) {
-            player.sendMessage(Text.translatable("notify.lulasmod.duplicate_seal"), true);
-            entity.dropStack(world, stack.copy());
-            stack.decrement(stack.getCount());
+    public void inventoryTick(ItemStack stack, ServerLevel world, Entity entity, @Nullable EquipmentSlot slot) {
+        if (entity instanceof Player player && !Objects.equals(ModUtil.getInventoryStack(player, stack.getItem()), stack)) {
+            player.displayClientMessage(Component.translatable("notify.lulasmod.duplicate_seal"), true);
+            entity.spawnAtLocation(world, stack.copy());
+            stack.shrink(stack.getCount());
         }
     }
 
     @Override
-    public int getMaxUseTime(ItemStack stack, LivingEntity user) {
-        List<Identifier> spells = user.getAttached(ModData.EQUIPPED_SPELLS);
-        return spells != null && Registries.ITEM.get(spells.getFirst()) instanceof SorceryItem ? 72000 : 0;
+    public int getUseDuration(ItemStack stack, LivingEntity user) {
+        List<ResourceLocation> spells = user.getAttached(ModData.EQUIPPED_SPELLS);
+        return spells != null && BuiltInRegistries.ITEM.getValue(spells.getFirst()) instanceof SorceryItem ? 72000 : 0;
     }
 }

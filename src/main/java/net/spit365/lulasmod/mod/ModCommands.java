@@ -4,35 +4,35 @@ import com.mojang.brigadier.arguments.BoolArgumentType;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
-import net.minecraft.command.argument.EntityArgumentType;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.server.command.ServerCommandSource;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.Text;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.arguments.EntityArgument;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.spit365.lulasmod.custom.Bleed;
 import net.spit365.lulasmod.custom.Demon;
 
-import static net.minecraft.server.command.CommandManager.argument;
-import static net.minecraft.server.command.CommandManager.literal;
+import static net.minecraft.commands.Commands.argument;
+import static net.minecraft.commands.Commands.literal;
 
 public final class ModCommands {
     public static void init() {
         CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
             int r = 0;
             dispatcher.register(literal("bleed")
-				.then(argument("targets", EntityArgumentType.entities())
+				.then(argument("targets", EntityArgument.entities())
 					.then(argument("seconds", IntegerArgumentType.integer())
 						.executes(context ->  {
-                			for (Entity e : EntityArgumentType.getEntities(context, "targets")) if (e instanceof LivingEntity)
+                			for (Entity e : EntityArgument.getEntities(context, "targets")) if (e instanceof LivingEntity)
                    				Bleed.apply((LivingEntity) e, IntegerArgumentType.getInteger(context, "seconds") * 20);
                 			return r;
             }))));
             dispatcher.register(literal("removecooldown")
 				.executes(context -> {
-                	if (context.getSource().getEntity() instanceof PlayerEntity player) for (int i = 0; i < player.getInventory().size(); i++)
-                    	player.getItemCooldownManager().set(player.getInventory().getStack(i), 0);
+                	if (context.getSource().getEntity() instanceof Player player) for (int i = 0; i < player.getInventory().getContainerSize(); i++)
+                    	player.getCooldowns().addCooldown(player.getInventory().getItem(i), 0);
                 	return r;
             }));
 			dispatcher.register(literal("demon")
@@ -42,9 +42,9 @@ public final class ModCommands {
 						setDemon(commandContext, entity);
 						return r;
 					})
-					.then(argument("targets", EntityArgumentType.entities())
+					.then(argument("targets", EntityArgument.entities())
 						.executes(commandContext -> {
-							for (Entity entity : EntityArgumentType.getEntities(commandContext, "targets")) {
+							for (Entity entity : EntityArgument.getEntities(commandContext, "targets")) {
 								setDemon(commandContext, entity);
 							}
 							return r;
@@ -55,7 +55,7 @@ public final class ModCommands {
 			dispatcher.register(literal("presence")
 				.then(argument("value", IntegerArgumentType.integer(0))
 					.executes(context -> {
-						ServerPlayerEntity player = context.getSource().getPlayer();
+						ServerPlayer player = context.getSource().getPlayer();
 						if (player != null)
                             player.setAttached(ModData.PRESENCE_LEVEL, IntegerArgumentType.getInteger(context, "value"));
 						return r;
@@ -65,11 +65,11 @@ public final class ModCommands {
         });
     }
 
-	private static void setDemon(CommandContext<ServerCommandSource> commandContext, Entity entity) {
+	private static void setDemon(CommandContext<CommandSourceStack> commandContext, Entity entity) {
 		if (entity != null) {
 			boolean value = BoolArgumentType.getBool(commandContext, "value");
 			Demon.setDemon(entity, value);
-			commandContext.getSource().sendFeedback(() -> Text.translatable("notify.lulasmod.demon." + value, entity.getName()), true);
+			commandContext.getSource().sendSuccess(() -> Component.translatable("notify.lulasmod.demon." + value, entity.getName()), true);
 		}
 	}
 }

@@ -19,11 +19,11 @@ public final class ClientPackets {
 		ClientPlayNetworking.registerGlobalReceiver(DashSpellUsagesS2CPacket.ID, (dashSpellUsagesS2CPacket, context) -> DashSpell.usages = dashSpellUsagesS2CPacket.usages());
         ClientPlayNetworking.registerGlobalReceiver(LightningLinkS2CPacket.ID, (lightningLinkS2CPacket, context) -> LinkedLightningRender.linkedLightnings = lightningLinkS2CPacket.linkedLightning());
 		ClientPlayNetworking.registerGlobalReceiver(SetTimeForwardAnimationStateS2CPacket.ID, (setTimeForwardAnimationStateS2CPacket, context) -> {
-			if (setTimeForwardAnimationStateS2CPacket.state()) TimeForwardRenderer.start(context.client().world);
+			if (setTimeForwardAnimationStateS2CPacket.state()) TimeForwardRenderer.start(context.client().level);
 			else TimeForwardRenderer.stop();
 		});
 		ClientPlayNetworking.registerGlobalReceiver(SpellHotbarListS2CPacket.ID, (spellHotbarListS2CPacket, context) -> SpellHotbarRenderer.spellHotbarList = spellHotbarListS2CPacket.list());
-		ClientPlayNetworking.registerGlobalReceiver(SummonBleedS2CPacket.ID, (summonBleedS2CPacket, context) -> ModUtil.summonBleed(summonBleedS2CPacket.pos(), context.client().world));
+		ClientPlayNetworking.registerGlobalReceiver(SummonBleedS2CPacket.ID, (summonBleedS2CPacket, context) -> ModUtil.summonBleed(summonBleedS2CPacket.pos(), context.client().level));
 		ClientPlayNetworking.registerGlobalReceiver(MindShimmerS2CPacket.ID, (mindShimmerS2CPacket, context) -> Shimmer.mindShimmerEnabled = mindShimmerS2CPacket.state());
 	}
 }

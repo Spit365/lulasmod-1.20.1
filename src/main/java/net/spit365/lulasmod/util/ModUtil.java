@@ -1,16 +1,16 @@
 package net.spit365.lulasmod.util;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
+import net.minecraft.core.BlockPos;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Box;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 import net.spit365.lulasmod.Lulasmod;
 import net.spit365.lulasmod.mod.ModDimensions;
 import org.jetbrains.annotations.Nullable;
@@ -22,32 +22,32 @@ import java.util.Set;
 
 public final class ModUtil {
     public static @Nullable Entity selectClosestEntity(Entity selector, double radius) {
-        Vec3d selectionCenter = selector.getRotationVec(1).normalize().multiply(radius).add(selector.getPos());
+        Vec3 selectionCenter = selector.getViewVector(1).normalize().scale(radius).add(selector.position());
         Entity selectedEntity = null;
-        for (Entity entityInRange : selector.getWorld().getOtherEntities(selector, new Box(selectionCenter.add(-radius, -radius, -radius), selectionCenter.add(radius, radius, radius)))) {
-            if (selectedEntity == null || selectedEntity.getPos().squaredDistanceTo(selector.getPos()) > entityInRange.getPos().squaredDistanceTo(selector.getPos()))
+        for (Entity entityInRange : selector.level().getEntities(selector, new AABB(selectionCenter.add(-radius, -radius, -radius), selectionCenter.add(radius, radius, radius)))) {
+            if (selectedEntity == null || selectedEntity.position().distanceToSqr(selector.position()) > entityInRange.position().distanceToSqr(selector.position()))
                 selectedEntity = entityInRange;
         }
         return selectedEntity;
     }
 
-	public static void sendHome(PlayerEntity player, Item item) {
+	public static void sendHome(Player player, Item item) {
 		try {
-            if (!(player instanceof ServerPlayerEntity serverPlayer)) return;
+            if (!(player instanceof ServerPlayer serverPlayer)) return;
 			MinecraftServer server = Objects.requireNonNull(player.getServer());
-			ServerPlayerEntity.Respawn respawn = serverPlayer.getRespawn();
-			ServerWorld targetDimension = Objects.requireNonNull(server.getWorld(respawn != null ? respawn.dimension() : World.OVERWORLD));
-			BlockPos pos = respawn != null ? respawn.pos() : targetDimension.getSpawnPos();
-			if (player.teleport(targetDimension, pos.getX(), pos.getY(), pos.getZ(), Set.of(), player.getYaw(), player.getPitch(), true))
-				Lulasmod.LOGGER.info("{} was sent home to {} {} {} in {} (with {})", player.getName(), pos.getX(), pos.getY(), pos.getZ(), targetDimension.getRegistryKey().getValue(), item);
+			ServerPlayer.RespawnConfig respawn = serverPlayer.getRespawnConfig();
+			ServerLevel targetDimension = Objects.requireNonNull(server.getLevel(respawn != null ? respawn.dimension() : Level.OVERWORLD));
+			BlockPos pos = respawn != null ? respawn.pos() : targetDimension.getSharedSpawnPos();
+			if (player.teleportTo(targetDimension, pos.getX(), pos.getY(), pos.getZ(), Set.of(), player.getYRot(), player.getXRot(), true))
+				Lulasmod.LOGGER.info("{} was sent home to {} {} {} in {} (with {})", player.getName(), pos.getX(), pos.getY(), pos.getZ(), targetDimension.dimension().location(), item);
         } catch (NullPointerException e) {
 			Lulasmod.LOGGER.error("Couldn't find the specified dimension");
 		}
 	}
 
-    public static ItemStack getInventoryStack(PlayerEntity player, Item item) {
-        for (int i = 0; i < player.getInventory().size(); i++) {
-            ItemStack itemStack = player.getInventory().getStack(i);
+    public static ItemStack getInventoryStack(Player player, Item item) {
+        for (int i = 0; i < player.getInventory().getContainerSize(); i++) {
+            ItemStack itemStack = player.getInventory().getItem(i);
             if (itemStack.getItem().equals(item)) {
                 return itemStack;
             }
@@ -56,12 +56,12 @@ public final class ModUtil {
     }
 
 	public static void pocketTeleport(Entity victim) {
-        victim.teleport(
-            Objects.requireNonNull(victim.getServer()).getWorld((
-			    victim.getWorld().getRegistryKey().equals(ModDimensions.POCKET_DIMENSION)?
-                    World.OVERWORLD :
+        victim.teleportTo(
+            Objects.requireNonNull(victim.getServer()).getLevel((
+			    victim.level().dimension().equals(ModDimensions.POCKET_DIMENSION)?
+                    Level.OVERWORLD :
                     ModDimensions.POCKET_DIMENSION)),
-            victim.getX(), victim.getY(), victim.getZ(), Set.of(), victim.getYaw(), victim.getPitch(), false);
+            victim.getX(), victim.getY(), victim.getZ(), Set.of(), victim.getYRot(), victim.getXRot(), false);
     }
 
 	public static <T> LinkedList<T> makeMutable(List<T> immutable) {

@@ -7,40 +7,39 @@ import net.fabricmc.fabric.api.client.particle.v1.ParticleFactoryRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElement;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
-import net.minecraft.client.option.KeyBinding;
-import net.minecraft.client.render.entity.EntityRendererFactory;
-import net.minecraft.client.util.InputUtil;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.network.packet.CustomPayload;
-import net.minecraft.particle.SimpleParticleType;
-import net.minecraft.util.Identifier;
+import net.minecraft.client.KeyMapping;
+import net.minecraft.client.renderer.entity.EntityRendererProvider;
+import net.minecraft.core.particles.SimpleParticleType;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
 import net.spit365.lulasmod.Lulasmod;
-
+import com.mojang.blaze3d.platform.InputConstants;
 import java.util.function.Supplier;
 
 public final class ClientRegisterHelper {
-	public static <T extends Entity> void entity(EntityType<T> entityType, EntityRendererFactory<T> entityRendererFactory) {
+	public static <T extends Entity> void entity(EntityType<T> entityType, EntityRendererProvider<T> entityRendererFactory) {
 		EntityRendererRegistry.register(entityType, entityRendererFactory);
 	}
 
-	public static KeyBinding keyBinding(String name, int key) {
-		return KeyBindingHelper.registerKeyBinding(new KeyBinding(
+	public static KeyMapping keyBinding(String name, int key) {
+		return KeyBindingHelper.registerKeyBinding(new KeyMapping(
 			"key." + Lulasmod.MOD_ID + "." + name,
-			InputUtil.Type.KEYSYM,
+			InputConstants.Type.KEYSYM,
 			key,
 			"key.categories." + Lulasmod.MOD_ID
 		));
 	}
 
-	public static KeyBinding packetKeyBinding(String name, int key, boolean repeating, Supplier<CustomPayload> payloadSupplier) {
-		KeyBinding keyBinding = keyBinding(name, key);
+	public static KeyMapping packetKeyBinding(String name, int key, boolean repeating, Supplier<CustomPacketPayload> payloadSupplier) {
+		KeyMapping keyBinding = keyBinding(name, key);
         ClientTickEvents.END_CLIENT_TICK.register(repeating ?
             client -> {
-				if (keyBinding.wasPressed()) ClientPlayNetworking.send(payloadSupplier.get());
+				if (keyBinding.consumeClick()) ClientPlayNetworking.send(payloadSupplier.get());
 			} :
             client -> {
-				if (keyBinding.isPressed()) ClientPlayNetworking.send(payloadSupplier.get());
+				if (keyBinding.isDown()) ClientPlayNetworking.send(payloadSupplier.get());
 			}
 		);
 		return keyBinding;
@@ -51,6 +50,6 @@ public final class ClientRegisterHelper {
 	}
 
     public static void hudElement(String name, HudElement hudElement) {
-        HudElementRegistry.addLast(Identifier.of(Lulasmod.MOD_ID, name), hudElement);
+        HudElementRegistry.addLast(ResourceLocation.fromNamespaceAndPath(Lulasmod.MOD_ID, name), hudElement);
     }
 }

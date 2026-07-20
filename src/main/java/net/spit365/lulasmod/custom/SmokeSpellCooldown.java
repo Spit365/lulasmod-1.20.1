@@ -1,7 +1,7 @@
 package net.spit365.lulasmod.custom;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.server.world.ServerWorld;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.Entity;
 import net.spit365.lulasmod.mod.ModData;
 
 import java.util.stream.StreamSupport;
@@ -23,8 +23,8 @@ public final class SmokeSpellCooldown {
         entity.setAttached(ModData.SMOKE_SPELL_COOLDOWN, MAX_COOLDOWN / cooldownDivisor);
     }
 
-    public static void tick(ServerWorld world) {
-        StreamSupport.stream(world.iterateEntities().spliterator(), true).forEach(entity -> {
+    public static void tick(ServerLevel world) {
+        StreamSupport.stream(world.getAllEntities().spliterator(), true).forEach(entity -> {
             Integer cooldown = entity.getAttached(ModData.SMOKE_SPELL_COOLDOWN);
             if (cooldown == null) return;
             if (cooldown <= 1) {

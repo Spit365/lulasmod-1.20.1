@@ -2,18 +2,18 @@ package net.spit365.lulasmod.packet;
 
 import com.mojang.serialization.Codec;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.network.codec.PacketCodec;
-import net.minecraft.network.codec.PacketCodecs;
-import net.minecraft.network.packet.CustomPayload;
-import net.minecraft.util.Identifier;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.ResourceLocation;
 import net.spit365.lulasmod.Lulasmod;
 
-public record SetTimeForwardAnimationStateS2CPacket(boolean state) implements CustomPayload {
+public record SetTimeForwardAnimationStateS2CPacket(boolean state) implements CustomPacketPayload {
     @Override
-    public Id<? extends CustomPayload> getId() {
+    public Type<? extends CustomPacketPayload> type() {
         return ID;
     }
 
-    public static final Id<SetTimeForwardAnimationStateS2CPacket> ID = new Id<>(Identifier.of(Lulasmod.MOD_ID, "time_forward_animation"));
-    public static final PacketCodec<ByteBuf, SetTimeForwardAnimationStateS2CPacket> CODEC = PacketCodecs.codec(Codec.BOOL).xmap(SetTimeForwardAnimationStateS2CPacket::new, SetTimeForwardAnimationStateS2CPacket::state);
+    public static final Type<SetTimeForwardAnimationStateS2CPacket> ID = new Type<>(ResourceLocation.fromNamespaceAndPath(Lulasmod.MOD_ID, "time_forward_animation"));
+    public static final StreamCodec<ByteBuf, SetTimeForwardAnimationStateS2CPacket> CODEC = ByteBufCodecs.fromCodec(Codec.BOOL).map(SetTimeForwardAnimationStateS2CPacket::new, SetTimeForwardAnimationStateS2CPacket::state);
 }

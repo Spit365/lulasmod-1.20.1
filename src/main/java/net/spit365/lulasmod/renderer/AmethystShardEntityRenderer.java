@@ -1,50 +1,50 @@
 package net.spit365.lulasmod.renderer;
 
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.math.Axis;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.render.OverlayTexture;
-import net.minecraft.client.render.RenderLayer;
-import net.minecraft.client.render.VertexConsumerProvider;
-import net.minecraft.client.render.entity.EntityRenderer;
-import net.minecraft.client.render.entity.EntityRendererFactory;
-import net.minecraft.client.render.entity.model.ArrowEntityModel;
-import net.minecraft.client.render.entity.model.EntityModelLayers;
-import net.minecraft.client.render.entity.state.ProjectileEntityRenderState;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.math.RotationAxis;
+import net.minecraft.client.model.ArrowModel;
+import net.minecraft.client.model.geom.ModelLayers;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.entity.EntityRenderer;
+import net.minecraft.client.renderer.entity.EntityRendererProvider;
+import net.minecraft.client.renderer.entity.state.ArrowRenderState;
+import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.resources.ResourceLocation;
 import net.spit365.lulasmod.Lulasmod;
 import net.spit365.lulasmod.entity.AmethystShardEntity;
 
 @Environment(EnvType.CLIENT)
-public class AmethystShardEntityRenderer extends EntityRenderer<AmethystShardEntity, ProjectileEntityRenderState> {
-    public static final Identifier TEXTURE = Identifier.of(Lulasmod.MOD_ID, "textures/entity/amethyst_shard.png");
-    private final ArrowEntityModel model;
+public class AmethystShardEntityRenderer extends EntityRenderer<AmethystShardEntity, ArrowRenderState> {
+    public static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(Lulasmod.MOD_ID, "textures/entity/amethyst_shard.png");
+    private final ArrowModel model;
 
-    public AmethystShardEntityRenderer(EntityRendererFactory.Context context) {
+    public AmethystShardEntityRenderer(EntityRendererProvider.Context context) {
         super(context);
-        this.model = new ArrowEntityModel(context.getPart(EntityModelLayers.ARROW));
+        this.model = new ArrowModel(context.bakeLayer(ModelLayers.ARROW));
     }
 
     @Override
-    public ProjectileEntityRenderState createRenderState() {
-        return new ProjectileEntityRenderState();
+    public ArrowRenderState createRenderState() {
+        return new ArrowRenderState();
     }
 
-    public void render(ProjectileEntityRenderState projectileEntityRenderState, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i) {
-        matrixStack.push();
-        matrixStack.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(projectileEntityRenderState.yaw - 90.0F));
-        matrixStack.multiply(RotationAxis.POSITIVE_Z.rotationDegrees(projectileEntityRenderState.pitch));
-        this.model.setAngles(projectileEntityRenderState);
-        this.model.render(matrixStack, vertexConsumerProvider.getBuffer(RenderLayer.getEntityCutout(TEXTURE)), i, OverlayTexture.DEFAULT_UV);
-        matrixStack.pop();
+    public void render(ArrowRenderState projectileEntityRenderState, PoseStack matrixStack, MultiBufferSource vertexConsumerProvider, int i) {
+        matrixStack.pushPose();
+        matrixStack.mulPose(Axis.YP.rotationDegrees(projectileEntityRenderState.yRot - 90.0F));
+        matrixStack.mulPose(Axis.ZP.rotationDegrees(projectileEntityRenderState.xRot));
+        this.model.setupAnim(projectileEntityRenderState);
+        this.model.renderToBuffer(matrixStack, vertexConsumerProvider.getBuffer(RenderType.entityCutout(TEXTURE)), i, OverlayTexture.NO_OVERLAY);
+        matrixStack.popPose();
         super.render(projectileEntityRenderState, matrixStack, vertexConsumerProvider, i);
     }
 
     @Override
-    public void updateRenderState(AmethystShardEntity persistentProjectileEntity, ProjectileEntityRenderState projectileEntityRenderState, float f) {
-        super.updateRenderState(persistentProjectileEntity, projectileEntityRenderState, f);
-        projectileEntityRenderState.pitch = persistentProjectileEntity.getLerpedPitch(f);
-        projectileEntityRenderState.yaw = -persistentProjectileEntity.getLerpedYaw(f);
+    public void extractRenderState(AmethystShardEntity entity, ArrowRenderState entityRenderState, float f) {
+        super.extractRenderState(entity, entityRenderState, f);
+        entityRenderState.xRot = entity.getXRot(f);
+        entityRenderState.yRot = -entity.getYRot(f);
     }
 }

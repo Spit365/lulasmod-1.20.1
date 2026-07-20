@@ -1,28 +1,28 @@
 package net.spit365.lulasmod.item;
 
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.TridentItem;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.Hand;
-import net.minecraft.world.World;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TridentItem;
+import net.minecraft.world.level.Level;
 import net.spit365.lulasmod.custom.Impaled;
 import net.spit365.lulasmod.mod.ModParticles;
 import net.spit365.lulasmod.util.ModUtil;
 
 public class GoldenTridentItem extends TridentItem {
-    public GoldenTridentItem(Item.Settings settings) {super(settings);}
+    public GoldenTridentItem(Item.Properties settings) {super(settings);}
 
     @Override
-    public ActionResult use(World world, PlayerEntity player, Hand hand) {
-        if (world.isClient() || !player.isCreative()) return ActionResult.PASS;
-        ItemStack item = player.getStackInHand(hand);
+    public InteractionResult use(Level world, Player player, InteractionHand hand) {
+        if (world.isClientSide() || !player.isCreative()) return InteractionResult.PASS;
+        ItemStack item = player.getItemInHand(hand);
         if (Impaled.impale(player, ModUtil.selectClosestEntity(player, 5), item, Integer.MAX_VALUE, 5, ModParticles.GOLDEN_SHIMMER)) {
-            player.getItemCooldownManager().set(item, 200);
-            return ActionResult.SUCCESS;
+            player.getCooldowns().addCooldown(item, 200);
+            return InteractionResult.SUCCESS;
         }
-        player.getItemCooldownManager().set(item, 20);
-        return ActionResult.PASS;
+        player.getCooldowns().addCooldown(item, 20);
+        return InteractionResult.PASS;
     }
 }

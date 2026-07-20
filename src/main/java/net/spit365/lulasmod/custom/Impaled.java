@@ -1,15 +1,15 @@
 package net.spit365.lulasmod.custom;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.effect.StatusEffectInstance;
-import net.minecraft.entity.effect.StatusEffects;
-import net.minecraft.entity.mob.EndermanEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.particle.ParticleEffect;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.core.particles.ParticleOptions;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.monster.EnderMan;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.phys.Vec3;
 import net.spit365.lulasmod.entity.ParticleProjectileEntity;
 import net.spit365.lulasmod.mod.ModData;
 
@@ -28,27 +28,27 @@ public final class Impaled {
             ImpaledContext ctx = it.next();
             LivingEntity victim = ctx.target;
             if (ctx.iterations > 0 && victim.isAlive()) {
-                if (victim instanceof EndermanEntity enderman) {
-                    enderman.kill((ServerWorld) victim.getWorld());
+                if (victim instanceof EnderMan enderman) {
+                    enderman.kill((ServerLevel) victim.level());
                     cleanup(ctx, it);
                     continue;
                 }
-                victim.setVelocity(0, 0, 0);
+                victim.setDeltaMovement(0, 0, 0);
                 ctx.counter++;
                 if (ctx.counter >= ctx.intervalDuration) {
                     ctx.counter = 0;
                     ctx.iterations--;
-                    Vec3d pos = Vec3d.fromPolar(
+                    Vec3 pos = Vec3.directionFromRotation(
                         (float) (Math.random() * 360),
                         (float) (Math.random() * 180 - 90)
-                    ).normalize().multiply(RADIUS).add(victim.getPos());
+                    ).normalize().scale(RADIUS).add(victim.position());
                     ctx.attacker.setAttached(ModData.DAMAGE_DELAY, 0);
-                    victim.getWorld().spawnEntity(
+                    victim.level().addFreshEntity(
                         new ParticleProjectileEntity(
-                            victim.getWorld(),
+                            victim.level(),
                             ctx.attacker,
                             pos,
-                            pos.subtract(victim.getEyePos()).multiply(-0.5),
+                            pos.subtract(victim.getEyePosition()).scale(-0.5),
                             ctx.particle
                         )
                     );
@@ -61,30 +61,30 @@ public final class Impaled {
     private static void cleanup(ImpaledContext ctx, Iterator<ImpaledContext> it) {
         it.remove();
         ctx.attacker.removeAttached(ModData.DAMAGE_DELAY);
-        ctx.target.addStatusEffect(
-            new StatusEffectInstance(StatusEffects.SLOW_FALLING, RADIUS * 10)
+        ctx.target.addEffect(
+            new MobEffectInstance(MobEffects.SLOW_FALLING, RADIUS * 10)
         );
     }
 
-    public static boolean impale(PlayerEntity attacker, Entity target, ItemStack item, int iterations, int intervalDuration, ParticleEffect particle) {
-        attacker.getItemCooldownManager().set(item, 2);
+    public static boolean impale(Player attacker, Entity target, ItemStack item, int iterations, int intervalDuration, ParticleOptions particle) {
+        attacker.getCooldowns().addCooldown(item, 2);
         if (!(target instanceof LivingEntity living) || IMPALED.stream().anyMatch(ctx -> ctx.attacker == attacker || ctx.target == living)) {
             return false;
         }
-        living.requestTeleport(living.getX(), living.getY() + RADIUS, living.getZ());
+        living.teleportTo(living.getX(), living.getY() + RADIUS, living.getZ());
         IMPALED.add(new ImpaledContext(attacker, living, particle, iterations, intervalDuration));
         return true;
     }
 
     public static final class ImpaledContext {
-        private final PlayerEntity attacker;
+        private final Player attacker;
         private final LivingEntity target;
-        private final ParticleEffect particle;
+        private final ParticleOptions particle;
         private final int intervalDuration;
         private int iterations;
         private int counter = 0;
 
-        public ImpaledContext(PlayerEntity attacker, LivingEntity target, ParticleEffect particle, int iterations, int intervalDuration) {
+        public ImpaledContext(Player attacker, LivingEntity target, ParticleOptions particle, int iterations, int intervalDuration) {
             this.attacker = attacker;
             this.target = target;
             this.particle = particle;

@@ -1,33 +1,33 @@
 package net.spit365.lulasmod.custom;
 
-import net.minecraft.registry.tag.BlockTags;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Box;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 import net.spit365.boa.BoxOutline;
 
 import java.util.Set;
 import java.util.stream.Collectors;
 
 public final class MinerRepel {
-    public static void tick(ServerPlayerEntity player) {
-        if (!player.getCommandTags().contains("miner")) return;
-        BlockPos playerPos = player.getBlockPos();
-        ServerWorld world = player.getWorld();
-        Set<Box> portalAndAdjacent =
-            BlockPos.stream(
-                playerPos.add(-5, -5, -5),
-                playerPos.add(5, 5, 5)
+    public static void tick(ServerPlayer player) {
+        if (!player.getTags().contains("miner")) return;
+        BlockPos playerPos = player.blockPosition();
+        ServerLevel world = player.level();
+        Set<AABB> portalAndAdjacent =
+            BlockPos.betweenClosedStream(
+                playerPos.offset(-5, -5, -5),
+                playerPos.offset(5, 5, 5)
             )
-            .map(BlockPos::toImmutable)
-            .filter(blockPos -> world.getBlockState(blockPos).isIn(BlockTags.PORTALS))
+            .map(BlockPos::immutable)
+            .filter(blockPos -> world.getBlockState(blockPos).is(BlockTags.PORTALS))
             .map(blockPos -> {
                 int x = blockPos.getX();
                 int y = blockPos.getY();
                 int z = blockPos.getZ();
-                return new Box(
+                return new AABB(
                     x - 5d,
                     y - 5d,
                     z - 5d,
@@ -39,9 +39,9 @@ public final class MinerRepel {
         BlockPos closestPortal = null;
         double closestDistance = Double.POSITIVE_INFINITY;
         BoxOutline.addAll(portalAndAdjacent, 0xFFFFFF00);
-        for (Box box : portalAndAdjacent) {
-            for (BlockPos pos : BlockPos.stream(box).map(BlockPos::toImmutable).collect(Collectors.toSet())) {
-                double squaredDistance = pos.getSquaredDistance(playerPos);
+        for (AABB box : portalAndAdjacent) {
+            for (BlockPos pos : BlockPos.betweenClosedStream(box).map(BlockPos::immutable).collect(Collectors.toSet())) {
+                double squaredDistance = pos.distSqr(playerPos);
                 if (
                     pos != closestPortal ||
                     squaredDistance < closestDistance
@@ -52,7 +52,7 @@ public final class MinerRepel {
             }
         }
         if (closestPortal == null || closestDistance < 1e-10) return;
-        player.setVelocity(player.getPos().subtract(Vec3d.ofCenter(closestPortal)).normalize());
-        player.velocityModified = true;
+        player.setDeltaMovement(player.position().subtract(Vec3.atCenterOf(closestPortal)).normalize());
+        player.hurtMarked = true;
     }
 }

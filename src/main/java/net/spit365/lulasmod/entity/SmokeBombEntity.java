@@ -1,47 +1,47 @@
 package net.spit365.lulasmod.entity;
 
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.projectile.thrown.ThrownItemEntity;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.particle.ParticleTypes;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvent;
-import net.minecraft.sound.SoundEvents;
-import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.util.hit.EntityHitResult;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.projectile.ThrowableItemProjectile;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.EntityHitResult;
+import net.minecraft.world.phys.Vec3;
 import net.spit365.lulasmod.mod.ModEntities;
 import net.spit365.lulasmod.mod.ModItems;
 
-public class SmokeBombEntity extends ThrownItemEntity {
-	public SmokeBombEntity(EntityType<? extends SmokeBombEntity> entityType, World world) {super(entityType, world);}
-	public SmokeBombEntity(World world, LivingEntity owner, ItemStack stack) {
+public class SmokeBombEntity extends ThrowableItemProjectile {
+	public SmokeBombEntity(EntityType<? extends SmokeBombEntity> entityType, Level world) {super(entityType, world);}
+	public SmokeBombEntity(Level world, LivingEntity owner, ItemStack stack) {
         super(ModEntities.SMOKE_BOMB, owner, world, stack);
-        this.setVelocity(owner, owner.getPitch(), owner.getYaw(), 0f, 1.5f, 0f);
+        this.shootFromRotation(owner, owner.getXRot(), owner.getYRot(), 0f, 1.5f, 0f);
     }
 
 	@Override protected Item getDefaultItem() {return ModItems.SMOKE_BOMB;}
-	@Override protected void onEntityHit(EntityHitResult entityHitResult) {collision(entityHitResult.getPos());}
-    @Override protected void onBlockHit(BlockHitResult blockHitResult) {collision(blockHitResult.getPos().add(blockHitResult.getSide().getDoubleVector()));}
+	@Override protected void onHitEntity(EntityHitResult entityHitResult) {collision(entityHitResult.getLocation());}
+    @Override protected void onHitBlock(BlockHitResult blockHitResult) {collision(blockHitResult.getLocation().add(blockHitResult.getDirection().getUnitVec3()));}
 
-    private void collision(Vec3d pos) {
-		if (this.getWorld() instanceof ServerWorld serverWorld) {
-            serverWorld.spawnParticles(
+    private void collision(Vec3 pos) {
+		if (this.level() instanceof ServerLevel serverWorld) {
+            serverWorld.sendParticles(
                 ParticleTypes.CAMPFIRE_SIGNAL_SMOKE,
-                pos.getX(), pos.getY(), pos.getZ(),
+                pos.x(), pos.y(), pos.z(),
                 269, 1.2d, 1.2d, 1.2d, 0.0d
             );
-            this.getWorld().playSound(
+            this.level().playSound(
                 null,
-                pos.getX(),
-                pos.getY(),
-                pos.getZ(),
+                pos.x(),
+                pos.y(),
+                pos.z(),
                 getSound(),
-                SoundCategory.PLAYERS,
+                SoundSource.PLAYERS,
                 1.0F,
                 1.0F
             );
@@ -50,6 +50,6 @@ public class SmokeBombEntity extends ThrownItemEntity {
 	}
 
     protected SoundEvent getSound() {
-        return SoundEvents.ENTITY_SPLASH_POTION_BREAK;
+        return SoundEvents.SPLASH_POTION_BREAK;
     }
 }

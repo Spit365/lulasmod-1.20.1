@@ -1,47 +1,47 @@
 package net.spit365.lulasmod.entity;
 
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.projectile.FireballEntity;
-import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.util.hit.EntityHitResult;
-import net.minecraft.util.hit.HitResult;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
-import net.minecraft.world.event.GameEvent;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.projectile.LargeFireball;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.gameevent.GameEvent;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.EntityHitResult;
+import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.phys.Vec3;
 
-public class MalignityEntity extends FireballEntity {
+public class MalignityEntity extends LargeFireball {
     private int explosionPower = 1;
 
-    public MalignityEntity(EntityType<? extends FireballEntity> entityType, World world) {super(entityType, world);}
-    public MalignityEntity(World world, LivingEntity owner, Vec3d velocity, int explosionPower) {
+    public MalignityEntity(EntityType<? extends LargeFireball> entityType, Level world) {super(entityType, world);}
+    public MalignityEntity(Level world, LivingEntity owner, Vec3 velocity, int explosionPower) {
         super(world, owner, velocity, explosionPower);
-        this.setPosition(owner.getEyePos());
+        this.setPos(owner.getEyePosition());
         this.explosionPower = explosionPower;
     }
 
     @Override
     public void tick() {
-        this.setVelocity(this.getVelocity().multiply(1.125));
+        this.setDeltaMovement(this.getDeltaMovement().scale(1.125));
         super.tick();
     }
 
     @Override
-    protected void onCollision(HitResult hitResult) {
+    protected void onHit(HitResult hitResult) {
         HitResult.Type type = hitResult.getType();
-        World world = this.getWorld();
+        Level world = this.level();
         if (type == HitResult.Type.ENTITY) {
-            this.onEntityHit((EntityHitResult)hitResult);
-            world.emitGameEvent(GameEvent.PROJECTILE_LAND, hitResult.getPos(), GameEvent.Emitter.of(this, null));
+            this.onHitEntity((EntityHitResult)hitResult);
+            world.gameEvent(GameEvent.PROJECTILE_LAND, hitResult.getLocation(), GameEvent.Context.of(this, null));
         } else if (type == HitResult.Type.BLOCK) {
             BlockHitResult blockHitResult = (BlockHitResult)hitResult;
-            this.onBlockHit(blockHitResult);
+            this.onHitBlock(blockHitResult);
             BlockPos blockPos = blockHitResult.getBlockPos();
-            world.emitGameEvent(GameEvent.PROJECTILE_LAND, blockPos, GameEvent.Emitter.of(this, world.getBlockState(blockPos)));
+            world.gameEvent(GameEvent.PROJECTILE_LAND, blockPos, GameEvent.Context.of(this, world.getBlockState(blockPos)));
         }
-        if (!world.isClient) {
-            world.createExplosion(this.getOwner(), this.getX(), this.getY(), this.getZ(), (float) this.explosionPower, false, World.ExplosionSourceType.NONE);
+        if (!world.isClientSide) {
+            world.explode(this.getOwner(), this.getX(), this.getY(), this.getZ(), (float) this.explosionPower, false, Level.ExplosionInteraction.NONE);
             this.discard();
         }
     }

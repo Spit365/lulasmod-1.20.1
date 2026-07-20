@@ -1,20 +1,20 @@
 package net.spit365.lulasmod.item.spell;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EquipmentSlot;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.registry.Registries;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvent;
-import net.minecraft.sound.SoundEvents;
-import net.minecraft.text.Text;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.Hand;
-import net.minecraft.util.Identifier;
-import net.minecraft.world.World;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import net.spit365.lulasmod.item.SpellBookItem;
 import net.spit365.lulasmod.mod.ModData;
 import net.spit365.lulasmod.util.ModUtil;
@@ -27,42 +27,42 @@ import java.util.Objects;
 public class SpellItem extends Item {
 	public final Spell spell;
 
-	public SpellItem(Settings settings, Spell spell) {
+	public SpellItem(Properties settings, Spell spell) {
         super(settings);
 		this.spell = spell;
     }
 
     @Override
-    public ActionResult use(World world, PlayerEntity player, Hand hand) {
-        if (!world.isClient() && !(player.getOffHandStack().getItem() instanceof SpellBookItem)) {
-            player.getItemCooldownManager().set(player.getStackInHand(hand), 5);
-			List<Identifier> mutable = ModUtil.makeMutable(player.getAttached(ModData.EQUIPPED_SPELLS));
+    public InteractionResult use(Level world, Player player, InteractionHand hand) {
+        if (!world.isClientSide() && !(player.getOffhandItem().getItem() instanceof SpellBookItem)) {
+            player.getCooldowns().addCooldown(player.getItemInHand(hand), 5);
+			List<ResourceLocation> mutable = ModUtil.makeMutable(player.getAttached(ModData.EQUIPPED_SPELLS));
             SoundEvent sound = null;
-            Identifier spellName = Registries.ITEM.getId(this);
-            if (player.isSneaking()) {
+            ResourceLocation spellName = BuiltInRegistries.ITEM.getKey(this);
+            if (player.isShiftKeyDown()) {
                 if (mutable.remove(spellName))
                     sound = getSound(false);
             } else if (!mutable.contains(spellName)) {
                 mutable.add(spellName);
                 sound = getSound(true);
             }
-            if (sound != null) world.playSound(null, player.getBlockPos(), sound, SoundCategory.PLAYERS);
+            if (sound != null) world.playSound(null, player.blockPosition(), sound, SoundSource.PLAYERS);
 			player.setAttached(ModData.EQUIPPED_SPELLS, mutable);
-			return ActionResult.SUCCESS;
+			return InteractionResult.SUCCESS;
         }
-        return ActionResult.PASS;
+        return InteractionResult.PASS;
     }
 
     protected SoundEvent getSound(boolean add) {
-        return add ? SoundEvents.BLOCK_RESPAWN_ANCHOR_CHARGE : SoundEvents.BLOCK_RESPAWN_ANCHOR_DEPLETE.value();
+        return add ? SoundEvents.RESPAWN_ANCHOR_CHARGE : SoundEvents.RESPAWN_ANCHOR_DEPLETE.value();
     }
 
     @Override
-    public void inventoryTick(ItemStack stack, ServerWorld world, Entity entity, @Nullable EquipmentSlot slot) {
-        if (entity instanceof PlayerEntity player && !Objects.equals(ModUtil.getInventoryStack(player, stack.getItem()), stack)) {
-            player.sendMessage(Text.translatable("notify.lulasmod.duplicate_spell"), true);
-            entity.dropStack(world, stack.copy());
-            stack.decrement(stack.getCount());
+    public void inventoryTick(ItemStack stack, ServerLevel world, Entity entity, @Nullable EquipmentSlot slot) {
+        if (entity instanceof Player player && !Objects.equals(ModUtil.getInventoryStack(player, stack.getItem()), stack)) {
+            player.displayClientMessage(Component.translatable("notify.lulasmod.duplicate_spell"), true);
+            entity.spawnAtLocation(world, stack.copy());
+            stack.shrink(stack.getCount());
         }
     }
 }

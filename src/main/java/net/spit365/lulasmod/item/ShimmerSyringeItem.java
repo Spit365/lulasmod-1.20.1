@@ -1,37 +1,37 @@
 package net.spit365.lulasmod.item;
 
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvents;
-import net.minecraft.text.Text;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.Hand;
-import net.minecraft.world.World;
+import net.minecraft.network.chat.Component;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import net.spit365.lulasmod.custom.Shimmer;
 import net.spit365.lulasmod.mod.ModData;
 
 public class ShimmerSyringeItem extends Item {
-    public ShimmerSyringeItem(Settings settings) {
+    public ShimmerSyringeItem(Properties settings) {
         super(settings);
     }
 
     @Override
-    public ActionResult use(World world, PlayerEntity user, Hand hand) {
-        ItemStack stack = user.getStackInHand(hand);
+    public InteractionResult use(Level world, Player user, InteractionHand hand) {
+        ItemStack stack = user.getItemInHand(hand);
         Shimmer.Variant variant = stack.get(ModData.SHIMMER_VARIANT);
-        stack.decrementUnlessCreative(1, user);
+        stack.consume(1, user);
         user.setAttached(ModData.APPLIED_SHIMMER_VARIANT, variant);
-        world.playSound(null, user.getX(), user.getY(), user.getZ(), SoundEvents.BLOCK_GLASS_BREAK, SoundCategory.PLAYERS);
-        return variant != null ? ActionResult.SUCCESS : ActionResult.PASS;
+        world.playSound(null, user.getX(), user.getY(), user.getZ(), SoundEvents.GLASS_BREAK, SoundSource.PLAYERS);
+        return variant != null ? InteractionResult.SUCCESS : InteractionResult.PASS;
     }
 
     @Override
-    public Text getName(ItemStack stack) {
-        String base = super.getTranslationKey();
+    public Component getName(ItemStack stack) {
+        String base = super.getDescriptionId();
         Shimmer.Variant variant = stack.get(ModData.SHIMMER_VARIANT);
-        if(variant == null) return Text.translatable(base);
-        else return Text.translatable(base + ".variant." + variant.name);
+        if(variant == null) return Component.translatable(base);
+        else return Component.translatable(base + ".variant." + variant.name);
     }
 }

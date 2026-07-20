@@ -1,24 +1,24 @@
 package net.spit365.lulasmod.util;
 
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.Hand;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.spit365.lulasmod.item.SealItem;
 
 @FunctionalInterface
 public interface Spell {
-    int cast(ServerWorld world, PlayerEntity player, Hand hand, float potencyMultiplier, int cooldownMultiplier);
+    int cast(ServerLevel world, Player player, InteractionHand hand, float potencyMultiplier, int cooldownMultiplier);
 
-    default int hitEntity(ServerWorld world, PlayerEntity player, Hand hand, LivingEntity target, float potencyMultiplier, int cooldownDivisor) {
+    default int hitEntity(ServerLevel world, Player player, InteractionHand hand, LivingEntity target, float potencyMultiplier, int cooldownDivisor) {
         return SealItem.FAIL_RESULT;
     }
 
-    default int castTick(ServerWorld world, PlayerEntity player, Hand hand, float potencyMultiplier, int cooldownDivisor) {
+    default int castTick(ServerLevel world, Player player, InteractionHand hand, float potencyMultiplier, int cooldownDivisor) {
         return SealItem.FAIL_RESULT;
     }
 
-    default int castStop(ServerWorld world, PlayerEntity player, Hand hand, float potencyMultiplier, int cooldownDivisor) {
+    default int castStop(ServerLevel world, Player player, InteractionHand hand, float potencyMultiplier, int cooldownDivisor) {
         return SealItem.FAIL_RESULT;
     }
 }

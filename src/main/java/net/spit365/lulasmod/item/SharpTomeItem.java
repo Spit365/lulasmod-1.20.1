@@ -1,35 +1,35 @@
 package net.spit365.lulasmod.item;
 
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.projectile.ArrowEntity;
-import net.minecraft.entity.projectile.PersistentProjectileEntity;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.stat.Stats;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.Hand;
-import net.minecraft.world.World;
+import net.minecraft.stats.Stats;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.AbstractArrow;
+import net.minecraft.world.entity.projectile.Arrow;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.level.Level;
 import net.spit365.lulasmod.util.ModUtil;
 
 public class SharpTomeItem extends Item{
-    public SharpTomeItem(Settings settings) {super(settings);}
+    public SharpTomeItem(Properties settings) {super(settings);}
 
     @Override
-    public ActionResult use(World world, PlayerEntity player, Hand hand) {
-        ItemStack stack = player.getStackInHand(hand);
+    public InteractionResult use(Level world, Player player, InteractionHand hand) {
+        ItemStack stack = player.getItemInHand(hand);
         ItemStack paper = ModUtil.getInventoryStack(player, Items.PAPER);
         boolean requirePaper = player.isCreative(); // || EnchantmentHelper.getLevel(Enchantments.INFINITY, stack) > 0;
-        if (!world.isClient() && (paper != null || requirePaper)) {
-            player.getItemCooldownManager().set(stack, 5);
-            if (!requirePaper) paper.decrement(1);
-            ArrowEntity arrow = new ArrowEntity(world, player, stack, paper);
-            arrow.pickupType = PersistentProjectileEntity.PickupPermission.CREATIVE_ONLY;
-            arrow.setVelocity(player, player.getPitch(), player.getYaw(), 0f, 3f, 1f);
-            world.spawnEntity(arrow);
-            player.incrementStat(Stats.USED.getOrCreateStat(this));
-            return ActionResult.SUCCESS;
+        if (!world.isClientSide() && (paper != null || requirePaper)) {
+            player.getCooldowns().addCooldown(stack, 5);
+            if (!requirePaper) paper.shrink(1);
+            Arrow arrow = new Arrow(world, player, stack, paper);
+            arrow.pickup = AbstractArrow.Pickup.CREATIVE_ONLY;
+            arrow.shootFromRotation(player, player.getXRot(), player.getYRot(), 0f, 3f, 1f);
+            world.addFreshEntity(arrow);
+            player.awardStat(Stats.ITEM_USED.get(this));
+            return InteractionResult.SUCCESS;
         }
-        return ActionResult.PASS;
+        return InteractionResult.PASS;
     }
 }

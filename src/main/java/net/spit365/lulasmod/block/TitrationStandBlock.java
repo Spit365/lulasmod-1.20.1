@@ -1,66 +1,71 @@
 package net.spit365.lulasmod.block;
 
 import com.mojang.serialization.MapCodec;
-import net.minecraft.block.*;
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.ItemScatterer;
-import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.shape.VoxelShape;
-import net.minecraft.util.shape.VoxelShapes;
-import net.minecraft.world.BlockView;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.Containers;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.BaseEntityBlock;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.EntityBlock;
+import net.minecraft.world.level.block.RenderShape;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import net.spit365.lulasmod.blockentity.TitrationStandBlockEntity;
 import org.jetbrains.annotations.Nullable;
 
-public class TitrationStandBlock extends BlockWithEntity implements BlockEntityProvider {
-    private static final VoxelShape SHAPE = VoxelShapes.union(Block.createColumnShape(2.0, 2.0, 14.0), Block.createColumnShape(14.0, 0.0, 2.0));
-    public static final MapCodec<TitrationStandBlock> CODEC = TitrationStandBlock.createCodec(TitrationStandBlock::new);
+public class TitrationStandBlock extends BaseEntityBlock implements EntityBlock {
+    private static final VoxelShape SHAPE = Shapes.or(Block.column(2.0, 2.0, 14.0), Block.column(14.0, 0.0, 2.0));
+    public static final MapCodec<TitrationStandBlock> CODEC = TitrationStandBlock.simpleCodec(TitrationStandBlock::new);
 
-    public TitrationStandBlock(Settings settings) {
+    public TitrationStandBlock(Properties settings) {
         super(settings);
     }
 
     @Override
-    protected VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
+    protected VoxelShape getShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext context) {
         return SHAPE;
     }
 
     @Override
-    protected MapCodec<? extends BlockWithEntity> getCodec() {
+    protected MapCodec<? extends BaseEntityBlock> codec() {
         return CODEC;
     }
 
     @Override
-    public @Nullable BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
+    public @Nullable BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
         return new TitrationStandBlockEntity(pos, state);
     }
 
     @Override
-    protected void onStateReplaced(BlockState state, ServerWorld world, BlockPos pos, boolean moved) {
+    protected void affectNeighborsAfterRemoval(BlockState state, ServerLevel world, BlockPos pos, boolean moved) {
         if(this != state.getBlock()) {
             BlockEntity blockEntity = world.getBlockEntity(pos);
             if (blockEntity instanceof TitrationStandBlockEntity titrationStandBlockEntity) {
-                ItemScatterer.spawn(world, pos, titrationStandBlockEntity);
-                world.updateComparators(pos, this);
+                Containers.dropContents(world, pos, titrationStandBlockEntity);
+                world.updateNeighbourForOutputSignal(pos, this);
             }
-            super.onStateReplaced(state, world, pos, moved);
+            super.affectNeighborsAfterRemoval(state, world, pos, moved);
         }
     }
 
     @Override
-    protected BlockRenderType getRenderType(BlockState state) {
-        return super.getRenderType(state);
+    protected RenderShape getRenderShape(BlockState state) {
+        return super.getRenderShape(state);
     }
 
     @Override
-    protected ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, BlockHitResult hit) {
+    protected InteractionResult useWithoutItem(BlockState state, Level world, BlockPos pos, Player player, BlockHitResult hit) {
         if (!(world.getBlockEntity(pos) instanceof TitrationStandBlockEntity titrationStandBlockEntity))
-            return ActionResult.PASS;
-        player.openHandledScreen(titrationStandBlockEntity);
-        return ActionResult.SUCCESS;
+            return InteractionResult.PASS;
+        player.openMenu(titrationStandBlockEntity);
+        return InteractionResult.SUCCESS;
     }
 }

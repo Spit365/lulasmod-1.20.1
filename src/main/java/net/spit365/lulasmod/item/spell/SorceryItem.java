@@ -1,16 +1,16 @@
 package net.spit365.lulasmod.item.spell;
 
-import net.minecraft.sound.SoundEvent;
-import net.minecraft.sound.SoundEvents;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
 import net.spit365.lulasmod.util.Spell;
 
 public class SorceryItem extends SpellItem{
-	public SorceryItem(Settings settings, Spell sorcery) {
+	public SorceryItem(Properties settings, Spell sorcery) {
 		super(settings, sorcery);
 	}
 
 	@Override
 	protected SoundEvent getSound(boolean add) {
-		return add ? SoundEvents.BLOCK_BEACON_ACTIVATE : SoundEvents.BLOCK_BEACON_DEACTIVATE;
+		return add ? SoundEvents.BEACON_ACTIVATE : SoundEvents.BEACON_DEACTIVATE;
 	}
 }

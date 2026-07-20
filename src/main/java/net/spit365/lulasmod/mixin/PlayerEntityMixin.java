@@ -1,11 +1,11 @@
 package net.spit365.lulasmod.mixin;
 
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.world.World;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.Mth;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
 import net.spit365.lulasmod.custom.Demon;
 import net.spit365.lulasmod.custom.Shimmer;
 import net.spit365.lulasmod.mod.ModData;
@@ -16,27 +16,27 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-@Mixin(PlayerEntity.class)
+@Mixin(Player.class)
 public abstract class PlayerEntityMixin extends LivingEntity {
-    protected PlayerEntityMixin(EntityType<? extends LivingEntity> entityType, World world) {super(entityType, world);}
+    protected PlayerEntityMixin(EntityType<? extends LivingEntity> entityType, Level world) {super(entityType, world);}
 
-    @Inject(method = "spawnSweepAttackParticles", at = @At("HEAD"), cancellable = true)
+    @Inject(method = "sweepAttack", at = @At("HEAD"), cancellable = true)
     private void spawnSweepAttackParticles(CallbackInfo ci) {
-        PlayerEntity player = (PlayerEntity) (Object) this;
-        if (Demon.isDemon(player) && player.getWorld() instanceof ServerWorld serverWorld) {
-            double x = -MathHelper.sin(this.getYaw() * (float) (Math.PI / 180.0));
-            double y = MathHelper.cos(this.getYaw() * (float) (Math.PI / 180.0));
-            serverWorld.spawnParticles(ModParticles.SCRATCH, player.getX() + x, player.getBodyY(0.5), player.getZ() + y, 0, x, 0.0, y, 0.0);
+        Player player = (Player) (Object) this;
+        if (Demon.isDemon(player) && player.level() instanceof ServerLevel serverWorld) {
+            double x = -Mth.sin(this.getYRot() * (float) (Math.PI / 180.0));
+            double y = Mth.cos(this.getYRot() * (float) (Math.PI / 180.0));
+            serverWorld.sendParticles(ModParticles.SCRATCH, player.getX() + x, player.getY(0.5), player.getZ() + y, 0, x, 0.0, y, 0.0);
             ci.cancel();
         }
     }
 
-    @Inject(method = "canFoodHeal", at = @At("HEAD"), cancellable = true)
+    @Inject(method = "isHurt", at = @At("HEAD"), cancellable = true)
     private void canFoodHeal(CallbackInfoReturnable<Boolean> cir) {
         if (Demon.isDemon(this)) cir.setReturnValue(false);
     }
 
-    @Inject(method = "canHarvest", at = @At("HEAD"), cancellable = true)
+    @Inject(method = "hasCorrectToolForDrops", at = @At("HEAD"), cancellable = true)
     private void canHarvest(CallbackInfoReturnable<Boolean> cir) {
         Shimmer.Variant variant = this.getAttached(ModData.APPLIED_SHIMMER_VARIANT);
         if (variant == Shimmer.Variant.FORTITUDE) cir.setReturnValue(true);

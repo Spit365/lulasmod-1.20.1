@@ -2,26 +2,25 @@ package net.spit365.lulasmod.renderer;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.render.OverlayTexture;
-import net.minecraft.client.render.RenderLayer;
-import net.minecraft.client.render.VertexConsumer;
-import net.minecraft.client.render.VertexConsumerProvider;
-import net.minecraft.client.render.entity.EntityRenderer;
-import net.minecraft.client.render.entity.EntityRendererFactory;
-import net.minecraft.client.render.entity.state.ProjectileEntityRenderState;
-import net.minecraft.client.render.item.ItemRenderer;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.item.ItemDisplayContext;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.math.RotationAxis;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.entity.EntityRenderer;
+import net.minecraft.client.renderer.entity.EntityRendererProvider;
+import net.minecraft.client.renderer.entity.ItemRenderer;
+import net.minecraft.client.renderer.entity.state.ArrowRenderState;
+import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemDisplayContext;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
 import net.spit365.lulasmod.entity.NeedleSwordEntity;
 import net.spit365.lulasmod.mod.ModItems;
 import org.joml.Matrix4f;
-
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.math.Axis;
 import java.util.Optional;
 
 @Environment(EnvType.CLIENT)
@@ -29,9 +28,9 @@ public class NeedleSwordEntityRenderer extends EntityRenderer<NeedleSwordEntity,
 
     private final ItemRenderer itemRenderer;
 
-    public NeedleSwordEntityRenderer(EntityRendererFactory.Context ctx) {
+    public NeedleSwordEntityRenderer(EntityRendererProvider.Context ctx) {
         super(ctx);
-        this.itemRenderer = MinecraftClient.getInstance().getItemRenderer();
+        this.itemRenderer = Minecraft.getInstance().getItemRenderer();
     }
 
     @Override
@@ -40,77 +39,77 @@ public class NeedleSwordEntityRenderer extends EntityRenderer<NeedleSwordEntity,
     }
 
     @Override
-    public void render(NeedleSwordRenderState state, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light) {
-        matrices.push();
-        matrices.multiply(RotationAxis.POSITIVE_X.rotationDegrees(-state.pitch + 75));
-        matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(-state.yaw));
+    public void render(NeedleSwordRenderState state, PoseStack matrices, MultiBufferSource vertexConsumers, int light) {
+        matrices.pushPose();
+        matrices.mulPose(Axis.XP.rotationDegrees(-state.xRot + 75));
+        matrices.mulPose(Axis.YP.rotationDegrees(-state.yRot));
 
-        itemRenderer.renderItem(
+        itemRenderer.renderStatic(
             state.needleSword,
             ItemDisplayContext.FIRST_PERSON_LEFT_HAND,
             light,
-            OverlayTexture.DEFAULT_UV,
+            OverlayTexture.NO_OVERLAY,
             matrices,
             vertexConsumers,
             state.world,
             0
         );
-        matrices.pop();
-        matrices.push();
+        matrices.popPose();
+        matrices.pushPose();
         if (state.ownerPos.isPresent() && state.shouldDisplayString)
-            renderLeash(matrices, vertexConsumers, state.ownerPos.get().subtract(new Vec3d(state.x, state.y, state.z)), light);
-        matrices.pop();
+            renderLeash(matrices, vertexConsumers, state.ownerPos.get().subtract(new Vec3(state.x, state.y, state.z)), light);
+        matrices.popPose();
     }
 
 
-    private static void renderLeash(MatrixStack matrices, VertexConsumerProvider vertexConsumers, Vec3d relativePos, int light) {
+    private static void renderLeash(PoseStack matrices, MultiBufferSource vertexConsumers, Vec3 relativePos, int light) {
         double x = relativePos.x;
         double z = relativePos.z;
         double normalizingFactorZPlane = org.joml.Math.invsqrt(x * x + z * z) * 0.025d;
         double XOffset = x * normalizingFactorZPlane;
         double ZOffset = z * normalizingFactorZPlane;
-        matrices.push();
-        VertexConsumer vertexConsumer = vertexConsumers.getBuffer(RenderLayer.getBeaconBeam(Identifier.ofVanilla("textures/entity/beacon_beam.png"), true));
-        Matrix4f matrix4f = matrices.peek().getPositionMatrix();
+        matrices.pushPose();
+        VertexConsumer vertexConsumer = vertexConsumers.getBuffer(RenderType.beaconBeam(ResourceLocation.withDefaultNamespace("textures/entity/beacon_beam.png"), true));
+        Matrix4f matrix4f = matrices.last().pose();
         for (double l = 0; l <= 1; l += 1 / 24d) {
-            renderLeashSegment(vertexConsumer, matrix4f, relativePos.multiply(l), XOffset, 0.05d, ZOffset, light);
-            renderLeashSegment(vertexConsumer, matrix4f, relativePos.multiply(1 - l), XOffset, 0d, ZOffset, light);
+            renderLeashSegment(vertexConsumer, matrix4f, relativePos.scale(l), XOffset, 0.05d, ZOffset, light);
+            renderLeashSegment(vertexConsumer, matrix4f, relativePos.scale(1 - l), XOffset, 0d, ZOffset, light);
         }
-        matrices.pop();
+        matrices.popPose();
     }
 
-    private static void renderLeashSegment(VertexConsumer vertexConsumer, Matrix4f matrix, Vec3d interpolatedRelativePos, double XOffset, double YOffset, double ZOffset, int light) {
+    private static void renderLeashSegment(VertexConsumer vertexConsumer, Matrix4f matrix, Vec3 interpolatedRelativePos, double XOffset, double YOffset, double ZOffset, int light) {
         vertexConsumer
-            .vertex(matrix, (float) (interpolatedRelativePos.x - ZOffset), (float) (interpolatedRelativePos.y + YOffset), (float) (interpolatedRelativePos.z + XOffset))
-            .normal(0, 0, 0)
-            .texture(4f, 0f)
-            .overlay(OverlayTexture.DEFAULT_UV)
-            .color(1, 1, 1, 1f)
-            .light(light);
+            .addVertex(matrix, (float) (interpolatedRelativePos.x - ZOffset), (float) (interpolatedRelativePos.y + YOffset), (float) (interpolatedRelativePos.z + XOffset))
+            .setNormal(0, 0, 0)
+            .setUv(4f, 0f)
+            .setOverlay(OverlayTexture.NO_OVERLAY)
+            .setColor(1, 1, 1, 1f)
+            .setLight(light);
         vertexConsumer
-            .vertex(matrix, (float) (interpolatedRelativePos.x + ZOffset), (float) (interpolatedRelativePos.y + 0.05f - YOffset), (float) (interpolatedRelativePos.z - XOffset))
-            .normal(0, 0, 0)
-            .texture(0f, 0f)
-            .overlay(OverlayTexture.DEFAULT_UV)
-            .color(1, 1, 1, 1f)
-            .light(light);
+            .addVertex(matrix, (float) (interpolatedRelativePos.x + ZOffset), (float) (interpolatedRelativePos.y + 0.05f - YOffset), (float) (interpolatedRelativePos.z - XOffset))
+            .setNormal(0, 0, 0)
+            .setUv(0f, 0f)
+            .setOverlay(OverlayTexture.NO_OVERLAY)
+            .setColor(1, 1, 1, 1f)
+            .setLight(light);
     }
 
     @Override
-    public void updateRenderState(NeedleSwordEntity entity, NeedleSwordRenderState state, float tickProgress) {
-        super.updateRenderState(entity, state, tickProgress);
-        state.needleSword = entity.getSword().copyComponentsToNewStack(ModItems.NEEDLE_HEAD, 1);
-        state.ownerPos = Optional.ofNullable(entity.getOwner()).map(owner -> owner.getLeashPos(tickProgress));
-        state.world = entity.getWorld();
-        state.yaw = entity.getYaw();
-        state.pitch = entity.getPitch();
+    public void extractRenderState(NeedleSwordEntity entity, NeedleSwordRenderState state, float tickProgress) {
+        super.extractRenderState(entity, state, tickProgress);
+        state.needleSword = entity.getSword().transmuteCopy(ModItems.NEEDLE_HEAD, 1);
+        state.ownerPos = Optional.ofNullable(entity.getOwner()).map(owner -> owner.getRopeHoldPosition(tickProgress));
+        state.world = entity.level();
+        state.yRot = entity.getYRot();
+        state.xRot = entity.getXRot();
         state.shouldDisplayString = entity.shouldReturn();
     }
 
-    public static class NeedleSwordRenderState extends ProjectileEntityRenderState {
+    public static class NeedleSwordRenderState extends ArrowRenderState {
         public ItemStack needleSword;
-        public World world;
+        public Level world;
         public boolean shouldDisplayString;
-        public Optional<Vec3d> ownerPos;
+        public Optional<Vec3> ownerPos;
     }
 }

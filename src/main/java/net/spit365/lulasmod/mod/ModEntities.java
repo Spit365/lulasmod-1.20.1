@@ -1,7 +1,7 @@
 package net.spit365.lulasmod.mod;
 
-import net.minecraft.block.entity.BlockEntityType;
-import net.minecraft.entity.EntityType;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.spit365.lulasmod.blockentity.TitrationStandBlockEntity;
 import net.spit365.lulasmod.entity.*;
 import net.spit365.lulasmod.util.RegisterHelper;

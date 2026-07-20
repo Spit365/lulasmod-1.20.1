@@ -5,8 +5,8 @@ import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.world.ClientWorld;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.server.MinecraftServer;
 import net.spit365.lulasmod.custom.TimeForward;
 
@@ -22,9 +22,9 @@ public final class TimeForwardRenderer {
         ClientTickEvents.END_CLIENT_TICK.register(TimeForwardRenderer::tick);
     }
 
-    private static void tick(MinecraftClient client) {
+    private static void tick(Minecraft client) {
         if (!running) return;
-        ClientWorld world = client.world;
+        ClientLevel world = client.level;
         if (world == null) return;
         MinecraftServer server = world.getServer();
         if (server != null && server.isPaused()) return;
@@ -36,16 +36,16 @@ public final class TimeForwardRenderer {
 
     private static void render(WorldRenderContext context) {
         if (!running) return;
-        ClientWorld world = context.world();
+        ClientLevel world = context.world();
         if (world == null) return;
-        long m = (displayTime + (long) (animationDuration * context.tickCounter().getTickProgress(false))) % DAY_LENGTH;
-        world.getLevelProperties().setTimeOfDay(m < 0 ? m + DAY_LENGTH : m);
+        long m = (displayTime + (long) (animationDuration * context.tickCounter().getGameTimeDeltaPartialTick(false))) % DAY_LENGTH;
+        world.getLevelData().setDayTime(m < 0 ? m + DAY_LENGTH : m);
     }
 
-    public static void start(ClientWorld world) {
+    public static void start(ClientLevel world) {
         if (running) return;
         running = true;
-        displayTime = world.getTimeOfDay();
+        displayTime = world.getDayTime();
         animationDuration = 0;
     }
 

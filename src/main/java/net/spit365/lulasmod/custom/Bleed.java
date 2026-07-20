@@ -1,16 +1,16 @@
 package net.spit365.lulasmod.custom;
 
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
-import net.minecraft.client.gl.RenderPipelines;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.world.ClientWorld;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.Mth;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.phys.Vec3;
 import net.spit365.lulasmod.Lulasmod;
 import net.spit365.lulasmod.mod.ModDamageTypes;
 import net.spit365.lulasmod.mod.ModData;
@@ -22,15 +22,15 @@ import java.util.HashSet;
 import java.util.Set;
 
 public final class Bleed {
-    public static final Identifier BACKGROUND = Identifier.of(Lulasmod.MOD_ID, "textures/gui/bleed_progress/background.png");
-    public static final Identifier PROGRESS = Identifier.of(Lulasmod.MOD_ID, "textures/gui/bleed_progress/progress.png");
+    public static final ResourceLocation BACKGROUND = ResourceLocation.fromNamespaceAndPath(Lulasmod.MOD_ID, "textures/gui/bleed_progress/background.png");
+    public static final ResourceLocation PROGRESS = ResourceLocation.fromNamespaceAndPath(Lulasmod.MOD_ID, "textures/gui/bleed_progress/progress.png");
     public static int progress = 0;
 
-    public static void tick(ServerWorld world) {
-        Set<Vec3d> occurrences = new HashSet<>();
-        for (Entity entity : world.iterateEntities()) {
+    public static void tick(ServerLevel world) {
+        Set<Vec3> occurrences = new HashSet<>();
+        for (Entity entity : world.getAllEntities()) {
             Integer duration = entity.getAttached(ModData.BLEED_VALUE);
-            if (entity instanceof ServerPlayerEntity player)
+            if (entity instanceof ServerPlayer player)
                 ServerPlayNetworking.send(player, new BleedProgressS2CPacket(duration != null ? duration * 100 / getThreshold(player) : 0));
             if (duration == null) continue;
             if (!(entity instanceof LivingEntity target) || !target.isAlive() || duration <= 0) {
@@ -40,22 +40,22 @@ public final class Bleed {
             int threshold = getThreshold(target);
             if (duration >= threshold) {
                 int times = duration / threshold;
-                target.damage(world, ModDamageTypes.createDamageSource(world, ModDamageTypes.BLOODSUCKING), (target.getMaxHealth() * 0.15f + 10f) * times);
+                target.hurtServer(world, ModDamageTypes.createDamageSource(world, ModDamageTypes.BLOODSUCKING), (target.getMaxHealth() * 0.15f + 10f) * times);
                 duration %= threshold;
-                occurrences.add(target.getPos());
+                occurrences.add(target.position());
             }
             duration--;
             if (duration > 0) target.setAttached(ModData.BLEED_VALUE, duration);
             else target.removeAttached(ModData.BLEED_VALUE);
         }
-        for (ServerPlayerEntity player : world.getPlayers()) for (Vec3d pos : occurrences) {
-            if (player.squaredDistanceTo(pos) <= 1_000_000)
+        for (ServerPlayer player : world.players()) for (Vec3 pos : occurrences) {
+            if (player.distanceToSqr(pos) <= 1_000_000)
                 ServerPlayNetworking.send(player, new SummonBleedS2CPacket(pos));
         }
     }
 
     private static int getThreshold(LivingEntity entity) {
-        return MathHelper.clamp((int) entity.getHealth() * 60, 1, 1200) ;
+        return Mth.clamp((int) entity.getHealth() * 60, 1, 1200) ;
     }
 
     public static void apply(LivingEntity entity, int duration) {
@@ -63,23 +63,23 @@ public final class Bleed {
         entity.setAttached(ModData.BLEED_VALUE, duration + (bleed != null? bleed : 0));
 	}
 
-	public static void summonParticles(Vec3d pos, ClientWorld world) {
+	public static void summonParticles(Vec3 pos, ClientLevel world) {
 		if (world != null) for (int i = 0; i < world.random.nextInt(4) + 6; i++) {
-            world.addParticleClient(ModParticles.getBlood(), pos.getX(), pos.getY() + 1, pos.getZ(), 1, 0, 1);
+            world.addParticle(ModParticles.getBlood(), pos.x(), pos.y() + 1, pos.z(), 1, 0, 1);
         }
 	}
 
-    public static void render(DrawContext drawContext) {
+    public static void render(GuiGraphics drawContext) {
         int textWidth = 182;
         int textHeight = 5;
-        int x = (drawContext.getScaledWindowWidth() - textWidth) / 2;
-        int y = drawContext.getScaledWindowHeight() * 3 / 4;
+        int x = (drawContext.guiWidth() - textWidth) / 2;
+        int y = drawContext.guiHeight() * 3 / 4;
         if (progress > 0) {
             progress = Math.min(progress, 100);
             int l = (int) (progress * 1.83F);
-            drawContext.drawTexture(RenderPipelines.GUI_TEXTURED, BACKGROUND, x, y, 0, 0, textWidth, textHeight, textWidth, textHeight);
+            drawContext.blit(RenderPipelines.GUI_TEXTURED, BACKGROUND, x, y, 0, 0, textWidth, textHeight, textWidth, textHeight);
             if (l > 0) {
-                drawContext.drawTexture(RenderPipelines.GUI_TEXTURED, PROGRESS, x, y, 0, 0, l, textHeight, textWidth, textHeight);
+                drawContext.blit(RenderPipelines.GUI_TEXTURED, PROGRESS, x, y, 0, 0, l, textHeight, textWidth, textHeight);
             }
         }
     }

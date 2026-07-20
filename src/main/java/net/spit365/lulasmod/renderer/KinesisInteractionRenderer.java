@@ -2,18 +2,17 @@ package net.spit365.lulasmod.renderer;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.client.option.GameOptions;
-import net.minecraft.client.option.Perspective;
-import net.minecraft.client.render.RenderTickCounter;
-import net.minecraft.client.util.Window;
-import net.minecraft.util.Hand;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.client.CameraType;
+import net.minecraft.client.DeltaTracker;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.Options;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.util.Mth;
+import net.minecraft.world.InteractionHand;
 import net.spit365.lulasmod.item.SealItem;
 import net.spit365.lulasmod.mod.ModSpells;
-
+import com.mojang.blaze3d.platform.Window;
 import java.util.Arrays;
 
 public final class KinesisInteractionRenderer {
@@ -23,19 +22,19 @@ public final class KinesisInteractionRenderer {
 	private static double lastFOV;
 
 	@Environment(EnvType.CLIENT)
-	public static void render(DrawContext context, RenderTickCounter renderTickCounter) {
-		MinecraftClient mc = MinecraftClient.getInstance();
-		ClientPlayerEntity player = mc.player;
-		if (player == null || Arrays.stream(Hand.values()).noneMatch(hand -> player.getStackInHand(hand).getItem() instanceof SealItem) || SpellHotbarRenderer.spellHotbarList.isEmpty() || !SpellHotbarRenderer.spellHotbarList.getFirst().isOf(ModSpells.KINESIS_SORCERY)) return;
+	public static void render(GuiGraphics context, DeltaTracker renderTickCounter) {
+		Minecraft mc = Minecraft.getInstance();
+		LocalPlayer player = mc.player;
+		if (player == null || Arrays.stream(InteractionHand.values()).noneMatch(hand -> player.getItemInHand(hand).getItem() instanceof SealItem) || SpellHotbarRenderer.spellHotbarList.isEmpty() || !SpellHotbarRenderer.spellHotbarList.getFirst().is(ModSpells.KINESIS_SORCERY)) return;
 		Window win = mc.getWindow();
-		int w = win.getScaledWidth();
-		int h = win.getScaledHeight();
+		int w = win.getGuiScaledWidth();
+		int h = win.getGuiScaledHeight();
 		float cx = w * 0.5f;
 		float cy = h * 0.5f;
 
-		GameOptions options = mc.options;
-		double newFOV = Math.toRadians(options.getFov().getValue()) * player.getFovMultiplier(options.getPerspective().equals(Perspective.FIRST_PERSON), 1f);
-		double lerpedFOV = lastFOV == 0L ? newFOV : MathHelper.lerp(renderTickCounter.getTickProgress(true), lastFOV, newFOV);
+		Options options = mc.options;
+		double newFOV = Math.toRadians(options.fov().get()) * player.getFieldOfViewModifier(options.getCameraType().equals(CameraType.FIRST_PERSON), 1f);
+		double lerpedFOV = lastFOV == 0L ? newFOV : Mth.lerp(renderTickCounter.getGameTimeDeltaPartialTick(true), lastFOV, newFOV);
 		lastFOV = lerpedFOV;
 
 		double tanLerpedFOV = Math.tan(lerpedFOV * 0.5d);

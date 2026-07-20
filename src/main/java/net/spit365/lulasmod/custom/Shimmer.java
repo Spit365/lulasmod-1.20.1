@@ -3,9 +3,9 @@ package net.spit365.lulasmod.custom;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
-import net.minecraft.entity.effect.StatusEffectInstance;
-import net.minecraft.entity.effect.StatusEffects;
-import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.spit365.lulasmod.mod.ModData;
 import net.spit365.lulasmod.packet.MindShimmerS2CPacket;
 
@@ -13,7 +13,7 @@ public final class Shimmer {
     @Environment(EnvType.CLIENT)
     public static boolean mindShimmerEnabled = false;
 
-    public static void tick(ServerPlayerEntity player) {
+    public static void tick(ServerPlayer player) {
         Variant variant = player.getAttached(ModData.APPLIED_SHIMMER_VARIANT);
         ServerPlayNetworking.send(player, new MindShimmerS2CPacket(variant == Variant.MIND));
         if (!player.isAlive()) return;
@@ -22,10 +22,10 @@ public final class Shimmer {
             if (health == 1) {
                 player.removeAttached(ModData.APPLIED_SHIMMER_VARIANT);
                 player.setHealth(player.getMaxHealth());
-            } else if (health < player.getMaxHealth() / 2 && !player.hasStatusEffect(StatusEffects.REGENERATION)) player.addStatusEffect(
-                new StatusEffectInstance(StatusEffects.REGENERATION, 80, 2, true, false));
+            } else if (health < player.getMaxHealth() / 2 && !player.hasEffect(MobEffects.REGENERATION)) player.addEffect(
+                new MobEffectInstance(MobEffects.REGENERATION, 80, 2, true, false));
         } else if (variant == Variant.FORTITUDE) {
-            player.addStatusEffect(new StatusEffectInstance(StatusEffects.STRENGTH, 1, 0, true, false));
+            player.addEffect(new MobEffectInstance(MobEffects.STRENGTH, 1, 0, true, false));
         }
     }
 

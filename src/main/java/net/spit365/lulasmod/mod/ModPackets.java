@@ -2,11 +2,11 @@ package net.spit365.lulasmod.mod;
 
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
-import net.minecraft.network.codec.PacketCodec;
-import net.minecraft.network.packet.CustomPayload;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.util.Hand;
-import net.minecraft.util.Identifier;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.InteractionHand;
 import net.spit365.lulasmod.custom.DashSpell;
 import net.spit365.lulasmod.custom.Demon;
 import net.spit365.lulasmod.custom.Shimmer;
@@ -39,11 +39,11 @@ public final class ModPackets {
 
 		//Serverside Receivers
 		ServerPlayNetworking.registerGlobalReceiver(CycleSpellHotbarC2SPacket.ID, (cycleSpellHotbarC2SPacket, context) -> {
-			ServerPlayerEntity player = context.player();
-			for (Hand hand : Hand.values()) if (player.getStackInHand(hand).getItem() instanceof SpellHotbar item) {
+			ServerPlayer player = context.player();
+			for (InteractionHand hand : InteractionHand.values()) if (player.getItemInHand(hand).getItem() instanceof SpellHotbar item) {
 				item.onCycle(player, identifiers -> {
-					List<Identifier> mutable = ModUtil.makeMutable(identifiers);
-					Collections.rotate(mutable, player.isSneaking() ? 1 : -1);
+					List<ResourceLocation> mutable = ModUtil.makeMutable(identifiers);
+					Collections.rotate(mutable, player.isShiftKeyDown() ? 1 : -1);
 					return mutable;
 				});
 				break;
@@ -54,18 +54,18 @@ public final class ModPackets {
 			Demon.give(context.player()));
 
 		ServerPlayNetworking.registerGlobalReceiver(DashC2SPacket.ID, (dashC2SPacket, context) -> {
-			ServerPlayerEntity player = context.player();
+			ServerPlayer player = context.player();
 			if (player == null || player.getAttached(ModData.APPLIED_SHIMMER_VARIANT) != Shimmer.Variant.PACE) return;
-			DashSpell.dash(player.getWorld(), player);
+			DashSpell.dash(player.level(), player);
 		});
 
 		ServerPlayNetworking.registerGlobalReceiver(BreakWithMindC2SPacket.ID, (breakWithMindC2SPacket, context) -> {
-			ServerPlayerEntity player = context.player();
-			ModPresences.breakWithMind(player, player.getWorld());
+			ServerPlayer player = context.player();
+			ModPresences.breakWithMind(player, player.level());
 		});
 	}
 
-	public static @NotNull <T extends CustomPayload> PacketCodec<Object, T> getEmptyPacketCodec(Supplier<T> packet) {
-		return PacketCodec.of((value, buf) -> {}, buf -> packet.get());
+	public static @NotNull <T extends CustomPacketPayload> StreamCodec<Object, T> getEmptyPacketCodec(Supplier<T> packet) {
+		return StreamCodec.ofMember((value, buf) -> {}, buf -> packet.get());
 	}
 }

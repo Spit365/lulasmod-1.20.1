@@ -3,15 +3,15 @@ package net.spit365.lulasmod.custom;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
-import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.entity.effect.StatusEffects;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.particle.ParticleTypes;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.Hand;
-import net.minecraft.util.PlayerInput;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.player.Input;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.phys.Vec3;
 import net.spit365.lulasmod.item.SealItem;
 import net.spit365.lulasmod.mod.ModData;
 import net.spit365.lulasmod.mod.ModSpells;
@@ -21,7 +21,7 @@ import net.spit365.lulasmod.renderer.SpellHotbarRenderer;
 public final class DashSpell {
 	public static int usages;
 
-	public static void tick(ServerPlayerEntity player) {
+	public static void tick(ServerPlayer player) {
         ServerPlayNetworking.send(player,
 			new DashSpellUsagesS2CPacket(player.getAttachedOrElse(ModData.DASH_SPELL, -1)));
 
@@ -32,12 +32,12 @@ public final class DashSpell {
 		}
 	}
 
-	public static int onUse(ServerWorld world, PlayerEntity player, int cooldownDivisor) {
-        if (player.hasStatusEffect(StatusEffects.SLOWNESS)) return SealItem.FAIL_RESULT;
+	public static int onUse(ServerLevel world, Player player, int cooldownDivisor) {
+        if (player.hasEffect(MobEffects.SLOWNESS)) return SealItem.FAIL_RESULT;
 
         int maxUsages = 5 * cooldownDivisor;
         int usages = player.getAttachedOrElse(ModData.DASH_SPELL, maxUsages) - 1;
-        int cooldown = usages > 0 ? 5 : (player.isOnGround() ? 20 : 40);
+        int cooldown = usages > 0 ? 5 : (player.onGround() ? 20 : 40);
 
 		if (!dashInternal(world, player)) return SealItem.FAIL_RESULT;
 
@@ -45,15 +45,15 @@ public final class DashSpell {
         return cooldown;
     }
 
-	public static void dash(ServerWorld world, PlayerEntity player) {
+	public static void dash(ServerLevel world, Player player) {
 		Integer prevCooldown = player.getAttached(ModData.DASH_COOLDOWN);
 		if (prevCooldown != null && prevCooldown > 0) return;
 
-		if (player.hasStatusEffect(StatusEffects.SLOWNESS)) return;
+		if (player.hasEffect(MobEffects.SLOWNESS)) return;
 
 		int maxUsages = 5;
         int usages = player.getAttachedOrElse(ModData.DASH_SPELL, maxUsages) - 1;
-        int cooldown = usages > 0 ? 10 : (player.isOnGround() ? 20 : 40);
+        int cooldown = usages > 0 ? 10 : (player.onGround() ? 20 : 40);
 
 		if (!dashInternal(world, player)) return;
 
@@ -61,20 +61,20 @@ public final class DashSpell {
         player.setAttached(ModData.DASH_COOLDOWN, cooldown);
     }
 
-	private static boolean dashInternal(ServerWorld world, PlayerEntity player) {
-		PlayerInput input = ((ServerPlayerEntity) player).getPlayerInput();
-		Vec3d movementDirection = new Vec3d(
+	private static boolean dashInternal(ServerLevel world, Player player) {
+		Input input = ((ServerPlayer) player).getLastClientInput();
+		Vec3 movementDirection = new Vec3(
 			mapMovement(input.left(), input.right()),
-			mapMovement(input.jump(), input.sneak()),
+			mapMovement(input.jump(), input.shift()),
 			mapMovement(input.forward(), input.backward())
-		).rotateY((float) -Math.toRadians(player.getYaw()));
-		if (movementDirection.lengthSquared() < 1E-10F) return false;
+		).yRot((float) -Math.toRadians(player.getYRot()));
+		if (movementDirection.lengthSqr() < 1E-10F) return false;
 
-		player.addVelocity(movementDirection.normalize().add(0, 0.25, 0));
-		player.velocityModified = true;
+		player.push(movementDirection.normalize().add(0, 0.25, 0));
+		player.hurtMarked = true;
 		player.fallDistance = 0;
 
-		world.spawnParticles(ParticleTypes.CLOUD, player.getX(), player.getY(), player.getZ(), 25, 0.75, 0.2, 0.75, 0);
+		world.sendParticles(ParticleTypes.CLOUD, player.getX(), player.getY(), player.getZ(), 25, 0.75, 0.2, 0.75, 0);
 		return true;
 	}
 
@@ -83,19 +83,19 @@ public final class DashSpell {
 	}
 
 	@Environment(EnvType.CLIENT)
-	public static Integer showUsages(ClientPlayerEntity player) {
+	public static Integer showUsages(LocalPlayer player) {
 		if (player == null) return null;
 
 		if (player.getAttached(ModData.APPLIED_SHIMMER_VARIANT) == Shimmer.Variant.PACE) return 5;
 
 		SealItem sealItem = null;
-		for (Hand hand : Hand.values()) {
-			if (player.getStackInHand(hand).getItem() instanceof SealItem item) {
+		for (InteractionHand hand : InteractionHand.values()) {
+			if (player.getItemInHand(hand).getItem() instanceof SealItem item) {
 				sealItem = item;
 				break;
 			}
 		}
-		if (sealItem != null && !SpellHotbarRenderer.spellHotbarList.isEmpty() && SpellHotbarRenderer.spellHotbarList.getFirst().isOf(ModSpells.DASH_SPELL)) return Math.max(sealItem.cooldownDivisor * 5, 0);
+		if (sealItem != null && !SpellHotbarRenderer.spellHotbarList.isEmpty() && SpellHotbarRenderer.spellHotbarList.getFirst().is(ModSpells.DASH_SPELL)) return Math.max(sealItem.cooldownDivisor * 5, 0);
         return null;
     }
 }

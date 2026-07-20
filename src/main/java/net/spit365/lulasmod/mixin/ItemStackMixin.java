@@ -1,8 +1,8 @@
 package net.spit365.lulasmod.mixin;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.spit365.lulasmod.custom.Demon;
 import net.spit365.lulasmod.mod.ModItems;
 import org.jetbrains.annotations.Nullable;
@@ -14,11 +14,11 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(ItemStack.class)
 public abstract class ItemStackMixin {
-    @Shadow public abstract boolean isOf(Item item);
-    @Shadow public abstract @Nullable Entity getHolder();
+    @Shadow public abstract boolean is(Item item);
+    @Shadow public abstract @Nullable Entity getEntityRepresentation();
 
-    @Inject(method = "isDamageable", at = @At("HEAD"), cancellable = true)
+    @Inject(method = "isDamageableItem", at = @At("HEAD"), cancellable = true)
     private void isDamageable(CallbackInfoReturnable<Boolean> cir) {
-        if (this.isOf(ModItems.SINFUL) && Demon.isDemon(this.getHolder())) cir.setReturnValue(false);
+        if (this.is(ModItems.SINFUL) && Demon.isDemon(this.getEntityRepresentation())) cir.setReturnValue(false);
     }
 }

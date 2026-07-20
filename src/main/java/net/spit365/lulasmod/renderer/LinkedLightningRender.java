@@ -4,20 +4,23 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.render.*;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.client.Camera;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.phys.Vec3;
 import net.spit365.lulasmod.util.MultiVec3d;
 import org.joml.Matrix4f;
-
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import java.util.HashSet;
 import java.util.Set;
 
 @Environment(EnvType.CLIENT)
 public final class LinkedLightningRender {
-    private static final Identifier TEXTURE = Identifier.ofVanilla("textures/entity/creeper/creeper_armor.png");
+    private static final ResourceLocation TEXTURE = ResourceLocation.withDefaultNamespace("textures/entity/creeper/creeper_armor.png");
     public static Set<MultiVec3d> linkedLightnings = new HashSet<>();
 
     public static void init() {
@@ -27,56 +30,56 @@ public final class LinkedLightningRender {
     private static void render(WorldRenderContext context) {
         if (linkedLightnings.isEmpty()) return;
 
-        VertexConsumerProvider.Immediate immediate = MinecraftClient.getInstance().getBufferBuilders().getEntityVertexConsumers();
-        MatrixStack matrices = context.matrixStack();
+        MultiBufferSource.BufferSource immediate = Minecraft.getInstance().renderBuffers().bufferSource();
+        PoseStack matrices = context.matrixStack();
         Matrix4f matrix;
-        if (matrices != null) matrix = matrices.peek().getPositionMatrix();
+        if (matrices != null) matrix = matrices.last().pose();
         else matrix = null;
 
-        Camera camera = context.gameRenderer().getCamera();
-        Vec3d cameraPos = camera.getPos();
+        Camera camera = context.gameRenderer().getMainCamera();
+        Vec3 cameraPos = camera.getPosition();
 
-        VertexConsumer vc = immediate.getBuffer(RenderLayer.getEntityTranslucentEmissive(TEXTURE));
+        VertexConsumer vc = immediate.getBuffer(RenderType.entityTranslucentEmissive(TEXTURE));
         for (MultiVec3d link : linkedLightnings)
             link.pairwiseSegments().forEach(twoVec3d -> {
-                Vec3d start = twoVec3d.start().subtract(cameraPos);
-                Vec3d end = twoVec3d.end().subtract(cameraPos);
-                Vec3d dir = end.subtract(start);
+                Vec3 start = twoVec3d.start().subtract(cameraPos);
+                Vec3 end = twoVec3d.end().subtract(cameraPos);
+                Vec3 dir = end.subtract(start);
 
                 int segments = Math.max(1, (int) (dir.length() / 4));
-                Vec3d step = dir.multiply(1.0 / segments);
+                Vec3 step = dir.scale(1.0 / segments);
 
-                Vec3d dirNorm = dir.normalize();
-                Vec3d up = new Vec3d(0, 1, 0);
-                Vec3d offset = up.subtract(dirNorm.multiply(up.dotProduct(dirNorm)));
-                if (offset.lengthSquared() < 1e-6) {
-                    offset = new Vec3d(1, 0, 0);
+                Vec3 dirNorm = dir.normalize();
+                Vec3 up = new Vec3(0, 1, 0);
+                Vec3 offset = up.subtract(dirNorm.scale(up.dot(dirNorm)));
+                if (offset.lengthSqr() < 1e-6) {
+                    offset = new Vec3(1, 0, 0);
                 }
                 offset = offset.normalize();
 
                 for (int j = 0; j < segments; j++) {
-                    Vec3d p0 = start.add(step.multiply(j));
-                    Vec3d p1 = start.add(step.multiply(j + 1));
+                    Vec3 p0 = start.add(step.scale(j));
+                    Vec3 p1 = start.add(step.scale(j + 1));
 
                     addBillboardQuad(vc, matrix, p0, p1, offset, j);
                 }
             });
-        immediate.draw();
+        immediate.endBatch();
     }
 
-    private static void addBillboardQuad(VertexConsumer vc, Matrix4f matrix, Vec3d p0, Vec3d p1, Vec3d offset, int segmentIndex) {
+    private static void addBillboardQuad(VertexConsumer vc, Matrix4f matrix, Vec3 p0, Vec3 p1, Vec3 offset, int segmentIndex) {
         float u1 = segmentIndex + 1;
         float v0 = 0;
         float v1 = 1;
 
-        Vec3d p0a = p0.add(offset);
-        Vec3d p0b = p0.subtract(offset);
-        Vec3d p1a = p1.add(offset);
-        Vec3d p1b = p1.subtract(offset);
+        Vec3 p0a = p0.add(offset);
+        Vec3 p0b = p0.subtract(offset);
+        Vec3 p1a = p1.add(offset);
+        Vec3 p1b = p1.subtract(offset);
 
-        vc.vertex(matrix, (float) p0a.x, (float) p0a.y, (float) p0a.z).color(255, 255, 255, 255).texture(segmentIndex, v0).overlay(OverlayTexture.DEFAULT_UV).light(0xF000F0, 0xF000F0).normal(0, 1, 0);
-        vc.vertex(matrix, (float) p0b.x, (float) p0b.y, (float) p0b.z).color(255, 255, 255, 255).texture(segmentIndex, v1).overlay(OverlayTexture.DEFAULT_UV).light(0xF000F0, 0xF000F0).normal(0, 1, 0);
-        vc.vertex(matrix, (float) p1b.x, (float) p1b.y, (float) p1b.z).color(255, 255, 255, 255).texture(u1, v1).overlay(OverlayTexture.DEFAULT_UV).light(0xF000F0, 0xF000F0).normal(0, 1, 0);
-        vc.vertex(matrix, (float) p1a.x, (float) p1a.y, (float) p1a.z).color(255, 255, 255, 255).texture(u1, v0).overlay(OverlayTexture.DEFAULT_UV).light(0xF000F0, 0xF000F0).normal(0, 1, 0);
+        vc.addVertex(matrix, (float) p0a.x, (float) p0a.y, (float) p0a.z).setColor(255, 255, 255, 255).setUv(segmentIndex, v0).setOverlay(OverlayTexture.NO_OVERLAY).setUv2(0xF000F0, 0xF000F0).setNormal(0, 1, 0);
+        vc.addVertex(matrix, (float) p0b.x, (float) p0b.y, (float) p0b.z).setColor(255, 255, 255, 255).setUv(segmentIndex, v1).setOverlay(OverlayTexture.NO_OVERLAY).setUv2(0xF000F0, 0xF000F0).setNormal(0, 1, 0);
+        vc.addVertex(matrix, (float) p1b.x, (float) p1b.y, (float) p1b.z).setColor(255, 255, 255, 255).setUv(u1, v1).setOverlay(OverlayTexture.NO_OVERLAY).setUv2(0xF000F0, 0xF000F0).setNormal(0, 1, 0);
+        vc.addVertex(matrix, (float) p1a.x, (float) p1a.y, (float) p1a.z).setColor(255, 255, 255, 255).setUv(u1, v0).setOverlay(OverlayTexture.NO_OVERLAY).setUv2(0xF000F0, 0xF000F0).setNormal(0, 1, 0);
     }
 }

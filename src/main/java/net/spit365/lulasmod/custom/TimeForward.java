@@ -1,9 +1,9 @@
 package net.spit365.lulasmod.custom;
 
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.util.math.Box;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 import net.spit365.boa.BoxOutline;
 import net.spit365.lulasmod.mod.ModData;
 import net.spit365.lulasmod.packet.SetTimeForwardAnimationStateS2CPacket;
@@ -12,12 +12,12 @@ import net.spit365.lulasmod.util.ModUtil;
 public final class TimeForward {
     public static final int ANIMATION_DURATION = 450;
 
-    public static void tick(ServerPlayerEntity player) {
+    public static void tick(ServerPlayer player) {
         VisualContext context = player.getAttached(ModData.TIME_FORWARD_ANIMATION_FRAMES);
         if (context == null) return;
-        Vec3d pos = context.pos();
-        Box box = new Box(pos.add(-5), pos.add(5));
-        if (!box.contains(player.getPos())) {
+        Vec3 pos = context.pos();
+        AABB box = new AABB(pos.add(-5), pos.add(5));
+        if (!box.contains(player.position())) {
             player.removeAttached(ModData.TIME_FORWARD_ANIMATION_FRAMES);
             ServerPlayNetworking.send(player, new SetTimeForwardAnimationStateS2CPacket(false));
             return;
@@ -32,5 +32,5 @@ public final class TimeForward {
         }
     }
 
-    public record VisualContext(int frames, Vec3d pos) {}
+    public record VisualContext(int frames, Vec3 pos) {}
 }

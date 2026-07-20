@@ -1,11 +1,11 @@
 package net.spit365.lulasmod.mod;
 
-import net.minecraft.block.AbstractBlock;
-import net.minecraft.block.Block;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.MapColor;
-import net.minecraft.block.piston.PistonBehavior;
-import net.minecraft.item.BlockItem;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.material.MapColor;
+import net.minecraft.world.level.material.PushReaction;
 import net.spit365.lulasmod.block.PentagrammBlock;
 import net.spit365.lulasmod.block.SpellPedestalBlock;
 import net.spit365.lulasmod.block.TitrationStandBlock;
@@ -16,28 +16,28 @@ public final class ModBlocks {
 	public static final BlockAndItem<SpellPedestalBlock> SPELL_PEDESTAL = RegisterHelper.block(
 		"spell_pedestal",
 		SpellPedestalBlock::new,
-		AbstractBlock.Settings.create()
-			.mapColor(MapColor.STONE_GRAY)
+		BlockBehaviour.Properties.of()
+			.mapColor(MapColor.STONE)
 			.strength(-1.0F, Float.MAX_VALUE)
-			.dropsNothing()
-			.allowsSpawning(Blocks::never));
+			.noLootTable()
+			.isValidSpawn(Blocks::never));
 	public static final BlockAndItem<PentagrammBlock> PENTAGRAMM = RegisterHelper.block(
 		"pentagramm",
 		PentagrammBlock::new,
-		AbstractBlock.Settings.create()
-			.mapColor(MapColor.RED)
-			.noCollision()
-			.breakInstantly()
-			.pistonBehavior(PistonBehavior.DESTROY)
-			.allowsSpawning(Blocks::never));
+		BlockBehaviour.Properties.of()
+			.mapColor(MapColor.COLOR_RED)
+			.noCollission()
+			.instabreak()
+			.pushReaction(PushReaction.DESTROY)
+			.isValidSpawn(Blocks::never));
 	public static final BlockAndItem<TitrationStandBlock> TITRATION_STAND = RegisterHelper.block(
 		"titration_stand",
 		TitrationStandBlock::new,
-		AbstractBlock.Settings.create()
-			.mapColor(MapColor.IRON_GRAY)
+		BlockBehaviour.Properties.of()
+			.mapColor(MapColor.METAL)
 			.strength(0.5F)
-			.luminance(state -> 1)
-			.nonOpaque());
+			.lightLevel(state -> 1)
+			.noOcclusion());
 
 	public static void init() {}
 }

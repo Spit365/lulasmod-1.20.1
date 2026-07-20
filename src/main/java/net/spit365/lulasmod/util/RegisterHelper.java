@@ -10,34 +10,34 @@ import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
 import net.fabricmc.fabric.api.particle.v1.FabricParticleTypes;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerType;
-import net.minecraft.block.AbstractBlock;
-import net.minecraft.block.Block;
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.block.entity.BlockEntityType;
-import net.minecraft.component.ComponentType;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.SpawnGroup;
-import net.minecraft.entity.damage.DamageType;
-import net.minecraft.entity.effect.StatusEffect;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemGroup;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.consume.ConsumeEffect;
-import net.minecraft.network.RegistryByteBuf;
-import net.minecraft.network.codec.PacketCodec;
-import net.minecraft.particle.SimpleParticleType;
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.Registry;
-import net.minecraft.registry.RegistryKey;
-import net.minecraft.registry.RegistryKeys;
-import net.minecraft.registry.entry.RegistryEntry;
-import net.minecraft.screen.ScreenHandler;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
-import net.minecraft.world.GameRules;
-import net.minecraft.world.World;
+import net.minecraft.core.Holder;
+import net.minecraft.core.Registry;
+import net.minecraft.core.component.DataComponentType;
+import net.minecraft.core.particles.SimpleParticleType;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.damagesource.DamageType;
+import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.MobCategory;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.consume_effects.ConsumeEffect;
+import net.minecraft.world.level.GameRules;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.spit365.lulasmod.Lulasmod;
 import net.spit365.lulasmod.custom.Presence;
 import net.spit365.lulasmod.item.spell.SpellItem;
@@ -60,82 +60,82 @@ public final class RegisterHelper {
 		return attachmentType;
 	}
 
-	public static <T extends Block> ModBlocks.BlockAndItem<T> block(String name, Function<AbstractBlock.Settings, T> factory, AbstractBlock.Settings settings) {
-		Identifier id = id(name);
-		RegistryKey<Block> blockRegistryKey = RegistryKey.of(RegistryKeys.BLOCK, id);
-		RegistryKey<Item> itemRegistryKey = RegistryKey.of(RegistryKeys.ITEM, id);
-		T block = factory.apply(settings.registryKey(blockRegistryKey));
-		BlockItem item = Registry.register(Registries.ITEM, itemRegistryKey, new BlockItem(block, new Item.Settings().registryKey(itemRegistryKey)));
+	public static <T extends Block> ModBlocks.BlockAndItem<T> block(String name, Function<BlockBehaviour.Properties, T> factory, BlockBehaviour.Properties settings) {
+		ResourceLocation id = id(name);
+		ResourceKey<Block> blockRegistryKey = ResourceKey.create(Registries.BLOCK, id);
+		ResourceKey<Item> itemRegistryKey = ResourceKey.create(Registries.ITEM, id);
+		T block = factory.apply(settings.setId(blockRegistryKey));
+		BlockItem item = Registry.register(BuiltInRegistries.ITEM, itemRegistryKey, new BlockItem(block, new Item.Properties().setId(itemRegistryKey)));
 		ModItems.MainTabItems.add(new ItemStack(item));
 		return new ModBlocks.BlockAndItem<>(
-			Registry.register(Registries.BLOCK, blockRegistryKey, block),
+			Registry.register(BuiltInRegistries.BLOCK, blockRegistryKey, block),
 			item
 		);
 	}
 
 	public static <T extends BlockEntity> BlockEntityType<T> blockEntity(String id, FabricBlockEntityTypeBuilder.Factory<T> factory, Block... blocks) {
-		return Registry.register(Registries.BLOCK_ENTITY_TYPE, id, FabricBlockEntityTypeBuilder.<T>create(factory, blocks).build());
+		return Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id, FabricBlockEntityTypeBuilder.<T>create(factory, blocks).build());
 	}
 
-	public static <T> ComponentType<T> componentType(String name, UnaryOperator<ComponentType.Builder<T>> builderOperator) {
-		return Registry.register(Registries.DATA_COMPONENT_TYPE, id(name),
-				builderOperator.apply(ComponentType.builder()).build());
+	public static <T> DataComponentType<T> componentType(String name, UnaryOperator<DataComponentType.Builder<T>> builderOperator) {
+		return Registry.register(BuiltInRegistries.DATA_COMPONENT_TYPE, id(name),
+				builderOperator.apply(DataComponentType.builder()).build());
 	}
 
-	public static <T extends ConsumeEffect> ConsumeEffect.Type<T> consumeEffect(String name, MapCodec<T> codec, PacketCodec<RegistryByteBuf, T> streamCode) {
-		return Registry.register(Registries.CONSUME_EFFECT_TYPE, id(name), new ConsumeEffect.Type<>(codec, streamCode));
+	public static <T extends ConsumeEffect> ConsumeEffect.Type<T> consumeEffect(String name, MapCodec<T> codec, StreamCodec<RegistryFriendlyByteBuf, T> streamCode) {
+		return Registry.register(BuiltInRegistries.CONSUME_EFFECT_TYPE, id(name), new ConsumeEffect.Type<>(codec, streamCode));
 	}
 
-	public static RegistryKey<DamageType> damageType(String name) {
-		return RegistryKey.of(RegistryKeys.DAMAGE_TYPE, id(name));
+	public static ResourceKey<DamageType> damageType(String name) {
+		return ResourceKey.create(Registries.DAMAGE_TYPE, id(name));
 	}
 
-	public static RegistryKey<World> dimension(String name) {
-		return RegistryKey.of(RegistryKeys.WORLD, id(name));
+	public static ResourceKey<Level> dimension(String name) {
+		return ResourceKey.create(Registries.DIMENSION, id(name));
 	}
 
 	public static <T extends Entity> EntityType<T> entity(String id, EntityType.EntityFactory<T> entityFactory, float width, float height, int maxTrackingRange, int trackingTickInterval) {
-		RegistryKey<EntityType<?>> key = RegistryKey.of(RegistryKeys.ENTITY_TYPE, id(id));
-        return Registry.register(Registries.ENTITY_TYPE, key,
-			 EntityType.Builder.create(entityFactory, SpawnGroup.MISC)
-				 .dimensions(width, height)
-				 .maxTrackingRange(maxTrackingRange)
-				 .trackingTickInterval(trackingTickInterval)
+		ResourceKey<EntityType<?>> key = ResourceKey.create(Registries.ENTITY_TYPE, id(id));
+        return Registry.register(BuiltInRegistries.ENTITY_TYPE, key,
+			 EntityType.Builder.of(entityFactory, MobCategory.MISC)
+				 .sized(width, height)
+				 .clientTrackingRange(maxTrackingRange)
+				 .updateInterval(trackingTickInterval)
 				 .build(key));
 	}
 
-	public static GameRules.Key<GameRules.BooleanRule> gameRule(String name, GameRules.Category category, GameRules.Type<GameRules.BooleanRule> type) {
+	public static GameRules.Key<GameRules.BooleanValue> gameRule(String name, GameRules.Category category, GameRules.Type<GameRules.BooleanValue> type) {
 		return GameRuleRegistry.register(Lulasmod.MOD_ID + "." + name, category, type);
 	}
 
-	public static <T extends Item> T item(String name, Function<Item.Settings, T> factory, Item.Settings settings) {
+	public static <T extends Item> T item(String name, Function<Item.Properties, T> factory, Item.Properties settings) {
 		T item = itemInternal(name, factory, settings);
 		ModItems.MainTabItems.add(new ItemStack(item));
 		return item;
 	}
-	public static <T extends Item> T item(String name, Function<Item.Settings, T> factory, Item.Settings settings, BiConsumer<Item, List<ItemStack>> creativeInventoryStacks) {
+	public static <T extends Item> T item(String name, Function<Item.Properties, T> factory, Item.Properties settings, BiConsumer<Item, List<ItemStack>> creativeInventoryStacks) {
 		T item = itemInternal(name, factory, settings);
 		List<ItemStack> list = new LinkedList<>();
 		creativeInventoryStacks.accept(item, list);
 		ModItems.MainTabItems.addAll(list);
 		return item;
 	}
-	private static <T extends Item> T itemInternal(String name, Function<Item.Settings, T> factory, Item.Settings settings) {
-		RegistryKey<Item> key = RegistryKey.of(RegistryKeys.ITEM, id(name));
-		return Registry.register(Registries.ITEM, key, factory.apply(settings.registryKey(key)));
+	private static <T extends Item> T itemInternal(String name, Function<Item.Properties, T> factory, Item.Properties settings) {
+		ResourceKey<Item> key = ResourceKey.create(Registries.ITEM, id(name));
+		return Registry.register(BuiltInRegistries.ITEM, key, factory.apply(settings.setId(key)));
 	}
 
-	public static ItemGroup itemGroup(String name, Item item, List<ItemStack> list) {
-		return Registry.register(Registries.ITEM_GROUP, id(name), FabricItemGroup.builder()
-			.displayName(Text.translatable("item_group." + Lulasmod.MOD_ID + "." + name))
+	public static CreativeModeTab itemGroup(String name, Item item, List<ItemStack> list) {
+		return Registry.register(BuiltInRegistries.CREATIVE_MODE_TAB, id(name), FabricItemGroup.builder()
+			.title(Component.translatable("item_group." + Lulasmod.MOD_ID + "." + name))
 			.icon(() -> new ItemStack(item))
-			.entries((displayContext, entries) -> entries.addAll(list.stream().peek(stack -> stack.setCount(1)).toList()))
+			.displayItems((displayContext, entries) -> entries.acceptAll(list.stream().peek(stack -> stack.setCount(1)).toList()))
 			.build());
 	}
 
 	public static SimpleParticleType particle(String name, Boolean alwaysShow) {
 		 SimpleParticleType particle = FabricParticleTypes.simple(alwaysShow);
-		 Registry.register(Registries.PARTICLE_TYPE, id(name), particle);
+		 Registry.register(BuiltInRegistries.PARTICLE_TYPE, id(name), particle);
 		 return particle;
 	}
 
@@ -149,22 +149,22 @@ public final class RegisterHelper {
 		return Presence.register(levelRequirement);
 	}
 
-	public static @NotNull <T extends ScreenHandler, D> ExtendedScreenHandlerType<T, D> screenHandler(String name, ExtendedScreenHandlerType.ExtendedFactory<T, D> screenHandlerFactory, PacketCodec<ByteBuf, D> packetCodec) {
-		return Registry.register(Registries.SCREEN_HANDLER, id(name), new ExtendedScreenHandlerType<>(screenHandlerFactory, packetCodec));
+	public static @NotNull <T extends AbstractContainerMenu, D> ExtendedScreenHandlerType<T, D> screenHandler(String name, ExtendedScreenHandlerType.ExtendedFactory<T, D> screenHandlerFactory, StreamCodec<ByteBuf, D> packetCodec) {
+		return Registry.register(BuiltInRegistries.MENU, id(name), new ExtendedScreenHandlerType<>(screenHandlerFactory, packetCodec));
 	}
 
-	public static <T extends SpellItem> T spell(String name, Function<Item.Settings, T> factory) {
-		T spell = itemInternal(name, factory, new Item.Settings().maxCount(1));
+	public static <T extends SpellItem> T spell(String name, Function<Item.Properties, T> factory) {
+		T spell = itemInternal(name, factory, new Item.Properties().stacksTo(1));
 		ModSpells.SpellTabItems.add(new ItemStack(spell));
 		return spell;
 	}
 
-	public static RegistryEntry<StatusEffect> statusEffect(String name, StatusEffect effect) {
-		Registry.register(Registries.STATUS_EFFECT, id(name), effect);
-		return Registries.STATUS_EFFECT.getEntry(effect);
+	public static Holder<MobEffect> statusEffect(String name, MobEffect effect) {
+		Registry.register(BuiltInRegistries.MOB_EFFECT, id(name), effect);
+		return BuiltInRegistries.MOB_EFFECT.wrapAsHolder(effect);
 	}
 
-	private static @NotNull Identifier id(String name) {
-		return Identifier.of(Lulasmod.MOD_ID, name);
+	private static @NotNull ResourceLocation id(String name) {
+		return ResourceLocation.fromNamespaceAndPath(Lulasmod.MOD_ID, name);
 	}
 }
