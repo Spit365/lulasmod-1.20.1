@@ -2,7 +2,7 @@ package net.spit365.lulasmod.item.spell;
 
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
@@ -36,9 +36,9 @@ public class SpellItem extends Item {
     public InteractionResult use(Level world, Player player, InteractionHand hand) {
         if (!world.isClientSide() && !(player.getOffhandItem().getItem() instanceof SpellBookItem)) {
             player.getCooldowns().addCooldown(player.getItemInHand(hand), 5);
-			List<ResourceLocation> mutable = ModUtil.makeMutable(player.getAttached(ModData.EQUIPPED_SPELLS));
+			List<Identifier> mutable = ModUtil.makeMutable(player.getAttached(ModData.EQUIPPED_SPELLS));
             SoundEvent sound = null;
-            ResourceLocation spellName = BuiltInRegistries.ITEM.getKey(this);
+            Identifier spellName = BuiltInRegistries.ITEM.getKey(this);
             if (player.isShiftKeyDown()) {
                 if (mutable.remove(spellName))
                     sound = getSound(false);
@@ -60,7 +60,7 @@ public class SpellItem extends Item {
     @Override
     public void inventoryTick(ItemStack stack, ServerLevel world, Entity entity, @Nullable EquipmentSlot slot) {
         if (entity instanceof Player player && !Objects.equals(ModUtil.getInventoryStack(player, stack.getItem()), stack)) {
-            player.displayClientMessage(Component.translatable("notify.lulasmod.duplicate_spell"), true);
+            player.sendOverlayMessage(Component.translatable("notify.lulasmod.duplicate_spell"));
             entity.spawnAtLocation(world, stack.copy());
             stack.shrink(stack.getCount());
         }

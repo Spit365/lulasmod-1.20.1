@@ -3,7 +3,7 @@ package net.spit365.lulasmod.entity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.projectile.LargeFireball;
+import net.minecraft.world.entity.projectile.hurtingprojectile.LargeFireball;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.BlockHitResult;
@@ -40,7 +40,7 @@ public class MalignityEntity extends LargeFireball {
             BlockPos blockPos = blockHitResult.getBlockPos();
             world.gameEvent(GameEvent.PROJECTILE_LAND, blockPos, GameEvent.Context.of(this, world.getBlockState(blockPos)));
         }
-        if (!world.isClientSide) {
+        if (!world.isClientSide()) {
             world.explode(this.getOwner(), this.getX(), this.getY(), this.getZ(), (float) this.explosionPower, false, Level.ExplosionInteraction.NONE);
             this.discard();
         }

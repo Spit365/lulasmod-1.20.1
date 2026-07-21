@@ -41,7 +41,7 @@ public class AmethystShardEntity extends Projectile {
 
     @Override protected void onHitBlock(BlockHitResult hitResult) {
         for (int i = 0; i < 8; i++) if (this.level() instanceof ServerLevel sw) sw.sendParticles(
-            new ItemParticleOption(ParticleTypes.ITEM, new ItemStack(Items.AMETHYST_BLOCK, 1)),
+            new ItemParticleOption(ParticleTypes.ITEM, Items.AMETHYST_BLOCK),
             hitResult.getLocation().x() + random.nextGaussian() / 20,
             hitResult.getLocation().y() + random.nextGaussian() / 20,
             hitResult.getLocation().z() + random.nextGaussian() / 20,

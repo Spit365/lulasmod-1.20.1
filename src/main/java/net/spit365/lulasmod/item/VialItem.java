@@ -35,7 +35,7 @@ public class VialItem extends PotionItem {
             Holder<MobEffect> effectType = statusEffectInstance.getEffect();
             user.addEffect(new MobEffectInstance(
                 effectType,
-                !effectType.value().isInstantenous() ? -1 : 1,
+                !effectType.value().isInstantaneous() ? -1 : 1,
                 statusEffectInstance.getAmplifier(),
                 false,
                 false)

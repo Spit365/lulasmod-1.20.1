@@ -17,13 +17,13 @@ public final class ModDamageTypes {
 	public static DamageSource createDamageSource(Entity attacker, ResourceKey<DamageType> damageType) {
 		return new DamageSource(attacker.level().registryAccess()
 			.lookupOrThrow(Registries.DAMAGE_TYPE)
-			.get(damageType.location())
+			.get(damageType.identifier())
 			.orElseThrow(), attacker);
 	}
 	public static DamageSource createDamageSource(Level world, ResourceKey<DamageType> damageType) {
 		return new DamageSource(world.registryAccess()
 			.lookupOrThrow(Registries.DAMAGE_TYPE)
-			.get(damageType.location())
+			.get(damageType.identifier())
 			.orElseThrow());
 	}
 

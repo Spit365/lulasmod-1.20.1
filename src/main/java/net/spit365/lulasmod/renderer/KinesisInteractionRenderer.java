@@ -6,7 +6,7 @@ import net.minecraft.client.CameraType;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.Options;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
@@ -22,7 +22,7 @@ public final class KinesisInteractionRenderer {
 	private static double lastFOV;
 
 	@Environment(EnvType.CLIENT)
-	public static void render(GuiGraphics context, DeltaTracker renderTickCounter) {
+	public static void render(GuiGraphicsExtractor context, DeltaTracker renderTickCounter) {
 		Minecraft mc = Minecraft.getInstance();
 		LocalPlayer player = mc.player;
 		if (player == null || Arrays.stream(InteractionHand.values()).noneMatch(hand -> player.getItemInHand(hand).getItem() instanceof SealItem) || SpellHotbarRenderer.spellHotbarList.isEmpty() || !SpellHotbarRenderer.spellHotbarList.getFirst().is(ModSpells.KINESIS_SORCERY)) return;

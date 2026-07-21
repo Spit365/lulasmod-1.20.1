@@ -2,69 +2,64 @@ package net.spit365.lulasmod.renderer;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext;
-import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
+import net.fabricmc.fabric.api.client.rendering.v1.level.LevelRenderContext;
+import net.fabricmc.fabric.api.client.rendering.v1.level.LevelRenderEvents;
 import net.minecraft.client.Camera;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.phys.Vec3;
 import net.spit365.lulasmod.util.MultiVec3d;
 import org.joml.Matrix4f;
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import java.util.HashSet;
 import java.util.Set;
 
 @Environment(EnvType.CLIENT)
 public final class LinkedLightningRender {
-    private static final ResourceLocation TEXTURE = ResourceLocation.withDefaultNamespace("textures/entity/creeper/creeper_armor.png");
+    private static final Identifier TEXTURE = Identifier.withDefaultNamespace("textures/entity/creeper/creeper_armor.png");
     public static Set<MultiVec3d> linkedLightnings = new HashSet<>();
 
     public static void init() {
-        WorldRenderEvents.AFTER_ENTITIES.register(LinkedLightningRender::render);
+        LevelRenderEvents.AFTER_SOLID_FEATURES.register(LinkedLightningRender::render);
     }
 
-    private static void render(WorldRenderContext context) {
+    private static void render(LevelRenderContext context) {
         if (linkedLightnings.isEmpty()) return;
 
-        MultiBufferSource.BufferSource immediate = Minecraft.getInstance().renderBuffers().bufferSource();
-        PoseStack matrices = context.matrixStack();
-        Matrix4f matrix;
-        if (matrices != null) matrix = matrices.last().pose();
-        else matrix = null;
+        Camera camera = context.gameRenderer().mainCamera();
+        Vec3 cameraPos = camera.position();
 
-        Camera camera = context.gameRenderer().getMainCamera();
-        Vec3 cameraPos = camera.getPosition();
+        context.submitNodeCollector().submitCustomGeometry(
+            context.poseStack(),
+            RenderTypes.entityTranslucentEmissive(TEXTURE),
+            (matrix, vc) -> {
+                for (MultiVec3d link : linkedLightnings)
+                    link.pairwiseSegments().forEach(twoVec3d -> {
+                        Vec3 start = twoVec3d.start().subtract(cameraPos);
+                        Vec3 end = twoVec3d.end().subtract(cameraPos);
+                        Vec3 dir = end.subtract(start);
 
-        VertexConsumer vc = immediate.getBuffer(RenderType.entityTranslucentEmissive(TEXTURE));
-        for (MultiVec3d link : linkedLightnings)
-            link.pairwiseSegments().forEach(twoVec3d -> {
-                Vec3 start = twoVec3d.start().subtract(cameraPos);
-                Vec3 end = twoVec3d.end().subtract(cameraPos);
-                Vec3 dir = end.subtract(start);
+                        int segments = Math.max(1, (int) (dir.length() / 4));
+                        Vec3 step = dir.scale(1.0 / segments);
 
-                int segments = Math.max(1, (int) (dir.length() / 4));
-                Vec3 step = dir.scale(1.0 / segments);
+                        Vec3 dirNorm = dir.normalize();
+                        Vec3 up = new Vec3(0, 1, 0);
+                        Vec3 offset = up.subtract(dirNorm.scale(up.dot(dirNorm)));
+                        if (offset.lengthSqr() < 1e-6) {
+                            offset = new Vec3(1, 0, 0);
+                        }
+                        offset = offset.normalize();
 
-                Vec3 dirNorm = dir.normalize();
-                Vec3 up = new Vec3(0, 1, 0);
-                Vec3 offset = up.subtract(dirNorm.scale(up.dot(dirNorm)));
-                if (offset.lengthSqr() < 1e-6) {
-                    offset = new Vec3(1, 0, 0);
-                }
-                offset = offset.normalize();
+                        for (int j = 0; j < segments; j++) {
+                            Vec3 p0 = start.add(step.scale(j));
+                            Vec3 p1 = start.add(step.scale(j + 1));
 
-                for (int j = 0; j < segments; j++) {
-                    Vec3 p0 = start.add(step.scale(j));
-                    Vec3 p1 = start.add(step.scale(j + 1));
-
-                    addBillboardQuad(vc, matrix, p0, p1, offset, j);
-                }
-            });
-        immediate.endBatch();
+                            addBillboardQuad(vc, matrix.pose(), p0, p1, offset, j);
+                        }
+                    });
+            }
+        );
     }
 
     private static void addBillboardQuad(VertexConsumer vc, Matrix4f matrix, Vec3 p0, Vec3 p1, Vec3 offset, int segmentIndex) {

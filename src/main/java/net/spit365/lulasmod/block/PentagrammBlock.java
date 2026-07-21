@@ -26,7 +26,7 @@ public class PentagrammBlock extends Block {
     protected InteractionResult useWithoutItem(BlockState state, Level world, BlockPos pos, Player player, BlockHitResult hit) {
         int candles = collectCandles(world, pos);
         if (candles > 0) {
-            player.displayClientMessage(Component.literal(String.valueOf(candles)), true);
+            player.sendOverlayMessage(Component.literal(String.valueOf(candles)));
             return InteractionResult.SUCCESS;
         }
         return InteractionResult.PASS;

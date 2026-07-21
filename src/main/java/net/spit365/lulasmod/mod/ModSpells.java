@@ -38,6 +38,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Supplier;
 import java.util.stream.StreamSupport;
 
 import static net.minecraft.sounds.SoundEvents.*;
@@ -46,7 +47,7 @@ import static net.spit365.lulasmod.item.SealItem.NO_COOLDOWN_RESULT;
 import static net.spit365.lulasmod.state.LinkedLightningPersistentState.lastLinks;
 
 public final class ModSpells {
-	public static final List<ItemStack> SpellTabItems = new LinkedList<>();
+	public static final List<Supplier<ItemStack>> SpellTabItems = new LinkedList<>();
 
     public static final SpellItem HIGHLIGHTER_SPELL = RegisterHelper.spell("highlighter_spell",  settings -> new SpellItem(settings, (world, player, hand, potencyMultiplier, cooldownDivisor) -> {
         boolean playerGlowing = !player.isCurrentlyGlowing();
@@ -71,7 +72,7 @@ public final class ModSpells {
             SmokeSpellCooldown.apply(player, cooldownDivisor);
             return 20;
 		} else {
-            player.displayClientMessage(Component.translatable("notify.lulasmod.smoke_cooling_down").append(Component.literal(": " + SmokeSpellCooldown.getPercent(player) + "%")), true);
+            player.sendOverlayMessage(Component.translatable("notify.lulasmod.smoke_cooling_down").append(Component.literal(": " + SmokeSpellCooldown.getPercent(player) + "%")));
             return FAIL_RESULT;
         }
 	}));
@@ -85,7 +86,7 @@ public final class ModSpells {
 
 
 	public static final SpellItem HOME_SPELL = RegisterHelper.spell("wickedness", settings -> new SpellItem(settings, (world, player, hand, potencyMultiplier, cooldownDivisor) -> {
-		ModUtil.sendHome(player, player.getItemInHand(hand).getItem());
+		ModUtil.sendHome(player, "wickedness");
 		return 600;
 	}));
 	public static final SpellItem AMETHYST_SPELL = RegisterHelper.spell("envy", settings -> new SpellItem(settings, (world, player, hand, potencyMultiplier, cooldownDivisor) -> {

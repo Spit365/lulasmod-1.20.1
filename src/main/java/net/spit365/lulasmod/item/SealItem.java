@@ -2,7 +2,7 @@ package net.spit365.lulasmod.item;
 
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -49,12 +49,12 @@ public class SealItem extends Item implements SpellHotbar {
 
 
     @Override
-    public List<ResourceLocation> getHotbarList(Player player) {
+    public List<Identifier> getHotbarList(Player player) {
         return player.getAttached(ModData.EQUIPPED_SPELLS);
     }
 
     @Override
-    public void onCycle(Player player,  Function<List<ResourceLocation>, List<ResourceLocation>> cycleFunction) {
+    public void onCycle(Player player,  Function<List<Identifier>, List<Identifier>> cycleFunction) {
         player.setAttached(ModData.EQUIPPED_SPELLS, cycleFunction.apply(player.getAttached(ModData.EQUIPPED_SPELLS)));
     }
 
@@ -85,7 +85,7 @@ public class SealItem extends Item implements SpellHotbar {
     private <T> T sealLogic(T resultSuccess, T resultFail, LivingEntity user, InteractionHand hand, SpellAction spellAction) {
         if (!(user instanceof Player player) || !(player.level() instanceof ServerLevel serverWorld) || !canUse.test(player))
             return resultFail;
-        List<ResourceLocation> spellList = player.getAttached(ModData.EQUIPPED_SPELLS);
+        List<Identifier> spellList = player.getAttached(ModData.EQUIPPED_SPELLS);
         if (spellList == null || spellList.isEmpty() || !(BuiltInRegistries.ITEM.getValue(spellList.getFirst()) instanceof SpellItem spellItem))
             return resultFail;
 
@@ -121,7 +121,7 @@ public class SealItem extends Item implements SpellHotbar {
     @Override
     public void inventoryTick(ItemStack stack, ServerLevel world, Entity entity, @Nullable EquipmentSlot slot) {
         if (entity instanceof Player player && !Objects.equals(ModUtil.getInventoryStack(player, stack.getItem()), stack)) {
-            player.displayClientMessage(Component.translatable("notify.lulasmod.duplicate_seal"), true);
+            player.sendOverlayMessage(Component.translatable("notify.lulasmod.duplicate_seal"));
             entity.spawnAtLocation(world, stack.copy());
             stack.shrink(stack.getCount());
         }
@@ -129,7 +129,7 @@ public class SealItem extends Item implements SpellHotbar {
 
     @Override
     public int getUseDuration(ItemStack stack, LivingEntity user) {
-        List<ResourceLocation> spells = user.getAttached(ModData.EQUIPPED_SPELLS);
+        List<Identifier> spells = user.getAttached(ModData.EQUIPPED_SPELLS);
         return spells != null && BuiltInRegistries.ITEM.getValue(spells.getFirst()) instanceof SorceryItem ? 72000 : 0;
     }
 }

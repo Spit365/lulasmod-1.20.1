@@ -4,7 +4,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.spit365.lulasmod.Lulasmod;
 import net.spit365.lulasmod.util.MultiVec3d;
 
@@ -18,7 +18,7 @@ public record LightningLinkS2CPacket(Set<MultiVec3d> linkedLightning) implements
         return ID;
     }
 
-    public static final Type<LightningLinkS2CPacket> ID = new Type<>(ResourceLocation.fromNamespaceAndPath(Lulasmod.MOD_ID, "lightning_links"));
+    public static final Type<LightningLinkS2CPacket> ID = new Type<>(Identifier.fromNamespaceAndPath(Lulasmod.MOD_ID, "lightning_links"));
     public static final StreamCodec<RegistryFriendlyByteBuf, LightningLinkS2CPacket> CODEC =
         StreamCodec.ofMember(
             (value, buf) -> new FriendlyByteBuf(buf).writeJsonWithCodec(

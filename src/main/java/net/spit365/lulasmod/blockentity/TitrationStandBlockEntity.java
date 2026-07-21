@@ -1,6 +1,6 @@
 package net.spit365.lulasmod.blockentity;
 
-import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
+import net.fabricmc.fabric.api.menu.v1.ExtendedMenuProvider;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
@@ -24,7 +24,7 @@ import net.spit365.lulasmod.screen.TitrationStandScreenHandler;
 import net.spit365.lulasmod.util.ImplementedInventory;
 import org.jetbrains.annotations.Nullable;
 
-public class TitrationStandBlockEntity extends BlockEntity implements ImplementedInventory, ExtendedScreenHandlerFactory<BlockPos> {
+public class TitrationStandBlockEntity extends BlockEntity implements ImplementedInventory, ExtendedMenuProvider<BlockPos> {
     public static NonNullList<ItemStack> inventory = NonNullList.withSize(1, ItemStack.EMPTY);
 
     public TitrationStandBlockEntity(BlockPos pos, BlockState state) {

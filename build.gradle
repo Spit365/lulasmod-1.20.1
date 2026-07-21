@@ -1,33 +1,39 @@
 plugins {
-	id 'fabric-loom' version "${loom_version}"
+	id 'net.fabricmc.fabric-loom' version "${loom_version}"
 	id 'maven-publish'
 }
 
 version = project.mod_version
 group = project.maven_group
 
-base {
-	archivesName = project.archives_base_name
-}
-
 repositories {
 	mavenLocal()
 }
 
+loom {
+	mods {
+		"lulasmod" {
+			sourceSet sourceSets.main
+		}
+	}
+}
+
 dependencies {
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"
-	mappings loom.officialMojangMappings()
-	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
-	modImplementation("net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}")
-	implementation("net.spit365:client-tweaks:1.0.0")
-	implementation("net.spit365:box-outlines-api:1.0.0")
+	implementation "net.fabricmc:fabric-loader:${project.loader_version}"
+	implementation("net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}")
+	include implementation("net.spit365:client-tweaks:1.0.0")
+	include implementation("net.spit365:box-outlines-api:1.0.0")
+	include implementation("net.minidev:json-smart:2.6.0")
+	include implementation("net.minidev:accessors-smart:2.6.0")
 }
 
 processResources {
-	inputs.property "version", project.version
+	def version = project.version
+	inputs.property "version", version
 
 	filesMatching("fabric.mod.json") {
-		expand "version": project.version
+		expand "version": version
 	}
 }
 
@@ -43,15 +49,17 @@ java {
 }
 
 jar {
+	def projectName = project.name
+	inputs.property "projectName", projectName
+
 	from("LICENSE") {
-		rename { "${it}_${project.base.archivesName.get()}"}
+		rename { "${it}_$projectName"}
 	}
 }
 
 publishing {
 	publications {
 		create("mavenJava", MavenPublication) {
-			artifactId = project.archives_base_name
 			from components.java
 		}
 	}

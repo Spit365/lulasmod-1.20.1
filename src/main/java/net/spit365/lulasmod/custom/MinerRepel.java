@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 
 public final class MinerRepel {
     public static void tick(ServerPlayer player) {
-        if (!player.getTags().contains("miner")) return;
+        if (!player.entityTags().contains("miner")) return;
         BlockPos playerPos = player.blockPosition();
         ServerLevel world = player.level();
         Set<AABB> portalAndAdjacent =

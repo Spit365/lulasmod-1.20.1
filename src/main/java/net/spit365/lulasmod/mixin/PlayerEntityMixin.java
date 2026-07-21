@@ -20,7 +20,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public abstract class PlayerEntityMixin extends LivingEntity {
     protected PlayerEntityMixin(EntityType<? extends LivingEntity> entityType, Level world) {super(entityType, world);}
 
-    @Inject(method = "sweepAttack", at = @At("HEAD"), cancellable = true)
+    @Inject(method = "doSweepAttack", at = @At("HEAD"), cancellable = true)
     private void spawnSweepAttackParticles(CallbackInfo ci) {
         Player player = (Player) (Object) this;
         if (Demon.isDemon(player) && player.level() instanceof ServerLevel serverWorld) {

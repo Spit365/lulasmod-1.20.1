@@ -1,6 +1,6 @@
 package net.spit365.lulasmod.mod;
 
-import net.fabricmc.fabric.api.registry.FabricBrewingRecipeRegistryBuilder;
+import net.fabricmc.fabric.api.registry.FabricPotionBrewingBuilder;
 import net.minecraft.core.Holder;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.item.Items;
@@ -11,6 +11,6 @@ public final class ModStatusEffects {
 	public static final Holder<MobEffect> CUSHIONED = RegisterHelper.statusEffect("cushioned", new CushionedStatusEffect());
 
 	public static void init() {
-        FabricBrewingRecipeRegistryBuilder.BUILD.register(builder -> builder.addContainerRecipe(Items.LINGERING_POTION, Items.NETHER_STAR, ModItems.VIAL));
+        FabricPotionBrewingBuilder.BUILD.register(builder -> builder.addContainerRecipe(Items.LINGERING_POTION, Items.NETHER_STAR, ModItems.VIAL));
     }
 }

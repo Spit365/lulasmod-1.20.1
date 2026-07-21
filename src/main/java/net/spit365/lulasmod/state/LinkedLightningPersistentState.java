@@ -1,11 +1,13 @@
 package net.spit365.lulasmod.state;
 
 import com.mojang.serialization.Codec;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.datafix.DataFixTypes;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.saveddata.SavedData;
 import net.minecraft.world.level.saveddata.SavedDataType;
+import net.spit365.lulasmod.Lulasmod;
 import net.spit365.lulasmod.util.MultiVec3d;
 
 import java.util.ArrayList;
@@ -25,9 +27,9 @@ public class LinkedLightningPersistentState extends SavedData {
 
 	public static final SavedDataType<LinkedLightningPersistentState> TYPE =
 		new SavedDataType<>(
-			"linked_lightning",
-			ctx -> new LinkedLightningPersistentState(),
-			ctx -> CODEC,
+			Identifier.fromNamespaceAndPath(Lulasmod.MOD_ID, "linked_lightning"),
+			LinkedLightningPersistentState::new,
+			CODEC,
 			DataFixTypes.LEVEL
 		);
 

@@ -16,7 +16,7 @@ public class HomeButtonItem extends Item {
         if (!world.isClientSide()) {
 			ItemStack stack = player.getItemInHand(hand);
             player.getCooldowns().addCooldown(stack, 6000);
-            ModUtil.sendHome(player, this);
+            ModUtil.sendHome(player, "home button");
 			stack.hurtAndBreak(1, player, hand);
             player.awardStat(Stats.ITEM_USED.get(this));
             return InteractionResult.SUCCESS;

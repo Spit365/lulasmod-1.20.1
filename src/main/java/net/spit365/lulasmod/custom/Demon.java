@@ -27,12 +27,12 @@ public final class Demon {
 	public static void give(@Nullable ServerPlayer player) {
 		if (player == null) return;
 		if (!isDemon(player)) {
-			player.displayClientMessage(Component.translatable("notify.lulasmod.command.contract_fail"), false);
+			player.sendOverlayMessage(Component.translatable("notify.lulasmod.command.contract_fail"));
 			return;
 		}
 
 		List<Item> items = new LinkedList<>(ModSpells.SpellTabItems.stream()
-			.map(ItemStack::getItem)
+			.map(itemStackSupplier -> itemStackSupplier.get().getItem())
 			.filter(ConjuringItem.class::isInstance)
 			.toList());
 		items.addFirst(ModItems.HELLISH_SEAL);
@@ -46,6 +46,6 @@ public final class Demon {
 			demonLevel--;
 		}
 		if (shouldDisplayMessage)
-			player.displayClientMessage(Component.translatable("notify.lulasmod.command.contract_success"), false);
+			player.sendOverlayMessage(Component.translatable("notify.lulasmod.command.contract_success"));
 	}
 }

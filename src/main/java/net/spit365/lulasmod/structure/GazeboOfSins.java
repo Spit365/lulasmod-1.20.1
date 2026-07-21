@@ -1,7 +1,7 @@
 package net.spit365.lulasmod.structure;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.block.Block;
@@ -15,31 +15,31 @@ import java.util.Map;
 import java.util.Optional;
 
 public final class GazeboOfSins {
-    public static final ResourceLocation GAZEBO_OF_SINS_ID = ResourceLocation.fromNamespaceAndPath(Lulasmod.MOD_ID, "gazebo_of_sins");
+    public static final Identifier GAZEBO_OF_SINS_ID = Identifier.fromNamespaceAndPath(Lulasmod.MOD_ID, "gazebo_of_sins");
 
     public static void tick(ServerLevel world) {
         GazeboGenerationPersistentState gazeboGenerationPersistentState = GazeboGenerationPersistentState.get(world);
-        if (gazeboGenerationPersistentState == null) return;
-        HashSet<Map.Entry<BlockPos, Boolean>> gazeboPos = new HashSet<>(gazeboGenerationPersistentState.getPending(world).entrySet());
+	    HashSet<Map.Entry<BlockPos, Boolean>> gazeboPos = new HashSet<>(gazeboGenerationPersistentState.getPending(world).entrySet());
 
         for (Map.Entry<BlockPos, Boolean> entry : gazeboPos) {
-            BlockPos pos = entry.getKey();
+            BlockPos start = entry.getKey();
             if (entry.getValue()) continue;
             Optional<StructureTemplate> structureTemplate = world.getStructureManager().get(GAZEBO_OF_SINS_ID);
             if (structureTemplate.isEmpty()) continue;
 
             StructureTemplate gazebo = structureTemplate.get();
-            boolean loaded = ChunkPos.rangeClosed(new ChunkPos(pos), new ChunkPos(pos.offset(gazebo.getSize())))
+            BlockPos end = start.offset(gazebo.getSize());
+            boolean loaded = ChunkPos.rangeClosed(new ChunkPos(start.getX(), start.getZ()), new ChunkPos(end.getX(), end.getZ()))
                 .allMatch(chunkPos -> world.isLoaded(chunkPos.getWorldPosition()));
             boolean placed = gazebo.placeInWorld(
                 world,
-                pos,
-                pos,
+                start,
+                start,
                 new StructurePlaceSettings(),
                 world.getRandom(),
                 Block.UPDATE_CLIENTS
             );
-            if (loaded && placed) gazeboGenerationPersistentState.markAsLoaded(pos);
+            if (loaded && placed) gazeboGenerationPersistentState.markAsLoaded(start);
         }
     }
 }

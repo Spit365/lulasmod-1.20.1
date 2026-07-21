@@ -2,7 +2,7 @@ package net.spit365.lulasmod.mod;
 
 import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.spit365.lulasmod.util.RegisterHelper;
 import org.jetbrains.annotations.Nullable;
 
@@ -15,7 +15,7 @@ public final class ModParticles {
 
 	public static @Nullable SimpleParticleType getBlood() {
 		if (BLOOD != null) return BLOOD;
-		return BLOOD = (SimpleParticleType) BuiltInRegistries.PARTICLE_TYPE.getValue(ResourceLocation.fromNamespaceAndPath("client-tweaks", "blood"));
+		return BLOOD = (SimpleParticleType) BuiltInRegistries.PARTICLE_TYPE.getValue(Identifier.fromNamespaceAndPath("client-tweaks", "blood"));
 	}
 
 	public static void init() {}

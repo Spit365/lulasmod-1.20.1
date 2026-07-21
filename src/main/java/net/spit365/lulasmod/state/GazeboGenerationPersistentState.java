@@ -4,8 +4,10 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.SectionPos;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.datafix.DataFixTypes;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.saveddata.SavedData;
 import net.minecraft.world.level.saveddata.SavedDataType;
@@ -22,7 +24,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class GazeboGenerationPersistentState extends SavedData {
-	private static final int count = (int) ModSpells.SpellTabItems.stream().filter(stack -> !(stack.getItem() instanceof ConjuringItem) && !stack.is(ModSpells.HIGHLIGHTER_SPELL)).count();
+	private static final int count = (int) ModSpells.SpellTabItems.stream().filter(stack -> !(stack.get().getItem() instanceof ConjuringItem) && !stack.get().is(ModSpells.HIGHLIGHTER_SPELL)).count();
 	private Map<BlockPos, Boolean> pendingPos;
 	public static final int RADIUS_BLOCKS = 1000;
 
@@ -38,13 +40,12 @@ public class GazeboGenerationPersistentState extends SavedData {
 		return storage;
 	}, storage -> new ArrayList<>(storage.pendingPos.entrySet()));
 
-	public static final SavedDataType<GazeboGenerationPersistentState> TYPE =
-		new SavedDataType<>(
-			"gazebo_generation",
-			ctx -> new GazeboGenerationPersistentState(),
-			ctx -> CODEC,
-			DataFixTypes.LEVEL
-		);
+	public static final SavedDataType<GazeboGenerationPersistentState> TYPE = new SavedDataType<>(
+		Identifier.fromNamespaceAndPath(Lulasmod.MOD_ID, "gazebo_generation"),
+		GazeboGenerationPersistentState::new,
+		CODEC,
+		DataFixTypes.LEVEL
+	);
 
 	public static GazeboGenerationPersistentState get(ServerLevel world) {
 		return world.getDataStorage().computeIfAbsent(TYPE);

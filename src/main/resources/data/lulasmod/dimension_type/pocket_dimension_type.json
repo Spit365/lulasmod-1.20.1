@@ -21,5 +21,6 @@
   "piglin_safe": false,
   "respawn_anchor_works": false,
   "ultrawarm": false,
-  "fixed_time": 16000
+  "fixed_time": 16000,
+  "has_ender_dragon_fight": false
 }

@@ -6,8 +6,8 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -25,6 +25,7 @@ import net.spit365.lulasmod.mod.ModSpells;
 import net.spit365.lulasmod.util.ModUtil;
 
 import java.util.List;
+import java.util.function.Supplier;
 
 public class SpellPedestalBlock extends Block {
     public SpellPedestalBlock(Properties settings) {super(settings);}
@@ -38,22 +39,22 @@ public class SpellPedestalBlock extends Block {
 		WorldBlockPos worldBlockPos = new WorldBlockPos(world.dimension(), blockPos);
 		if (!mutable.contains(worldBlockPos)) {
 			mutable.add(worldBlockPos);
-			List<ItemStack> spells = ModSpells.SpellTabItems;
-			spells.removeIf(spell -> spell.getItem() instanceof ConjuringItem || spell.is(ModSpells.HIGHLIGHTER_SPELL));
+			List<Supplier<ItemStack>> spells = ModSpells.SpellTabItems;
+			spells.removeIf(spell -> spell.get().getItem() instanceof ConjuringItem || spell.get().is(ModSpells.HIGHLIGHTER_SPELL));
 			if (mutable.size() <= spells.size()) {
 				player.setAttached(ModData.ABSORBED_PEDESTALS,  mutable);
 				((ServerLevel) world).sendParticles(ParticleTypes.CRIMSON_SPORE, blockPos.getX(), blockPos.getY(), blockPos.getZ(), 500, 1.5, 1.5, 1.5, 0);
-				player.addItem(spells.get(mutable.size() - 1));
-			} else player.displayClientMessage(Component.translatable("notify.lulasmod.pedestal.all_spells"), true);
+				player.addItem(spells.get(mutable.size() - 1).get());
+			} else player.sendOverlayMessage(Component.translatable("notify.lulasmod.pedestal.all_spells"));
 			return InteractionResult.SUCCESS;
-		} else player.displayClientMessage(Component.translatable("notify.lulasmod.already_absorbed_pedestal"), true);
+		} else player.sendOverlayMessage(Component.translatable("notify.lulasmod.already_absorbed_pedestal"));
 		return InteractionResult.PASS;
     }
     @Override public VoxelShape getShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext context) {return SHAPE;}
 
 	public record WorldBlockPos(ResourceKey<Level> world, BlockPos blockPos) {
 		public static final Codec<WorldBlockPos> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-			ResourceLocation.CODEC.fieldOf("world").xmap(id -> ResourceKey.create(Registries.DIMENSION, id), ResourceKey::location)
+			Identifier.CODEC.fieldOf("world").xmap(id -> ResourceKey.create(Registries.DIMENSION, id), ResourceKey::identifier)
 				.forGetter(WorldBlockPos::world),
 			BlockPos.CODEC.fieldOf("blockPos")
 				.forGetter(WorldBlockPos::blockPos)

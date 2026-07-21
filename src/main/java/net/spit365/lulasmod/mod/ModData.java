@@ -4,7 +4,7 @@ import com.mojang.serialization.Codec;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentType;
 import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
 import net.minecraft.core.component.DataComponentType;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.ExtraCodecs;
 import net.spit365.lulasmod.block.SpellPedestalBlock;
 import net.spit365.lulasmod.custom.Shimmer;
@@ -22,12 +22,12 @@ public final class ModData {
 	public static final Set<AttachmentType<Object>> deathPersistent = new HashSet<>();
 
 	// Component Types (Items)
-    public static final DataComponentType<List<ResourceLocation>> SPELL_BOOK_SPELLS = RegisterHelper.componentType("spell_book_spells", builder -> builder.persistent(ResourceLocation.CODEC.listOf()));
+    public static final DataComponentType<List<Identifier>> SPELL_BOOK_SPELLS = RegisterHelper.componentType("spell_book_spells", builder -> builder.persistent(Identifier.CODEC.listOf()));
 	public static final DataComponentType<Shimmer.Variant> SHIMMER_VARIANT = RegisterHelper.componentType("shimmer_variant", builder -> builder.persistent(SHIMMER_VARIANT_CODEC));
 
 	//Attachment Types (Entities)
 	public static final AttachmentType<Integer> DAMAGE_DELAY = RegisterHelper.persistentAttachmentType("damage_delay", Codec.INT, false);
-	public static final AttachmentType<List<ResourceLocation>> EQUIPPED_SPELLS = RegisterHelper.persistentAttachmentType("equipped_spells", ResourceLocation.CODEC.listOf(), true);
+	public static final AttachmentType<List<Identifier>> EQUIPPED_SPELLS = RegisterHelper.persistentAttachmentType("equipped_spells", Identifier.CODEC.listOf(), true);
 	public static final AttachmentType<Integer> DASH_SPELL = RegisterHelper.persistentAttachmentType("purloining_spell", Codec.INT, false);
 	public static final AttachmentType<Integer> DASH_COOLDOWN = RegisterHelper.attachmentType("dash_cooldown", false);
 	public static final AttachmentType<List<SpellPedestalBlock.WorldBlockPos>> ABSORBED_PEDESTALS = RegisterHelper.persistentAttachmentType("absorbed_pedestals", SpellPedestalBlock.WorldBlockPos.CODEC.listOf(), false);

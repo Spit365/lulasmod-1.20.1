@@ -1,10 +1,10 @@
 package net.spit365.lulasmod.custom;
 
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.RenderPipelines;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
@@ -22,8 +22,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 public final class Bleed {
-    public static final ResourceLocation BACKGROUND = ResourceLocation.fromNamespaceAndPath(Lulasmod.MOD_ID, "textures/gui/bleed_progress/background.png");
-    public static final ResourceLocation PROGRESS = ResourceLocation.fromNamespaceAndPath(Lulasmod.MOD_ID, "textures/gui/bleed_progress/progress.png");
+    public static final Identifier BACKGROUND = Identifier.fromNamespaceAndPath(Lulasmod.MOD_ID, "textures/gui/bleed_progress/background.png");
+    public static final Identifier PROGRESS = Identifier.fromNamespaceAndPath(Lulasmod.MOD_ID, "textures/gui/bleed_progress/progress.png");
     public static int progress = 0;
 
     public static void tick(ServerLevel world) {
@@ -64,12 +64,12 @@ public final class Bleed {
 	}
 
 	public static void summonParticles(Vec3 pos, ClientLevel world) {
-		if (world != null) for (int i = 0; i < world.random.nextInt(4) + 6; i++) {
+		if (world != null) for (int i = 0; i < world.getRandom().nextInt(4) + 6; i++) {
             world.addParticle(ModParticles.getBlood(), pos.x(), pos.y() + 1, pos.z(), 1, 0, 1);
         }
 	}
 
-    public static void render(GuiGraphics drawContext) {
+    public static void render(GuiGraphicsExtractor drawContext) {
         int textWidth = 182;
         int textHeight = 5;
         int x = (drawContext.guiWidth() - textWidth) / 2;

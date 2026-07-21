@@ -6,7 +6,7 @@ import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
@@ -23,9 +23,10 @@ import net.spit365.lulasmod.util.RegisterHelper;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.function.Supplier;
 
 public final class ModItems {
-	public static final List<ItemStack> MainTabItems = new LinkedList<>();
+	public static final List<Supplier<ItemStack>> MainTabItems = new LinkedList<>();
 
 	public static final SealItem SEAL = RegisterHelper.item("seal", settings -> new SealItem(settings, entity -> true, 1, 1), new Item.Properties().stacksTo(1));
 	public static final SealItem HELLISH_SEAL = RegisterHelper.item("hellish_seal", settings -> new SealItem(settings, Demon::isDemon, 2, 1), new Item.Properties().stacksTo(1).fireResistant());
@@ -41,18 +42,20 @@ public final class ModItems {
 	public static final SpellBookItem SPELL_BOOK = RegisterHelper.item("spell_book", SpellBookItem::new, new Item.Properties().stacksTo(1));
     public static final NeedleSwordItem NEEDLE_SWORD = RegisterHelper.item("needle_sword", NeedleSwordItem::new, new Item.Properties().sword(ToolMaterial.NETHERITE, 3, 0).stacksTo(1).durability(2500).fireResistant());
 	public static final ShimmerSyringeItem SHIMMER_SYRINGE = RegisterHelper.item("shimmer_syringe", ShimmerSyringeItem::new, new Item.Properties().stacksTo(16), (item, itemStacks) -> {
-		for (Shimmer.Variant variant : Shimmer.Variant.values()) {
-			ItemStack stack = new ItemStack(item);
-			stack.set(ModData.SHIMMER_VARIANT, variant);
-			itemStacks.add(stack);
-		}
+		for (Shimmer.Variant variant : Shimmer.Variant.values())
+			itemStacks.add(() -> {
+				ItemStack stack = new ItemStack(item);
+				stack.set(ModData.SHIMMER_VARIANT, variant);
+				return stack;
+			});
 	});
     public static final VialItem VIAL = RegisterHelper.item("vial", VialItem::new, new Item.Properties().stacksTo(16), (item, itemStacks) -> {
-		for (Potion potion : BuiltInRegistries.POTION) {
-			ItemStack stack = new ItemStack(item);
-			stack.set(DataComponents.POTION_CONTENTS, new PotionContents(BuiltInRegistries.POTION.wrapAsHolder(potion)));
-			itemStacks.add(stack);
-		}
+		for (Potion potion : BuiltInRegistries.POTION)
+			itemStacks.add(() -> {
+				ItemStack stack = new ItemStack(item);
+				stack.set(DataComponents.POTION_CONTENTS, new PotionContents(BuiltInRegistries.POTION.wrapAsHolder(potion)));
+				return stack;
+			});
 	});
 
     public static final Item NEEDLE_HEAD = RegisterHelper.item("needle_head", Item::new, new Item.Properties().fireResistant());
@@ -64,9 +67,11 @@ public final class ModItems {
 		if (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT) ItemTooltipCallback.EVENT.register((stack, tooltipContext, tooltipType, list) -> {
 			switch (stack.getItem()) {
 				case SpellBookItem ignored -> {
-					List<ResourceLocation> spells = stack.get(ModData.SPELL_BOOK_SPELLS);
-					if (spells != null && !spells.isEmpty()) spells.forEach(id ->
-						list.add(BuiltInRegistries.ITEM.getValue(id).getName()));
+					List<Identifier> spells = stack.get(ModData.SPELL_BOOK_SPELLS);
+					if (spells != null && !spells.isEmpty()) spells.forEach(id -> {
+						Item item = BuiltInRegistries.ITEM.getValue(id);
+						list.add(item.getDefaultInstance().getItemName());
+					});
 				}
 				case SpellItem item -> list.add(Component.translatable("spell." + BuiltInRegistries.ITEM.getKey(item).getNamespace() + ".tooltip." + BuiltInRegistries.ITEM.getKey(item).getPath()));
                 default -> {}

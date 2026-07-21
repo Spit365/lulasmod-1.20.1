@@ -19,7 +19,6 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(LivingEntity.class)
@@ -40,19 +39,19 @@ public abstract class LivingEntityMixin extends Entity implements Attackable {
             if (Demon.isDemon(attacker) && attacker instanceof LivingEntity demon) demon.heal(amount);
         }
     }
-    @ModifyVariable(method = "travelInAir", at = @At("STORE"), ordinal = 0)
-    private double travelMidAir(double d) {
+    @ModifyVariable(method = "travelInAir", at = @At("STORE"), name = "movementY")
+    private double travelMidAir(double movementY) {
         LivingEntityMixin entity = this;
         return (
             entity.getMainHandItem().getItem() instanceof BowItem &&
             entity.isUsingItem() &&
             !entity.onGround() &&
             entity.getDeltaMovement().y <= 0.0
-        ) ? -0.07 : d;
+        ) ? -0.07 : movementY;
     }
-	@Inject(method = "knockback", at = @At("HEAD"), cancellable = true)
-	private void takeKnockback(double strength, double x, double z, CallbackInfo ci) {
+	@Inject(method = "getKnockback", at = @At("HEAD"), cancellable = true)
+	private void takeKnockback(Entity target, DamageSource damageSource, CallbackInfoReturnable<Float> cir) {
 		DamageSource recent = ((LivingEntity) (Object) this).getLastDamageSource();
-		if (recent != null && recent.typeHolder().is(ModDamageTypes.KINETIC_BACKLASH)) ci.cancel();
+		if (recent != null && recent.typeHolder().is(ModDamageTypes.KINETIC_BACKLASH)) cir.setReturnValue(0f);
 	}
 }

@@ -26,7 +26,7 @@ public final class ModBlocks {
 		PentagrammBlock::new,
 		BlockBehaviour.Properties.of()
 			.mapColor(MapColor.COLOR_RED)
-			.noCollission()
+			.noCollision()
 			.instabreak()
 			.pushReaction(PushReaction.DESTROY)
 			.isValidSpawn(Blocks::never));

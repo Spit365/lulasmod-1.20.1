@@ -1,13 +1,13 @@
 package net.spit365.lulasmod.mod;
 
+import net.fabricmc.fabric.api.gamerule.v1.GameRuleBuilder;
+import net.minecraft.world.level.gamerules.GameRule;
+import net.minecraft.world.level.gamerules.GameRuleCategory;
 import net.spit365.lulasmod.util.RegisterHelper;
 
-import static net.fabricmc.fabric.api.gamerule.v1.GameRuleFactory.createBooleanRule;
-
-import net.minecraft.world.level.GameRules;
-
 public final class ModGamerules {
-	public static final GameRules.Key<GameRules.BooleanValue> NEW_DEATH_SYSTEM = RegisterHelper.gameRule("newDeathSystem", GameRules.Category.PLAYER, createBooleanRule(false));
+	public static final GameRule<Boolean> NEW_DEATH_SYSTEM =
+		RegisterHelper.gameRule("new_death_system", () -> GameRuleBuilder.forBoolean(false).category(GameRuleCategory.PLAYER));
 
 	public static void init() {}
 }

@@ -3,11 +3,12 @@ package net.spit365.lulasmod.renderer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext;
-import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
+import net.fabricmc.fabric.api.client.rendering.v1.level.LevelExtractionContext;
+import net.fabricmc.fabric.api.client.rendering.v1.level.LevelExtractionEvents;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.world.phys.HitResult;
 import net.spit365.lulasmod.custom.TimeForward;
 
 @Environment(EnvType.CLIENT)
@@ -18,7 +19,7 @@ public final class TimeForwardRenderer {
     private static final long DAY_LENGTH = 24000L;
 
     public static void init() {
-        WorldRenderEvents.START.register(TimeForwardRenderer::render);
+        LevelExtractionEvents.AFTER_BLOCK_OUTLINE_EXTRACTION.register(TimeForwardRenderer::render);
         ClientTickEvents.END_CLIENT_TICK.register(TimeForwardRenderer::tick);
     }
 
@@ -34,18 +35,16 @@ public final class TimeForwardRenderer {
         animationDuration += 1;
     }
 
-    private static void render(WorldRenderContext context) {
+    private static void render(LevelExtractionContext context, HitResult hit) {
         if (!running) return;
-        ClientLevel world = context.world();
-        if (world == null) return;
-        long m = (displayTime + (long) (animationDuration * context.tickCounter().getGameTimeDeltaPartialTick(false))) % DAY_LENGTH;
-        world.getLevelData().setDayTime(m < 0 ? m + DAY_LENGTH : m);
+        long m = (displayTime + (long) (animationDuration * context.deltaTracker().getGameTimeDeltaPartialTick(false))) % DAY_LENGTH;
+        context.levelState().gameTime = (m < 0 ? m + DAY_LENGTH : m);
     }
 
     public static void start(ClientLevel world) {
         if (running) return;
         running = true;
-        displayTime = world.getDayTime();
+        displayTime = world.getGameTime();
         animationDuration = 0;
     }
 
